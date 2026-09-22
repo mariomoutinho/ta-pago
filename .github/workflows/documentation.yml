@@ -11,15 +11,26 @@ permissions:
 jobs:
   documentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+          cache: npm
+      - name: Instalar dependências do lockfile
+        run: npm ci
       - name: Validar documentação
         run: npm run docs:validate
       - name: Testar ferramentas documentais
         run: npm run docs:test
       - name: Verificar manifesto versionado
         run: npm run knowledge:check
+      - name: Verificar TypeScript
+        run: npm run typecheck
+      - name: Validar inventário do código
+        run: npm run code:check
+      - name: Testar inventário do código
+        run: npm run code:test

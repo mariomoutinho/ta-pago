@@ -4,13 +4,32 @@
   "title": "Instruções para agentes — Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "project"
   ],
   "indexable": false,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "policy",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.07-ai.agent-contract",
+    "ta-pago.docs.07-ai.task-protocol",
+    "ta-pago.docs.07-ai.tool-policy"
+  ],
+  "framework_version": null,
+  "domain": "ai"
 }
 ---
 
@@ -34,6 +53,14 @@ Escreva em pt-BR, mantenha IDs estáveis e atualize metadados e fontes. Siga o [
 
 ## Validação e Git
 
-Execute `npm run docs:validate`, `npm run docs:test`, `npm run knowledge:build`, `npm run knowledge:check` e `npm run typecheck` conforme a mudança. Revise diff e segredos; inclua somente arquivos da tarefa no commit. Ao concluir trabalho autorizado, faça commit descritivo e push normal para a branch atual. Não use force push, descarte alterações nem reescreva histórico. Se houver impedimento, mantenha commit local e informe hash, branch e causa.
+Execute `npm run docs:validate`, `npm run docs:test`, `npm run knowledge:build`, `npm run knowledge:check` e `npm run typecheck` conforme a mudança. Revise diff e segredos; inclua somente arquivos da tarefa no commit. Ao concluir trabalho autorizado, faça commit descritivo e push normal para a branch atual, salvo instrução explícita da tarefa para não fazê-los. Não use force push, descarte alterações nem reescreva histórico. Se houver impedimento, mantenha commit local e informe hash, branch e causa.
 
 Não afirme sucesso de testes, push ou funcionalidades sem evidência. `CLAUDE.md` continua referenciando este arquivo.
+
+## Conhecimento v2 e autorização da tarefa
+
+Respeite instruções explícitas da tarefa sobre commit/push, inclusive pedidos de deixar tudo local. `AGENTS.md` é operacional, tem `authority: policy` e `indexable: false`; não é evidência de comportamento do aplicativo.
+
+Leia [knowledge/README.md](knowledge/README.md) antes de modificar os extratores. Preserve os extratores documental/código e as coleções distintas no manifesto consolidado, os IDs, as evidências e os marcadores `observed`, `inferred` e `unknown`. Use a revisão-base real de `knowledge/config.json`; não invente o SHA do commit futuro. Não introduza embeddings, banco vetorial, busca, reranking ou integração com modelo nesta fase.
+
+Depois de alterar fontes ou contratos, execute as validações documentais, `code:inventory`, `code:check`, `code:test` e `typecheck`. Gere manifestos determinísticos e revise exclusões e chunks sem dados pessoais ou segredos. Não afirme que a CI remota passou se as alterações ainda não foram enviadas.

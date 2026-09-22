@@ -4,13 +4,30 @@
   "title": "Estratégia de testes",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "04-development"
   ],
   "indexable": true,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "policy",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.01-requirements.acceptance-criteria"
+  ],
+  "framework_version": null,
+  "domain": "testing"
 }
 ---
 
@@ -34,3 +51,9 @@ Para cada funcionalidade, partir dos [critérios de aceitação](../01-requireme
 ## Evidência de entrega
 
 Registrar comandos e resultados, ambiente e limitações. Tipo correto não comprova comportamento de negócio ou funcionamento em dispositivo.
+
+## Verificações do inventário de código
+
+`npm run code:test` testa componentes, hooks, rotas, funções, constantes, relações, confiança, exclusões sensíveis e planos incrementais. `npm run code:check` compara inventário e manifesto com as fontes atuais, incluindo chunks e resumos. Os testes usam fontes sintéticas em diretórios temporários e não dados reais de alunos.
+
+A CI instala dependências e executa TypeScript, documentos e código. Não configura nem executa o lint incompleto do template. A análise sintática não substitui testes de comportamento em Android, iOS ou web.

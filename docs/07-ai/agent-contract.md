@@ -4,13 +4,32 @@
   "title": "Contrato para agentes",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "07-ai"
   ],
   "indexable": false,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "policy",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.07-ai.rag-policy",
+    "ta-pago.docs.07-ai.task-protocol",
+    "ta-pago.docs.07-ai.tool-policy"
+  ],
+  "framework_version": null,
+  "domain": "ai"
 }
 ---
 
@@ -26,7 +45,7 @@ Inspecionar código antes de afirmar implementação. Consultar Expo 57 antes de
 
 ## Evidências e conclusão
 
-Relacionar mudança a requisito e arquivos; executar validações relevantes; atualizar documentos e manifesto. Revisar segredos, criar commit e fazer push normal quando a tarefa autorizar o trabalho no repositório. Relatar falhas com precisão, sem alegar sucesso não verificado.
+Relacionar mudança a requisito e arquivos; executar validações relevantes; atualizar documentos e manifesto. Revisar segredos, criar commit e fazer push normal quando a tarefa autorizar e não houver instrução explícita para deixar as alterações locais. Relatar falhas com precisão, sem alegar sucesso não verificado.
 
 ## Limites de IA
 

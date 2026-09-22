@@ -4,13 +4,37 @@
   "title": "Requisitos funcionais",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "01-requirements"
   ],
   "indexable": true,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "requirement",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.03-features.achievements",
+    "ta-pago.docs.03-features.challenges",
+    "ta-pago.docs.03-features.groups",
+    "ta-pago.docs.03-features.points-and-ranking",
+    "ta-pago.docs.03-features.running-records",
+    "ta-pago.docs.03-features.social-feed",
+    "ta-pago.docs.03-features.teacher-student-monitoring",
+    "ta-pago.docs.03-features.workouts"
+  ],
+  "framework_version": null,
+  "domain": "requirements"
 }
 ---
 

@@ -4,13 +4,28 @@
   "title": "Política de ferramentas",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "07-ai"
   ],
   "indexable": false,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "policy",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [],
+  "framework_version": null,
+  "domain": "ai"
 }
 ---
 
@@ -29,3 +44,7 @@ Não usar `git reset --hard`, `git clean -fd`, restauração indiscriminada ou f
 ## Ferramentas documentais
 
 Os scripts em `scripts/docs` leem apenas o conjunto documental permitido; `knowledge:build` escreve o manifesto. `knowledge:plan` apenas apresenta diferenças em JSON. Nenhum script executa embeddings, envia dados pela rede ou sincroniza índices externos.
+
+## Ferramentas de código
+
+`scripts/code` lê apenas fontes TypeScript permitidas de `src`, sem executá-las, e gera inventário e chunks locais. Não segue links simbólicos nem ingere dependências ou mídia. Possível conteúdo sensível exclui o arquivo; limitações do detector exigem revisão humana. Planos documentais e de código continuam `applied: false` e não chamam serviços externos.

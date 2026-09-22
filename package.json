@@ -43,7 +43,11 @@
     "docs:test": "node --test scripts/docs/*.test.mjs",
     "knowledge:build": "node scripts/docs/cli.mjs build",
     "knowledge:check": "node scripts/docs/cli.mjs check",
-    "knowledge:plan": "node scripts/docs/cli.mjs plan"
+    "knowledge:plan": "node scripts/docs/cli.mjs plan",
+    "code:inventory": "node scripts/code/cli.mjs inventory",
+    "code:check": "node scripts/code/cli.mjs check",
+    "code:test": "node --test scripts/code/*.test.mjs",
+    "knowledge:plan-code": "node scripts/code/cli.mjs plan"
   },
   "private": true
 }

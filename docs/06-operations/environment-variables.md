@@ -4,7 +4,7 @@
   "title": "Variáveis de ambiente",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "06-operations"
@@ -13,7 +13,22 @@
   "sources": [
     "src/components/external-link.tsx",
     ".gitignore"
-  ]
+  ],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "code",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [],
+  "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
+  "domain": "operations"
 }
 ---
 

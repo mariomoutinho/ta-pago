@@ -54,6 +54,111 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[\\w./-]+$"
+    },
+    "commit_sha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "authority": {
+      "type": "string",
+      "enum": [
+        "code",
+        "requirement",
+        "architecture",
+        "decision",
+        "policy",
+        "proposal",
+        "external",
+        "product"
+      ]
+    },
+    "audience": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "developer",
+          "ai_agent",
+          "teacher",
+          "student",
+          "product",
+          "operations",
+          "reviewer"
+        ]
+      },
+      "minItems": 1
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ]
+    },
+    "supersedes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ta-pago\\.[a-zA-Z0-9.-]+$"
+      }
+    },
+    "related_documents": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^ta-pago\\.[a-zA-Z0-9.-]+$"
+      }
+    },
+    "framework_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "product",
+        "requirements",
+        "architecture",
+        "navigation",
+        "ui",
+        "components",
+        "hooks",
+        "routing",
+        "development",
+        "operations",
+        "ai",
+        "rag",
+        "testing",
+        "fitness",
+        "social",
+        "workouts",
+        "running",
+        "teacher-student"
+      ]
     }
   },
   "required": [
@@ -65,6 +170,17 @@
     "language",
     "tags",
     "indexable",
-    "sources"
+    "sources",
+    "repository",
+    "branch",
+    "commit_sha",
+    "version",
+    "authority",
+    "audience",
+    "sensitivity",
+    "supersedes",
+    "related_documents",
+    "framework_version",
+    "domain"
   ]
 }

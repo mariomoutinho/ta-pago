@@ -4,13 +4,30 @@
   "title": "Glossário",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "00-context"
   ],
   "indexable": true,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "product",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.03-features.social-feed"
+  ],
+  "framework_version": null,
+  "domain": "product"
 }
 ---
 

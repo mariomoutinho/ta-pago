@@ -1,0 +1,515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Entidade de código Tá Pago v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "entity_type",
+    "name",
+    "source_path",
+    "repository",
+    "branch",
+    "commit_sha",
+    "version",
+    "framework_version",
+    "domain",
+    "exported",
+    "export_kind",
+    "parent",
+    "references",
+    "imports",
+    "props",
+    "parameters",
+    "return_type",
+    "route",
+    "behavior",
+    "evidence",
+    "confidence",
+    "status",
+    "source_sha256",
+    "extractor_version",
+    "chunking_version",
+    "variant",
+    "consumers",
+    "callbacks",
+    "children",
+    "calls",
+    "links",
+    "uses_state",
+    "uses_effect",
+    "uses_theme",
+    "native_components",
+    "sha256",
+    "start_line",
+    "end_line",
+    "value_type"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ta-pago\\.code:.+"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "component",
+        "hook",
+        "route",
+        "function",
+        "constant",
+        "interface-behavior",
+        "symbol-relation"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_path": {
+      "type": "string",
+      "pattern": "^src/.+\\.tsx?$"
+    },
+    "repository": {
+      "type": "string",
+      "enum": [
+        "mariomoutinho/ta-pago"
+      ]
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commit_sha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "framework_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "product",
+        "requirements",
+        "architecture",
+        "navigation",
+        "ui",
+        "components",
+        "hooks",
+        "routing",
+        "development",
+        "operations",
+        "ai",
+        "rag",
+        "testing",
+        "fitness",
+        "social",
+        "workouts",
+        "running",
+        "teacher-student"
+      ]
+    },
+    "exported": {
+      "type": "boolean"
+    },
+    "export_kind": {
+      "type": "string",
+      "enum": [
+        "none",
+        "named",
+        "default",
+        "reexport",
+        "unknown"
+      ]
+    },
+    "parent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^ta-pago\\.code:.+"
+      },
+      "uniqueItems": true
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "imported",
+          "local",
+          "type_only"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "imported": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "local": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type_only": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "props": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "definitions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "signature",
+        "bindings",
+        "definitions"
+      ],
+      "additionalProperties": false
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "return_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "route": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "screen",
+            "layout"
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "navigable": {
+          "type": "boolean"
+        },
+        "layout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "navigable",
+        "layout",
+        "components",
+        "links"
+      ],
+      "additionalProperties": false
+    },
+    "behavior": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "description",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_path",
+                "start_line",
+                "end_line",
+                "snippet"
+              ],
+              "properties": {
+                "source_path": {
+                  "type": "string",
+                  "pattern": "^src/.+\\.tsx?$"
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "end_line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "snippet": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "inferred",
+              "unknown"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_path",
+          "start_line",
+          "end_line",
+          "snippet"
+        ],
+        "properties": {
+          "source_path": {
+            "type": "string",
+            "pattern": "^src/.+\\.tsx?$"
+          },
+          "start_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "end_line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "snippet": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "inferred",
+        "unknown"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "current",
+        "proposed",
+        "deprecated"
+      ]
+    },
+    "source_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "extractor_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chunking_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variant": {
+      "type": "string",
+      "enum": [
+        "shared",
+        "web",
+        "native",
+        "ios",
+        "android",
+        "unknown"
+      ]
+    },
+    "consumers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "callbacks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "calls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "uses_state": {
+      "type": "boolean"
+    },
+    "uses_effect": {
+      "type": "boolean"
+    },
+    "uses_theme": {
+      "type": "boolean"
+    },
+    "native_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "redacted": {
+      "type": "boolean"
+    },
+    "relation": {
+      "type": "object",
+      "required": [
+        "from",
+        "to",
+        "kind"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "renders",
+            "calls",
+            "uses-hook",
+            "uses-constant",
+            "references",
+            "links-to",
+            "file-layout-includes",
+            "has-web-variant",
+            "handles-event"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "start_line": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "end_line": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "value_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

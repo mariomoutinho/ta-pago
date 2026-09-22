@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -15,7 +15,57 @@
     "src/app/index.tsx",
     "src/app/explore.tsx",
     "LICENSE"
-  ]
+  ],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "product",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.AGENTS",
+    "ta-pago.docs.00-context.glossary",
+    "ta-pago.docs.00-context.personas",
+    "ta-pago.docs.00-context.product-brief",
+    "ta-pago.docs.01-requirements.acceptance-criteria",
+    "ta-pago.docs.01-requirements.functional-requirements",
+    "ta-pago.docs.01-requirements.non-functional-requirements",
+    "ta-pago.docs.02-architecture.app-structure",
+    "ta-pago.docs.02-architecture.data-model",
+    "ta-pago.docs.02-architecture.integrations",
+    "ta-pago.docs.02-architecture.navigation",
+    "ta-pago.docs.02-architecture.system-overview",
+    "ta-pago.docs.03-features.achievements",
+    "ta-pago.docs.03-features.challenges",
+    "ta-pago.docs.03-features.groups",
+    "ta-pago.docs.03-features.points-and-ranking",
+    "ta-pago.docs.03-features.running-records",
+    "ta-pago.docs.03-features.social-feed",
+    "ta-pago.docs.03-features.teacher-student-monitoring",
+    "ta-pago.docs.03-features.workouts",
+    "ta-pago.docs.04-development.coding-guidelines",
+    "ta-pago.docs.04-development.debugging",
+    "ta-pago.docs.04-development.local-setup",
+    "ta-pago.docs.04-development.testing",
+    "ta-pago.docs.05-decisions.ADR-0001-expo-and-expo-router",
+    "ta-pago.docs.06-operations.environment-variables",
+    "ta-pago.docs.06-operations.incident-response",
+    "ta-pago.docs.06-operations.release-process",
+    "ta-pago.docs.07-ai.agent-contract",
+    "ta-pago.docs.07-ai.evaluation-policy",
+    "ta-pago.docs.07-ai.rag-policy",
+    "ta-pago.docs.07-ai.task-protocol",
+    "ta-pago.docs.07-ai.task-template",
+    "ta-pago.docs.07-ai.tool-policy"
+  ],
+  "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
+  "domain": "product"
 }
 ---
 
@@ -80,7 +130,7 @@ O repositório requer acesso autorizado enquanto privado. Para web, executar `np
 | `typecheck` | Verifica tipos sem gerar arquivos. |
 | `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |
 | `docs:test` | Executa testes dos scripts documentais. |
-| `knowledge:build` | Gera manifesto local determinístico. |
+| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |
 | `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |
 | `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |
 
@@ -149,3 +199,18 @@ Validar MVP e regras com usuários; definir identidade, autorização e persist�
 ## Licença e autor
 
 Licença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).
+
+## Base de conhecimento v2
+
+A documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.
+
+Os manifestos contêm chunks integrais e resumos determinísticos, sem modelo externo. Embeddings e vetores estão `not_generated`; índices de caminho, símbolo e domínio são planejados, e o índice lexical não foi gerado. Ainda não existem banco vetorial, busca semântica, reranking, recuperação de contexto por modelo ou integração operacional entre RAG e agente.
+
+| Script adicional | Finalidade |
+| --- | --- |
+| `code:inventory` | Gera inventário e manifesto de código locais. |
+| `code:check` | Confere inventário e manifesto sem modificá-los. |
+| `code:test` | Testa extração, relações, segurança e comparação incremental. |
+| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |
+
+O extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.

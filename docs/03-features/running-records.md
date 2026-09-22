@@ -4,13 +4,31 @@
   "title": "Registro de corridas",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-21",
+  "updated_at": "2026-09-22",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
-  "sources": []
+  "sources": [],
+  "repository": "mariomoutinho/ta-pago",
+  "branch": "main",
+  "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+  "version": "2.0.0",
+  "authority": "proposal",
+  "audience": [
+    "developer",
+    "ai_agent",
+    "reviewer"
+  ],
+  "sensitivity": "internal",
+  "supersedes": [],
+  "related_documents": [
+    "ta-pago.docs.01-requirements.functional-requirements",
+    "ta-pago.docs.02-architecture.data-model"
+  ],
+  "framework_version": null,
+  "domain": "running"
 }
 ---
 
