@@ -37,7 +37,13 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "docs:validate": "node scripts/docs/cli.mjs validate",
+    "docs:test": "node --test scripts/docs/*.test.mjs",
+    "knowledge:build": "node scripts/docs/cli.mjs build",
+    "knowledge:check": "node scripts/docs/cli.mjs check",
+    "knowledge:plan": "node scripts/docs/cli.mjs plan"
   },
   "private": true
 }

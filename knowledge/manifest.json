@@ -1,0 +1,488 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "id": "ta-pago.README",
+      "title": "Tá Pago",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "project"
+      ],
+      "indexable": true,
+      "sources": [
+        "package.json",
+        "src/app/index.tsx",
+        "src/app/explore.tsx",
+        "LICENSE"
+      ],
+      "path": "README.md",
+      "sha256": "99db00f25cbda2c0aa31c906f3ea893b71a3275a6c03137c5b9c143a97aa6d5b"
+    },
+    {
+      "id": "ta-pago.docs.00-context.glossary",
+      "title": "Glossário",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "00-context"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/00-context/glossary.md",
+      "sha256": "cd5728aef9b2f1b383741aa5d074363ed71377fa3cbe3bc1248493c8214bb742"
+    },
+    {
+      "id": "ta-pago.docs.00-context.personas",
+      "title": "Perfis de usuário",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "00-context"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/00-context/personas.md",
+      "sha256": "346db5a40d220f2d8bafae1103847473bf14a17cf9b3c3377e6eab9e82ea1e89"
+    },
+    {
+      "id": "ta-pago.docs.00-context.product-brief",
+      "title": "Visão do produto",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "00-context"
+      ],
+      "indexable": true,
+      "sources": [
+        "src/app/index.tsx",
+        "src/app/explore.tsx"
+      ],
+      "path": "docs/00-context/product-brief.md",
+      "sha256": "e771c085a6591901dc8e53e28291c80cdd59a044c73c6ab609ecdd5a1bb4af73"
+    },
+    {
+      "id": "ta-pago.docs.01-requirements.acceptance-criteria",
+      "title": "Critérios de aceitação",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "01-requirements"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/01-requirements/acceptance-criteria.md",
+      "sha256": "367e1dafc72ffe72d98b4d7cbe13392235db5e27b718fd67b603ed552c7b97db"
+    },
+    {
+      "id": "ta-pago.docs.01-requirements.functional-requirements",
+      "title": "Requisitos funcionais",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "01-requirements"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/01-requirements/functional-requirements.md",
+      "sha256": "6047ded21405e08b37ab190aa82d8d715662690cd7523064724da41c83056b7c"
+    },
+    {
+      "id": "ta-pago.docs.01-requirements.non-functional-requirements",
+      "title": "Requisitos não funcionais",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "01-requirements"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/01-requirements/non-functional-requirements.md",
+      "sha256": "3583e9679a25ee9fe625933fb16ac6665535326d1f2bd34af7941f147032ef80"
+    },
+    {
+      "id": "ta-pago.docs.02-architecture.app-structure",
+      "title": "Estrutura do aplicativo",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "02-architecture"
+      ],
+      "indexable": true,
+      "sources": [
+        "tsconfig.json",
+        "src/constants/theme.ts",
+        "src/hooks/use-theme.ts",
+        "scripts/reset-project.js"
+      ],
+      "path": "docs/02-architecture/app-structure.md",
+      "sha256": "e866191814f29714958ad49745242a3e23dd5eebd582954914ab1f153507945f"
+    },
+    {
+      "id": "ta-pago.docs.02-architecture.data-model",
+      "title": "Modelo conceitual de dados",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "02-architecture"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/02-architecture/data-model.md",
+      "sha256": "a3019a03f847ac0776c6c5b4d168a7ff30c007c83473ecfd3cb6a0fbc8d7cbe4"
+    },
+    {
+      "id": "ta-pago.docs.02-architecture.integrations",
+      "title": "Integrações",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "02-architecture"
+      ],
+      "indexable": true,
+      "sources": [
+        "package.json",
+        "src/components/external-link.tsx"
+      ],
+      "path": "docs/02-architecture/integrations.md",
+      "sha256": "d3db3c73534a3576cea00164f58c3acc9cada4cb19376e2d623d545a0c01a4bc"
+    },
+    {
+      "id": "ta-pago.docs.02-architecture.navigation",
+      "title": "Navegação",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "02-architecture"
+      ],
+      "indexable": true,
+      "sources": [
+        "src/components/app-tabs.tsx",
+        "src/components/app-tabs.web.tsx",
+        "src/app/_layout.tsx"
+      ],
+      "path": "docs/02-architecture/navigation.md",
+      "sha256": "3bec67b169620940effd6f255a3512b642fcae472b7c91dea0796a9f15e4dab8"
+    },
+    {
+      "id": "ta-pago.docs.02-architecture.system-overview",
+      "title": "Visão da arquitetura",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "02-architecture"
+      ],
+      "indexable": true,
+      "sources": [
+        "package.json",
+        "app.json",
+        "src/app/_layout.tsx"
+      ],
+      "path": "docs/02-architecture/system-overview.md",
+      "sha256": "ff307d0e3678d5a551bbd77f27750f31be28388ba307851228d0d4c3015d6408"
+    },
+    {
+      "id": "ta-pago.docs.03-features.achievements",
+      "title": "Títulos e conquistas",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/achievements.md",
+      "sha256": "d1ccd34a082f5045e641e38d5f0c51c780e178de7dabe6a7fbd0ae156039d559"
+    },
+    {
+      "id": "ta-pago.docs.03-features.challenges",
+      "title": "Desafios coletivos",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/challenges.md",
+      "sha256": "62137456421318cb9b124788ca2cdd2d6dd6164eea2af1d0b92c5f3810182592"
+    },
+    {
+      "id": "ta-pago.docs.03-features.groups",
+      "title": "Grupos",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/groups.md",
+      "sha256": "a4af0fb133166448e8b184f1a6611a88bd8da0052337b8d5696716e781ded47e"
+    },
+    {
+      "id": "ta-pago.docs.03-features.points-and-ranking",
+      "title": "Pontos e rankings",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/points-and-ranking.md",
+      "sha256": "6bdf6ced6a11206b5b894d0dfcb9d8556b2fbec2e42862720b769fff7e90ef0a"
+    },
+    {
+      "id": "ta-pago.docs.03-features.running-records",
+      "title": "Registro de corridas",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/running-records.md",
+      "sha256": "34834795095b7bfa53c2ddca5d1a20d26263b586b9401e99f0960e9e84b7e006"
+    },
+    {
+      "id": "ta-pago.docs.03-features.social-feed",
+      "title": "Rede social fitness",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/social-feed.md",
+      "sha256": "1c26cc01bd9c62670831da0097ab171d61ef16e75044e843dc51b8aff27fde40"
+    },
+    {
+      "id": "ta-pago.docs.03-features.teacher-student-monitoring",
+      "title": "Acompanhamento de alunos",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/teacher-student-monitoring.md",
+      "sha256": "965a717ded771cfd999ed767507712815909275f4e4badf9a310a1df05e52b24"
+    },
+    {
+      "id": "ta-pago.docs.03-features.workouts",
+      "title": "Treinos personalizados",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "03-features"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/03-features/workouts.md",
+      "sha256": "08d2dafe5ba2b743c27fdfc357360547dcc8d6ef6729531341a2a479eaeec1c2"
+    },
+    {
+      "id": "ta-pago.docs.04-development.coding-guidelines",
+      "title": "Diretrizes de desenvolvimento",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "04-development"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/04-development/coding-guidelines.md",
+      "sha256": "4d70f445418d98a5474c54d279e200d075e740d47fbdeb3e6452c895edf034a0"
+    },
+    {
+      "id": "ta-pago.docs.04-development.debugging",
+      "title": "Diagnóstico",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "04-development"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/04-development/debugging.md",
+      "sha256": "d26d809dc1cb3fccf1819fedf01889ad1a27cc90609f4ace33cda3e5429793c9"
+    },
+    {
+      "id": "ta-pago.docs.04-development.local-setup",
+      "title": "Ambiente local",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "04-development"
+      ],
+      "indexable": true,
+      "sources": [
+        "package.json",
+        "scripts/reset-project.js"
+      ],
+      "path": "docs/04-development/local-setup.md",
+      "sha256": "cc010724a76de20f892f4393f77ed5fbb4d3162d02d8e244626ad18bcde4bb9f"
+    },
+    {
+      "id": "ta-pago.docs.04-development.testing",
+      "title": "Estratégia de testes",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "04-development"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/04-development/testing.md",
+      "sha256": "3632d8c1845b642a8eb64bd602c0b67c1a3f31d055c233f3dbce03ef89e10925"
+    },
+    {
+      "id": "ta-pago.docs.05-decisions.ADR-0001-expo-and-expo-router",
+      "title": "ADR-0001 — Expo e Expo Router",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "05-decisions"
+      ],
+      "indexable": true,
+      "sources": [
+        "package.json",
+        "src/components/app-tabs.tsx"
+      ],
+      "path": "docs/05-decisions/ADR-0001-expo-and-expo-router.md",
+      "sha256": "bd68d185bcf43d5ae4b8d0bb0136c0b3d333957c894314b974a0055ab07cf395"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.environment-variables",
+      "title": "Variáveis de ambiente",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations"
+      ],
+      "indexable": true,
+      "sources": [
+        "src/components/external-link.tsx",
+        ".gitignore"
+      ],
+      "path": "docs/06-operations/environment-variables.md",
+      "sha256": "f22f181272795efd1889b939b84716c8ef79c857c90d4d52f18f4b7a5ffb5a53"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.incident-response",
+      "title": "Resposta a incidentes",
+      "status": "proposed",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/06-operations/incident-response.md",
+      "sha256": "248ec90a2d457fcd3225fc88952f351768ccb704cea34816d316518b08275116"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.release-process",
+      "title": "Processo de entrega",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/06-operations/release-process.md",
+      "sha256": "acdb4e8e1a66786ddb1e24759d00e26284e2e066af428868f17567b398a55f8e"
+    },
+    {
+      "id": "ta-pago.docs.07-ai.evaluation-policy",
+      "title": "Política de avaliação de IA",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "07-ai"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/07-ai/evaluation-policy.md",
+      "sha256": "9f5229514497b61b06f470ca6456a4be32b90f157cc1229ca2246df2ea18737e"
+    },
+    {
+      "id": "ta-pago.docs.07-ai.rag-policy",
+      "title": "Política da base de conhecimento e RAG",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-09-21",
+      "language": "pt-BR",
+      "tags": [
+        "07-ai"
+      ],
+      "indexable": true,
+      "sources": [],
+      "path": "docs/07-ai/rag-policy.md",
+      "sha256": "b6e04ae171e62fb7363ac9a8925e10259b9897b44711fe0e4eebca7a3e14d0fe"
+    }
+  ]
+}
