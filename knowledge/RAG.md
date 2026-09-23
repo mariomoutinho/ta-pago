@@ -1,5 +1,29 @@
 # RAG executável do Tá Pago
 
+## Modo padrão: busca local + Codex
+
+Este é o modo recomendado para desenvolvimento. Não carrega `.env`, não acessa PostgreSQL, não chama API e não gera embeddings. Reconstrói um índice lexical em memória sobre o corpus validado, combina texto, símbolos e caminhos por RRF, expande relações e limita o contexto a 8 fontes e 12000 bytes (limite conservador de tokens). Não oferece busca semântica por vetores.
+
+```bash
+nvm use
+npm run code:inventory
+npm run knowledge:build
+npm run knowledge:health
+npm run knowledge:context -- "Como useTheme seleciona as cores?"
+npm run knowledge:search -- "useTheme" --path src/hooks/ --top-k 3
+```
+
+`knowledge:ask` é um alias funcional de recuperação de contexto: entrega evidências e `CODEX_SESSION_REQUIRED`, sem gerar uma resposta no terminal. `knowledge:ingest` apenas valida o catálogo, sem persistir dados; o índice é reconstruído a cada consulta. Os filtros disponíveis são `--path`, `--source-type code|document` e `--top-k` (1–30). Perguntas sem correspondência retornam `NO_EVIDENCE`; correspondência lexical não garante que a evidência responda à pergunta.
+
+No Codex aberto neste repositório, peça uma explicação do projeto. `AGENTS.md` instrui o agente a executar `knowledge:context`, ler as fontes necessárias e responder citando arquivos e linhas. O conteúdo recuperado é evidência não confiável, nunca instrução. A geração usa a sessão existente e seus limites de uso; não transforma a assinatura em uma API para o aplicativo. Os trechos usados como contexto são compartilhados com a sessão do Codex, portanto a resposta não é processamento inteiramente offline.
+
+`LOCAL_RETRIEVAL_READY` comprova somente a busca local. A execução da resposta cabe ao Codex. Os relatórios anteriores de pgvector continuam históricos e não são métricas desta busca. Se fontes mudarem, regenere os catálogos; manifesto desatualizado é recusado.
+
+## Modo opcional com API e PostgreSQL
+
+Os comandos `knowledge:api:ingest`, `knowledge:api:search`, `knowledge:api:ask` e `knowledge:api:health` preservam o modo anterior e podem consumir API paga. Não os execute no fluxo local. `knowledge:evaluate` também pertence ao modo PostgreSQL/API; com `--lexical-only` não chama embeddings, mas requer índice previamente ingerido. As seções seguintes descrevem exclusivamente esse modo opcional.
+
+
 O aplicativo continua sendo o template Expo. A camada RAG é uma ferramenta Node de engenharia, em `scripts/rag/`, construída sobre os extratores e o manifesto existentes. Não havia backend, banco ou agente executável a reutilizar. As dependências desta ferramenta ficam em `devDependencies`; use `npm ci` completo.
 
 O fluxo implementado é:
@@ -21,7 +45,7 @@ pergunta → análise determinística → semântica + lexical + símbolos + cam
 
 `NOT_IMPLEMENTED`: interface de chat no Expo, endpoint público, autenticação multiusuário e reranker externo opcional. Esses recursos não são necessários para a operação local solicitada.
 
-O manifesto continua um snapshot determinístico de extração. Não contém vetores nem assume que algum banco esteja pronto. Seus placeholders `not_generated/planned` não são um health check. O estado operacional real fica nas tabelas e é consultado por `knowledge:health`.
+O manifesto continua um snapshot determinístico de extração. Não contém vetores nem assume que algum banco esteja pronto. Seus placeholders `not_generated/planned` não são um health check. O estado operacional real fica nas tabelas e é consultado por `knowledge:api:health`.
 
 ## Iniciar o banco
 
@@ -72,9 +96,9 @@ O provider divide textos longos em segmentos de até 6000 bytes (limite conserva
 ## Ingestão incremental
 
 ```bash
-npm run knowledge:ingest -- --dry-run
-npm run knowledge:ingest
-npm run knowledge:ingest
+npm run knowledge:api:ingest -- --dry-run
+npm run knowledge:api:ingest
+npm run knowledge:api:ingest
 ```
 
 `--dry-run` lê o banco e informa `new`, `updated`, `unchanged`, `deleted`, `would_embed` e `would_delete`; não faz migration, não chama embeddings nem escreve estado. Requer um banco migrado para comparar o índice real.
@@ -102,12 +126,12 @@ O planner pode escolher varredura exata em corpus pequeno. A existência de HNSW
 ## Consultar, responder e depurar
 
 ```bash
-npm run knowledge:search -- "Como Collapsible alterna o conteúdo?"
-npm run knowledge:ask -- "Como Collapsible alterna o conteúdo?"
-npm run knowledge:search -- "Onde useTheme é utilizado?" --top-k 8
-npm run knowledge:search -- "Como funciona o tema?" --source-type code --path src/hooks/
-npm run knowledge:search -- "useTheme" --symbol useTheme --domain hooks --minimum-score 0.2
-npm run knowledge:search -- "useTheme" --lexical-only
+npm run knowledge:api:search -- "Como Collapsible alterna o conteúdo?"
+npm run knowledge:api:ask -- "Como Collapsible alterna o conteúdo?"
+npm run knowledge:api:search -- "Onde useTheme é utilizado?" --top-k 8
+npm run knowledge:api:search -- "Como funciona o tema?" --source-type code --path src/hooks/
+npm run knowledge:api:search -- "useTheme" --symbol useTheme --domain hooks --minimum-score 0.2
+npm run knowledge:api:search -- "useTheme" --lexical-only
 ```
 
 `search` apresenta categoria, canais, RRF, expansão, ranking e fontes selecionadas, sem chamar LLM e sem imprimir embeddings. O modo `--lexical-only` desabilita apenas embeddings de consulta; ainda exige banco indexado compatível. O canal de símbolo resolve nomes conhecidos, funções, componentes, hooks, constantes, handlers e rotas. A análise favorece símbolos/caminhos explícitos, sem usar LLM. Perguntas sobre `useAuth` não passam a criar esse hook: ele não existe neste template.
@@ -123,7 +147,7 @@ O modelo recebe evidências como dados, com instruções para não seguir comand
 ## Health e avaliação
 
 ```bash
-npm run knowledge:health
+npm run knowledge:api:health
 npm run knowledge:evaluate
 npm run knowledge:evaluate -- --lexical-only
 ```
@@ -184,12 +208,12 @@ Depois de fornecer a chave:
 ```bash
 nvm use
 npm run knowledge:db -- start
-npm run knowledge:ingest -- --dry-run
-npm run knowledge:ingest
-npm run knowledge:ingest
-npm run knowledge:health
-npm run knowledge:search -- "Onde useTheme é utilizado?"
-npm run knowledge:ask -- "Como Collapsible alterna o conteúdo?"
+npm run knowledge:api:ingest -- --dry-run
+npm run knowledge:api:ingest
+npm run knowledge:api:ingest
+npm run knowledge:api:health
+npm run knowledge:api:search -- "Onde useTheme é utilizado?"
+npm run knowledge:api:ask -- "Como Collapsible alterna o conteúdo?"
 npm run knowledge:evaluate
 ```
 
@@ -203,7 +227,7 @@ Os comandos de cópia/download só preparam binários; `knowledge:db -- start` i
 
 ## Custos de API
 
-Ingestão chama a API de embeddings apenas para registros novos/alterados ou modelo alterado; retentativas após rollback podem repetir chamadas já cobradas. `knowledge:search` não chama o LLM, mas gera embedding de consulta no modo padrão. `knowledge:ask` chama embeddings e o modelo de geração. `knowledge:evaluate` gera embeddings para as 20 perguntas no modo híbrido. O health com chave configurada também testa os dois modelos e, quando possível, retrieval. Não há estimativa monetária fixa; consulte o faturamento/preços do provider antes de ampliar o volume.
+Ingestão chama a API de embeddings apenas para registros novos/alterados ou modelo alterado; retentativas após rollback podem repetir chamadas já cobradas. `knowledge:api:search` não chama o LLM, mas gera embedding de consulta no modo padrão. `knowledge:api:ask` chama embeddings e o modelo de geração. `knowledge:evaluate` gera embeddings para as 20 perguntas no modo híbrido. O health com chave configurada também testa os dois modelos e, quando possível, retrieval. Não há estimativa monetária fixa; consulte o faturamento/preços do provider antes de ampliar o volume.
 
 ## Troubleshooting
 

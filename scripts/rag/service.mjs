@@ -12,7 +12,7 @@ export class KnowledgeService {
     if (!this.config.enabled) throw new RagError('RAG_DISABLED', 'RAG_ENABLED=false.');
     const state = await this.store.state();
     if (!state || state.manifest_hash !== this.corpus.hash || state.embedding_model !== this.embeddings.model || state.embedding_dimensions !== this.embeddings.dimensions) {
-      throw new RagError('INDEX_NOT_READY', 'Índice ausente, desatualizado ou incompatível; execute knowledge:ingest.');
+      throw new RagError('INDEX_NOT_READY', 'Índice ausente, desatualizado ou incompatível; execute knowledge:api:ingest.');
     }
   }
   options(options) {

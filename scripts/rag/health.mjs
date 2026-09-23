@@ -21,7 +21,7 @@ export async function health({ corpus, store, service, embeddings, config }) {
     Object.assign(report, { stored_vectors: stored.length, missing_vectors: plan.new.length, orphan_vectors: plan.deleted.length, stale_vectors: plan.updated.length });
     let ready = true;
     try { await service.assertIndexed(); }
-    catch (error) { ready=false; report.index=publicError(error); report.blockers.push('knowledge:ingest'); }
+    catch (error) { ready=false; report.index=publicError(error); report.blockers.push('knowledge:api:ingest'); }
     if (!config.apiKey) report.blockers.unshift('OPENAI_API_KEY');
     // Checa o acesso aos dois modelos mesmo antes da primeira ingestão.
     if (config.apiKey) {

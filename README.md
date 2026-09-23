@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-09-23",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -22,7 +22,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -80,7 +80,9 @@ O Tá Pago será uma rede social fitness para amigos compartilharem treinos, par
 
 **Em desenvolvimento.** O aplicativo ainda é o template Expo: telas Home e Explore, navegação por abas, componentes tematizados e exemplos de animação. O logo está no repositório, mas não foi integrado às telas. Não há funcionalidades fitness, backend, banco, autenticação ou integrações de negócio implementadas.
 
-Esta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. A execução com IA real requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).
+O modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- "Como useTheme seleciona as cores?"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).
+
+Esta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).
 
 ## Objetivos e visão geral
 
@@ -207,7 +209,7 @@ Licença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Proj
 
 A documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.
 
-Os manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:health` consulta o estado real. A CLI `knowledge:ask` recupera contexto e chama o LLM, preservando fontes verificadas.
+Os manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.
 
 | Script adicional | Finalidade |
 | --- | --- |
@@ -224,9 +226,9 @@ Configure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). 
 
 ```bash
 npm run knowledge:migrate
-npm run knowledge:ingest -- --dry-run
-npm run knowledge:ingest
-npm run knowledge:ask -- "Como Collapsible alterna o conteúdo?"
+npm run knowledge:api:ingest -- --dry-run
+npm run knowledge:api:ingest
+npm run knowledge:api:ask -- "Como Collapsible alterna o conteúdo?"
 ```
 
-Os comandos `knowledge:search`, `knowledge:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.
+Os comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.

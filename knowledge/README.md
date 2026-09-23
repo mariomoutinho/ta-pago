@@ -1,6 +1,6 @@
 # Base de conhecimento do Tá Pago
 
-A base tem extratores independentes para documentos e código, um inventário de código próprio e um manifesto principal consolidado. Documentos e entidades continuam em coleções distintas, com chunks e resumos determinísticos. O pipeline de execução em `scripts/rag` consome esses artefatos para ingestão incremental e answering. Consulte [RAG.md](RAG.md) para PostgreSQL/pgvector, providers, comandos, testes e limites. A execução real exige configuração externa.
+A base tem extratores independentes para documentos e código, um inventário de código próprio e um manifesto principal consolidado. Documentos e entidades continuam em coleções distintas, com chunks e resumos determinísticos. O pipeline de execução em `scripts/rag` consome esses artefatos para ingestão incremental e answering. Consulte [RAG.md](RAG.md) para PostgreSQL/pgvector, providers, comandos, testes e limites. O modo padrão local dispensa banco e chave: `knowledge:context` entrega evidências ao Codex e `knowledge:health` valida o catálogo. Apenas o modo opcional com API exige configuração externa.
 
 ## Arquivos e fronteiras
 
@@ -78,7 +78,7 @@ O manifesto principal v2 tem `documents`, `code_entities`, `chunks`, `embeddings
 - `path-index`, `symbol-index` e `domain-index`: `status: planned`, sem itens.
 - `lexical-index`: `status: not_generated`, sem itens.
 
-Esses estados pertencem ao snapshot de extração. Os extratores continuam sem rede; não representam o estado operacional do RAG. `knowledge:ingest` persiste vetores e o estado real no PostgreSQL, e `knowledge:health` consulta vetores, índices e recuperação. Não se altera o manifesto para simular sucesso de uma ingestão.
+Esses estados pertencem ao snapshot de extração. Os extratores continuam sem rede; não representam o estado operacional do RAG. `knowledge:api:ingest` persiste vetores e o estado real no PostgreSQL, e `knowledge:api:health` consulta vetores, índices e recuperação. Não se altera o manifesto para simular sucesso de uma ingestão.
 
 ## Operação e atualização incremental
 

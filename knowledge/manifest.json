@@ -13,7 +13,7 @@
       "title": "Tá Pago",
       "status": "current",
       "owner": "mariomoutinho",
-      "updated_at": "2026-09-22",
+      "updated_at": "2026-09-23",
       "language": "pt-BR",
       "tags": [
         "project"
@@ -31,7 +31,7 @@
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "authority": "product",
       "audience": [
         "developer",
@@ -79,7 +79,7 @@
       "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
       "domain": "product",
       "path": "README.md",
-      "sha256": "666b46b40d60c26a83b71bd8a04e2003a20f009d414029d79b207c1fb3f6c72d"
+      "sha256": "20c28d2933e12c07c8fe1aa3e2affc0930ed265786b7144296b374d26e912794"
     },
     {
       "id": "ta-pago.docs.00-context.glossary",
@@ -810,7 +810,7 @@
       "title": "Estratégia de testes",
       "status": "current",
       "owner": "mariomoutinho",
-      "updated_at": "2026-09-22",
+      "updated_at": "2026-09-23",
       "language": "pt-BR",
       "tags": [
         "04-development"
@@ -824,7 +824,7 @@
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "authority": "policy",
       "audience": [
         "developer",
@@ -839,7 +839,7 @@
       "framework_version": null,
       "domain": "testing",
       "path": "docs/04-development/testing.md",
-      "sha256": "238b48c146d19a5255926af7c61f93275861aed0ee582a9b1b15d9f023a1b179"
+      "sha256": "4e2b5d9e9efcb33af1e930460700b04a9a495c644a94b69a71cf5da833c17d81"
     },
     {
       "id": "ta-pago.docs.05-decisions.ADR-0001-expo-and-expo-router",
@@ -895,7 +895,7 @@
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "3.0.1",
+      "version": "3.1.0",
       "authority": "code",
       "audience": [
         "developer",
@@ -908,7 +908,7 @@
       "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
       "domain": "operations",
       "path": "docs/06-operations/environment-variables.md",
-      "sha256": "f6bf0e5847d8f75fdcb9382f6915ee3b106bc829c374618c540ea4b139cdf1c4"
+      "sha256": "4c9cd5af0b4e3914c7949d86faaab870f6a246a8566808d70f8494b63602b96d"
     },
     {
       "id": "ta-pago.docs.06-operations.incident-response",
@@ -1005,7 +1005,7 @@
       "title": "Política da base de conhecimento e RAG",
       "status": "current",
       "owner": "mariomoutinho",
-      "updated_at": "2026-09-22",
+      "updated_at": "2026-09-23",
       "language": "pt-BR",
       "tags": [
         "07-ai"
@@ -1020,7 +1020,7 @@
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "authority": "policy",
       "audience": [
         "developer",
@@ -1033,7 +1033,7 @@
       "framework_version": null,
       "domain": "rag",
       "path": "docs/07-ai/rag-policy.md",
-      "sha256": "a8f81cf8a88ba80b4869cf85728ea778aa58e978bc8b6f2b8ec7edcc1f6aa56d"
+      "sha256": "8a827a9cf32cf3b381bcefa290736831ca9904b63decb13d9d36bd694c2ed4d5"
     }
   ],
   "code_entities": [
@@ -13562,8 +13562,8 @@
       "section": "whole",
       "name": "Tá Pago",
       "entity_type": null,
-      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Em desenvolvimento.** O aplicativo ainda é o template Expo: telas Home e Explore, navegação por abas, componentes tematizados e exemplos de animação. O logo está no repositório, mas não foi integrado às telas. Não há funcionalidades fitness, backend, banco, autenticação ou integrações de negócio implementadas.\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. A execução com IA real requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Treinos personalizados: exercícios, séries, repetições, carga, descanso e vídeos ilustrativos.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nUsar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm start\n```\n\nO repositório requer acesso autorizado enquanto privado. Para web, executar `npm run web`. Android e iOS dependem de dispositivo ou simulador configurado; o simulador iOS exige macOS. Nenhum `.env` de negócio é necessário atualmente.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar MVP e regras com usuários; definir identidade, autorização e persistência por ADR; desenhar jornadas; implementar funcionalidades com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:health` consulta o estado real. A CLI `knowledge:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:ingest -- --dry-run\nnpm run knowledge:ingest\nnpm run knowledge:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:search`, `knowledge:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n",
-      "token_estimate": 2436,
+      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Em desenvolvimento.** O aplicativo ainda é o template Expo: telas Home e Explore, navegação por abas, componentes tematizados e exemplos de animação. O logo está no repositório, mas não foi integrado às telas. Não há funcionalidades fitness, backend, banco, autenticação ou integrações de negócio implementadas.\n\nO modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- \"Como useTheme seleciona as cores?\"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Treinos personalizados: exercícios, séries, repetições, carga, descanso e vídeos ilustrativos.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nUsar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm start\n```\n\nO repositório requer acesso autorizado enquanto privado. Para web, executar `npm run web`. Android e iOS dependem de dispositivo ou simulador configurado; o simulador iOS exige macOS. Nenhum `.env` de negócio é necessário atualmente.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar MVP e regras com usuários; definir identidade, autorização e persistência por ADR; desenhar jornadas; implementar funcionalidades com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:api:ingest -- --dry-run\nnpm run knowledge:api:ingest\nnpm run knowledge:api:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n",
+      "token_estimate": 2521,
       "semantic_summary": {
         "representation": "Documento: Tá Pago",
         "responsibility": "Registra tá pago sob autoridade product; domínio product.",
@@ -13609,7 +13609,7 @@
           {
             "source_path": "README.md",
             "section": "whole",
-            "sha256": "666b46b40d60c26a83b71bd8a04e2003a20f009d414029d79b207c1fb3f6c72d"
+            "sha256": "20c28d2933e12c07c8fe1aa3e2affc0930ed265786b7144296b374d26e912794"
           }
         ],
         "confidence": "observed"
@@ -13619,7 +13619,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "status": "current",
         "domain": "product",
         "confidence": null,
@@ -13631,11 +13631,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-        "source_sha256": "666b46b40d60c26a83b71bd8a04e2003a20f009d414029d79b207c1fb3f6c72d",
+        "source_sha256": "20c28d2933e12c07c8fe1aa3e2affc0930ed265786b7144296b374d26e912794",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "af035ea0918da876dfd53cbfeb5121e62ba5c7e8a91c308cc451e3b463535e74"
+      "sha256": "e00dc01cda8fea0573475943dac855641ce8306d65e7094e03cd9e0c8f394e1b"
     },
     {
       "id": "ta-pago.code:src/app/_layout.tsx:component:TabLayout::chunk:whole",
@@ -25718,8 +25718,8 @@
       "section": "whole",
       "name": "Estratégia de testes",
       "entity_type": null,
-      "content": "# Estratégia de testes\n\n## Verificações disponíveis\n\n| Comando | O que comprova |\n| --- | --- |\n| `npm run typecheck` | Verificação estática de tipos do aplicativo. |\n| `npm run docs:validate` | Metadados, fontes locais, links locais por arquivo, título e IDs únicos. |\n| `npm run docs:test` | Regressões dos validadores e planejamento incremental com casos negativos. |\n| `npm run knowledge:check` | Manifesto versionado idêntico ao catálogo calculado dos documentos. |\n\nA validação de links não acessa URLs externas nem verifica âncoras de títulos. A CI documental não substitui testes do aplicativo. Não há suíte funcional ou end-to-end do produto configurada.\n\n## Testes futuros\n\nPara cada funcionalidade, partir dos [critérios de aceitação](../01-requirements/acceptance-criteria.md). Cobrir permissões, repetição de operações, falhas de rede e paridade entre plataformas. Testar interface com teclado, leitor de tela e texto ampliado.\n\n## Evidência de entrega\n\nRegistrar comandos e resultados, ambiente e limitações. Tipo correto não comprova comportamento de negócio ou funcionamento em dispositivo.\n\n## Verificações do inventário de código\n\n`npm run code:test` testa componentes, hooks, rotas, funções, constantes, relações, confiança, exclusões sensíveis e planos incrementais. `npm run code:check` compara inventário e manifesto com as fontes atuais, incluindo chunks e resumos. Os testes usam fontes sintéticas em diretórios temporários e não dados reais de alunos.\n\nA CI instala dependências e executa TypeScript, documentos e código. Não configura nem executa o lint incompleto do template. A análise sintática não substitui testes de comportamento em Android, iOS ou web.\n\n## Testes de RAG\n\n`npm run rag:test` verifica SQL PostgreSQL/pgvector em PGlite, incrementalidade, rollback, filtros, RRF, relações, contexto e integração do agente com respostas fixture. O provider determinístico existe somente em `scripts/rag/testing`; a CLI de produção não o seleciona. A suíte com servidor PostgreSQL usa `RAG_TEST_DATABASE_URL` e exige um banco dedicado terminado em `_test`; sem essa variável, apenas esse teste fica skipped. A CI fornece o serviço isolado.\n\n`npm test` reúne documentos, código e RAG. `knowledge:evaluate` mede retrieval real com o dataset de 20 perguntas; `--lexical-only` separa a avaliação lexical/estrutural da semântica. Métricas de fixtures não validam qualidade de embeddings ou respostas reais. Consulte [RAG.md](../../knowledge/RAG.md).\n",
-      "token_estimate": 619,
+      "content": "# Estratégia de testes\n\n## Verificações disponíveis\n\n| Comando | O que comprova |\n| --- | --- |\n| `npm run typecheck` | Verificação estática de tipos do aplicativo. |\n| `npm run docs:validate` | Metadados, fontes locais, links locais por arquivo, título e IDs únicos. |\n| `npm run docs:test` | Regressões dos validadores e planejamento incremental com casos negativos. |\n| `npm run knowledge:check` | Manifesto versionado idêntico ao catálogo calculado dos documentos. |\n\nA validação de links não acessa URLs externas nem verifica âncoras de títulos. A CI documental não substitui testes do aplicativo. Não há suíte funcional ou end-to-end do produto configurada.\n\n## Testes futuros\n\nPara cada funcionalidade, partir dos [critérios de aceitação](../01-requirements/acceptance-criteria.md). Cobrir permissões, repetição de operações, falhas de rede e paridade entre plataformas. Testar interface com teclado, leitor de tela e texto ampliado.\n\n## Evidência de entrega\n\nRegistrar comandos e resultados, ambiente e limitações. Tipo correto não comprova comportamento de negócio ou funcionamento em dispositivo.\n\n## Verificações do inventário de código\n\n`npm run code:test` testa componentes, hooks, rotas, funções, constantes, relações, confiança, exclusões sensíveis e planos incrementais. `npm run code:check` compara inventário e manifesto com as fontes atuais, incluindo chunks e resumos. Os testes usam fontes sintéticas em diretórios temporários e não dados reais de alunos.\n\nA CI instala dependências e executa TypeScript, documentos e código. Não configura nem executa o lint incompleto do template. A análise sintática não substitui testes de comportamento em Android, iOS ou web.\n\n## Testes de RAG\n\n`npm run rag:test` verifica SQL PostgreSQL/pgvector em PGlite, incrementalidade, rollback, filtros, RRF, relações, contexto e integração do agente com respostas fixture. O provider determinístico existe somente em `scripts/rag/testing`; a CLI de produção não o seleciona. A suíte com servidor PostgreSQL usa `RAG_TEST_DATABASE_URL` e exige um banco dedicado terminado em `_test`; sem essa variável, apenas esse teste fica skipped. A CI fornece o serviço isolado.\n\n`npm test` reúne documentos, código e RAG. `knowledge:evaluate` mede retrieval real com o dataset de 20 perguntas; `--lexical-only` separa a avaliação lexical/estrutural da semântica. Métricas de fixtures não validam qualidade de embeddings ou respostas reais. Consulte [RAG.md](../../knowledge/RAG.md).\n\n## Busca local\n\n`rag:test` também valida recuperação local por símbolo, filtros, ausência de evidência e orçamento de contexto. A CLI local é testada com rede proibida pelo permission model do Node e configuração externa inválida. O modo local não depende dos testes opcionais de PostgreSQL.\n",
+      "token_estimate": 692,
       "semantic_summary": {
         "representation": "Documento: Estratégia de testes",
         "responsibility": "Registra estratégia de testes sob autoridade policy; domínio testing.",
@@ -25732,7 +25732,7 @@
           {
             "source_path": "docs/04-development/testing.md",
             "section": "whole",
-            "sha256": "238b48c146d19a5255926af7c61f93275861aed0ee582a9b1b15d9f023a1b179"
+            "sha256": "4e2b5d9e9efcb33af1e930460700b04a9a495c644a94b69a71cf5da833c17d81"
           }
         ],
         "confidence": "observed"
@@ -25742,7 +25742,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "status": "current",
         "domain": "testing",
         "confidence": null,
@@ -25754,11 +25754,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": null,
-        "source_sha256": "238b48c146d19a5255926af7c61f93275861aed0ee582a9b1b15d9f023a1b179",
+        "source_sha256": "4e2b5d9e9efcb33af1e930460700b04a9a495c644a94b69a71cf5da833c17d81",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "46785bbe31a1693df4d0a5e49f68b06f41b687f69342e85514f46f721a279475"
+      "sha256": "faaf64ebf81ac211e7a590c3376e223865bcaa984bd4efea03a9a3b9e1033514"
     },
     {
       "id": "ta-pago.docs.05-decisions.ADR-0001-expo-and-expo-router::chunk:whole",
@@ -25816,8 +25816,8 @@
       "section": "whole",
       "name": "Variáveis de ambiente",
       "entity_type": null,
-      "content": "# Variáveis de ambiente\n\n## Inventário atual\n\nNenhuma variável de ambiente de negócio é exigida pelo aplicativo. `process.env.EXPO_OS` aparece no componente de links como seleção de plataforma fornecida pelo Expo. O RAG usa credenciais locais de ferramentas Node, separadas do aplicativo e mantidas fora do Git. Sua disponibilidade é verificada por `knowledge:health`.\n\n## Política para futuras variáveis\n\nDocumentar nome, finalidade, obrigatoriedade, ambiente e responsável antes de introduzir uma variável. Valores públicos incorporados ao cliente nunca devem conter segredos. Credenciais de servidor devem permanecer fora do bundle e do Git.\n\nO `.gitignore` exclui `.env` e `.env.*`, com exceção de `.env.example`. Criar exemplo somente quando houver variáveis reais necessárias, usando placeholders sem valores reais. Não indexar arquivos de ambiente na base de conhecimento.\n\n## Variáveis do RAG local\n\nO arquivo [.env.example](../../.env.example) lista as variáveis reais usadas por `scripts/rag/config.mjs`. `DATABASE_URL` conecta o banco, `OPENAI_API_KEY` autentica embeddings e geração, e `RAG_EMBEDDING_MODEL`, `RAG_EMBEDDING_DIMENSIONS` e `RAG_LLM_MODEL` selecionam modelos. `RAG_TOP_K`, `RAG_RERANK_TOP_K`, `RAG_MIN_SCORE`, `RAG_MAX_CHUNKS`, `RAG_MAX_CONTEXT_TOKENS`, `RAG_RELATION_DEPTH` e `RAG_MAX_RELATED_CHUNKS` limitam a recuperação e o contexto. `RAG_ENABLED=false` desabilita a CLI.\n\nSão variáveis de ferramentas Node, fora de `src/`, sem prefixo `EXPO_PUBLIC_`. A CLI lê `.env`; não imprime URLs, chaves ou erros brutos dos providers. Configuração e operação estão em [RAG.md](../../knowledge/RAG.md).\n",
-      "token_estimate": 406,
+      "content": "# Variáveis de ambiente\n\n## Inventário atual\n\nNenhuma variável de ambiente de negócio é exigida pelo aplicativo. `process.env.EXPO_OS` aparece no componente de links como seleção de plataforma fornecida pelo Expo. O RAG usa credenciais locais de ferramentas Node, separadas do aplicativo e mantidas fora do Git. Sua disponibilidade é verificada por `knowledge:api:health`.\n\n## Política para futuras variáveis\n\nDocumentar nome, finalidade, obrigatoriedade, ambiente e responsável antes de introduzir uma variável. Valores públicos incorporados ao cliente nunca devem conter segredos. Credenciais de servidor devem permanecer fora do bundle e do Git.\n\nO `.gitignore` exclui `.env` e `.env.*`, com exceção de `.env.example`. Criar exemplo somente quando houver variáveis reais necessárias, usando placeholders sem valores reais. Não indexar arquivos de ambiente na base de conhecimento.\n\n## Variáveis do RAG local\n\nO arquivo [.env.example](../../.env.example) lista as variáveis reais usadas por `scripts/rag/config.mjs`. `DATABASE_URL` conecta o banco, `OPENAI_API_KEY` autentica embeddings e geração, e `RAG_EMBEDDING_MODEL`, `RAG_EMBEDDING_DIMENSIONS` e `RAG_LLM_MODEL` selecionam modelos. `RAG_TOP_K`, `RAG_RERANK_TOP_K`, `RAG_MIN_SCORE`, `RAG_MAX_CHUNKS`, `RAG_MAX_CONTEXT_TOKENS`, `RAG_RELATION_DEPTH` e `RAG_MAX_RELATED_CHUNKS` limitam a recuperação e o contexto. `RAG_ENABLED=false` desabilita a CLI.\n\nSão variáveis de ferramentas Node, fora de `src/`, sem prefixo `EXPO_PUBLIC_`. A CLI lê `.env`; não imprime URLs, chaves ou erros brutos dos providers. Configuração e operação estão em [RAG.md](../../knowledge/RAG.md).\n\n## Busca local com Codex\n\nOs comandos padrão `knowledge:context`, `knowledge:search`, `knowledge:ask`, `knowledge:health` e `knowledge:ingest` não leem `.env` nem exigem configuração de providers ou banco. As variáveis RAG e credenciais descritas acima pertencem ao modo opcional de API/PostgreSQL. Os limites da busca local são definidos por argumentos da CLI; consulte `knowledge/RAG.md`.\n",
+      "token_estimate": 505,
       "semantic_summary": {
         "representation": "Documento: Variáveis de ambiente",
         "responsibility": "Registra variáveis de ambiente sob autoridade code; domínio operations.",
@@ -25828,7 +25828,7 @@
           {
             "source_path": "docs/06-operations/environment-variables.md",
             "section": "whole",
-            "sha256": "f6bf0e5847d8f75fdcb9382f6915ee3b106bc829c374618c540ea4b139cdf1c4"
+            "sha256": "4c9cd5af0b4e3914c7949d86faaab870f6a246a8566808d70f8494b63602b96d"
           }
         ],
         "confidence": "observed"
@@ -25838,7 +25838,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "3.0.1",
+        "version": "3.1.0",
         "status": "current",
         "domain": "operations",
         "confidence": null,
@@ -25850,11 +25850,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-        "source_sha256": "f6bf0e5847d8f75fdcb9382f6915ee3b106bc829c374618c540ea4b139cdf1c4",
+        "source_sha256": "4c9cd5af0b4e3914c7949d86faaab870f6a246a8566808d70f8494b63602b96d",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "392846e4b4e73e2a309b3bcfdef456ff3ebc1006f18561e88d3e70d05942912b"
+      "sha256": "dfb709fb5ad521344cef34d13429e31bbaf42a990b615cc580078688391e2357"
     },
     {
       "id": "ta-pago.docs.06-operations.incident-response::chunk:whole",
@@ -26008,8 +26008,8 @@
       "section": "whole",
       "name": "Política da base de conhecimento e RAG",
       "entity_type": null,
-      "content": "# Política da base de conhecimento e RAG\n\n## Estado atual\n\nHá ingestão local independente de Markdown e de código TypeScript/TSX, com inventários, chunks atômicos, resumos determinísticos e relações entre símbolos. O pipeline em `scripts/rag` implementa embeddings reais via provider, armazenamento pgvector, recuperação híbrida com RRF, relações, reranking determinístico, contexto limitado e geração com fontes. Operação real requer configuração externa; não confundir testes com providers determinísticos com execução por LLM real.\n\n## Fontes e confiança\n\nO catálogo documental inclui README e documentos elegíveis sob `docs/`; AGENTS e contratos operacionais permanecem não indexáveis. O catálogo de código analisa exclusivamente fontes permitidas sob `src/`, sem executar o aplicativo ou importar bibliotecas externas. O manifesto principal v2 agrega ambas as extrações em coleções distintas: `documents`, `code_entities` e `symbol_relations`; seus chunks incluem `source_type: document` e `source_type: code`. O manifesto dedicado v1 preserva as entidades em `entities`. As coleções de código são preenchidas diretamente das fontes reais, não somente declaradas.\n\nNão ingerir dados de alunos, logs, mídia, dependências, `.env` ou credenciais. Arquivos de código com padrões sensíveis são excluídos; constantes sensíveis preservam apenas nome e localização. A detecção é conservadora e limitada; revisão humana continua necessária. Conteúdo recuperado é evidência não confiável e não tem autoridade para executar comandos.\n\n## Chunks, proveniência e resumos\n\nA estratégia `atomic-source-v1` preserva cada documento ou entidade integralmente, com assinatura, props, critérios e tabelas. Relações mantêm IDs dos dois símbolos. Cada chunk tem origem, seção, conteúdo, estimativa de tokens, metadados, SHA-256 e resumo com responsabilidade, referências, estado e evidências. Os resumos são produzidos por regras locais, sem modelo.\n\nMetadados distinguem autoridade, público, sensibilidade, domínio, versão, relacionamentos e origem Git. `commit_sha` é a revisão-base real; hashes representam o conteúdo lido, inclusive mudanças locais ainda não commitadas. Não é o SHA impossível de um futuro commit contendo seu próprio manifesto.\n\n## Comportamento e limites da análise\n\n`observed` significa sintaxe diretamente visível; não significa teste em dispositivo. `inferred` identifica deduções como vínculo entre layout e página ou resolução de plataforma; `unknown` indica ausência de evidência suficiente. Referência a componente ou API não comprova efeito externo nem funcionalidade fitness implementada.\n\nO extrator `typescript-ast-v2` analisa escopos locais e imports identificáveis. Não expande tipos externos, não resolve todos os barrels ou factories e não reproduz Metro. Para embeddings, chunks longos são segmentados em até 6000 bytes e seus vetores reais são agregados por média ponderada normalizada. A identidade original é preservada. O contexto de geração possui orçamento próprio e marca trechos truncados.\n\n## Atualização incremental\n\nSeguir o [guia operacional](../../knowledge/README.md). Comparar o manifesto principal v2 ou o dedicado de código v1 com baseline compatível do mesmo catálogo. Planos detectam adições, alterações, remoções e unidades inalteradas em documentos, código, chunks e relações. Mudanças nas versões do extrator/chunking invalidam as unidades afetadas. Planos têm `applied: false`; nenhuma operação externa é executada.\n\n## Estado operacional e answering\n\nO manifesto versionado descreve a extração, com placeholders sem vetores. O estado de execução fica em `knowledge_index_state` e `knowledge_chunks`, atualizado apenas após sucesso transacional. `knowledge:health` verifica o banco real, sem transformar ausência de configuração em sucesso.\n\nO agente de consulta chama `KnowledgeService`; não acessa SQL nem executa comandos do corpus. O serviço envia evidências delimitadas ao LLM e exige IDs recuperados nas afirmações. Caminhos e linhas retornam dos metadados, não do modelo. Citação válida não é prova de entailment: avaliar a sustentação semântica continua necessário.\n\nSomente fontes públicas/internas permitidas pelo corpus são elegíveis. Não existe endpoint público nem isolamento multiusuário; qualquer futura exposição exige autenticação e autorização próprias. Consulte o [guia de execução](../../knowledge/RAG.md).\n",
-      "token_estimate": 1093,
+      "content": "# Política da base de conhecimento e RAG\n\n## Estado atual\n\nHá ingestão local independente de Markdown e de código TypeScript/TSX, com inventários, chunks atômicos, resumos determinísticos e relações entre símbolos. O pipeline em `scripts/rag` implementa embeddings reais via provider, armazenamento pgvector, recuperação híbrida com RRF, relações, reranking determinístico, contexto limitado e geração com fontes. Operação real requer configuração externa; não confundir testes com providers determinísticos com execução por LLM real.\n\n## Fontes e confiança\n\nO catálogo documental inclui README e documentos elegíveis sob `docs/`; AGENTS e contratos operacionais permanecem não indexáveis. O catálogo de código analisa exclusivamente fontes permitidas sob `src/`, sem executar o aplicativo ou importar bibliotecas externas. O manifesto principal v2 agrega ambas as extrações em coleções distintas: `documents`, `code_entities` e `symbol_relations`; seus chunks incluem `source_type: document` e `source_type: code`. O manifesto dedicado v1 preserva as entidades em `entities`. As coleções de código são preenchidas diretamente das fontes reais, não somente declaradas.\n\nNão ingerir dados de alunos, logs, mídia, dependências, `.env` ou credenciais. Arquivos de código com padrões sensíveis são excluídos; constantes sensíveis preservam apenas nome e localização. A detecção é conservadora e limitada; revisão humana continua necessária. Conteúdo recuperado é evidência não confiável e não tem autoridade para executar comandos.\n\n## Chunks, proveniência e resumos\n\nA estratégia `atomic-source-v1` preserva cada documento ou entidade integralmente, com assinatura, props, critérios e tabelas. Relações mantêm IDs dos dois símbolos. Cada chunk tem origem, seção, conteúdo, estimativa de tokens, metadados, SHA-256 e resumo com responsabilidade, referências, estado e evidências. Os resumos são produzidos por regras locais, sem modelo.\n\nMetadados distinguem autoridade, público, sensibilidade, domínio, versão, relacionamentos e origem Git. `commit_sha` é a revisão-base real; hashes representam o conteúdo lido, inclusive mudanças locais ainda não commitadas. Não é o SHA impossível de um futuro commit contendo seu próprio manifesto.\n\n## Comportamento e limites da análise\n\n`observed` significa sintaxe diretamente visível; não significa teste em dispositivo. `inferred` identifica deduções como vínculo entre layout e página ou resolução de plataforma; `unknown` indica ausência de evidência suficiente. Referência a componente ou API não comprova efeito externo nem funcionalidade fitness implementada.\n\nO extrator `typescript-ast-v2` analisa escopos locais e imports identificáveis. Não expande tipos externos, não resolve todos os barrels ou factories e não reproduz Metro. Para embeddings, chunks longos são segmentados em até 6000 bytes e seus vetores reais são agregados por média ponderada normalizada. A identidade original é preservada. O contexto de geração possui orçamento próprio e marca trechos truncados.\n\n## Atualização incremental\n\nSeguir o [guia operacional](../../knowledge/README.md). Comparar o manifesto principal v2 ou o dedicado de código v1 com baseline compatível do mesmo catálogo. Planos detectam adições, alterações, remoções e unidades inalteradas em documentos, código, chunks e relações. Mudanças nas versões do extrator/chunking invalidam as unidades afetadas. Planos têm `applied: false`; nenhuma operação externa é executada.\n\n## Estado operacional e answering\n\nO manifesto versionado descreve a extração, com placeholders sem vetores. O estado de execução fica em `knowledge_index_state` e `knowledge_chunks`, atualizado apenas após sucesso transacional. `knowledge:api:health` verifica o banco real, sem transformar ausência de configuração em sucesso.\n\nO agente de consulta chama `KnowledgeService`; não acessa SQL nem executa comandos do corpus. O serviço envia evidências delimitadas ao LLM e exige IDs recuperados nas afirmações. Caminhos e linhas retornam dos metadados, não do modelo. Citação válida não é prova de entailment: avaliar a sustentação semântica continua necessário.\n\nSomente fontes públicas/internas permitidas pelo corpus são elegíveis. Não existe endpoint público nem isolamento multiusuário; qualquer futura exposição exige autenticação e autorização próprias. Consulte o [guia de execução](../../knowledge/RAG.md).\n\n## Modo padrão local com Codex\n\n`knowledge:context`, `knowledge:search` e `knowledge:ask` recuperam evidências do catálogo em memória, sem rede, banco, embeddings ou chave. A resposta é produzida na sessão do Codex conforme `AGENTS.md`, citando fontes e distinguindo requisitos de implementação. `knowledge:health` verifica este modo local; não comprova o funcionamento do modo opcional de API descrito acima.\n",
+      "token_estimate": 1197,
       "semantic_summary": {
         "representation": "Documento: Política da base de conhecimento e RAG",
         "responsibility": "Registra política da base de conhecimento e rag sob autoridade policy; domínio rag.",
@@ -26020,7 +26020,7 @@
           {
             "source_path": "docs/07-ai/rag-policy.md",
             "section": "whole",
-            "sha256": "a8f81cf8a88ba80b4869cf85728ea778aa58e978bc8b6f2b8ec7edcc1f6aa56d"
+            "sha256": "8a827a9cf32cf3b381bcefa290736831ca9904b63decb13d9d36bd694c2ed4d5"
           }
         ],
         "confidence": "observed"
@@ -26030,7 +26030,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "status": "current",
         "domain": "rag",
         "confidence": null,
@@ -26042,11 +26042,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": null,
-        "source_sha256": "a8f81cf8a88ba80b4869cf85728ea778aa58e978bc8b6f2b8ec7edcc1f6aa56d",
+        "source_sha256": "8a827a9cf32cf3b381bcefa290736831ca9904b63decb13d9d36bd694c2ed4d5",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "200cf07db89ba3b2d6eace2f2999a54c805862bd4bebcf4611e28bb2dfc1a16f"
+      "sha256": "660083730835151a31aa80b420fef6d71077c12e33102c74bd1b04b0484c98d5"
     }
   ],
   "embeddings": {
@@ -26133,7 +26133,7 @@
         {
           "source_path": "README.md",
           "section": "whole",
-          "sha256": "666b46b40d60c26a83b71bd8a04e2003a20f009d414029d79b207c1fb3f6c72d"
+          "sha256": "20c28d2933e12c07c8fe1aa3e2affc0930ed265786b7144296b374d26e912794"
         }
       ],
       "confidence": "observed"
@@ -31498,7 +31498,7 @@
         {
           "source_path": "docs/04-development/testing.md",
           "section": "whole",
-          "sha256": "238b48c146d19a5255926af7c61f93275861aed0ee582a9b1b15d9f023a1b179"
+          "sha256": "4e2b5d9e9efcb33af1e930460700b04a9a495c644a94b69a71cf5da833c17d81"
         }
       ],
       "confidence": "observed"
@@ -31532,7 +31532,7 @@
         {
           "source_path": "docs/06-operations/environment-variables.md",
           "section": "whole",
-          "sha256": "f6bf0e5847d8f75fdcb9382f6915ee3b106bc829c374618c540ea4b139cdf1c4"
+          "sha256": "4c9cd5af0b4e3914c7949d86faaab870f6a246a8566808d70f8494b63602b96d"
         }
       ],
       "confidence": "observed"
@@ -31600,7 +31600,7 @@
         {
           "source_path": "docs/07-ai/rag-policy.md",
           "section": "whole",
-          "sha256": "a8f81cf8a88ba80b4869cf85728ea778aa58e978bc8b6f2b8ec7edcc1f6aa56d"
+          "sha256": "8a827a9cf32cf3b381bcefa290736831ca9904b63decb13d9d36bd694c2ed4d5"
         }
       ],
       "confidence": "observed"

@@ -4,7 +4,7 @@
   "title": "Estratégia de testes",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-09-23",
   "language": "pt-BR",
   "tags": [
     "04-development"
@@ -18,7 +18,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "authority": "policy",
   "audience": [
     "developer",
@@ -67,3 +67,7 @@ A CI instala dependências e executa TypeScript, documentos e código. Não conf
 `npm run rag:test` verifica SQL PostgreSQL/pgvector em PGlite, incrementalidade, rollback, filtros, RRF, relações, contexto e integração do agente com respostas fixture. O provider determinístico existe somente em `scripts/rag/testing`; a CLI de produção não o seleciona. A suíte com servidor PostgreSQL usa `RAG_TEST_DATABASE_URL` e exige um banco dedicado terminado em `_test`; sem essa variável, apenas esse teste fica skipped. A CI fornece o serviço isolado.
 
 `npm test` reúne documentos, código e RAG. `knowledge:evaluate` mede retrieval real com o dataset de 20 perguntas; `--lexical-only` separa a avaliação lexical/estrutural da semântica. Métricas de fixtures não validam qualidade de embeddings ou respostas reais. Consulte [RAG.md](../../knowledge/RAG.md).
+
+## Busca local
+
+`rag:test` também valida recuperação local por símbolo, filtros, ausência de evidência e orçamento de contexto. A CLI local é testada com rede proibida pelo permission model do Node e configuração externa inválida. O modo local não depende dos testes opcionais de PostgreSQL.

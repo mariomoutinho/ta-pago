@@ -4,7 +4,7 @@
   "title": "Política da base de conhecimento e RAG",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-09-23",
   "language": "pt-BR",
   "tags": [
     "07-ai"
@@ -19,7 +19,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "authority": "policy",
   "audience": [
     "developer",
@@ -64,8 +64,12 @@ Seguir o [guia operacional](../../knowledge/README.md). Comparar o manifesto pri
 
 ## Estado operacional e answering
 
-O manifesto versionado descreve a extração, com placeholders sem vetores. O estado de execução fica em `knowledge_index_state` e `knowledge_chunks`, atualizado apenas após sucesso transacional. `knowledge:health` verifica o banco real, sem transformar ausência de configuração em sucesso.
+O manifesto versionado descreve a extração, com placeholders sem vetores. O estado de execução fica em `knowledge_index_state` e `knowledge_chunks`, atualizado apenas após sucesso transacional. `knowledge:api:health` verifica o banco real, sem transformar ausência de configuração em sucesso.
 
 O agente de consulta chama `KnowledgeService`; não acessa SQL nem executa comandos do corpus. O serviço envia evidências delimitadas ao LLM e exige IDs recuperados nas afirmações. Caminhos e linhas retornam dos metadados, não do modelo. Citação válida não é prova de entailment: avaliar a sustentação semântica continua necessário.
 
 Somente fontes públicas/internas permitidas pelo corpus são elegíveis. Não existe endpoint público nem isolamento multiusuário; qualquer futura exposição exige autenticação e autorização próprias. Consulte o [guia de execução](../../knowledge/RAG.md).
+
+## Modo padrão local com Codex
+
+`knowledge:context`, `knowledge:search` e `knowledge:ask` recuperam evidências do catálogo em memória, sem rede, banco, embeddings ou chave. A resposta é produzida na sessão do Codex conforme `AGENTS.md`, citando fontes e distinguindo requisitos de implementação. `knowledge:health` verifica este modo local; não comprova o funcionamento do modo opcional de API descrito acima.

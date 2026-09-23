@@ -20,7 +20,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -39,7 +39,7 @@
 
 ## Inventário atual
 
-Nenhuma variável de ambiente de negócio é exigida pelo aplicativo. `process.env.EXPO_OS` aparece no componente de links como seleção de plataforma fornecida pelo Expo. O RAG usa credenciais locais de ferramentas Node, separadas do aplicativo e mantidas fora do Git. Sua disponibilidade é verificada por `knowledge:health`.
+Nenhuma variável de ambiente de negócio é exigida pelo aplicativo. `process.env.EXPO_OS` aparece no componente de links como seleção de plataforma fornecida pelo Expo. O RAG usa credenciais locais de ferramentas Node, separadas do aplicativo e mantidas fora do Git. Sua disponibilidade é verificada por `knowledge:api:health`.
 
 ## Política para futuras variáveis
 
@@ -52,3 +52,7 @@ O `.gitignore` exclui `.env` e `.env.*`, com exceção de `.env.example`. Criar 
 O arquivo [.env.example](../../.env.example) lista as variáveis reais usadas por `scripts/rag/config.mjs`. `DATABASE_URL` conecta o banco, `OPENAI_API_KEY` autentica embeddings e geração, e `RAG_EMBEDDING_MODEL`, `RAG_EMBEDDING_DIMENSIONS` e `RAG_LLM_MODEL` selecionam modelos. `RAG_TOP_K`, `RAG_RERANK_TOP_K`, `RAG_MIN_SCORE`, `RAG_MAX_CHUNKS`, `RAG_MAX_CONTEXT_TOKENS`, `RAG_RELATION_DEPTH` e `RAG_MAX_RELATED_CHUNKS` limitam a recuperação e o contexto. `RAG_ENABLED=false` desabilita a CLI.
 
 São variáveis de ferramentas Node, fora de `src/`, sem prefixo `EXPO_PUBLIC_`. A CLI lê `.env`; não imprime URLs, chaves ou erros brutos dos providers. Configuração e operação estão em [RAG.md](../../knowledge/RAG.md).
+
+## Busca local com Codex
+
+Os comandos padrão `knowledge:context`, `knowledge:search`, `knowledge:ask`, `knowledge:health` e `knowledge:ingest` não leem `.env` nem exigem configuração de providers ou banco. As variáveis RAG e credenciais descritas acima pertencem ao modo opcional de API/PostgreSQL. Os limites da busca local são definidos por argumentos da CLI; consulte `knowledge/RAG.md`.
