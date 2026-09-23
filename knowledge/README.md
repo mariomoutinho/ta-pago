@@ -1,6 +1,6 @@
 # Base de conhecimento do Tá Pago
 
-A base tem extratores independentes para documentos e código, um inventário de código próprio e um manifesto principal consolidado. Documentos e entidades continuam em coleções distintas, com chunks e resumos determinísticos. Ainda não existem embeddings reais, banco vetorial, busca semântica, reranking, recuperação de contexto por modelo ou integração operacional entre RAG e agente.
+A base tem extratores independentes para documentos e código, um inventário de código próprio e um manifesto principal consolidado. Documentos e entidades continuam em coleções distintas, com chunks e resumos determinísticos. O pipeline de execução em `scripts/rag` consome esses artefatos para ingestão incremental e answering. Consulte [RAG.md](RAG.md) para PostgreSQL/pgvector, providers, comandos, testes e limites. A execução real exige configuração externa.
 
 ## Arquivos e fronteiras
 
@@ -31,7 +31,7 @@ Preserva-se JSON entre delimitadores `---`, com H1 correspondente a `title`. Nã
 | `indexable` / `sources` | Elegibilidade e arquivos locais de evidência; documento obsoleto não é indexável. |
 | `repository` / `branch` | Origem completa `mariomoutinho/ta-pago` e branch de origem, conforme configuração. |
 | `commit_sha` | SHA real da revisão-base em `config.json`; `null` somente quando a origem não for conhecida. |
-| `version` | Versão explícita dos metadados/conteúdo, atualmente `2.0.0`. |
+| `version` | Versão explícita dos metadados/conteúdo, `2.0.0` na base anterior e `3.0.0` nos documentos revisados para RAG. |
 | `authority` | `code`, `requirement`, `architecture`, `decision`, `policy`, `proposal`, `external` ou `product`. |
 | `audience` | Lista sem duplicatas de `developer`, `ai_agent`, `teacher`, `student`, `product`, `operations`, `reviewer`. |
 | `sensitivity` | `public`, `internal`, `confidential` ou `restricted`; corpus atual interno. |
@@ -78,7 +78,7 @@ O manifesto principal v2 tem `documents`, `code_entities`, `chunks`, `embeddings
 - `path-index`, `symbol-index` e `domain-index`: `status: planned`, sem itens.
 - `lexical-index`: `status: not_generated`, sem itens.
 
-Não existem índices de busca operacionais. Não há chamadas de API, geração de vetores nem sincronização externa nesses scripts.
+Esses estados pertencem ao snapshot de extração. Os extratores continuam sem rede; não representam o estado operacional do RAG. `knowledge:ingest` persiste vetores e o estado real no PostgreSQL, e `knowledge:health` consulta vetores, índices e recuperação. Não se altera o manifesto para simular sucesso de uma ingestão.
 
 ## Operação e atualização incremental
 
@@ -107,10 +107,10 @@ O plano principal tem `applied: false` e grupos independentes `documents`, `code
 
 O plano de código tem `schema_version: 1`, `applied: false` e `added`, `updated`, `removed`, `unchanged` no nível superior para entidades; grupos `code_entities`, `chunks` e `symbol_relations` preservam o detalhamento. Aceita o catálogo dedicado v1 e explicitamente o formato local anterior de código v2.
 
-Para primeira carga, usar baseline com o mesmo cabeçalho/versões e coleções vazias. O catálogo principal agora usa `catalog: knowledge`; para migrar o antigo catálogo `documents`, reconstruir/revisar o snapshot ou iniciar baseline consolidado novo. Não reinterpretar o antigo manifesto documental v1 como código. Um consumidor futuro deverá processar adições/atualizações, remover unidades antigas, retentar de forma idempotente e confirmar sucesso antes de avançar baseline. O plano atual não aplica nada.
+Para primeira carga, usar baseline com o mesmo cabeçalho/versões e coleções vazias. O catálogo principal agora usa `catalog: knowledge`; para migrar o antigo catálogo `documents`, reconstruir/revisar o snapshot ou iniciar baseline consolidado novo. Não reinterpretar o antigo manifesto documental v1 como código. O consumidor `scripts/rag/ingest.mjs` processa novos/alterados, remove órfãos e confirma o estado na mesma transação; a reexecução preserva chunks inalterados. Os comandos de planejamento dos extratores continuam sem aplicar mudanças.
 
 ## Segurança, CI e limites
 
 Links simbólicos, inclusive quebrados e em diretórios, são rejeitados. Possíveis credenciais, padrões de tokens, e-mail, CPF e telefone internacional excluem o arquivo de código inteiro. Para constantes com nomes sensíveis, o relatório preserva apenas nome e localização; valor, declaração e hash do conteúdo sensível são omitidos. Não há garantia de identificar todo dado pessoal ou segredo arbitrário: revisar fontes e diff continua obrigatório. Não adicionar dados reais de alunos para completar o inventário.
 
-A CI instala dependências pelo lockfile e valida documentos, código e TypeScript. Não configura ESLint, não faz deploy, commit, push, embeddings ou acesso a serviços de RAG. O comando herdado `expo lint` continua sem configuração completa. Links locais são checados por arquivo; URLs externas, âncoras, veracidade semântica e comportamento em dispositivo precisam de revisão/testes específicos.
+A CI instala dependências pelo lockfile, valida documentos, código e TypeScript e executa testes de RAG com PostgreSQL/pgvector isolado e providers determinísticos exclusivos de teste. Não chama APIs reais de IA, configura ESLint nem faz deploy, commit ou push. O comando herdado `expo lint` continua sem configuração completa. Links locais são checados por arquivo; URLs externas, âncoras, veracidade semântica e comportamento em dispositivo precisam de revisão/testes específicos.

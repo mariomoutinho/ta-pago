@@ -1,0 +1,18 @@
+services:
+  rag-db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: ta_pago_knowledge
+      POSTGRES_USER: ta_pago
+      POSTGRES_PASSWORD: ${RAG_DB_PASSWORD:?Defina RAG_DB_PASSWORD no .env}
+    ports:
+      - "127.0.0.1:${RAG_DB_PORT:-5433}:5432"
+    volumes:
+      - rag-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ta_pago -d ta_pago_knowledge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  rag-data:

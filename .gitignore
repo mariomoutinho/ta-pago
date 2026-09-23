@@ -31,6 +31,7 @@ yarn-error.*
 *.pem
 
 # local env files
+.rag/
 .env*.local
 .env
 .env.*

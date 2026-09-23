@@ -1,0 +1,201 @@
+[
+  {
+    "id": "q001",
+    "question": "Como useTheme escolhe o tema quando o esquema é unspecified?",
+    "expectedSources": [
+      "src/hooks/use-theme.ts"
+    ],
+    "expectedSymbols": [
+      "useTheme"
+    ]
+  },
+  {
+    "id": "q002",
+    "question": "Quais componentes ThemedText e ThemedView consomem useTheme?",
+    "expectedSources": [
+      "src/components/themed-text.tsx",
+      "src/components/themed-view.tsx"
+    ],
+    "expectedSymbols": [
+      "ThemedText",
+      "ThemedView"
+    ]
+  },
+  {
+    "id": "q003",
+    "question": "Como Collapsible alterna o conteúdo ao pressionar o título?",
+    "expectedSources": [
+      "src/components/ui/collapsible.tsx"
+    ],
+    "expectedSymbols": [
+      "Collapsible"
+    ]
+  },
+  {
+    "id": "q004",
+    "question": "Como ExternalLink abre links nas plataformas nativas?",
+    "expectedSources": [
+      "src/components/external-link.tsx"
+    ],
+    "expectedSymbols": [
+      "ExternalLink"
+    ]
+  },
+  {
+    "id": "q005",
+    "question": "Como useColorScheme funciona antes da hidratação na web?",
+    "expectedSources": [
+      "src/hooks/use-color-scheme.web.ts"
+    ],
+    "expectedSymbols": [
+      "useColorScheme"
+    ]
+  },
+  {
+    "id": "q006",
+    "question": "Como AppTabs define as abas Home e Explore na web?",
+    "expectedSources": [
+      "src/components/app-tabs.web.tsx"
+    ],
+    "expectedSymbols": [
+      "AppTabs"
+    ]
+  },
+  {
+    "id": "q007",
+    "question": "Quais ícones são usados nas abas nativas de AppTabs?",
+    "expectedSources": [
+      "src/components/app-tabs.tsx"
+    ],
+    "expectedSymbols": [
+      "AppTabs"
+    ]
+  },
+  {
+    "id": "q008",
+    "question": "Como TabLayout aplica ThemeProvider às telas?",
+    "expectedSources": [
+      "src/app/_layout.tsx"
+    ],
+    "expectedSymbols": [
+      "TabLayout"
+    ]
+  },
+  {
+    "id": "q009",
+    "question": "Onde HomeScreen renderiza o componente HintRow?",
+    "expectedSources": [
+      "src/app/index.tsx"
+    ],
+    "expectedSymbols": [
+      "HomeScreen"
+    ]
+  },
+  {
+    "id": "q010",
+    "question": "Qual tela TabTwoScreen explica o template Expo?",
+    "expectedSources": [
+      "src/app/explore.tsx"
+    ],
+    "expectedSymbols": [
+      "TabTwoScreen"
+    ]
+  },
+  {
+    "id": "q011",
+    "question": "Quais valores padrão HintRow usa para title e hint?",
+    "expectedSources": [
+      "src/components/hint-row.tsx"
+    ],
+    "expectedSymbols": [
+      "HintRow"
+    ]
+  },
+  {
+    "id": "q012",
+    "question": "Como WebBadge escolhe a imagem conforme o esquema de cores?",
+    "expectedSources": [
+      "src/components/web-badge.tsx"
+    ],
+    "expectedSymbols": [
+      "WebBadge"
+    ]
+  },
+  {
+    "id": "q013",
+    "question": "Como ThemedText escolhe a cor do texto?",
+    "expectedSources": [
+      "src/components/themed-text.tsx"
+    ],
+    "expectedSymbols": [
+      "ThemedText"
+    ]
+  },
+  {
+    "id": "q014",
+    "question": "Como ThemedView escolhe a cor de fundo?",
+    "expectedSources": [
+      "src/components/themed-view.tsx"
+    ],
+    "expectedSymbols": [
+      "ThemedView"
+    ]
+  },
+  {
+    "id": "q015",
+    "question": "Como AnimatedSplashOverlay esconde a splash screen no nativo?",
+    "expectedSources": [
+      "src/components/animated-icon.tsx"
+    ],
+    "expectedSymbols": [
+      "AnimatedSplashOverlay"
+    ]
+  },
+  {
+    "id": "q016",
+    "question": "Como TabButton destaca a aba selecionada?",
+    "expectedSources": [
+      "src/components/app-tabs.web.tsx"
+    ],
+    "expectedSymbols": [
+      "TabButton"
+    ]
+  },
+  {
+    "id": "q017",
+    "question": "Onde são definidos os valores de Spacing e MaxContentWidth?",
+    "expectedSources": [
+      "src/constants/theme.ts"
+    ],
+    "expectedSymbols": [
+      "Spacing",
+      "MaxContentWidth"
+    ]
+  },
+  {
+    "id": "q018",
+    "question": "O que existe no arquivo src/hooks/use-theme.ts?",
+    "expectedSources": [
+      "src/hooks/use-theme.ts"
+    ],
+    "expectedSymbols": [
+      "useTheme"
+    ]
+  },
+  {
+    "id": "q019",
+    "question": "Qual é a estrutura de navegação do aplicativo?",
+    "expectedSources": [
+      "docs/02-architecture/navigation.md"
+    ],
+    "expectedSymbols": []
+  },
+  {
+    "id": "q020",
+    "question": "O registro de corridas está implementado ou planejado?",
+    "expectedSources": [
+      "docs/03-features/running-records.md"
+    ],
+    "expectedSymbols": []
+  }
+]

@@ -11,15 +11,18 @@
   ],
   "indexable": true,
   "sources": [
+    "LICENSE",
+    "knowledge/RAG.md",
     "package.json",
-    "src/app/index.tsx",
+    "scripts/rag/cli.mjs",
+    "scripts/rag/service.mjs",
     "src/app/explore.tsx",
-    "LICENSE"
+    "src/app/index.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -77,7 +80,7 @@ O Tá Pago será uma rede social fitness para amigos compartilharem treinos, par
 
 **Em desenvolvimento.** O aplicativo ainda é o template Expo: telas Home e Explore, navegação por abas, componentes tematizados e exemplos de animação. O logo está no repositório, mas não foi integrado às telas. Não há funcionalidades fitness, backend, banco, autenticação ou integrações de negócio implementadas.
 
-Esta base inclui documentação do produto, contratos para agentes, validação documental e manifesto local para um futuro RAG. Não há embeddings, base vetorial ou recuperação por IA em funcionamento.
+Esta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. A execução com IA real requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).
 
 ## Objetivos e visão geral
 
@@ -194,7 +197,7 @@ O [guia da base de conhecimento](knowledge/README.md) explica metadados, geraç�
 
 ## Próximas etapas
 
-Validar MVP e regras com usuários; definir identidade, autorização e persistência por ADR; desenhar jornadas; implementar funcionalidades com critérios de aceitação e testes. Escolher infraestrutura RAG somente em tarefa futura, após avaliar necessidade e segurança.
+Validar MVP e regras com usuários; definir identidade, autorização e persistência por ADR; desenhar jornadas; implementar funcionalidades com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.
 
 ## Licença e autor
 
@@ -204,7 +207,7 @@ Licença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Proj
 
 A documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.
 
-Os manifestos contêm chunks integrais e resumos determinísticos, sem modelo externo. Embeddings e vetores estão `not_generated`; índices de caminho, símbolo e domínio são planejados, e o índice lexical não foi gerado. Ainda não existem banco vetorial, busca semântica, reranking, recuperação de contexto por modelo ou integração operacional entre RAG e agente.
+Os manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:health` consulta o estado real. A CLI `knowledge:ask` recupera contexto e chama o LLM, preservando fontes verificadas.
 
 | Script adicional | Finalidade |
 | --- | --- |
@@ -214,3 +217,16 @@ Os manifestos contêm chunks integrais e resumos determinísticos, sem modelo ex
 | `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |
 
 O extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.
+
+## Consultas ao conhecimento
+
+Configure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:
+
+```bash
+npm run knowledge:migrate
+npm run knowledge:ingest -- --dry-run
+npm run knowledge:ingest
+npm run knowledge:ask -- "Como Collapsible alterna o conteúdo?"
+```
+
+Os comandos `knowledge:search`, `knowledge:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.

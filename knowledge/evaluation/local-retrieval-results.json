@@ -1,0 +1,493 @@
+{
+  "environment": "TEST_ONLY: PostgreSQL/pgvector WASM; lexical/structural retrieval; no external API",
+  "manifest_hash": "0d62a62d418f447c092abb8bc4397a27b8ed406b272bac76db39863dca50256e",
+  "indexed_test_vectors": 225,
+  "test_embedding_model": "test-only-deterministic",
+  "test_embedding_dimensions": 32,
+  "ingestion": {
+    "first": {
+      "applied": true,
+      "new": 225,
+      "updated": 0,
+      "unchanged": 0,
+      "deleted": 0,
+      "would_embed": 225,
+      "would_delete": 0,
+      "embedded": 225
+    },
+    "second": {
+      "applied": true,
+      "new": 0,
+      "updated": 0,
+      "unchanged": 225,
+      "deleted": 0,
+      "would_embed": 0,
+      "would_delete": 0,
+      "embedded": 0
+    }
+  },
+  "evaluation": {
+    "mode": "lexical-structural (sem embeddings)",
+    "questions": 20,
+    "Recall@1": 0.975,
+    "Recall@3": 1,
+    "Recall@5": 1,
+    "MRR": 1,
+    "cases": [
+      {
+        "id": "q001",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/hooks/use-theme.ts",
+          "src/components/web-badge.tsx",
+          "src/app/explore.tsx",
+          "src/components/external-link.tsx",
+          "src/constants/theme.ts"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q002",
+        "Recall@1": 0.5,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/themed-text.tsx",
+          "src/components/themed-view.tsx",
+          "src/hooks/use-theme.ts",
+          "src/components/hint-row.tsx",
+          "src/app/index.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q003",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/ui/collapsible.tsx",
+          "src/components/themed-text.tsx",
+          "src/components/themed-view.tsx",
+          "src/hooks/use-theme.ts",
+          "README.md"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q004",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/external-link.tsx",
+          "docs/02-architecture/integrations.md",
+          "docs/04-development/testing.md",
+          "docs/02-architecture/navigation.md",
+          "README.md"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q005",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/hooks/use-color-scheme.web.ts",
+          "src/hooks/use-color-scheme.ts",
+          "src/components/web-badge.tsx",
+          "src/components/ui/collapsible.tsx",
+          "src/hooks/use-theme.ts"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q006",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/app-tabs.web.tsx",
+          "src/components/app-tabs.tsx",
+          "src/app/index.tsx",
+          "src/app/_layout.tsx",
+          "src/constants/theme.ts"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q007",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/app-tabs.tsx",
+          "src/components/app-tabs.web.tsx",
+          "src/app/index.tsx",
+          "src/constants/theme.ts",
+          "docs/05-decisions/ADR-0001-expo-and-expo-router.md"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q008",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/app/_layout.tsx",
+          "src/app/explore.tsx",
+          "src/app/index.tsx",
+          "src/components/animated-icon.tsx",
+          "src/components/app-tabs.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q009",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/app/index.tsx",
+          "src/components/hint-row.tsx",
+          "src/components/themed-text.tsx",
+          "src/components/web-badge.tsx",
+          "src/components/animated-icon.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q010",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/app/explore.tsx",
+          "src/components/external-link.tsx",
+          "src/components/themed-text.tsx",
+          "src/components/themed-view.tsx",
+          "src/components/ui/collapsible.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q011",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/hint-row.tsx",
+          "src/app/index.tsx",
+          "src/components/animated-icon.tsx",
+          "src/components/themed-view.tsx",
+          "src/components/web-badge.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q012",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/web-badge.tsx",
+          "src/components/themed-text.tsx",
+          "src/components/themed-view.tsx",
+          "src/app/index.tsx",
+          "src/components/external-link.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q013",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/themed-text.tsx",
+          "src/components/ui/collapsible.tsx",
+          "src/app/index.tsx",
+          "src/components/hint-row.tsx",
+          "src/hooks/use-theme.ts"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q014",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/themed-view.tsx",
+          "src/components/web-badge.tsx",
+          "src/components/app-tabs.web.tsx",
+          "src/components/hint-row.tsx",
+          "src/hooks/use-theme.ts"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q015",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/animated-icon.tsx",
+          "src/components/animated-icon.web.tsx",
+          "src/app/_layout.tsx",
+          "docs/02-architecture/system-overview.md",
+          "src/app/explore.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q016",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/components/app-tabs.web.tsx",
+          "src/components/themed-text.tsx",
+          "src/components/themed-view.tsx",
+          "docs/04-development/testing.md",
+          "docs/06-operations/environment-variables.md"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q017",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/constants/theme.ts",
+          "src/app/explore.tsx",
+          "src/components/hint-row.tsx",
+          "src/components/ui/collapsible.tsx",
+          "src/components/web-badge.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q018",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "src/hooks/use-theme.ts",
+          "src/hooks/use-color-scheme.ts",
+          "src/constants/theme.ts",
+          "docs/02-architecture/app-structure.md",
+          "src/app/explore.tsx"
+        ],
+        "symbol_recall_at_5": 1
+      },
+      {
+        "id": "q019",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "docs/02-architecture/navigation.md",
+          "README.md",
+          "docs/02-architecture/app-structure.md",
+          "docs/04-development/testing.md",
+          "docs/02-architecture/system-overview.md"
+        ],
+        "symbol_recall_at_5": null
+      },
+      {
+        "id": "q020",
+        "Recall@1": 1,
+        "Recall@3": 1,
+        "Recall@5": 1,
+        "reciprocal_rank": 1,
+        "rankedSources": [
+          "docs/03-features/running-records.md",
+          "docs/03-features/teacher-student-monitoring.md",
+          "README.md",
+          "docs/01-requirements/functional-requirements.md",
+          "docs/03-features/groups.md"
+        ],
+        "symbol_recall_at_5": null
+      }
+    ]
+  },
+  "demonstration": {
+    "QUESTION": "Como Collapsible alterna o conteúdo?",
+    "RETRIEVED_SOURCES": [
+      {
+        "chunk_id": "ta-pago.code:src/components/ui/collapsible.tsx:component:Collapsible::chunk:whole",
+        "path": "src/components/ui/collapsible.tsx",
+        "start_line": 11,
+        "end_line": 41,
+        "score": 0.20575051229508196,
+        "symbol": "Collapsible"
+      },
+      {
+        "chunk_id": "ta-pago.code:src/components/ui/collapsible.tsx:constant:styles::chunk:whole",
+        "path": "src/components/ui/collapsible.tsx",
+        "start_line": 43,
+        "end_line": 65,
+        "score": 0.08230020491803278,
+        "symbol": "styles"
+      },
+      {
+        "chunk_id": "ta-pago.code:src/components/ui/collapsible.tsx:function:Collapsible%2Fcallback%3AonPress::chunk:whole",
+        "path": "src/components/ui/collapsible.tsx",
+        "start_line": 19,
+        "end_line": 19,
+        "score": 0.08230020491803278,
+        "symbol": "Collapsible/callback:onPress"
+      },
+      {
+        "chunk_id": "ta-pago.code:src/components/themed-text.tsx:component:ThemedText::chunk:whole",
+        "path": "src/components/themed-text.tsx",
+        "start_line": 11,
+        "end_line": 31,
+        "score": 0.06172515368852459,
+        "symbol": "ThemedText"
+      },
+      {
+        "chunk_id": "ta-pago.code:src/components/themed-view.tsx:component:ThemedView::chunk:whole",
+        "path": "src/components/themed-view.tsx",
+        "start_line": 12,
+        "end_line": 16,
+        "score": 0.06172515368852459,
+        "symbol": "ThemedView"
+      },
+      {
+        "chunk_id": "ta-pago.code:src/hooks/use-theme.ts:hook:useTheme::chunk:whole",
+        "path": "src/hooks/use-theme.ts",
+        "start_line": 9,
+        "end_line": 14,
+        "score": 0.06172515368852459,
+        "symbol": "useTheme"
+      },
+      {
+        "chunk_id": "ta-pago.README::chunk:whole",
+        "path": "README.md",
+        "start_line": 75,
+        "end_line": 233,
+        "score": 0.047619047619047616,
+        "symbol": "Tá Pago"
+      },
+      {
+        "chunk_id": "ta-pago.docs.02-architecture.navigation::chunk:whole",
+        "path": "docs/02-architecture/navigation.md",
+        "start_line": 36,
+        "end_line": 56,
+        "score": 0.032467532467532464,
+        "symbol": "Navegação"
+      }
+    ],
+    "FINAL_CONTEXT_SOURCES": [
+      {
+        "id": "S1",
+        "chunk_id": "ta-pago.code:src/components/ui/collapsible.tsx:component:Collapsible::chunk:whole",
+        "path": "src/components/ui/collapsible.tsx",
+        "start_line": 11,
+        "end_line": 41,
+        "symbol": "Collapsible",
+        "score": 0.20575051229508196,
+        "truncated": false
+      },
+      {
+        "id": "S2",
+        "chunk_id": "ta-pago.code:src/components/ui/collapsible.tsx:constant:styles::chunk:whole",
+        "path": "src/components/ui/collapsible.tsx",
+        "start_line": 43,
+        "end_line": 65,
+        "symbol": "styles",
+        "score": 0.08230020491803278,
+        "truncated": false
+      },
+      {
+        "id": "S3",
+        "chunk_id": "ta-pago.code:src/components/themed-text.tsx:component:ThemedText::chunk:whole",
+        "path": "src/components/themed-text.tsx",
+        "start_line": 11,
+        "end_line": 31,
+        "symbol": "ThemedText",
+        "score": 0.06172515368852459,
+        "truncated": false
+      },
+      {
+        "id": "S4",
+        "chunk_id": "ta-pago.code:src/components/themed-view.tsx:component:ThemedView::chunk:whole",
+        "path": "src/components/themed-view.tsx",
+        "start_line": 12,
+        "end_line": 16,
+        "symbol": "ThemedView",
+        "score": 0.06172515368852459,
+        "truncated": false
+      },
+      {
+        "id": "S5",
+        "chunk_id": "ta-pago.code:src/hooks/use-theme.ts:hook:useTheme::chunk:whole",
+        "path": "src/hooks/use-theme.ts",
+        "start_line": 9,
+        "end_line": 14,
+        "symbol": "useTheme",
+        "score": 0.06172515368852459,
+        "truncated": false
+      },
+      {
+        "id": "S6",
+        "chunk_id": "ta-pago.README::chunk:whole",
+        "path": "README.md",
+        "start_line": 75,
+        "end_line": 233,
+        "symbol": "Tá Pago",
+        "score": 0.047619047619047616,
+        "truncated": true
+      },
+      {
+        "id": "S7",
+        "chunk_id": "ta-pago.docs.02-architecture.navigation::chunk:whole",
+        "path": "docs/02-architecture/navigation.md",
+        "start_line": 36,
+        "end_line": 56,
+        "symbol": "Navegação",
+        "score": 0.032467532467532464,
+        "truncated": false
+      },
+      {
+        "id": "S8",
+        "chunk_id": "ta-pago.code:src/app/explore.tsx:component:TabTwoScreen::chunk:whole",
+        "path": "src/app/explore.tsx",
+        "start_line": 14,
+        "end_line": 126,
+        "symbol": "TabTwoScreen",
+        "score": 0.0273972602739726,
+        "truncated": true
+      }
+    ],
+    "ANSWER": "NOT_EXECUTED: real LLM requires external configuration",
+    "CITATIONS": [],
+    "context_token_upper_bound": 12000
+  }
+}

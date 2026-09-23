@@ -1,131 +1,165 @@
-# Relatório da consolidação da ingestão de código
+# Relatório operacional do RAG — 2026-09-23
 
-Relatório local, fora dos corpora indexáveis. As alterações anteriores foram preservadas; nenhum commit ou push foi feito. O manifesto principal agora agrega a extração real de src/, além dos documentos.
+## Status final
 
-## Contagens
+**PARTIALLY_OPERATIONAL**: PostgreSQL/pgvector reais estão funcionando, migration aplicada e infraestrutura testada. O fluxo RAG com IA real permanece **IMPLEMENTED_BUT_REQUIRES_EXTERNAL_CONFIGURATION** por uma única credencial ausente: `OPENAI_API_KEY`.
 
-| Categoria | Quantidade |
-| --- | ---: |
-| component | 17 |
-| hook | 3 |
-| route | 2 |
-| function | 11 |
-| constant | 23 |
-| interface-behavior | 33 |
-| symbol-relation | 106 |
-| Entidades sem relações | 89 |
-| Chunks documentais | 30 |
-| Chunks de código | 195 |
-| Resumos documentais | 30 |
-| Resumos de código | 195 |
+Não foi declarada operação end-to-end. Não houve embeddings ou respostas reais de LLM, nem inserção de vetores simulados no banco da aplicação. Nenhum commit/push ou alteração de configuração Git foi realizado.
 
-## Validações
+## Auditoria e mudanças necessárias
 
-| Comando | Resultado |
+A arquitetura em `scripts/rag` já estava implementada e foi preservada. Auditoria: `VectorStore`, `PgVectorStore`, providers OpenAI, `KnowledgeService`, retriever, RRF, reranker, contexto, agente e CLIs presentes. Faltavam infraestrutura/configuração de banco e chave OpenAI. O health anterior não verificava geração real, e a checagem de dimensão precisava consultar a coluna antes da ingestão: esses pontos foram corrigidos.
+
+O Docker permanece sem integração WSL. PostgreSQL 16 já estava instalado, mas pgvector não. A solução local usa cópia privada dos binários PostgreSQL e o pacote oficial Ubuntu de pgvector, extraído sem sudo. O cluster preexistente do sistema não foi alterado. A configuração Compose existente foi preservada para outros desenvolvedores.
+
+Também foi encontrada uma diferença de runtime: a sessão passou a usar Node 18. Foi utilizado o Node 24.19.0 já instalado, adicionado `.nvmrc` e declarado `engines.node >=22.13.0`.
+
+## Infrastructure
+
+| Item | Evidência real |
 | --- | --- |
-| npm ci | Concluído; 22 vulnerabilidades preexistentes reportadas (14 moderadas, 8 altas). |
-| npm run docs:validate | 35 documentos válidos. |
-| npm run docs:test | 33 testes passaram. |
-| npm run knowledge:build | Manifesto principal consolidado regenerado. |
-| npm run knowledge:check | Passou. |
-| npm run code:inventory | Inventário e manifesto dedicado regenerados. |
-| npm run code:check | Passou. |
-| npm run code:test | 20 testes passaram. |
-| npm run typecheck | Passou. |
-| npm run lint | Falhou: ESLint não configurado; instalação automática recusada. |
-| knowledge:plan e knowledge:plan-code | Comparação consigo mesmo sem diferenças; applied: false. |
-| git diff --check | Passou. |
+| PostgreSQL | 16.15, processo nativo em execução. |
+| pgvector | 0.6.0, extensão consultada no banco após migration. |
+| Escuta | Somente `127.0.0.1:5433`, confirmada via configuração do servidor. |
+| Banco da aplicação | `ta_pago_knowledge`. |
+| Banco de testes | `ta_pago_rag_test`, separado da aplicação. |
+| Persistência | `.rag/postgres/data`, modo 0700. |
+| Migration | `knowledge:migrate` executada com sucesso. |
+| Tabelas | `knowledge_chunks` e `knowledge_index_state`. |
+| Coluna vetorial | `vector(1536)`. |
+| Índices | HNSW/cosseno, GIN lexical, B-tree de símbolo, caminho, filename, directory e domínio; nenhum ausente. |
+| Constraints | PK `(corpus_key, chunk_id)`, dimensão 1536, tipo code/document e vetor obrigatório. |
+| Credenciais | `.env` local modo 0600; Git ignora `.env` e `.rag/`. Valores não publicados. |
 
-Foram conferidos hashes dos artefatos, igualdade das coleções entre os manifestos, chunks source_type=code, relações não vazias e resumos correspondentes. Testes negativos cobrem inventários vazios/adulterados, caminhos inseguros e mudanças nas fontes. O aplicativo e package-lock.json não mudaram. As validações locais obrigatórias passaram, exceto lint sem configuração; nenhuma execução remota foi iniciada.
+Helper nativo: `npm run knowledge:db -- start`, `status` e `stop`. Não há autostart após reiniciar WSL; usar `start`. Nenhum banco ou volume preexistente foi apagado.
 
-## Artefatos futuros e limites
+## Embeddings e ingestão
 
-Embeddings e vetores permanecem not_generated, sem valores. Índices de caminho, símbolo e domínio permanecem planned; índice lexical not_generated. Não existem embeddings reais, banco vetorial, busca semântica, reranking, recuperação de contexto por modelo ou integração operacional entre RAG e agente. A análise é estática, não teste visual; resolução de variantes é inferida, chunks são integrais e a detecção de dados sensíveis não é infalível.
+| Campo | Resultado |
+| --- | --- |
+| Provider | OpenAI implementado; chave ausente. |
+| Modelo configurado | `text-embedding-3-small`. |
+| Dimensões | 1536, compatíveis com a coluna e constraint. |
+| Chunks descobertos | 225. |
+| New / updated / unchanged / deleted no dry-run | 225 / 0 / 0 / 0. |
+| Embeddings reais gerados | 0. |
+| Vetores reais inseridos / atualizados / removidos | 0 / 0 / 0. |
+| Stored vectors | 0. |
+| Missing vectors | 225. |
+| Orphan vectors | 0. |
+| Stale vectors | 0. |
+| Erro da tentativa de ingestão | `REQUIRES_EXTERNAL_CONFIGURATION`: preencher `OPENAI_API_KEY`. |
 
-## Arquivos criados nesta tarefa
+A ingestão real foi iniciada pelo comando existente e interrompida no primeiro lote, antes de chamar a API. A transação fez rollback. Consulta direta posterior confirmou zero registros e vetores no banco da aplicação. Não se realizou segunda ingestão real como suposta prova de incrementalidade, pois a primeira ainda não pôde gerar embeddings.
 
-- `knowledge/ingestion-report.md`
-- `scripts/knowledge/catalog.mjs`
+Nos testes com servidor PostgreSQL real e provider **exclusivamente de teste**, foram validados: primeira carga, reexecução concorrente sem duplicar embeddings, 1 atualização/1 embedding, 1 deleção/0 embeddings, restauração da fixture, rollback e rejeição de dimensão incompatível. O schema temporário foi removido ao terminar. Esses resultados não substituem incrementalidade com OpenAI real.
 
-## Arquivos modificados nesta tarefa
+## Retrieval e geração
 
-- `AGENTS.md`
-- `README.md`
-- `docs/02-architecture/app-structure.md`
-- `docs/02-architecture/navigation.md`
-- `docs/04-development/local-setup.md`
-- `docs/07-ai/evaluation-policy.md`
-- `docs/07-ai/rag-policy.md`
-- `knowledge/README.md`
-- `knowledge/code-inventory.json`
-- `knowledge/code-manifest.json`
-- `knowledge/code.schema.json`
-- `knowledge/manifest.json`
-- `scripts/code/cli.mjs`
-- `scripts/code/lib.mjs`
-- `scripts/code/lib.test.mjs`
-- `scripts/docs/cli.mjs`
-- `scripts/docs/lib.test.mjs`
-- `scripts/knowledge/common.mjs`
+| Componente | Estado neste ambiente |
+| --- | --- |
+| Semântico real | Pendente de chave e primeira ingestão; não foi silenciosamente substituído por lexical. |
+| Lexical/estrutural/símbolo/caminho/domínio | Implementados; consultas SQL testadas também em PostgreSQL nativo isolado. Banco da aplicação ainda sem corpus indexado. |
+| Relações, híbrido e reranking | Implementados e aprovados nos testes; operação híbrida com embeddings reais ainda não medida. |
+| Context builder | Implementado e testado, com fontes, deduplicação e orçamento. |
+| LLM real | Não executado; chave ausente. |
+| Modelo de geração | `gpt-4.1-mini`. |
+| Contexto enviado a LLM real | Nenhum. |
+| Citações de LLM real | Nenhuma; não foram inventadas respostas. |
 
-O workflow e os scripts npm exigidos já estavam nas alterações locais anteriores e foram preservados. A lista Git abaixo inclui também todo o trabalho anterior ainda não commitado.
+O health agora verifica embeddings e LLM reais quando há chave, e só retorna `OK` se ambos e o retrieval funcionarem. Sem chave, consulta a infraestrutura real e informa blockers. O diagnóstico atual é banco `OK`, provider/LLM `NOT_CONFIGURED`, com `OPENAI_API_KEY` e ingestão pendentes. A CLI `ask` foi ampliada para mostrar tipo da query, canais semântico/lexical/estrutural e relações junto da resposta e fontes.
 
-## Estado completo do Git
+## Tentativas end-to-end
 
-Branch: `main`. HEAD: `aaa87fefa966c6c358fc82d3fe3deb418203baeb`. Remoto: `https://github.com/mariomoutinho/ta-pago.git`. Nenhum arquivo no staging, commit novo ou push.
+Foram executados `knowledge:ask` para estas perguntas reais/tipos, mais um caso intencionalmente fora do corpus:
+
+1. Símbolo: “Onde useTheme é utilizado?”
+2. Comportamento: “Como funciona a expansão do conteúdo ao pressionar um título?”
+3. Arquitetura: “Qual é a arquitetura do aplicativo e como se organizam seus componentes?”
+4. Insuficiência: “Qual algoritmo de liquidação de derivativos usa o módulo QuantumSettlementService deste projeto?” — módulo propositalmente inexistente.
+
+Em todos os casos a CLI retornou `REQUIRES_EXTERNAL_CONFIGURATION`, apontando `OPENAI_API_KEY`. Não houve execução do LLM nem avaliação real de insuficiência: essa proteção segue coberta apenas por testes automatizados enquanto falta a chave.
 
 ```text
- M .github/workflows/documentation.yml
- M AGENTS.md
- M README.md
- M docs/00-context/glossary.md
- M docs/00-context/personas.md
- M docs/00-context/product-brief.md
- M docs/01-requirements/acceptance-criteria.md
- M docs/01-requirements/functional-requirements.md
- M docs/01-requirements/non-functional-requirements.md
- M docs/02-architecture/app-structure.md
- M docs/02-architecture/data-model.md
- M docs/02-architecture/integrations.md
- M docs/02-architecture/navigation.md
- M docs/02-architecture/system-overview.md
- M docs/03-features/achievements.md
- M docs/03-features/challenges.md
- M docs/03-features/groups.md
- M docs/03-features/points-and-ranking.md
- M docs/03-features/running-records.md
- M docs/03-features/social-feed.md
- M docs/03-features/teacher-student-monitoring.md
- M docs/03-features/workouts.md
- M docs/04-development/coding-guidelines.md
- M docs/04-development/debugging.md
- M docs/04-development/local-setup.md
- M docs/04-development/testing.md
- M docs/05-decisions/ADR-0001-expo-and-expo-router.md
- M docs/06-operations/environment-variables.md
- M docs/06-operations/incident-response.md
- M docs/06-operations/release-process.md
- M docs/07-ai/agent-contract.md
- M docs/07-ai/evaluation-policy.md
- M docs/07-ai/rag-policy.md
- M docs/07-ai/task-protocol.md
- M docs/07-ai/task-template.md
- M docs/07-ai/tool-policy.md
- M knowledge/README.md
- M knowledge/document.schema.json
- M knowledge/manifest.json
- M package.json
- M scripts/docs/cli.mjs
- M scripts/docs/lib.mjs
- M scripts/docs/lib.test.mjs
-?? knowledge/code-inventory.json
-?? knowledge/code-manifest.json
-?? knowledge/code.schema.json
-?? knowledge/config.json
-?? knowledge/ingestion-report.md
-?? scripts/code/cli.mjs
-?? scripts/code/lib.mjs
-?? scripts/code/lib.test.mjs
-?? scripts/knowledge/catalog.mjs
-?? scripts/knowledge/common.mjs
+QUESTION
+Como funciona a expansão do conteúdo ao pressionar um título?
+
+RETRIEVED SOURCES
+Não executado: OPENAI_API_KEY ausente.
+
+FINAL CONTEXT
+Não enviado a modelo real.
+
+ANSWER
+REQUIRES_EXTERNAL_CONFIGURATION: configure OPENAI_API_KEY.
+
+CITATIONS
+Nenhuma resposta de LLM foi gerada.
 ```
+
+## Evaluation
+
+`knowledge:evaluate` foi tentado e informou a chave ausente. Não existem métricas novas de retrieval semântico/híbrido real.
+
+O golden dataset de 20 perguntas continua aprovado. Na avaliação lexical/estrutural automatizada: Recall@1 **0.975**, Recall@3 **1.000**, Recall@5 **1.000**, MRR **1.000**. Essa avaliação usa banco isolado e não mede qualidade dos embeddings/LLM OpenAI. O arquivo `evaluation/local-retrieval-results.json` preserva evidência histórica da etapa anterior, com o hash do corpus correspondente àquela execução.
+
+## Tests e validações
+
+| Estado | Passed | Failed | Skipped |
+| --- | ---: | ---: | ---: |
+| Anterior | 71 | 0 | 1 |
+| Atual | **73** | **0** | **0** |
+
+Atuais: documentos 33, inventário 20, RAG 20. O teste de servidor antes ignorado foi habilitado com `RAG_TEST_DATABASE_URL` apontando para o banco dedicado. Acrescentado teste para impedir health `OK` quando a geração falha.
+
+Executados: `npm ci`, `npm test`, `npm run rag:test`, `npm run docs:validate`, `npm run typecheck`, `npm run knowledge:build`, `npm run knowledge:check`, `npm run code:check`, `knowledge:db -- start`, migration e consultas diretas de extensão/índices/constraints/contagens. A CI remota não foi executada, pois não houve push. As 22 vulnerabilidades pré-existentes foram mantidas; não houve audit fix nem configuração de ESLint.
+
+Comandos operacionais registrados:
+
+| Comando | Exit code | Resultado |
+| --- | ---: | --- |
+| `npm run knowledge:health` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:ingest -- --dry-run` | 0 | `DRY_RUN_OK` |
+| `npm run knowledge:search -- Onde useTheme é utilizado?` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:evaluate` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:ask -- Onde useTheme é utilizado?` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:ask -- Como funciona a expansão do conteúdo ao pressionar um título?` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:ask -- Qual é a arquitetura do aplicativo e como se organizam seus componentes?` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+| `npm run knowledge:ask -- Qual algoritmo de liquidação de derivativos usa o módulo QuantumSettlementService deste projeto?` | 2 | `REQUIRES_EXTERNAL_CONFIGURATION` |
+
+A tentativa de `knowledge:ingest` fora de dry-run também foi executada e retornou código 2 por ausência da chave, com rollback. As operações locais autorizadas nesta etapa foram permitidas pela revisão automática; o bloqueio da etapa anterior não foi contornado.
+
+## Arquivos alterados nesta etapa
+
+- `.gitignore`: exclui dados/runtime em `.rag/`.
+- `.nvmrc`, `package.json`, `package-lock.json`: runtime Node, helper nativo e carregamento opcional de `.env` nos testes.
+- `scripts/rag/local-db.mjs`: start/stop/status do cluster nativo dedicado.
+- `scripts/rag/store.mjs`: inspeção real de servidor, vetores e dimensões.
+- `scripts/rag/ingest.mjs`: validação de schema antes de escrever e contadores de operações.
+- `scripts/rag/config.mjs`: erros seguros e específicos de conexão/autenticação/tabela.
+- `scripts/rag/health.mjs`: probes de ambos providers, blockers e distinção de índice não pronto.
+- `scripts/rag/cli.mjs`: diagnóstico de chave ausente e evidências dos canais no answering.
+- `scripts/rag/postgres.test.mjs`, `scripts/rag/rag.test.mjs`: regressões e incrementalidade nativa.
+- `.env.example`: placeholder da variável de banco de teste já existente.
+- `docs/06-operations/environment-variables.md`, `knowledge/manifest.json`: correção documental e hashes regenerados.
+- `knowledge/RAG.md`, `knowledge/ingestion-report.md`: setup, custos, troubleshooting e evidências atuais.
+- `.env` e `.rag/`: somente locais/ignorados; não fazem parte dos arquivos para versionamento.
+
+As alterações preexistentes da implementação anterior foram preservadas. Nenhuma mudança em `src/`, telas ou funcionalidades fitness.
+
+## Única ação externa pendente
+
+**O usuário precisa preencher `OPENAI_API_KEY` em `/home/mario/ta-pago/.env` com uma chave válida, com acesso e cota para os modelos configurados.** Não é necessário fornecer senha de PostgreSQL, instalar banco ou preencher `DATABASE_URL` nesta máquina: isso já foi feito.
+
+Depois da chave, as etapas técnicas restantes são executar ingestão real, confirmar a segunda execução sem embeddings novos, executar health/search/ask para as três perguntas e o caso de insuficiência, e medir o dataset híbrido. As operações estão implementadas e documentadas; ainda precisam ser executadas com a credencial real antes de declarar `OPERATIONAL`.
+
+## Git
+
+- Branch: `main`.
+- HEAD: `719c2445964e65d0b03f7981ed0258e0a0e77e94`.
+- Modified: 12 arquivos rastreados (inclui trabalho anterior preservado).
+- Untracked: 23 arquivos (inclui trabalho anterior preservado).
+- Staged: 0.
+- Nenhum commit, push, mudança de remoto ou descarte de alterações.
+
+Guia operacional completo: [RAG.md](RAG.md).

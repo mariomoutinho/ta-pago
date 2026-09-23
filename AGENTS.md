@@ -10,11 +10,14 @@
     "project"
   ],
   "indexable": false,
-  "sources": [],
+  "sources": [
+    "knowledge/RAG.md",
+    "scripts/rag/cli.mjs"
+  ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "authority": "policy",
   "audience": [
     "developer",
@@ -61,6 +64,6 @@ Não afirme sucesso de testes, push ou funcionalidades sem evidência. `CLAUDE.m
 
 Respeite instruções explícitas da tarefa sobre commit/push, inclusive pedidos de deixar tudo local. `AGENTS.md` é operacional, tem `authority: policy` e `indexable: false`; não é evidência de comportamento do aplicativo.
 
-Leia [knowledge/README.md](knowledge/README.md) antes de modificar os extratores. Preserve os extratores documental/código e as coleções distintas no manifesto consolidado, os IDs, as evidências e os marcadores `observed`, `inferred` e `unknown`. Use a revisão-base real de `knowledge/config.json`; não invente o SHA do commit futuro. Não introduza embeddings, banco vetorial, busca, reranking ou integração com modelo nesta fase.
+Leia [knowledge/README.md](knowledge/README.md) antes de modificar os extratores. Preserve os extratores documental/código e as coleções distintas no manifesto consolidado, os IDs, as evidências e os marcadores `observed`, `inferred` e `unknown`. Use a revisão-base real de `knowledge/config.json`; não invente o SHA do commit futuro. O RAG em `scripts/rag` tem escopo autorizado próprio; consulte `knowledge/RAG.md`. Mantenha providers e acesso ao banco fora do aplicativo Expo e execute `rag:test` quando alterar essa camada.
 
 Depois de alterar fontes ou contratos, execute as validações documentais, `code:inventory`, `code:check`, `code:test` e `typecheck`. Gere manifestos determinísticos e revise exclusões e chunks sem dados pessoais ou segredos. Não afirme que a CI remota passou se as alterações ainda não foram enviadas.

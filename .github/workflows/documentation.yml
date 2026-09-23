@@ -12,6 +12,18 @@ jobs:
   documentation:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      rag-postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: ta_pago_rag_test
+          POSTGRES_USER: rag_test
+          POSTGRES_PASSWORD: ci_test_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rag_test -d ta_pago_rag_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,3 +46,7 @@ jobs:
         run: npm run code:check
       - name: Testar inventário do código
         run: npm run code:test
+      - name: Testar recuperação, ingestão e answering RAG
+        run: npm run rag:test
+        env:
+          RAG_TEST_DATABASE_URL: postgresql://rag_test:ci_test_only@127.0.0.1:5432/ta_pago_rag_test
