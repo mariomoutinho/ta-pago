@@ -4,7 +4,7 @@
   "title": "Visão da arquitetura",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
@@ -13,12 +13,15 @@
   "sources": [
     "package.json",
     "app.json",
-    "src/app/_layout.tsx"
+    "src/app/_layout.tsx",
+    "server/app.ts",
+    "server/db.ts",
+    "shared/validation.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "architecture",
   "audience": [
     "developer",
@@ -39,18 +42,12 @@
 
 # Visão da arquitetura
 
-## Arquitetura observada
+O cliente Expo 57 compartilha telas React Native entre web e plataformas nativas. `src/app/_layout.tsx` monta tema, sessão e proteção de rotas. O módulo Personal reside em `src/features/personal` e `src/components/personal`.
 
-O repositório contém um cliente Expo com React Native, React Native Web e TypeScript. A entrada em `package.json` é `expo-router/entry`. O layout em `src/app/_layout.tsx` monta o tema, a animação de abertura e as abas.
+Express em `server/app.ts` implementa a API de negócio. Prisma com adaptador SQLite persiste contas, vínculos, programas, modelos versionados, avaliações, registros e histórico. Regras Zod e questionário ficam em `shared`. O servidor também entrega a exportação web SPA de `dist`.
 
-As rotas `/` e `/explore` mostram o template do Expo. Há componentes compartilhados e variantes `.web.tsx`. `app.json` configura saída web estática, esquema `tapago`, ícones e plugins do Router e splash.
+Na web, a sessão usa cookie HttpOnly SameSite Strict; no nativo, token armazenado por SecureStore. O banco guarda somente o hash do token e expiração de 12 horas. A API verifica papel, propriedade e estado do vínculo a cada operação. Convites são únicos, duram 48 horas e têm somente hash persistido.
 
-## Limites atuais
+A API Personal usa PERSONAL_DATABASE_URL, independente do DATABASE_URL da ferramenta RAG. Não existe integração entre dados de alunos e catálogo de conhecimento. Rede social, fotos, GPS e publicação em produção permanecem fora desta implementação.
 
-Não foram encontrados servidor, banco de dados, autenticação, API de negócio, armazenamento de fotos, coleta GPS ou cliente RAG. Dependências de interface instaladas não comprovam funcionalidades do produto.
-
-## Evolução proposta
-
-Separar interface, regras de domínio e acesso a dados quando surgirem fluxos reais. Escolher serviços externos por ADR, com critérios de autorização, custo, portabilidade e operação. Nenhuma dessas camadas futuras é apresentada como implementada.
-
-Veja [estrutura](app-structure.md), [navegação](navigation.md) e [integrações](integrations.md).
+Veja [módulo Personal](../03-features/personal-integration.md), [navegação](navigation.md) e [ambiente local](../04-development/local-setup.md).

@@ -48,3 +48,11 @@ example
 # generated native folders
 /ios
 /android
+
+# Dados privados do módulo Personal
+data/
+*.db
+*.db-*
+server/generated/
+test-results/
+playwright-report/

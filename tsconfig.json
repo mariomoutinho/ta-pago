@@ -2,7 +2,9 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "types": ["expo/types"],
+    "types": [
+      "expo/types"
+    ],
     "paths": {
       "@/*": [
         "./src/*"
@@ -17,5 +19,14 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "server",
+    "tests/personal",
+    "prisma.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "scripts/prepare-personal-db.ts"
   ]
 }

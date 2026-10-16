@@ -50,3 +50,14 @@ jobs:
         run: npm run rag:test
         env:
           RAG_TEST_DATABASE_URL: postgresql://rag_test:ci_test_only@127.0.0.1:5432/ta_pago_rag_test
+
+      - name: Gerar cliente Prisma Personal
+        run: npx prisma generate
+      - name: Verificar API Personal
+        run: npm run personal:typecheck && npm run personal:test
+      - name: Compilar interface Personal
+        run: npm run personal:build
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Testar interface Personal
+        run: npm run personal:e2e

@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client"
+  output = "../server/generated/prisma"
+}
+datasource db {
+  provider = "sqlite"
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  role String @default("personal")
+  students Student[] @relation("PersonalStudents")
+  profiles Student[] @relation("StudentAccount")
+  programs Program[]
+  passwordHash String
+  sessions Session[]
+}
+model Session {
+  id String @id
+  userId String
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  expiresAt DateTime
+}
+model Student {
+  personalId String
+  personal User @relation("PersonalStudents",fields:[personalId],references:[id],onDelete:Restrict)
+  accountId String?
+  account User? @relation("StudentAccount",fields:[accountId],references:[id],onDelete:SetNull)
+  linkStatus String @default("unlinked")
+  invitations Invitation[]
+  id String @id @default(cuid())
+  name String
+  birthDate String?
+  phone String @default("")
+  email String @default("")
+  sex String @default("")
+  startDate String
+  status String @default("ativo")
+  mainGoal String
+  secondaryGoals String @default("")
+  experience String @default("")
+  weeklyFrequency Int @default(3)
+  availability String @default("")
+  notes String @default("")
+  injuries String @default("")
+  limitations String @default("")
+  surgeries String @default("")
+  conditions String @default("")
+  medications String @default("")
+  restrictions String @default("")
+  emergencyContact String @default("")
+  nextEvaluationDate String?
+  programId String?
+  program Program? @relation(fields:[programId],references:[id],onDelete:SetNull)
+  evaluations Evaluation[]
+  records TrackingRecord[]
+  history HistoryEntry[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Program {
+  ownerId String
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Restrict)
+  id String @id @default(cuid())
+  name String
+  description String
+  weeklyFrequency Int
+  cycleDays Int @default(30)
+  sessions String
+  students Student[]
+  evaluations Evaluation[]
+  createdAt DateTime @default(now())
+}
+model EvaluationTemplate {
+  ownerId String @default("system")
+  id String @id @default(cuid())
+  name String
+  version Int
+  cycleDays Int @default(30)
+  questions EvaluationQuestion[]
+  evaluations Evaluation[]
+  createdAt DateTime @default(now())
+  @@unique([name,version,ownerId])
+}
+model EvaluationQuestion {
+  id String @id @default(cuid())
+  templateId String
+  template EvaluationTemplate @relation(fields:[templateId],references:[id],onDelete:Cascade)
+  position Int
+  dimension String
+  text String
+  type String
+  required Boolean @default(true)
+  min Float?
+  max Float?
+  options EvaluationOption[]
+  answers EvaluationAnswer[]
+  @@unique([templateId,position])
+}
+model EvaluationOption {
+  id String @id @default(cuid())
+  questionId String
+  question EvaluationQuestion @relation(fields:[questionId],references:[id],onDelete:Cascade)
+  position Int
+  label String
+}
+model Evaluation {
+  id String @id @default(cuid())
+  studentId String
+  student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
+  templateId String
+  template EvaluationTemplate @relation(fields:[templateId],references:[id],onDelete:Restrict)
+  programId String?
+  program Program? @relation(fields:[programId],references:[id],onDelete:SetNull)
+  programSnapshot String @default("")
+  date String
+  cycle Int
+  evaluator String
+  status String @default("rascunho")
+  notes String @default("")
+  conclusion String @default("")
+  actionPlan String @default("")
+  answers EvaluationAnswer[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([studentId,date])
+}
+model EvaluationAnswer {
+  id String @id @default(cuid())
+  evaluationId String
+  evaluation Evaluation @relation(fields:[evaluationId],references:[id],onDelete:Cascade)
+  questionId String
+  question EvaluationQuestion @relation(fields:[questionId],references:[id],onDelete:Restrict)
+  value String
+  @@unique([evaluationId,questionId])
+}
+model TrackingRecord {
+  id String @id @default(cuid())
+  studentId String
+  student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
+  kind String
+  date String
+  data Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([studentId,kind,date])
+}
+model HistoryEntry {
+  id String @id @default(cuid())
+  studentId String
+  student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
+  action String
+  detail Json
+  createdAt DateTime @default(now())
+  @@index([studentId,createdAt])
+}
+
+model Invitation {
+  id String @id @default(cuid())
+  tokenHash String @unique
+  studentId String
+  student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime @default(now())
+}

@@ -4,7 +4,7 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
@@ -13,12 +13,14 @@
   "sources": [
     "src/components/app-tabs.tsx",
     "src/components/app-tabs.web.tsx",
-    "src/app/_layout.tsx"
+    "src/app/_layout.tsx",
+    "src/components/personal/navigation.tsx",
+    "server/app.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -35,21 +37,17 @@
 
 # Navegação
 
-## Rotas existentes
+O layout raiz aplica tema, sessão e rotas protegidas. A autorização efetiva também acontece na API; esconder uma tela não concede nem remove acesso a dados.
 
-| Rota | Arquivo | Conteúdo |
+| Rota | Acesso | Conteúdo |
 | --- | --- | --- |
-| `/` | `src/app/index.tsx` | Boas-vindas e instruções do Expo. |
-| `/explore` | `src/app/explore.tsx` | Exemplos e links de documentação. |
+| `/entrar` | Sem sessão | Login e criação de conta com papel personal ou aluno. |
+| `/` | Autenticado | Painel do personal ou acompanhamentos do aluno. |
+| `/alunos` | Personal | Lista, busca, filtros e cadastro. |
+| `/alunos/[id]` | Personal proprietário | Perfil com sete abas e histórico. |
+| `/programas` | Personal | CRUD de programas próprios. |
+| `/modelos` | Personal | Modelo base e versões próprias de questionários. |
+| `/acompanhamento/[id]` | Aluno vinculado | Consulta, respostas em rascunho, exportação e revogação. |
+| `/explore` | Autenticado | Redireciona ao painel. |
 
-`src/app/_layout.tsx` aplica tema e monta `AppTabs`. A variante nativa usa `expo-router/unstable-native-tabs`; a variante web usa `expo-router/ui`. Não há rotas protegidas ou telas de aluno, professor, feed ou treino.
-
-## Direção futura
-
-Definir jornadas e autorização antes de adicionar grupos de rotas. Um grupo de rotas não substitui controle de acesso no serviço de dados. Validar links diretos e comportamento do botão voltar em cada plataforma.
-
-## Inventário derivado do código
-
-O extrator estático gera entidades de rota para `/` e `/explore` a partir dos arquivos reais com exportação default. `_layout.tsx` é um componente/layout não navegável e aparece separadamente no inventário. A relação estrutural entre layout e páginas é `inferred`, pois depende da convenção do Expo Router; JSX e destinos literais de links são observações sintáticas.
-
-As variantes nativa e web de `AppTabs` têm identidades próprias. Imports compartilhados com alternativa web recebem confiança inferida quando a seleção depende do bundler. Relações `has-web-variant` incluem evidência dos arquivos compartilhado e web; `handles-event` associa callbacks a seus componentes. Links com destino variável permanecem `unknown`; a ferramenta não inventa a rota final. Não foram criadas rotas fitness ou autenticação.
+AppTabs usa navegação compartilhada com tema claro/escuro e adaptação de largura. A saída web é SPA (`single`); Express entrega index.html para links diretos e atualização de páginas. Rotas de feed e desafios permanecem planejadas.

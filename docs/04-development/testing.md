@@ -4,7 +4,7 @@
   "title": "Estratégia de testes",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-23",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "04-development"
@@ -13,12 +13,14 @@
   "sources": [
     "knowledge/evaluation/questions.json",
     "scripts/rag/postgres.test.mjs",
-    "scripts/rag/rag.test.mjs"
+    "scripts/rag/rag.test.mjs",
+    "vitest.config.ts",
+    "playwright.config.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "authority": "policy",
   "audience": [
     "developer",
@@ -46,7 +48,7 @@
 | `npm run docs:test` | Regressões dos validadores e planejamento incremental com casos negativos. |
 | `npm run knowledge:check` | Manifesto versionado idêntico ao catálogo calculado dos documentos. |
 
-A validação de links não acessa URLs externas nem verifica âncoras de títulos. A CI documental não substitui testes do aplicativo. Não há suíte funcional ou end-to-end do produto configurada.
+A validação de links não acessa URLs externas nem verifica âncoras de títulos. A CI documental não substitui testes do aplicativo. O módulo Personal possui testes Vitest com SQLite temporário em tests/personal e navegação Playwright em tests/personal/browser. Execute personal:test e, após personal:build, personal:e2e. Os testes não usam o banco local de alunos.
 
 ## Testes futuros
 

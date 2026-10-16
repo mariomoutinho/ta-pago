@@ -4,7 +4,7 @@
   "title": "Ambiente local",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "04-development"
@@ -12,12 +12,15 @@
   "indexable": true,
   "sources": [
     "package.json",
-    "scripts/reset-project.js"
+    "scripts/reset-project.js",
+    "server/index.ts",
+    "server/import-compasso.ts",
+    ".nvmrc"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -34,30 +37,29 @@
 
 # Ambiente local
 
-## Pré-requisitos
+## Executar localmente
 
-Usar Node.js 22.13 ou superior compatível com Expo 57 e npm. A CI documental usa Node 24. Consultar a [referência versionada](https://docs.expo.dev/versions/v57.0.0/) antes de alterações no app.
+Use a versão de Node da `.nvmrc` (24.19.0). Após reiniciar o WSL, execute `source ~/.nvm/nvm.sh` e `nvm use` na pasta do projeto.
 
 ```bash
 npm ci
-npm start
+npm run personal:setup
+npm run personal:build
+npm run personal:start
 ```
 
-Para web, executar `npm run web`. `npm run android` requer ambiente Android ou dispositivo configurado. `npm run ios` requer ambiente Apple adequado para simulador. Não é necessário configurar backend ou `.env` para o template atual.
+Abra http://localhost:3003. O servidor atende a API e a interface compilada na mesma origem. Para desenvolvimento com recarga: `npm run personal:dev`, interface em http://localhost:8081 e API na porta 3003. `npm start` inicia somente o Expo, sem a API.
 
-## Verificações
+Na primeira execução, crie uma conta de personal ou aluno. Para migrar o Compasso, faça a importação antes de criar contas no destino:
 
 ```bash
-npm run typecheck
-npm run docs:validate
-npm run docs:test
-npm run knowledge:check
+npm run personal:import -- --source /caminho/compasso/data/personal.db
 ```
 
-A validação documental usa módulos nativos do Node; o comando de construção consolidada também usa o TypeScript instalado para analisar o código. O comando `npm run lint` herdado chama `expo lint`, mas ESLint e sua configuração ainda não estão presentes; o assistente pode propor instalá-los. Não tratá-lo como verificação já configurada.
+A origem é aberta somente para leitura. IDs, senha protegida, avaliações e histórico são preservados; sessões não são copiadas. O destino deve estar sem contas, alunos e programas; qualquer conflito aborta a transação. O questionário base criado no setup pode permanecer. A importação nunca envia dados ao GitHub.
 
-Não executar `reset-project` para tarefas documentais: ele move ou remove `src` e `scripts`.
+Para dispositivos, configure `EXPO_PUBLIC_PERSONAL_API_URL` com uma URL acessível pelo aparelho e inicie a API. Em rede local, configure também `PERSONAL_API_HOST=0.0.0.0` e controle o acesso à rede. Android/iOS precisam de ambiente próprio; a compilação web não comprova funcionamento em dispositivo.
 
-## Inventário de código
+## Validação
 
-Após `npm ci`, executar `npm run code:inventory`, `npm run code:check` e `npm run code:test`. Esses scripts usam o TypeScript do lockfile e não instalam dependências adicionais. Para validar a origem Git, clones da CI usam histórico completo; `commit_sha` documenta a revisão-base fixada em `knowledge/config.json`.
+Execute `npm run typecheck`, `npm run personal:typecheck`, `npm run personal:test`, `npm run personal:build` e `npm run personal:e2e`. O Playwright requer Chromium instalado (`npx playwright install chromium`). Execute também as validações documentais e do catálogo previstas em AGENTS.md. ESLint ainda não está configurado. Não execute `reset-project` no fluxo normal.

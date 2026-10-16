@@ -4,7 +4,7 @@
   "title": "Estrutura do aplicativo",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
@@ -14,12 +14,14 @@
     "tsconfig.json",
     "src/constants/theme.ts",
     "src/hooks/use-theme.ts",
-    "scripts/reset-project.js"
+    "scripts/reset-project.js",
+    "src/features/personal/api.ts",
+    "server/app.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -38,13 +40,13 @@
 
 | Caminho | Responsabilidade existente |
 | --- | --- |
-| `src/app` | Layout e rotas Home e Explore do template. |
+| `src/app` | Rotas autenticadas do módulo Personal e entrada de contas. |
 | `src/components` | Texto e view tematizados, abas, animação, links, dicas e badge. |
 | `src/components/ui` | Componente expansível de demonstração. |
 | `src/constants/theme.ts` | Cores, fontes, espaçamentos e largura de conteúdo. |
 | `src/hooks` | Tema e esquema de cores, com adaptação de hidratação web. |
 | `src/global.css` | Fontes usadas na web. |
-| `assets` | Imagens e ícones do template. |
+| `assets` | Assets herdados; a identidade ativa usa logotapago.png. |
 | `logotapago.png` | Logo disponível no repositório; ainda não conectado às telas. |
 | `scripts/reset-project.js` | Reinicialização do template, que move ou remove `src` e `scripts`. |
 | `scripts/docs` | Validação documental e catálogo local de conhecimento. |

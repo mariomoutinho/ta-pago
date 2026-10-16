@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-23",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -17,12 +17,15 @@
     "scripts/rag/cli.mjs",
     "scripts/rag/service.mjs",
     "src/app/explore.tsx",
-    "src/app/index.tsx"
+    "src/app/index.tsx",
+    "server/app.ts",
+    "prisma/schema.prisma",
+    "src/components/personal/profile.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -78,7 +81,7 @@ O Tá Pago será uma rede social fitness para amigos compartilharem treinos, par
 
 ## Estado atual
 
-**Em desenvolvimento.** O aplicativo ainda é o template Expo: telas Home e Explore, navegação por abas, componentes tematizados e exemplos de animação. O logo está no repositório, mas não foi integrado às telas. Não há funcionalidades fitness, backend, banco, autenticação ou integrações de negócio implementadas.
+**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
 
 O modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- "Como useTheme seleciona as cores?"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).
 
@@ -119,10 +122,12 @@ Usar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.
 git clone https://github.com/mariomoutinho/ta-pago.git
 cd ta-pago
 npm ci
-npm start
+npm run personal:setup
+npm run personal:build
+npm run personal:start
 ```
 
-O repositório requer acesso autorizado enquanto privado. Para web, executar `npm run web`. Android e iOS dependem de dispositivo ou simulador configurado; o simulador iOS exige macOS. Nenhum `.env` de negócio é necessário atualmente.
+Abra http://localhost:3003. Use Node 24 da `.nvmrc`. Para recarga automática, `npm run personal:dev` (web na porta 8081). Consulte [ambiente local](docs/04-development/local-setup.md) e [módulo Personal](docs/03-features/personal-integration.md) para migração e configuração nativa.
 
 ## Scripts disponíveis
 
@@ -199,7 +204,7 @@ O [guia da base de conhecimento](knowledge/README.md) explica metadados, geraç�
 
 ## Próximas etapas
 
-Validar MVP e regras com usuários; definir identidade, autorização e persistência por ADR; desenhar jornadas; implementar funcionalidades com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.
+Validar o módulo Personal com usuários e dispositivos reais; evoluir os recursos sociais planejados com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.
 
 ## Licença e autor
 

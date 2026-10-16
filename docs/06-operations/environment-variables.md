@@ -4,7 +4,7 @@
   "title": "Variáveis de ambiente",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-23",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "06-operations"
@@ -15,12 +15,14 @@
     ".gitignore",
     "compose.rag.yaml",
     "scripts/rag/config.mjs",
-    "src/components/external-link.tsx"
+    "src/components/external-link.tsx",
+    "server/db.ts",
+    "src/features/personal/api.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -36,6 +38,10 @@
 ---
 
 # Variáveis de ambiente
+
+## API Personal
+
+Consulte .env.example e [módulo Personal](../03-features/personal-integration.md). PERSONAL_DATABASE_URL é independente do DATABASE_URL usado pelo RAG. EXPO_PUBLIC_PERSONAL_API_URL é público e contém somente a URL da API. Os padrões locais permitem executar a web sem editar .env. Nenhuma credencial deve usar prefixo EXPO_PUBLIC.
 
 ## Inventário atual
 

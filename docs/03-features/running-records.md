@@ -4,17 +4,20 @@
   "title": "Registro de corridas",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
-  "sources": [],
+  "sources": [
+    "src/components/personal/profile.tsx",
+    "server/app.ts"
+  ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -36,7 +39,7 @@
 
 ## Estado
 
-Planejado, não implementado. Referência: RF-05 nos [requisitos funcionais](../01-requirements/functional-requirements.md).
+Implementação parcial no [módulo Personal](personal-integration.md): cadastro, vínculos, programas em texto, avaliações e registros manuais. Prescrição estruturada com vídeos, GPS e recursos sociais descritos abaixo permanecem planejados. Referência: RF-05 nos [requisitos funcionais](../01-requirements/functional-requirements.md).
 
 ## Objetivo
 

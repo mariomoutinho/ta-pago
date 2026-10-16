@@ -4,17 +4,20 @@
   "title": "Diagnóstico",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-10-16",
   "language": "pt-BR",
   "tags": [
     "04-development"
   ],
   "indexable": true,
-  "sources": [],
+  "sources": [
+    "server/app.ts",
+    "server/index.ts"
+  ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "authority": "policy",
   "audience": [
     "developer",
@@ -41,4 +44,4 @@ O validador informa arquivo e regra inválida. Corrigir o documento de origem; n
 
 ## Limites
 
-Não compartilhar tokens, `.env`, dados de alunos ou caminhos privados em logs. Não apagar diretórios ou reinicializar o projeto como primeira tentativa. Não há logs de backend ou monitoramento de produção neste repositório.
+Não compartilhar tokens, `.env`, dados de alunos ou caminhos privados em logs. Não apagar diretórios ou reinicializar o projeto como primeira tentativa. A API registra somente a classe do erro interno. Para falha de acesso local, confira Node 24, personal:setup, personal:build e personal:start; Expo isolado não inicia a API. Não há monitoramento de produção configurado.
