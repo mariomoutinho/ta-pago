@@ -31,12 +31,14 @@
         "prisma/schema.prisma",
         "src/components/personal/profile.tsx",
         "server/enrollment.ts",
-        "src/app/alunos/link.tsx"
+        "src/app/alunos/link.tsx",
+        "hostinger.mjs",
+        "server/runtime.ts"
       ],
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "4.1.0",
+      "version": "4.2.0",
       "authority": "product",
       "audience": [
         "developer",
@@ -84,7 +86,7 @@
       "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
       "domain": "product",
       "path": "README.md",
-      "sha256": "f2a63430265902d8e166dff0e1f29edbd6fa4986fd6959267d03f0d18ca42f2e"
+      "sha256": "cfda01059b634017bb28e9ae2179339a893c24330dfcfc05a96e80f4c4d00bde"
     },
     {
       "id": "ta-pago.docs.00-context.glossary",
@@ -1019,6 +1021,43 @@
       "domain": "operations",
       "path": "docs/06-operations/environment-variables.md",
       "sha256": "2101f2734a41606c887b3f46b5621461d4d65469ad2c15293a2f68ec87a570c9"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.hostinger-deployment",
+      "title": "Publicação do Tá Pago na Hostinger",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-10-16",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations"
+      ],
+      "indexable": true,
+      "sources": [
+        "hostinger.mjs",
+        "server/runtime.ts",
+        "server/index.ts",
+        "server/app.ts",
+        "deploy/hostinger.env.example",
+        "package.json"
+      ],
+      "repository": "mariomoutinho/ta-pago",
+      "branch": "main",
+      "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+      "version": "1.0.0",
+      "authority": "code",
+      "audience": [
+        "developer",
+        "ai_agent",
+        "reviewer"
+      ],
+      "sensitivity": "internal",
+      "supersedes": [],
+      "related_documents": [],
+      "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
+      "domain": "operations",
+      "path": "docs/06-operations/hostinger-deployment.md",
+      "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
     },
     {
       "id": "ta-pago.docs.06-operations.incident-response",
@@ -176330,8 +176369,8 @@
       "section": "whole",
       "name": "Tá Pago",
       "entity_type": null,
-      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.\n\nO modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- \"Como useTheme seleciona as cores?\"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Treinos personalizados: exercícios, séries, repetições, carga, descanso e vídeos ilustrativos.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nUsar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm run personal:setup\nnpm run personal:build\nnpm run personal:start\n```\n\nAbra http://localhost:3003. Use Node 24 da `.nvmrc`. Para recarga automática, `npm run personal:dev` (web na porta 8081). Consulte [ambiente local](docs/04-development/local-setup.md) e [módulo Personal](docs/03-features/personal-integration.md) para migração e configuração nativa.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar o módulo Personal com usuários e dispositivos reais; evoluir os recursos sociais planejados com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:api:ingest -- --dry-run\nnpm run knowledge:api:ingest\nnpm run knowledge:api:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n\n## Link de Cadastro de Alunos\n\nEm Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).\n",
-      "token_estimate": 2614,
+      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.\n\nO modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- \"Como useTheme seleciona as cores?\"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Treinos personalizados: exercícios, séries, repetições, carga, descanso e vídeos ilustrativos.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nUsar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm run personal:setup\nnpm run personal:build\nnpm run personal:start\n```\n\nAbra http://localhost:3003. Use Node 24 da `.nvmrc`. Para recarga automática, `npm run personal:dev` (web na porta 8081). Consulte [ambiente local](docs/04-development/local-setup.md) e [módulo Personal](docs/03-features/personal-integration.md) para migração e configuração nativa.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar o módulo Personal com usuários e dispositivos reais; evoluir os recursos sociais planejados com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:api:ingest -- --dry-run\nnpm run knowledge:api:ingest\nnpm run knowledge:api:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n\n## Link de Cadastro de Alunos\n\nEm Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).\n\n## Publicação no Coletivo Pindorama\n\nPreparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.\n",
+      "token_estimate": 2689,
       "semantic_summary": {
         "representation": "Documento: Tá Pago",
         "responsibility": "Registra tá pago sob autoridade product; domínio product.",
@@ -176377,7 +176416,7 @@
           {
             "source_path": "README.md",
             "section": "whole",
-            "sha256": "f2a63430265902d8e166dff0e1f29edbd6fa4986fd6959267d03f0d18ca42f2e"
+            "sha256": "cfda01059b634017bb28e9ae2179339a893c24330dfcfc05a96e80f4c4d00bde"
           }
         ],
         "confidence": "observed"
@@ -176387,7 +176426,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "4.1.0",
+        "version": "4.2.0",
         "status": "current",
         "domain": "product",
         "confidence": null,
@@ -176399,11 +176438,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-        "source_sha256": "f2a63430265902d8e166dff0e1f29edbd6fa4986fd6959267d03f0d18ca42f2e",
+        "source_sha256": "cfda01059b634017bb28e9ae2179339a893c24330dfcfc05a96e80f4c4d00bde",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "a6f22727b7f938d4658b3c705b238da27eb860ce8f9ee243c4a9f6788104bb14"
+      "sha256": "c8038413cb3f1f5c99321ab96ba50c8d6a52aaad32a22b57dffbcb704e28d76a"
     },
     {
       "id": "ta-pago.code:src/app/_layout.tsx:component:Navigation::chunk:whole",
@@ -266419,6 +266458,54 @@
       "sha256": "c3700df2f2c2b0483c3777704d1f48a284a261fb175242b1c46bcac682e5cf41"
     },
     {
+      "id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole",
+      "source_id": "ta-pago.docs.06-operations.hostinger-deployment",
+      "source_type": "document",
+      "source_path": "docs/06-operations/hostinger-deployment.md",
+      "section": "whole",
+      "name": "Publicação do Tá Pago na Hostinger",
+      "entity_type": null,
+      "content": "# Publicação do Tá Pago na Hostinger\n\n## Destino e estado\n\nDestino solicitado: https://tapago.coletivopindorama.com.br. A preparação está versionada; não implica publicação concluída. Na inspeção inicial, o subdomínio não resolvia no DNS e o acesso disponível era o deploy FTP do site principal, em outro repositório. Ele não oferece, sozinho, a execução da API Node.js. O usuário confirmou que pode conectar o painel/Hostinger Connector; a criação da aplicação, DNS e SSL depende dessa conexão.\n\nNão reutilizar o deploy FTP do site principal para servir apenas dist: login, fichas, aprovações e persistência dependem de Express. Não modificar a raiz do Coletivo Pindorama nem outros subdomínios.\n\n## Aplicação gerenciada\n\nSegundo a [documentação da Hostinger](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/), Express e Node.js 24 são suportados nos planos compatíveis com Web Apps. Confirmar a capacidade da conta pelo painel antes de criar recursos.\n\n- Repositório: mariomoutinho/ta-pago; branch main; raiz do projeto.\n- Aplicação: backend Express/Other, Node.js 24. Não selecionar hospedagem somente estática.\n- Instalação: npm ci, incluindo dependências de build.\n- Build: npm run production:build (Prisma generate e exportação web).\n- Entrada Node: hostinger.mjs; comando equivalente: npm run production:start.\n- A pasta dist contém somente os assets web; server, shared e dependências permanecem necessários no runtime.\n- Inicialização usa PORT do provedor e escuta em 0.0.0.0 em produção.\n- GET /api/health retorna 200 se o banco e o schema User estiverem acessíveis; 503 em falha, sem revelar dados.\n\n## Configuração obrigatória\n\nUse deploy/hostinger.env.example como referência para cadastrar variáveis no painel; não coloque valores secretos no Git. Defina NODE_ENV=production, PERSONAL_ENROLLMENT_ORIGIN e PERSONAL_APP_ORIGINS com o destino HTTPS exato. Cookies de sessão são Secure em produção. A web usa a mesma origem; deixe EXPO_PUBLIC_PERSONAL_API_URL ausente.\n\nPERSONAL_DATABASE_URL deve apontar para SQLite em caminho absoluto privado e persistente, fora da pasta da release. Confirmar no provedor permissões, persistência entre deploys e backup; não assumir que public_html, dist ou a pasta temporária do build são armazenamento permanente. Se a hospedagem não oferecer esse volume, escolher VPS/armazenamento compatível antes de publicar.\n\nPERSONAL_ENROLLMENT_KEY deve conter 32 bytes em hexadecimal, armazenados no painel como segredo. Para migrar fichas cifradas existentes, preservar a chave original; trocar a chave torna essas fichas ilegíveis. Não transportar o .env local inteiro: ele também pode conter configuração RAG independente.\n\nPERSONAL_TRUST_PROXY aceita IPs/sub-redes separados por vírgula. Configurar somente após confirmar a topologia e o tratamento dos cabeçalhos pelo proxy, conforme [Express atrás de proxies](https://expressjs.com/en/guide/behind-proxies/). Sem isso, limites de requisição podem agregar usuários no IP do proxy. Não usar confiança irrestrita.\n\n## Banco, migração e publicação\n\n1. Criar a aplicação dedicada e associar tapago.coletivopindorama.com.br. Confirmar registros DNS e emissão de certificado pelo painel.\n2. Definir volume privado persistente e variáveis, sem tornar arquivos SQLite ou chave acessíveis por HTTP.\n3. Para instalação vazia: npm run production:setup. Esse comando verifica configuração, gera Prisma, aplica migrations e cria somente o modelo de avaliação base.\n4. Para levar os dados locais: preparar snapshot consistente do SQLite, transferir por canal autenticado e cifrado e preservar a chave de fichas. Nunca incluir banco, sessões ou chave no pacote de código/Git. Preservar a origem e backup; confirmar o destino antes de importar.\n5. Iniciar com NODE_ENV=production e npm run production:start. Verificar /api/health, login, links diretos, cookies Secure, formulário público e isolamento entre profissionais.\n6. Criar uma solicitação de teste sem dados reais e confirmar aprovação. Verificar que dados persistem após reiniciar/republicar. Só então considerar a migração concluída.\n\nO código local continua funcionando com personal:start na porta 3003. Nenhum dado local foi migrado para a internet na preparação.\n\n## Verificação local da preparação\n\nproduction.test.ts executa hostinger.mjs em processo real com SQLite temporário, verifica a API, rota SPA e cookie Secure, além de rejeitar configuração insegura ou banco dentro da release. Isso valida a entrada de produção; não comprova DNS, SSL, permissões ou persistência do provedor.\n",
+      "token_estimate": 1140,
+      "semantic_summary": {
+        "representation": "Documento: Publicação do Tá Pago na Hostinger",
+        "responsibility": "Registra publicação do tá pago na hostinger sob autoridade code; domínio operations.",
+        "related_symbols": [],
+        "related_documents": [],
+        "status": "current",
+        "evidence": [
+          {
+            "source_path": "docs/06-operations/hostinger-deployment.md",
+            "section": "whole",
+            "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
+          }
+        ],
+        "confidence": "observed"
+      },
+      "metadata": {
+        "entity_type": null,
+        "repository": "mariomoutinho/ta-pago",
+        "branch": "main",
+        "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+        "version": "1.0.0",
+        "status": "current",
+        "domain": "operations",
+        "confidence": null,
+        "authority": "code",
+        "audience": [
+          "developer",
+          "ai_agent",
+          "reviewer"
+        ],
+        "sensitivity": "internal",
+        "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
+        "source_sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843",
+        "extractor_version": "document-json-v2",
+        "chunking_version": "atomic-source-v1"
+      },
+      "sha256": "eedc3c6462aff60d2db1d1d07bd3490482cccb394c6ba7d7f92ca4187cb84ae4"
+    },
+    {
       "id": "ta-pago.docs.06-operations.incident-response::chunk:whole",
       "source_id": "ta-pago.docs.06-operations.incident-response",
       "source_type": "document",
@@ -266695,7 +266782,7 @@
         {
           "source_path": "README.md",
           "section": "whole",
-          "sha256": "f2a63430265902d8e166dff0e1f29edbd6fa4986fd6959267d03f0d18ca42f2e"
+          "sha256": "cfda01059b634017bb28e9ae2179339a893c24330dfcfc05a96e80f4c4d00bde"
         }
       ],
       "confidence": "observed"
@@ -306768,6 +306855,23 @@
           "source_path": "docs/06-operations/environment-variables.md",
           "section": "whole",
           "sha256": "2101f2734a41606c887b3f46b5621461d4d65469ad2c15293a2f68ec87a570c9"
+        }
+      ],
+      "confidence": "observed"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole::summary",
+      "chunk_id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole",
+      "representation": "Documento: Publicação do Tá Pago na Hostinger",
+      "responsibility": "Registra publicação do tá pago na hostinger sob autoridade code; domínio operations.",
+      "related_symbols": [],
+      "related_documents": [],
+      "status": "current",
+      "evidence": [
+        {
+          "source_path": "docs/06-operations/hostinger-deployment.md",
+          "section": "whole",
+          "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
         }
       ],
       "confidence": "observed"

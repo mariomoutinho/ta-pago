@@ -41,6 +41,11 @@ const studentInclude = {
 export function createApp(db: Db) {
   const app = express();
   app.disable("x-powered-by");
+  if (process.env.PERSONAL_TRUST_PROXY)
+    app.set(
+      "trust proxy",
+      process.env.PERSONAL_TRUST_PROXY.split(",").map((value) => value.trim()),
+    );
   app.use(
     helmet({
       contentSecurityPolicy: {
@@ -83,7 +88,9 @@ export function createApp(db: Db) {
   const cookie = {
     httpOnly: true,
     sameSite: "strict" as const,
-    secure: process.env.COOKIE_SECURE === "true",
+    secure:
+      process.env.NODE_ENV === "production" ||
+      process.env.COOKIE_SECURE === "true",
     path: "/",
     maxAge: 12 * 60 * 60 * 1000,
   };
@@ -162,6 +169,14 @@ export function createApp(db: Db) {
     if (!user || !(await verifyPassword(data.password, user.passwordHash)))
       throw new HttpError(401, "E-mail ou senha inválidos");
     await establish(req, res, user);
+  });
+  app.get("/api/health", async (_req, res) => {
+    try {
+      await db.user.count();
+      res.json({ status: "ok" });
+    } catch {
+      res.status(503).json({ status: "unavailable" });
+    }
   });
   app.use("/api/public/enrollment", publicEnrollmentRoutes(db));
   app.use("/api", async (req, res, next) => {

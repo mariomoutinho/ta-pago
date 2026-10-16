@@ -1,17 +1,14 @@
+import { runtimeConfig } from "./runtime";
 import { setInterval, clearInterval } from "node:timers";
 import { purgeEnrollments } from "./enrollment";
 import { mkdirSync } from "node:fs";
 import { createDb } from "./db";
 import { createApp } from "./app";
 mkdirSync("data", { recursive: true });
+const { port, host } = runtimeConfig();
 const db = createDb();
-const server = createApp(db).listen(
-  Number(process.env.PERSONAL_API_PORT ?? 3003),
-  process.env.PERSONAL_API_HOST ?? "127.0.0.1",
-  () =>
-    console.log(
-      `Tá Pago Personal disponível em http://127.0.0.1:${process.env.PERSONAL_API_PORT ?? 3003}`,
-    ),
+const server = createApp(db).listen(port, host, () =>
+  console.log(`Tá Pago Personal escutando em ${host}:${port}`),
 );
 let purging = false;
 async function purge() {

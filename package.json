@@ -35,7 +35,8 @@
     "react-native-screens": "~4.26.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1",
-    "zod": "^4.0.0"
+    "zod": "^4.0.0",
+    "tsx": "^4.20.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
@@ -44,7 +45,6 @@
     "pg": "^8.23.0",
     "typescript": "~6.0.3",
     "prisma": "^7.0.0",
-    "tsx": "^4.20.0",
     "concurrently": "^9.0.0",
     "vitest": "^5.0.5",
     "supertest": "^7.1.0",
@@ -94,7 +94,11 @@
     "personal:e2e": "playwright test",
     "personal:import": "tsx server/import-compasso.ts",
     "personal:typecheck": "tsc --noEmit -p tsconfig.server.json",
-    "personal:purge-enrollments": "tsx server/purge-enrollments.ts"
+    "personal:purge-enrollments": "tsx server/purge-enrollments.ts",
+    "production:build": "prisma generate && expo export --platform web",
+    "production:check": "tsx server/check-production.ts",
+    "production:setup": "npm run production:check && npm run personal:setup",
+    "production:start": "node hostinger.mjs"
   },
   "private": true,
   "engines": {

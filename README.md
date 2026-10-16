@@ -22,12 +22,14 @@
     "prisma/schema.prisma",
     "src/components/personal/profile.tsx",
     "server/enrollment.ts",
-    "src/app/alunos/link.tsx"
+    "src/app/alunos/link.tsx",
+    "hostinger.mjs",
+    "server/runtime.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -243,3 +245,7 @@ Os comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate
 ## Link de Cadastro de Alunos
 
 Em Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).
+
+## Publicação no Coletivo Pindorama
+
+Preparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.
