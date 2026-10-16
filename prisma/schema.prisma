@@ -15,6 +15,8 @@ model User {
   programs Program[]
   passwordHash String
   sessions Session[]
+  enrollmentLink EnrollmentLink?
+  enrollmentRequests EnrollmentRequest[]
 }
 model Session {
   id String @id
@@ -29,6 +31,7 @@ model Student {
   account User? @relation("StudentAccount",fields:[accountId],references:[id],onDelete:SetNull)
   linkStatus String @default("unlinked")
   invitations Invitation[]
+  enrollmentRequest EnrollmentRequest?
   id String @id @default(cuid())
   name String
   birthDate String?
@@ -163,5 +166,51 @@ model Invitation {
   student Student @relation(fields:[studentId],references:[id],onDelete:Cascade)
   expiresAt DateTime
   consumedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model EnrollmentLink {
+  id String @id @default(cuid())
+  personalId String @unique
+  personal User @relation(fields:[personalId],references:[id],onDelete:Cascade)
+  token String @unique
+  active Boolean @default(true)
+  publicName String
+  contact String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  challenges EnrollmentChallenge[]
+}
+model EnrollmentChallenge {
+  id String @id
+  linkId String
+  link EnrollmentLink @relation(fields:[linkId],references:[id],onDelete:Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+model EnrollmentRequest {
+  id String @id @default(cuid())
+  personalId String
+  personal User @relation(fields:[personalId],references:[id],onDelete:Restrict)
+  emailHash String
+  payload String
+  healthPayload String?
+  status String @default("pending")
+  studentId String? @unique
+  student Student? @relation(fields:[studentId],references:[id],onDelete:Cascade)
+  policyVersion String
+  consentAt DateTime
+  healthConsentAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events EnrollmentEvent[]
+  @@unique([personalId,emailHash])
+  @@index([personalId,status,createdAt])
+}
+model EnrollmentEvent {
+  id String @id @default(cuid())
+  requestId String
+  request EnrollmentRequest @relation(fields:[requestId],references:[id],onDelete:Cascade)
+  status String
   createdAt DateTime @default(now())
 }

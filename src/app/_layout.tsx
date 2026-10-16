@@ -1,5 +1,11 @@
 import { useEffect } from "react";
-import { DarkTheme, DefaultTheme, ThemeProvider, Stack } from "expo-router";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+  Stack,
+  usePathname,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -9,9 +15,16 @@ import { Button, Notice, Label } from "@/components/personal/ui";
 void SplashScreen.preventAutoHideAsync().catch(() => {});
 function Navigation() {
   const { user, loading, error, refresh } = useSession();
+  const publicForm = usePathname().startsWith("/cadastro/");
   useEffect(() => {
-    if (!loading) void SplashScreen.hideAsync();
-  }, [loading]);
+    if (!loading || publicForm) void SplashScreen.hideAsync();
+  }, [loading, publicForm]);
+  if (publicForm)
+    return (
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="cadastro/[token]" />
+      </Stack>
+    );
   if (loading) return <Label>Carregando Tá Pago…</Label>;
   if (error)
     return (
@@ -32,6 +45,7 @@ function Navigation() {
         </Stack.Protected>
         <Stack.Protected guard={user?.role === "personal"}>
           <Stack.Screen name="alunos/index" />
+          <Stack.Screen name="alunos/link" />
           <Stack.Screen name="alunos/[id]" />
           <Stack.Screen name="programas" />
           <Stack.Screen name="modelos" />
@@ -39,6 +53,7 @@ function Navigation() {
         <Stack.Protected guard={user?.role === "student"}>
           <Stack.Screen name="acompanhamento/[id]" />
         </Stack.Protected>
+        <Stack.Screen name="cadastro/[token]" />
       </Stack>
     </PersonalShell>
   );

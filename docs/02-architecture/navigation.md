@@ -15,12 +15,14 @@
     "src/components/app-tabs.web.tsx",
     "src/app/_layout.tsx",
     "src/components/personal/navigation.tsx",
-    "server/app.ts"
+    "server/app.ts",
+    "src/app/alunos/link.tsx",
+    "src/app/cadastro/[token].tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -51,3 +53,7 @@ O layout raiz aplica tema, sessão e rotas protegidas. A autorização efetiva t
 | `/explore` | Autenticado | Redireciona ao painel. |
 
 AppTabs usa navegação compartilhada com tema claro/escuro e adaptação de largura. A saída web é SPA (`single`); Express entrega index.html para links diretos e atualização de páginas. Rotas de feed e desafios permanecem planejadas.
+
+## Cadastro por link
+
+`/alunos/link` exige personal; `/cadastro/[token]` é pública, com logo e formulário em etapas. A API continua autorizando cada consulta privada. Veja [fluxo de cadastro](../03-features/enrollment-links.md).

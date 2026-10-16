@@ -1,3 +1,8 @@
+import {
+  publicEnrollmentRoutes,
+  privateEnrollmentRoutes,
+  enrollmentOrigin,
+} from "./enrollment";
 import express from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -52,7 +57,7 @@ export function createApp(db: Db) {
   app.use("/api", (req, res, next) => {
     res.setHeader("Cache-Control", "no-store");
     const origin = req.get("Origin");
-    if (origin && !origins.includes(origin))
+    if (origin && ![...origins, enrollmentOrigin()].includes(origin))
       throw new HttpError(403, "Origem não autorizada");
     if (origin) {
       res.setHeader("Access-Control-Allow-Origin", origin);
@@ -158,12 +163,14 @@ export function createApp(db: Db) {
       throw new HttpError(401, "E-mail ou senha inválidos");
     await establish(req, res, user);
   });
+  app.use("/api/public/enrollment", publicEnrollmentRoutes(db));
   app.use("/api", async (req, res, next) => {
     const user = await sessionUser(req);
     if (!user) throw new HttpError(401, "Entre na sua conta para continuar");
     res.locals.user = publicUser(user);
     next();
   });
+  app.use("/api/enrollment", privateEnrollmentRoutes(db));
   app.post("/api/auth/logout", async (req, res) => {
     await db.session.deleteMany({ where: { id: sessionKey(tokenFrom(req)) } });
     res
@@ -190,6 +197,18 @@ export function createApp(db: Db) {
         invite.student.linkStatus === "ended"
       )
         throw new HttpError(400, "Convite inválido ou expirado");
+      const enrollment = await tx.enrollmentRequest.findUnique({
+        where: { studentId: invite.studentId },
+      });
+      if (
+        enrollment &&
+        (enrollment.status !== "active" ||
+          invite.student.email.toLowerCase() !== user.email.toLowerCase())
+      )
+        throw new HttpError(
+          403,
+          "Use a conta do titular indicado no cadastro e um convite do personal",
+        );
       if (invite.student.accountId && invite.student.accountId !== user.id)
         throw new HttpError(409, "Este cadastro já possui um vínculo");
       await tx.invitation.update({
@@ -247,13 +266,11 @@ export function createApp(db: Db) {
       where: { id: String(req.params.id) },
       include: studentInclude,
     });
-    res
-      .attachment(`tapago-${req.params.id}.json`)
-      .json({
-        formatVersion: 1,
-        exportedAt: new Date().toISOString(),
-        student: s,
-      });
+    res.attachment(`tapago-${req.params.id}.json`).json({
+      formatVersion: 1,
+      exportedAt: new Date().toISOString(),
+      student: s,
+    });
   });
   app.post("/api/me/students/:id/revoke", async (req, res) => {
     await db.$transaction(async (tx) => {
@@ -261,6 +278,18 @@ export function createApp(db: Db) {
         where: { id: String(req.params.id) },
         data: { linkStatus: "ended" },
       });
+      const registration = await tx.enrollmentRequest.findUnique({
+        where: { studentId: String(req.params.id) },
+      });
+      if (registration)
+        await tx.enrollmentRequest.update({
+          where: { id: registration.id },
+          data: {
+            status: "inactive",
+            healthPayload: null,
+            events: { create: { status: "inactive" } },
+          },
+        });
       await tx.invitation.deleteMany({
         where: { studentId: String(req.params.id) },
       });
@@ -326,13 +355,11 @@ export function createApp(db: Db) {
     ),
   );
   app.post("/api/programs", async (req, res) =>
-    res
-      .status(201)
-      .json(
-        await db.program.create({
-          data: { ...programSchema.parse(req.body), ownerId: identity(res).id },
-        }),
-      ),
+    res.status(201).json(
+      await db.program.create({
+        data: { ...programSchema.parse(req.body), ownerId: identity(res).id },
+      }),
+    ),
   );
   app.use("/api/programs/:id", async (req, res, next) => {
     if (
@@ -421,17 +448,15 @@ export function createApp(db: Db) {
   app.post("/api/students", async (req, res) => {
     const data = studentSchema.parse(req.body);
     await ownProgram(data.programId, identity(res).id);
-    res
-      .status(201)
-      .json(
-        await db.student.create({
-          data: {
-            ...data,
-            personalId: identity(res).id,
-            history: { create: { action: "Cadastro criado", detail: {} } },
-          },
-        }),
-      );
+    res.status(201).json(
+      await db.student.create({
+        data: {
+          ...data,
+          personalId: identity(res).id,
+          history: { create: { action: "Cadastro criado", detail: {} } },
+        },
+      }),
+    );
   });
   app.use("/api/students/:id", async (req, res, next) => {
     if (
@@ -489,13 +514,11 @@ export function createApp(db: Db) {
       where: { id: String(req.params.id) },
       include: studentInclude,
     });
-    res
-      .attachment(`tapago-${req.params.id}.json`)
-      .json({
-        formatVersion: 1,
-        exportedAt: new Date().toISOString(),
-        student: s,
-      });
+    res.attachment(`tapago-${req.params.id}.json`).json({
+      formatVersion: 1,
+      exportedAt: new Date().toISOString(),
+      student: s,
+    });
   });
   app.post("/api/students/:id/invite", async (req, res) => {
     const code = newToken();
@@ -521,6 +544,18 @@ export function createApp(db: Db) {
         where: { id: String(req.params.id) },
         data: { linkStatus: "ended" },
       });
+      const registration = await tx.enrollmentRequest.findUnique({
+        where: { studentId: String(req.params.id) },
+      });
+      if (registration)
+        await tx.enrollmentRequest.update({
+          where: { id: registration.id },
+          data: {
+            status: "inactive",
+            healthPayload: null,
+            events: { create: { status: "inactive" } },
+          },
+        });
       await tx.invitation.deleteMany({
         where: { studentId: String(req.params.id) },
       });
@@ -669,13 +704,11 @@ export function createApp(db: Db) {
       _next: express.NextFunction,
     ) => {
       if (error instanceof z.ZodError) {
-        res
-          .status(400)
-          .json({
-            error: error.issues
-              .map((i) => `${i.path.join(".")}: ${i.message}`)
-              .join("; "),
-          });
+        res.status(400).json({
+          error: error.issues
+            .map((i) => `${i.path.join(".")}: ${i.message}`)
+            .join("; "),
+        });
         return;
       }
       if (error instanceof HttpError) {

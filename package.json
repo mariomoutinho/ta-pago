@@ -9,6 +9,7 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.0.0",
     "expo": "~57.0.10",
+    "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.9",
     "expo-device": "~57.0.1",
     "expo-font": "~57.0.1",
@@ -92,7 +93,8 @@
     "personal:test": "vitest run",
     "personal:e2e": "playwright test",
     "personal:import": "tsx server/import-compasso.ts",
-    "personal:typecheck": "tsc --noEmit -p tsconfig.server.json"
+    "personal:typecheck": "tsc --noEmit -p tsconfig.server.json",
+    "personal:purge-enrollments": "tsx server/purge-enrollments.ts"
   },
   "private": true,
   "engines": {

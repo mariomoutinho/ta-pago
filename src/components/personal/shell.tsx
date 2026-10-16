@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import {
   Image,
   ScrollView,
@@ -96,10 +96,21 @@ export function PersonalShell({ children }: { children: ReactNode }) {
     </SafeAreaView>
   );
 }
-export function Page({ children }: { children: ReactNode }) {
+export function Page({
+  children,
+  resetKey,
+}: {
+  children: ReactNode;
+  resetKey?: string | number;
+}) {
+  const scrollRef = useRef<ScrollView>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [resetKey]);
   const { width } = useWindowDimensions();
   return (
     <ScrollView
+      ref={scrollRef}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
         padding: width < 600 ? 18 : 32,

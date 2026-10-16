@@ -21,6 +21,8 @@ test.beforeAll(async () => {
   );
   await seed(db);
   process.env.PERSONAL_APP_ORIGINS = "http://127.0.0.1:3197";
+  process.env.PERSONAL_ENROLLMENT_ORIGIN = "http://127.0.0.1:3197";
+  process.env.PERSONAL_ENROLLMENT_KEY = "cd".repeat(32);
   server = createApp(db).listen(3197, "127.0.0.1");
   base = "http://127.0.0.1:3197";
 });
@@ -78,4 +80,119 @@ test("cadastro, navegação, aluno persistente e layout móvel", async ({
     ),
   ).toBe(true);
   expect(errors).toEqual([]);
+});
+
+test("link local, formulário público em cinco etapas e aprovação", async ({
+  page,
+  browser,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.request.post(base + "/api/auth/register", {
+    headers: { "X-Requested-With": "TaPago" },
+    data: {
+      name: "Personal Cadastro",
+      email: "enrollment-browser@example.com",
+      password: "senha-ficticia-12345",
+      role: "personal",
+    },
+  });
+  await page.goto(base + "/alunos");
+  await page
+    .getByRole("button", { name: "Link de Cadastro", exact: true })
+    .click();
+  await page
+    .getByLabel("Contato público para privacidade (e-mail ou telefone)")
+    .fill("contato@example.com");
+  await page
+    .getByRole("button", { name: "Gerar meu link", exact: true })
+    .click();
+  await expect(page.getByLabel("URL de cadastro")).toBeVisible();
+  const link = await page.getByLabel("URL de cadastro").inputValue();
+  expect(link).toMatch(/^http:\/\/127.0.0.1:3197\/cadastro\/[a-f0-9]{64}$/);
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.getByRole("button", { name: "Copiar link", exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(link);
+  await page.screenshot({
+    path: "test-results/enrollment-link.png",
+    fullPage: true,
+  });
+  const publicContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+  });
+  const form = await publicContext.newPage();
+  form.on("pageerror", (e) => errors.push(e.message));
+  await form.goto(link);
+  await expect(form.getByText("Boas-vindas!", { exact: false })).toBeVisible();
+  await form
+    .getByLabel("Nome completo *", { exact: true })
+    .fill("Aluno Público");
+  await form.getByLabel("E-mail *", { exact: true }).fill("public@example.com");
+  await form.getByLabel("WhatsApp *", { exact: true }).fill("11987654321");
+  await form.getByRole("button", { name: "Avançar", exact: true }).click();
+  await form
+    .getByRole("checkbox", { name: "Hipertrofia", exact: true })
+    .click();
+  await form.getByRole("button", { name: "Avançar", exact: true }).click();
+  await form
+    .getByLabel("Disponibilidade semanal *", { exact: true })
+    .fill("Segunda e quarta");
+  await form.getByRole("button", { name: "Avançar", exact: true }).click();
+  await form
+    .getByLabel("Adaptações necessárias", { exact: true })
+    .fill("Adaptar movimento de teste");
+  const health = form.getByRole("checkbox", {
+    name: "Autorizo o tratamento",
+    exact: false,
+  });
+  await expect(health).not.toBeChecked();
+  await health.click();
+  await form.getByRole("button", { name: "Avançar", exact: true }).click();
+  const consent = form.getByRole("checkbox", {
+    name: "Li a política",
+    exact: false,
+  });
+  await expect(consent).not.toBeChecked();
+  await consent.click();
+  await form.screenshot({
+    path: "test-results/enrollment-mobile.png",
+    fullPage: true,
+  });
+  await db.enrollmentChallenge.updateMany({
+    data: { createdAt: new Date(Date.now() - 3000) },
+  });
+  await form
+    .getByRole("button", { name: "Concluir cadastro", exact: true })
+    .click();
+  await expect(
+    form.getByText("Cadastro enviado!", { exact: true }),
+  ).toBeVisible();
+  expect(
+    await form.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.reload();
+  await page
+    .getByRole("radio", { name: "Seção: Contatos", exact: true })
+    .click();
+  await expect(page.getByText("Aluno Público", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Pendente", { exact: true }).last(),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Ver ficha", exact: true }).click();
+  await expect(
+    page.getByText("Adaptar movimento de teste", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page.getByRole("button", { name: "Aprovar", exact: true }).click();
+  await expect(page.getByText("Ativo", { exact: true }).last()).toBeVisible();
+  await page
+    .getByRole("button", { name: "Abrir acompanhamento", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Aluno Público" }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+  await publicContext.close();
 });

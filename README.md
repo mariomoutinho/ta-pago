@@ -20,12 +20,14 @@
     "src/app/index.tsx",
     "server/app.ts",
     "prisma/schema.prisma",
-    "src/components/personal/profile.tsx"
+    "src/components/personal/profile.tsx",
+    "server/enrollment.ts",
+    "src/app/alunos/link.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -237,3 +239,7 @@ npm run knowledge:api:ask -- "Como Collapsible alterna o conteúdo?"
 ```
 
 Os comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.
+
+## Link de Cadastro de Alunos
+
+Em Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).

@@ -17,12 +17,13 @@
     "scripts/rag/config.mjs",
     "src/components/external-link.tsx",
     "server/db.ts",
-    "src/features/personal/api.ts"
+    "src/features/personal/api.ts",
+    "server/enrollment-crypto.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -62,3 +63,7 @@ São variáveis de ferramentas Node, fora de `src/`, sem prefixo `EXPO_PUBLIC_`.
 ## Busca local com Codex
 
 Os comandos padrão `knowledge:context`, `knowledge:search`, `knowledge:ask`, `knowledge:health` e `knowledge:ingest` não leem `.env` nem exigem configuração de providers ou banco. As variáveis RAG e credenciais descritas acima pertencem ao modo opcional de API/PostgreSQL. Os limites da busca local são definidos por argumentos da CLI; consulte `knowledge/RAG.md`.
+
+## Links de cadastro
+
+PERSONAL_ENROLLMENT_ORIGIN define a origem local; PERSONAL_ENROLLMENT_RETENTION_DAYS define retenção; PERSONAL_ENROLLMENT_KEY e PERSONAL_ENROLLMENT_KEY_FILE configuram a chave de armazenamento. Consulte [operação do cadastro](../03-features/enrollment-links.md). Nunca indexe ou versione a chave.

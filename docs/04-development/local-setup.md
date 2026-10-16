@@ -15,12 +15,13 @@
     "scripts/reset-project.js",
     "server/index.ts",
     "server/import-compasso.ts",
-    ".nvmrc"
+    ".nvmrc",
+    "server/enrollment.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -63,3 +64,7 @@ Para dispositivos, configure `EXPO_PUBLIC_PERSONAL_API_URL` com uma URL acessív
 ## Validação
 
 Execute `npm run typecheck`, `npm run personal:typecheck`, `npm run personal:test`, `npm run personal:build` e `npm run personal:e2e`. O Playwright requer Chromium instalado (`npx playwright install chromium`). Execute também as validações documentais e do catálogo previstas em AGENTS.md. ESLint ainda não está configurado. Não execute `reset-project` no fluxo normal.
+
+## Cadastro por link
+
+Após atualizar, execute personal:setup e personal:build. O link local usa localhost:3003. Instruções para navegador, Expo Go, IP de rede e chave em [Link de Cadastro de Alunos](../03-features/enrollment-links.md).

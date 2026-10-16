@@ -53,52 +53,52 @@
   },
   {
     "id": "q006",
-    "question": "Como AppTabs define as abas Home e Explore na web?",
+    "question": "Como PersonalNavigation define as abas do personal e do aluno?",
     "expectedSources": [
-      "src/components/app-tabs.web.tsx"
+      "src/components/personal/navigation.tsx"
     ],
     "expectedSymbols": [
-      "AppTabs"
+      "PersonalNavigation"
     ]
   },
   {
     "id": "q007",
-    "question": "Quais ícones são usados nas abas nativas de AppTabs?",
+    "question": "Como shareEnrollmentLink compartilha o cadastro no Android, iOS e web?",
     "expectedSources": [
-      "src/components/app-tabs.tsx"
+      "src/features/personal/enrollment-sharing.ts"
     ],
     "expectedSymbols": [
-      "AppTabs"
+      "shareEnrollmentLink"
     ]
   },
   {
     "id": "q008",
-    "question": "Como TabLayout aplica ThemeProvider às telas?",
+    "question": "Como RootLayout aplica ThemeProvider e SessionProvider às telas?",
     "expectedSources": [
       "src/app/_layout.tsx"
     ],
     "expectedSymbols": [
-      "TabLayout"
+      "RootLayout"
     ]
   },
   {
     "id": "q009",
-    "question": "Onde HomeScreen renderiza o componente HintRow?",
+    "question": "Como Home seleciona StudentHome ou PersonalHome pelo papel do usuário?",
     "expectedSources": [
       "src/app/index.tsx"
     ],
     "expectedSymbols": [
-      "HomeScreen"
+      "Home"
     ]
   },
   {
     "id": "q010",
-    "question": "Qual tela TabTwoScreen explica o template Expo?",
+    "question": "Como EnrollmentForm organiza o formulário público de cadastro em etapas?",
     "expectedSources": [
-      "src/app/explore.tsx"
+      "src/app/cadastro/[token].tsx"
     ],
     "expectedSymbols": [
-      "TabTwoScreen"
+      "EnrollmentForm"
     ]
   },
   {
@@ -153,12 +153,12 @@
   },
   {
     "id": "q016",
-    "question": "Como TabButton destaca a aba selecionada?",
+    "question": "Como PersonalNavigation destaca a rota selecionada?",
     "expectedSources": [
-      "src/components/app-tabs.web.tsx"
+      "src/components/personal/navigation.tsx"
     ],
     "expectedSymbols": [
-      "TabButton"
+      "PersonalNavigation"
     ]
   },
   {

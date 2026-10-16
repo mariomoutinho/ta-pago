@@ -16,7 +16,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "architecture",
   "audience": [
     "developer",
@@ -60,3 +60,7 @@ Preservar a prescrição usada em uma execução; não duplicar eventos de ponto
 ## Decisões pendentes
 
 Exclusão e retenção, fuso canônico, precisão de distância, política de alterações retroativas, múltiplos professores e armazenamento de mídia. Rankings podem ser projeções de eventos; implementação depende de ADR.
+
+## Solicitações de cadastro
+
+EnrollmentLink, EnrollmentChallenge, EnrollmentRequest e EnrollmentEvent compõem a recepção de fichas, sem duplicar User. EnrollmentRequest usa status pending/active/rejected/inactive e referência única opcional a Student. Os estados preexistentes de acesso em Student.linkStatus permanecem separados do status da solicitação. Veja [cadastro por link](../03-features/enrollment-links.md).
