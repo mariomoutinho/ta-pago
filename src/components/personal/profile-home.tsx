@@ -12,8 +12,8 @@ export function ProfileHeader({ student, studentView, tab, onNavigate, onBack }:
 }) {
   const t = useTheme();
   return <View style={{ gap: 14, marginBottom: 12 }}>
-    <Pressable accessibilityRole="button" accessibilityLabel="Voltar aos alunos" onPress={onBack} style={{ minHeight: 44, justifyContent: "center", alignSelf: "flex-start" }}>
-      <Label size={13}>‹ {studentView ? "Meus acompanhamentos" : "Todos os alunos"}</Label>
+    <Pressable accessibilityRole="button" accessibilityLabel={tab === "Treinos" ? "Início do aluno" : "Voltar aos alunos"} onPress={tab === "Treinos" ? () => onNavigate("Início") : onBack} style={{ minHeight: 44, justifyContent: "center", alignSelf: "flex-start" }}>
+      <Label size={13}>‹ {tab === "Treinos" ? "Voltar" : studentView ? "Meus acompanhamentos" : "Todos os alunos"}</Label>
     </Pressable>
     <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
       <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: t.accentSoft, alignItems: "center", justifyContent: "center" }}>
@@ -24,15 +24,15 @@ export function ProfileHeader({ student, studentView, tab, onNavigate, onBack }:
         <Label size={12} muted>{student.linkStatus === "ended" ? "Vínculo encerrado" : student.accountId ? "Conta vinculada" : "Acompanhamento do personal"}</Label>
       </View>
     </View>
-    <View style={{ flexDirection: "row", gap: 6 }}>
+    {tab !== "Treinos" && <View style={{ flexDirection: "row", gap: 6 }}>
       {["Início", "Opções"].map(value => <Pressable key={value} accessibilityRole="tab" accessibilityLabel={value} aria-selected={tab === value} onPress={() => onNavigate(value)}
         style={{ flex: 1, minHeight: 44, alignItems: "center", justifyContent: "center", borderRadius: 6, backgroundColor: tab === value ? t.accentSoft : t.backgroundElement, borderBottomWidth: 3, borderBottomColor: tab === value ? t.accent : "transparent" }}>
         <Label size={13} bold>{value}</Label>
       </Pressable>)}
-    </View>
-    {!["Início", "Opções"].includes(tab) && <View style={{ gap: 8 }}>
+    </View>}
+    {!["Início", "Opções", "Treinos"].includes(tab) && <View style={{ gap: 8 }}>
       <Button variant="secondary" onPress={() => onNavigate("Início")}>‹ Início do aluno</Button>
-      <Label bold size={18}>{tab}</Label>
+      {tab !== "Treinos" && <Label bold size={18}>{tab}</Label>}
     </View>}
   </View>;
 }

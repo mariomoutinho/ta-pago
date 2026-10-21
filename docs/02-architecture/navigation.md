@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/plans.tsx",
     "src/components/personal/profile-home.tsx",
     "src/components/personal/profile.tsx",
     "src/components/personal/student-list-row.tsx",
@@ -26,7 +27,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -78,3 +79,7 @@ O cabeçalho fica compacto no celular e a navegação usa rolagem horizontal em 
 O perfil abre em Início, com identificação compacta, atalhos para treinos, progresso e avaliações, frequência da semana (segunda a domingo), engajamento e última anotação. A frequência utiliza os registros de treinamento; dias sem registro ficam vazios. A média considera registros realizados nos últimos 28 dias, divididos por quatro semanas, sem atribuir risco automaticamente.
 
 Opções reúne edição do cadastro e todas as seções anteriores do prontuário. Dados do aluno e vínculo mantém o resumo detalhado, programa, exportação e controles de privacidade. Adicionar anotação usa o formulário existente e persiste no histórico; a visão do aluno continua somente leitura para esses registros. As cores acompanham o tema do Tá Pago.
+
+## Rotinas de treino do aluno
+
+A área Treinos mantém o cabeçalho compacto do aluno e volta diretamente ao início do perfil. Rotinas de treino e Arquivadas dividem a listagem; filtros Todas, Atuais, Futuras, Encerradas e Rascunhos usam status e vigência reais. Cada cartão mostra nome, datas, objetivo, dificuldade e quantidade de treinos. Abrir a rotina revela a prescrição existente; o menu de opções permite ver, editar ou arquivar. A criação reutiliza o formulário de planos. A conta do aluno consulta apenas os planos publicados autorizados pela API, sem ações de edição. Aeróbico separado e lixeira de rotinas não são funcionalidades implementadas.

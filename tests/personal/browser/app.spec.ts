@@ -230,7 +230,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     .getByRole("button", { name: "Treinos", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "+ Criar treino", exact: true })
+    .getByRole("button", { name: "Criar rotina", exact: true })
     .click();
   await page
     .getByLabel("Nome do plano *", { exact: true })
@@ -307,6 +307,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     route.fulfill({ contentType: "text/html", body: "Player de teste" }),
   );
   await pupil.goto(base + "/treinos");
+  await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
   await expect(
     pupil.getByText("Supino de teste", { exact: true }),
@@ -339,6 +340,16 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     path: "test-results/workouts-desktop.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "Opções da rotina Adaptação funcional", exact: true }).click();
+  await page.getByRole("button", { name: "Arquivar plano", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  await expect(page.getByText("Plano arquivado.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true })).toHaveCount(0);
+  await page.getByRole("tab", { name: "Arquivadas", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/routines-mobile.png", fullPage: true });
+  await page.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Treino A", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
   await context.close();
 });
