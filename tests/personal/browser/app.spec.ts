@@ -196,3 +196,138 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
   expect(errors).toEqual([]);
   await publicContext.close();
 });
+
+test("prescrição completa no mobile e leitura do aluno em conta própria", async ({
+  page,
+  browser,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", {
+    headers,
+    data: {
+      name: "Personal Treinos",
+      email: "workout-browser@example.com",
+      password: "senha-ficticia-12345",
+      role: "personal",
+    },
+  });
+  const created = await page.request.post(base + "/api/students", {
+    headers,
+    data: {
+      name: "Aluno Treinos",
+      mainGoal: "Força",
+      startDate: "2026-10-01",
+    },
+  });
+  const studentId = (await created.json()).id;
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + `/alunos/${studentId}`);
+  await page
+    .getByRole("radio", { name: "Prontuário: Treinos", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "+ Criar treino", exact: true })
+    .click();
+  await page
+    .getByLabel("Nome do plano *", { exact: true })
+    .fill("Adaptação funcional");
+  await page
+    .getByRole("button", { name: "+ Adicionar treino", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "+ Adicionar exercício", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "+ Criar exercício", exact: true })
+    .click();
+  await page
+    .getByLabel("Nome do exercício *", { exact: true })
+    .fill("Supino de teste");
+  await page.getByLabel("Grupo muscular *", { exact: true }).fill("Peitoral");
+  await page.getByLabel("Categoria *", { exact: true }).fill("Musculação");
+  await page
+    .getByRole("button", { name: "Salvar exercício", exact: true })
+    .click();
+  await page.getByLabel("Séries", { exact: true }).fill("4");
+  await page
+    .getByLabel("Repetições (ex.: 10 ou 8-12)", { exact: true })
+    .fill("10");
+  await page.getByLabel("Carga (kg)", { exact: true }).fill("60");
+  await page.getByLabel("Descanso (segundos)", { exact: true }).fill("90");
+  await page
+    .getByLabel("Observações da prescrição", { exact: true })
+    .fill("Controle o movimento");
+  await page
+    .getByRole("button", { name: "Confirmar prescrição", exact: true })
+    .click();
+  await page
+    .getByRole("radio", { name: "Status do plano: ativo", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
+  await expect(
+    page.getByText("Plano salvo com sucesso.", { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await page
+    .getByRole("radio", { name: "Prontuário: Treinos", exact: true })
+    .click();
+  await expect(
+    page.getByText("Adaptação funcional", { exact: true }),
+  ).toBeVisible();
+  const invite = await page.request.post(
+    base + `/api/students/${studentId}/invite`,
+    { headers },
+  );
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+  });
+  const pupil = await context.newPage();
+  pupil.on("pageerror", (e) => errors.push(e.message));
+  await pupil.request.post(base + "/api/auth/register", {
+    headers,
+    data: {
+      name: "Aluno Treinos",
+      email: "workout-pupil@example.com",
+      password: "senha-ficticia-12345",
+      role: "student",
+    },
+  });
+  await pupil.request.post(base + "/api/me/claim", {
+    headers,
+    data: { code: (await invite.json()).code },
+  });
+  await pupil.goto(base + "/treinos");
+  await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
+  await expect(
+    pupil.getByText("Supino de teste", { exact: true }),
+  ).toBeVisible();
+  await expect(pupil.getByText("4 séries", { exact: true })).toBeVisible();
+  await expect(pupil.getByText("60 kg", { exact: true })).toBeVisible();
+  await expect(
+    pupil.getByText("Descanso: 90 s", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    pupil.getByText("Controle o movimento", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    pupil.getByRole("button", { name: "Editar plano", exact: true }),
+  ).toHaveCount(0);
+  expect(
+    await pupil.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await pupil.screenshot({
+    path: "test-results/workouts-mobile.png",
+    fullPage: true,
+  });
+  await pupil.setViewportSize({ width: 1280, height: 900 });
+  await pupil.screenshot({
+    path: "test-results/workouts-desktop.png",
+    fullPage: true,
+  });
+  expect(errors).toEqual([]);
+  await context.close();
+});

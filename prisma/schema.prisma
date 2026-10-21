@@ -10,6 +10,7 @@ model User {
   name String
   email String @unique
   role String @default("personal")
+  exercises Exercise[]
   students Student[] @relation("PersonalStudents")
   profiles Student[] @relation("StudentAccount")
   programs Program[]
@@ -30,6 +31,7 @@ model Student {
   accountId String?
   account User? @relation("StudentAccount",fields:[accountId],references:[id],onDelete:SetNull)
   linkStatus String @default("unlinked")
+  workoutPlans WorkoutPlan[]
   invitations Invitation[]
   enrollmentRequest EnrollmentRequest?
   id String @id @default(cuid())
@@ -213,4 +215,77 @@ model EnrollmentEvent {
   request EnrollmentRequest @relation(fields:[requestId],references:[id],onDelete:Cascade)
   status String
   createdAt DateTime @default(now())
+}
+
+// A atribuição usa o vínculo Student existente; não cria outro cadastro de aluno.
+model WorkoutPlan {
+  id String @id @default(cuid())
+  studentId String
+  student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+  title String
+  objective String
+  difficulty String
+  startsAt String
+  endsAt String?
+  instructions String @default("")
+  status String @default("rascunho")
+  publishedAt DateTime?
+  revision Int @default(1)
+  workouts Workout[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([studentId,status])
+}
+model Workout {
+  id String @id @default(cuid())
+  planId String
+  plan WorkoutPlan @relation(fields:[planId], references:[id], onDelete:Cascade)
+  name String
+  subtitle String @default("")
+  instructions String @default("")
+  orderIndex Int
+  deletedAt DateTime?
+  exercises WorkoutExercise[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([planId,orderIndex])
+}
+model Exercise {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields:[ownerId], references:[id], onDelete:Restrict)
+  name String
+  muscleGroup String
+  category String
+  equipment String @default("")
+  description String @default("")
+  imageUrl String @default("")
+  videoUrl String @default("")
+  notes String @default("")
+  status String @default("ativo")
+  prescriptions WorkoutExercise[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ownerId,status])
+}
+model WorkoutExercise {
+  id String @id @default(cuid())
+  workoutId String
+  workout Workout @relation(fields:[workoutId], references:[id], onDelete:Cascade)
+  exerciseId String
+  exercise Exercise @relation(fields:[exerciseId], references:[id], onDelete:Restrict)
+  orderIndex Int
+  sets Int?
+  repetitions String @default("")
+  load Float?
+  durationSeconds Int?
+  restSeconds Int?
+  rir Float?
+  rpe Float?
+  cadence String @default("")
+  notes String @default("")
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([workoutId,orderIndex])
 }

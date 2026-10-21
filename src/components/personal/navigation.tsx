@@ -12,9 +12,13 @@ export default function PersonalNavigation() {
           ["/", "Visão geral"],
           ["/alunos", "Alunos"],
           ["/programas", "Programas"],
+          ["/exercicios", "Exercícios"],
           ["/modelos", "Avaliações"],
         ]
-      : [["/", "Meu acompanhamento"]];
+      : [
+          ["/", "Meu acompanhamento"],
+          ["/treinos", "Treinos"],
+        ];
   return (
     <View style={styles.nav}>
       {items.map(([href, label]) => {
@@ -46,7 +50,13 @@ export default function PersonalNavigation() {
   );
 }
 const styles = StyleSheet.create({
-  nav: { flexDirection: "row", flexWrap: "wrap", gap: 8, maxWidth: "100%", flexShrink: 1 },
+  nav: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    maxWidth: "100%",
+    flexShrink: 1,
+  },
   item: {
     paddingHorizontal: 16,
     paddingVertical: 12,

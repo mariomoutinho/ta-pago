@@ -1,3 +1,4 @@
+import { WorkoutPlans } from "@/components/workouts/plans";
 import { useState } from "react";
 import { View, ScrollView } from "react-native";
 import { router, useLocalSearchParams, type Href } from "expo-router";
@@ -44,6 +45,7 @@ const tabs = [
   "Visão geral",
   "Avaliações",
   "Evolução física",
+  "Treinos",
   "Treinamentos",
   "Evolução técnica",
   "Adaptação social",
@@ -505,6 +507,9 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
             {list("physical")}
           </Card>
         </>
+      )}
+      {tab === "Treinos" && (
+        <WorkoutPlans studentId={id} studentView={studentView} />
       )}
       {tab === "Treinamentos" && (
         <Card>

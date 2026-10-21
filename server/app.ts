@@ -1,3 +1,4 @@
+import { planInclude, workoutRoutes } from "./workouts";
 import {
   publicEnrollmentRoutes,
   privateEnrollmentRoutes,
@@ -186,6 +187,7 @@ export function createApp(db: Db) {
     next();
   });
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
+  app.use("/api", workoutRoutes(db));
   app.post("/api/auth/logout", async (req, res) => {
     await db.session.deleteMany({ where: { id: sessionKey(tokenFrom(req)) } });
     res
@@ -279,7 +281,16 @@ export function createApp(db: Db) {
   app.get("/api/me/students/:id/export", async (req, res) => {
     const s = await db.student.findUnique({
       where: { id: String(req.params.id) },
-      include: studentInclude,
+      include: {
+        ...studentInclude,
+        workoutPlans: {
+          where: {
+            publishedAt: { not: null },
+            status: { in: ["ativo", "arquivado"] },
+          },
+          include: planInclude,
+        },
+      },
     });
     res.attachment(`tapago-${req.params.id}.json`).json({
       formatVersion: 1,
@@ -527,7 +538,7 @@ export function createApp(db: Db) {
   app.get("/api/students/:id/export", async (req, res) => {
     const s = await db.student.findUnique({
       where: { id: String(req.params.id) },
-      include: studentInclude,
+      include: { ...studentInclude, workoutPlans: { include: planInclude } },
     });
     res.attachment(`tapago-${req.params.id}.json`).json({
       formatVersion: 1,

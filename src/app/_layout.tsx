@@ -48,10 +48,12 @@ function Navigation() {
           <Stack.Screen name="alunos/link" />
           <Stack.Screen name="alunos/[id]" />
           <Stack.Screen name="programas" />
+          <Stack.Screen name="exercicios" />
           <Stack.Screen name="modelos" />
         </Stack.Protected>
         <Stack.Protected guard={user?.role === "student"}>
           <Stack.Screen name="acompanhamento/[id]" />
+          <Stack.Screen name="treinos" />
         </Stack.Protected>
         <Stack.Screen name="cadastro/[token]" />
       </Stack>

@@ -6,6 +6,8 @@ import {
   TextInput,
   StyleSheet,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   useWindowDimensions,
   type TextInputProps,
@@ -274,7 +276,10 @@ export function Dialog({
   const { height } = useWindowDimensions();
   return (
     <Modal transparent visible animationType="fade" onRequestClose={onClose}>
-      <View style={s.overlay}>
+      <KeyboardAvoidingView
+        style={s.overlay}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
         <View
           accessibilityViewIsModal
           style={[
@@ -307,7 +312,7 @@ export function Dialog({
             {children}
           </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

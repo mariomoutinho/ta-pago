@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-10-20",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -29,7 +29,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -102,7 +102,7 @@ Incentivar constância, interação entre amigos e acompanhamento individual. Co
 - Sistema de pontos e rankings: regras transparentes de participação e comparação por período.
 - Desafios: objetivos coletivos e acompanhamento do progresso.
 - Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.
-- Treinos personalizados: exercícios, séries, repetições, carga, descanso e vídeos ilustrativos.
+- Evolução futura dos treinos: registro de execução associado à prescrição.
 - Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.
 - Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.
 
@@ -249,3 +249,7 @@ Em Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerenc
 ## Publicação no Coletivo Pindorama
 
 Preparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.
+
+## Prescrição de treinos
+
+Personal → Alunos → perfil → Treinos permite criar planos e sessões com exercícios da biblioteca privada. Alunos leem planos publicados em Treinos. Consulte [fluxo, migration, autorização e teste manual](docs/03-features/workouts.md). A biblioteca começa vazia e é preenchida manualmente.
