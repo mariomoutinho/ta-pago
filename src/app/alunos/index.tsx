@@ -1,24 +1,31 @@
+import { useTheme } from "@/hooks/use-theme";
+import { Fonts } from "@/constants/theme";
 import { useState, useEffect } from "react";
-import { View } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { router, type Href } from "expo-router";
 import { useResource } from "@/features/personal/use-resource";
 import type { Student, Program } from "@/features/personal/types";
 import { Page } from "@/components/personal/shell";
 import {
-  Badge,
   Button,
   Card,
-  Choices,
   Dialog,
   Empty,
   Field,
-  Heading,
   Label,
   Notice,
   s,
 } from "@/components/personal/ui";
 import { StudentForm } from "@/components/personal/forms";
+import { StudentListRow } from "@/components/personal/student-list-row";
+const normalize = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR")
+    .trim();
 export default function Students() {
+  const t = useTheme();
   const requests = useResource<
     import("../../../shared/enrollment").EnrollmentSummary[]
   >("/enrollment/requests");
@@ -26,134 +33,185 @@ export default function Students() {
     const timer = setInterval(() => void requests.reload(), 15000);
     return () => clearInterval(timer);
   }, [requests.reload]);
-  const { data, error, loading } = useResource<Student[]>("/students");
-  const { data: programs } = useResource<Program[]>("/programs");
+  const { data, error, loading, reload } = useResource<Student[]>("/students");
+  const programs = useResource<Program[]>("/programs");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [create, setCreate] = useState(false);
-  const students = (data ?? []).filter(
-    (x) =>
-      x.name
-        .toLocaleLowerCase("pt-BR")
-        .includes(search.toLocaleLowerCase("pt-BR")) &&
-      (!status || x.status === status),
-  );
+  const query = normalize(search);
+  const phoneQuery = search.replace(/\D/g, "");
+  const students = (data ?? [])
+    .filter((x) => {
+      const matches =
+        normalize(x.name).includes(query) ||
+        normalize(x.email).includes(query) ||
+        (!!phoneQuery &&
+          /^[\d\s()+.-]+$/.test(search) &&
+          x.phone.replace(/\D/g, "").includes(phoneQuery));
+      return matches && (!status || x.status === status);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  const pending = requests.data?.filter((x) => x.status === "pending").length;
+  const count = (value: string) =>
+    !data || error
+      ? "—"
+      : data.filter((x) => !value || x.status === value).length;
   return (
     <Page>
-      <Heading
-        title="Meus alunos"
-        subtitle="Cada pessoa tem seu ritmo. Acompanhe toda a trajetória."
-        action={
-          <View style={s.row}>
+      <View style={{ width: "100%", maxWidth: 900, alignSelf: "center" }}>
+        <View
+          style={[s.row, { justifyContent: "space-between", marginBottom: 16 }]}
+        >
+          <Text
+            accessibilityRole="header"
+            style={{
+              fontFamily: Fonts.sans,
+              fontSize: 24,
+              fontWeight: "700",
+              color: t.text,
+            }}
+          >
+            Meus alunos
+          </Text>
+          <Button variant="secondary" onPress={() => router.push("/")}>
+            ‹ Início
+          </Button>
+        </View>
+        <Card style={{ padding: 16 }}>
+          <Field
+            label="Buscar aluno"
+            placeholder="Nome, e-mail ou telefone"
+            value={search}
+            onChangeText={setSearch}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <View style={{ flexDirection: "row", gap: 6, marginBottom: 16 }}>
+            {[
+              { value: "", label: `Todos: ${count("")}` },
+              { value: "ativo", label: `Ativos: ${count("ativo")}` },
+              { value: "pausado", label: `Pausados: ${count("pausado")}` },
+              { value: "inativo", label: `Inativos: ${count("inativo")}` },
+            ].map((option) => (
+              <Pressable
+                key={option.value}
+                accessibilityRole="radio"
+                accessibilityLabel={`Status: ${option.label}`}
+                accessibilityState={{ checked: status === option.value }}
+                onPress={() => setStatus(option.value)}
+                style={{
+                  flex: 1,
+                  minHeight: 44,
+                  justifyContent: "center",
+                  padding: 4,
+                  borderRadius: 22,
+                  backgroundColor:
+                    status === option.value
+                      ? t.accentSoft
+                      : t.backgroundElement,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: Fonts.sans,
+                    textAlign: "center",
+                    fontSize: 11,
+                    color: status === option.value ? t.accent : t.textSecondary,
+                  }}
+                >
+                  {option.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <View style={[s.row, { justifyContent: "center", marginBottom: 16 }]}>
+            <Button onPress={() => setCreate(true)}>+ Adicionar aluno</Button>
             <Button
               variant="secondary"
               onPress={() => router.push("/alunos/link" as Href)}
             >
               Link de Cadastro
             </Button>
-            <Button onPress={() => setCreate(true)}>Novo aluno</Button>
           </View>
-        }
-      />
-      <Notice error>{error || requests.error}</Notice>
-      <Card>
-        <View style={s.row}>
-          <Label>
-            Ativos: {(data ?? []).filter((x) => x.status === "ativo").length}
-          </Label>
-          <Label>
-            Pendentes:{" "}
-            {(requests.data ?? []).filter((x) => x.status === "pending").length}
-          </Label>
-          <Label>
-            Recebidos nos últimos 7 dias:{" "}
-            {
-              (requests.data ?? []).filter(
-                (x) => Date.now() - Date.parse(x.createdAt) < 7 * 86400000,
-              ).length
-            }
-          </Label>
-        </View>
-        <Button
-          variant="secondary"
-          onPress={() => router.push("/alunos/link" as Href)}
-        >
-          Ver cadastros recebidos
-        </Button>
-      </Card>
-      <Field
-        label="Buscar aluno"
-        placeholder="Nome do aluno"
-        value={search}
-        onChangeText={setSearch}
-      />
-      <Choices
-        label="Status"
-        value={status}
-        onChange={setStatus}
-        options={[
-          { value: "", label: "Todos" },
-          ...["ativo", "pausado", "inativo"].map((value) => ({
-            value,
-            label: value,
-          })),
-        ]}
-      />
-      {loading ? (
-        <Notice>Carregando alunos…</Notice>
-      ) : students.length ? (
-        <View style={s.grid}>
-          {students.map((x) => (
-            <Card key={x.id} style={s.column}>
-              <View style={[s.row, { justifyContent: "space-between" }]}>
-                <Label size={20} bold>
-                  {x.name}
+          <Notice error>{error}</Notice>
+          {error && (
+            <Button variant="secondary" onPress={() => void reload()}>
+              Tentar novamente
+            </Button>
+          )}
+          {loading ? (
+            <Notice>Carregando alunos…</Notice>
+          ) : (
+            !error &&
+            (students.length ? (
+              <>
+                <Label muted size={11}>
+                  {students.length}{" "}
+                  {students.length === 1
+                    ? "aluno encontrado"
+                    : "alunos encontrados"}
                 </Label>
-                <Badge>{x.status}</Badge>
-              </View>
-              <View style={{ marginVertical: 14, gap: 8 }}>
-                <Label muted>{x.mainGoal}</Label>
-                <Label size={12}>
-                  {x.weeklyFrequency}× por semana ·{" "}
-                  {x.program?.name ?? "Sem programa"}
-                </Label>
-                <Label size={11} muted>
-                  {x.accountId
-                    ? "Conta de aluno vinculada"
-                    : "Acompanhamento local"}
-                </Label>
-              </View>
-              <Button
-                variant="secondary"
-                onPress={() => router.push(`/alunos/${x.id}` as Href)}
-              >
-                Ver acompanhamento →
-              </Button>
-            </Card>
-          ))}
-        </View>
-      ) : (
-        <Card>
-          <Empty
-            title="Nenhum aluno encontrado"
-            description="Cadastre um aluno ou ajuste os filtros de busca."
-            action={
-              <Button onPress={() => setCreate(true)}>Cadastrar aluno</Button>
-            }
-          />
+                {students.map((student) => (
+                  <StudentListRow key={student.id} student={student} />
+                ))}
+              </>
+            ) : (
+              <Empty
+                title="Nenhum aluno encontrado"
+                description={
+                  data?.length
+                    ? "Tente outro nome, e-mail, telefone ou filtro."
+                    : "Adicione seu primeiro aluno ou compartilhe o link de cadastro."
+                }
+              />
+            ))
+          )}
         </Card>
-      )}
-      {create && (
-        <Dialog title="Cadastrar aluno" onClose={() => setCreate(false)}>
-          <StudentForm
-            programs={programs ?? []}
-            onSaved={(x) => {
-              setCreate(false);
-              router.push(`/alunos/${x.id}` as Href);
-            }}
-          />
-        </Dialog>
-      )}
+        <Notice error>{requests.error}</Notice>
+        <Card style={{ padding: 16 }}>
+          <View style={{ gap: 12 }}>
+            <Label bold>Cadastros recebidos</Label>
+            <Label muted>
+              Pendentes:{" "}
+              {requests.error || pending === undefined ? "—" : pending} ·
+              Últimos 7 dias:{" "}
+              {requests.error || !requests.data
+                ? "—"
+                : requests.data.filter(
+                    (x) => Date.now() - Date.parse(x.createdAt) < 7 * 86400000,
+                  ).length}
+            </Label>
+            <Button
+              variant="secondary"
+              onPress={() => router.push("/alunos/link" as Href)}
+            >
+              Ver cadastros recebidos
+            </Button>
+          </View>
+        </Card>
+        {create && (
+          <Dialog title="Cadastrar aluno" onClose={() => setCreate(false)}>
+            {programs.error ? (
+              <>
+                <Notice error>{programs.error}</Notice>
+                <Button onPress={() => void programs.reload()}>
+                  Tentar novamente
+                </Button>
+              </>
+            ) : !programs.data ? (
+              <Notice>Carregando formulário…</Notice>
+            ) : (
+              <StudentForm
+                programs={programs.data}
+                onSaved={(x) => {
+                  setCreate(false);
+                  router.push(`/alunos/${x.id}` as Href);
+                }}
+              />
+            )}
+          </Dialog>
+        )}
+      </View>
     </Page>
   );
 }

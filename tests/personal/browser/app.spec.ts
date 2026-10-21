@@ -49,7 +49,9 @@ test("cadastro, navegação, aluno persistente e layout móvel", async ({
     page.getByText("Personal Teste", { exact: true }).first(),
   ).toBeVisible();
   await page.goto(base + "/alunos");
-  await page.getByRole("button", { name: "Novo aluno", exact: true }).click();
+  await page
+    .getByRole("button", { name: "+ Adicionar aluno", exact: true })
+    .click();
   await page
     .getByLabel("Nome completo *", { exact: true })
     .fill("Aluno Browser");
@@ -466,6 +468,113 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
   ).toHaveCSS("background-color", "rgb(57, 22, 29)");
   await page.screenshot({
     path: "test-results/dashboard-dark.png",
+    fullPage: true,
+  });
+});
+
+test("lista compacta busca nome, e-mail e telefone e filtra status", async ({
+  page,
+}) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", {
+    headers,
+    data: {
+      name: "Personal Lista",
+      email: "list-browser@example.com",
+      password: "senha-ficticia-12345",
+      role: "personal",
+    },
+  });
+  for (const data of [
+    {
+      name: "Ágata Teste",
+      email: "agata@example.com",
+      phone: "(11) 99999-1234",
+      status: "ativo",
+    },
+    {
+      name: "Bruno Teste",
+      email: "bruno@example.com",
+      phone: "",
+      status: "inativo",
+    },
+    {
+      name: "Carla Teste",
+      email: "carla@example.com",
+      phone: "",
+      status: "pausado",
+    },
+  ]) {
+    expect(
+      (
+        await page.request.post(base + "/api/students", {
+          headers,
+          data: { ...data, mainGoal: "Força", startDate: "2026-10-01" },
+        })
+      ).ok(),
+    ).toBe(true);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + "/alunos");
+  const row = (name: string) =>
+    page.getByRole("button", {
+      name: `Abrir acompanhamento de ${name}`,
+      exact: true,
+    });
+  await expect(row("Ágata Teste")).toBeVisible();
+  await expect(
+    page.getByRole("radio", { name: "Status: Ativos: 1", exact: true }),
+  ).toBeVisible();
+  for (const query of [
+    "agata",
+    "agata@example.com",
+    "11999991234",
+    "(11) 99999-1234",
+  ]) {
+    await page.getByLabel("Buscar aluno", { exact: true }).fill(query);
+    await expect(row("Ágata Teste")).toBeVisible();
+    await expect(row("Bruno Teste")).toHaveCount(0);
+  }
+  await page.getByLabel("Buscar aluno", { exact: true }).fill("");
+  await page
+    .getByRole("radio", { name: "Status: Inativos: 1", exact: true })
+    .click();
+  await expect(row("Bruno Teste")).toBeVisible();
+  await expect(row("Ágata Teste")).toHaveCount(0);
+  await page
+    .getByRole("radio", { name: "Status: Todos: 3", exact: true })
+    .click();
+  await page.screenshot({
+    path: "test-results/students-list-mobile.png",
+    fullPage: true,
+  });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await row("Ágata Teste").click();
+  await expect(
+    page.getByRole("heading", { name: "Ágata Teste", exact: true }),
+  ).toBeVisible();
+  await page.goto(base + "/alunos");
+  await page.getByLabel("Buscar aluno", { exact: true }).fill("Sem resultado");
+  await expect(
+    page.getByText("Nenhum aluno encontrado", { exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Buscar aluno", { exact: true }).fill("");
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.reload();
+  await expect(
+    page.getByRole("link", { name: "Alunos", exact: true }),
+  ).toHaveCSS("background-color", "rgb(57, 22, 29)");
+  await page.screenshot({
+    path: "test-results/students-list-dark.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.screenshot({
+    path: "test-results/students-list-desktop.png",
     fullPage: true,
   });
 });
