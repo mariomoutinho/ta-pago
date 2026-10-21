@@ -248,6 +248,9 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.getByLabel("Grupo muscular *", { exact: true }).fill("Peitoral");
   await page.getByLabel("Categoria *", { exact: true }).fill("Musculação");
   await page
+    .getByLabel("Vídeo (URL http/https)", { exact: true })
+    .fill("https://www.youtube.com/watch?v=M7lc1UVf-VE");
+  await page
     .getByRole("button", { name: "Salvar exercício", exact: true })
     .click();
   await page.getByLabel("Séries", { exact: true }).fill("4");
@@ -298,10 +301,16 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     headers,
     data: { code: (await invite.json()).code },
   });
+  await pupil.route("https://www.youtube-nocookie.com/embed/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: "Player de teste" }),
+  );
   await pupil.goto(base + "/treinos");
   await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
   await expect(
     pupil.getByText("Supino de teste", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    pupil.getByTitle("Vídeo: Supino de teste", { exact: true }),
   ).toBeVisible();
   await expect(pupil.getByText("4 séries", { exact: true })).toBeVisible();
   await expect(pupil.getByText("60 kg", { exact: true })).toBeVisible();
@@ -330,4 +339,57 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   });
   expect(errors).toEqual([]);
   await context.close();
+});
+
+test("vídeo YouTube aparece dentro da biblioteca sem navegar para outra página", async ({
+  page,
+}) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", {
+    headers,
+    data: {
+      name: "Personal Vídeo",
+      email: "video-browser@example.com",
+      password: "senha-ficticia-12345",
+      role: "personal",
+    },
+  });
+  await page.request.post(base + "/api/exercises", {
+    headers,
+    data: {
+      name: "Supino com vídeo",
+      muscleGroup: "Peitoral",
+      category: "Musculação",
+      videoUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+    },
+  });
+  await page.route("https://www.youtube-nocookie.com/embed/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<button aria-label="Reproduzir">Reproduzir</button>',
+    }),
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  const response = await page.goto(base + "/exercicios");
+  expect(response?.headers()["content-security-policy"]).toContain(
+    "https://www.youtube-nocookie.com",
+  );
+  const player = page.getByTitle("Vídeo: Supino com vídeo", { exact: true });
+  await expect(player).toBeVisible();
+  await expect(player).toHaveAttribute(
+    "src",
+    "https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?playsinline=1&rel=0",
+  );
+  await page
+    .frameLocator('iframe[title="Vídeo: Supino com vídeo"]')
+    .getByRole("button", { name: "Reproduzir" })
+    .click();
+  expect(page.url()).toBe(base + "/exercicios");
+  expect(page.context().pages()).toHaveLength(1);
+  await expect(
+    page.getByRole("button", { name: "Abrir vídeo", exact: true }),
+  ).toHaveCount(0);
+  const bounds = await player.boundingBox();
+  expect(bounds!.width).toBeLessThanOrEqual(390);
+  expect(bounds!.height).toBeGreaterThanOrEqual(200);
 });

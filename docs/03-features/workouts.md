@@ -12,6 +12,9 @@
   "indexable": true,
   "sources": [
     "server/workouts.ts",
+    "src/features/personal/exercise-video.ts",
+    "src/components/workouts/exercise-video.web.tsx",
+    "src/components/workouts/exercise-video.tsx",
     "shared/workouts.ts",
     "prisma/schema.prisma",
     "prisma/migrations/20261020120000_workout_prescription/migration.sql",
@@ -24,7 +27,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -56,7 +59,7 @@ Personal → Alunos → perfil → Treinos → Criar treino → dados do plano �
 
 Salvar com status ativo publica para a conta vinculada do aluno. Rascunhos permanecem privados. Datas distinguem planos atuais, futuros e encerrados; arquivamento mantém planos publicados acessíveis ao aluno. É possível ter vários planos ativos em paralelo. Um plano publicado não volta a rascunho.
 
-Aluno → Treinos, ou perfil do acompanhamento → Treinos → selecionar sessão. Leitura inclui exercícios ordenados, orientações, imagem opcional e link externo de vídeo. Não existe edição de prescrição pela conta do aluno.
+Aluno → Treinos, ou perfil do acompanhamento → Treinos → selecionar sessão. Leitura inclui exercícios ordenados, orientações, imagem opcional e player de vídeo incorporado. Não existe edição de prescrição pela conta do aluno.
 
 ## Modelo e persistência
 
@@ -106,4 +109,4 @@ npm run personal:start
 
 A suíte tests/personal/workouts.test.ts cobre CRUD da biblioteca, atribuição sem duplicação, publicação, exercícios por tempo, ordem, duplicação, autorização cruzada, validações, concorrência, soft-delete, revogação e integridade após exclusão do acompanhamento. O cenário Playwright em tests/personal/browser/app.spec.ts percorre a criação mobile e leitura pela conta do aluno. Usam bancos temporários com todas as migrations, sem dados reais.
 
-Imagem é cadastrada por URL, sem upload de mídia. Vídeos abrem no navegador. Testes nativos em dispositivos Android/iOS e publicação em hospedagem não fazem parte da execução local. O comando lint herdado necessita configuração/dependências ESLint, ausentes na base auditada.
+Imagem é cadastrada por URL, sem upload de mídia. Vídeos do YouTube (watch, youtu.be, Shorts, live e embed) são convertidos para o player incorporado, sem alterar o cadastro. Vídeos diretos MP4/WebM/OGV/M4V/MOV usam controles internos. Na web são usados iframe/vídeo HTML; Android/iOS usam react-native-webview 13.16.1 compatível com Expo 57. A reprodução começa por ação do usuário. Links não reconhecidos mantêm a alternativa externa. A disponibilidade e a permissão de incorporação dependem do provedor do vídeo. A CSP permite frames somente da própria aplicação e de www.youtube-nocookie.com. Testes nativos em dispositivos Android/iOS e publicação em hospedagem não fazem parte da execução local. O comando lint herdado necessita configuração/dependências ESLint, ausentes na base auditada.

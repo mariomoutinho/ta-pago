@@ -1,9 +1,12 @@
+import { exerciseVideoSource } from "@/features/personal/exercise-video";
+import { ExerciseVideo } from "./exercise-video";
 import { Image, Linking, View } from "react-native";
 import { useState } from "react";
 import { Button, Label, Notice } from "@/components/personal/ui";
 import type { Exercise, Prescription } from "../../../shared/workouts";
 export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
   const [error, setError] = useState("");
+  const video = exerciseVideoSource(exercise.videoUrl);
   return (
     <View style={{ gap: 8, marginBottom: 12 }}>
       <Label size={18} bold>
@@ -24,7 +27,10 @@ export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
           onError={() => setError("Não foi possível carregar a imagem.")}
         />
       )}
-      {!!exercise.videoUrl && (
+      {video && (
+        <ExerciseVideo key={video.url} source={video} title={exercise.name} />
+      )}
+      {!!exercise.videoUrl && !video && (
         <Button
           variant="secondary"
           onPress={() => {
@@ -33,7 +39,7 @@ export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
             );
           }}
         >
-          Abrir vídeo
+          Abrir link de vídeo
         </Button>
       )}
       <Notice error>{error}</Notice>

@@ -50,7 +50,11 @@ export function createApp(db: Db) {
   app.use(
     helmet({
       contentSecurityPolicy: {
-        directives: { "script-src": ["'self'", "'unsafe-inline'"] },
+        directives: {
+          "script-src": ["'self'", "'unsafe-inline'"],
+          "frame-src": ["'self'", "https://www.youtube-nocookie.com"],
+          "media-src": ["'self'", "https:", "http:"],
+        },
       },
     }),
   );
