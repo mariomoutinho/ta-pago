@@ -393,3 +393,79 @@ test("vídeo YouTube aparece dentro da biblioteca sem navegar para outra página
   expect(bounds!.width).toBeLessThanOrEqual(390);
   expect(bounds!.height).toBeGreaterThanOrEqual(200);
 });
+
+test("home organiza ações do personal, mostra dados reais e adapta larguras", async ({
+  page,
+}) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", {
+    headers,
+    data: {
+      name: "Personal Painel",
+      email: "dashboard-browser@example.com",
+      password: "senha-ficticia-12345",
+      role: "personal",
+    },
+  });
+  await page.request.post(base + "/api/students", {
+    headers,
+    data: {
+      name: "Aluno Painel",
+      mainGoal: "Força",
+      startDate: "2026-10-01",
+      weeklyFrequency: 3,
+    },
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base);
+  await expect(page.getByText("Ativos: 1", { exact: true })).toBeVisible();
+  await page
+    .getByRole("button", { name: "Adicionar aluno", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Nome completo *", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Link de cadastro", exact: true })
+    .click();
+  await expect(page).toHaveURL(base + "/alunos/link");
+  await page.goto(base);
+  await page
+    .getByRole("button", { name: "Biblioteca de exercícios", exact: true })
+    .click();
+  await expect(page).toHaveURL(base + "/exercicios");
+  await page.goto(base);
+  await page
+    .getByRole("button", { name: "Prescrever treino", exact: true })
+    .click();
+  await expect(page).toHaveURL(base + "/alunos");
+  await page.goto(base);
+  for (const width of [320, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(
+      page.getByRole("button", { name: "Adicionar aluno", exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    if (width === 390 || width === 1280) {
+      await page.screenshot({
+        path: `test-results/dashboard-${width}.png`,
+        fullPage: true,
+      });
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.reload();
+  await expect(
+    page.getByRole("link", { name: "Início", exact: true }),
+  ).toHaveCSS("background-color", "rgb(57, 22, 29)");
+  await page.screenshot({
+    path: "test-results/dashboard-dark.png",
+    fullPage: true,
+  });
+});

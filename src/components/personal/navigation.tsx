@@ -1,5 +1,5 @@
 import { router, usePathname } from "expo-router";
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import { Pressable, ScrollView, Text, StyleSheet } from "react-native";
 import { useTheme } from "@/hooks/use-theme";
 import { useSession } from "@/features/personal/auth";
 export default function PersonalNavigation() {
@@ -9,7 +9,7 @@ export default function PersonalNavigation() {
   const items =
     user?.role === "personal"
       ? [
-          ["/", "Visão geral"],
+          ["/", "Início"],
           ["/alunos", "Alunos"],
           ["/programas", "Programas"],
           ["/exercicios", "Exercícios"],
@@ -20,7 +20,12 @@ export default function PersonalNavigation() {
           ["/treinos", "Treinos"],
         ];
   return (
-    <View style={styles.nav}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={{ maxWidth: "100%", flexGrow: 0 }}
+      contentContainerStyle={styles.nav}
+    >
       {items.map(([href, label]) => {
         const active = href === "/" ? path === "/" : path.startsWith(href);
         return (
@@ -46,21 +51,19 @@ export default function PersonalNavigation() {
           </Pressable>
         );
       })}
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   nav: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    flexWrap: "nowrap",
     gap: 8,
-    maxWidth: "100%",
-    flexShrink: 1,
   },
   item: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderRadius: 24,
+    borderRadius: 10,
     minHeight: 44,
   },
 });

@@ -4,13 +4,14 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-10-21",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
   ],
   "indexable": true,
   "sources": [
+    "src/components/personal/dashboard.tsx",
     "src/components/app-tabs.tsx",
     "src/components/app-tabs.web.tsx",
     "src/app/_layout.tsx",
@@ -22,7 +23,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -57,3 +58,10 @@ AppTabs usa navegação compartilhada com tema claro/escuro e adaptação de lar
 ## Cadastro por link
 
 `/alunos/link` exige personal; `/cadastro/[token]` é pública, com logo e formulário em etapas. A API continua autorizando cada consulta privada. Veja [fluxo de cadastro](../03-features/enrollment-links.md).
+
+
+## Página inicial do personal
+
+O painel em src/components/personal/dashboard.tsx organiza as ações por seção: saudação, resumo de cadastros pendentes/avaliações/sessões semanais, Seus alunos, Treinos, Próximos cuidados e Acompanhamento. Adicionar aluno abre o formulário existente diretamente; Link de cadastro abre /alunos/link. Os cards de treino abrem a seleção de aluno, biblioteca, programas e modelos existentes. Os contadores vêm de /students e /enrollment/requests, com estados de carregamento, erro e nova tentativa; não simulam retenção ou engajamento.
+
+O cabeçalho fica compacto no celular e a navegação usa rolagem horizontal em uma linha. Em telas largas, os blocos do painel usam duas colunas. Tema, cores e componentes são os do Tá Pago. A home do aluno preserva seu fluxo de acompanhamento.
