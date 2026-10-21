@@ -1,3 +1,4 @@
+import { ProfileHeader, ProfileHome, ProfileMenu } from "./profile-home";
 import { WorkoutPlans } from "@/components/workouts/plans";
 import { useState } from "react";
 import { View, ScrollView } from "react-native";
@@ -32,7 +33,6 @@ import {
   Dialog,
   Empty,
   Field,
-  Heading,
   Label,
   Notice,
   Section,
@@ -65,7 +65,7 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
   const { data: templates } = useResource<Template[]>(
     studentView ? null : "/templates",
   );
-  const [tab, setTab] = useState("Visão geral");
+  const [tab, setTab] = useState("Início");
   const [editing, setEditing] = useState(false);
   const [evaluation, setEvaluation] = useState<Evaluation | "new" | null>(null);
   const [record, setRecord] = useState<{
@@ -97,13 +97,6 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
   const lastMonthly = student.records.find((r) => r.kind === "monthly");
   const lastEvaluation = student.evaluations.find(
     (e) => e.status === "concluida",
-  );
-  const days = Math.max(
-    0,
-    Math.floor(
-      (new Date(today()).getTime() - new Date(student.startDate).getTime()) /
-        86400000,
-    ),
   );
   const records = (kind: RecordKind) =>
     student.records.filter((r) => r.kind === kind);
@@ -148,32 +141,9 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
     </View>
   );
   return (
-    <Page>
-      <View style={{ alignSelf: "flex-start", marginBottom: 20 }}>
-        <Button
-          variant="secondary"
-          onPress={() => router.push((studentView ? "/" : "/alunos") as Href)}
-        >
-          ← {studentView ? "Meus acompanhamentos" : "Todos os alunos"}
-        </Button>
-      </View>
-      <Heading
-        title={student.name}
-        subtitle={`${studentView ? `Personal: ${student.personal?.name ?? "—"} · ` : ""}${days} dias de acompanhamento · desde ${formatDate(student.startDate)}`}
-        action={
-          !studentView ? (
-            <Button variant="secondary" onPress={() => setEditing(true)}>
-              Editar cadastro
-            </Button>
-          ) : (
-            <Badge>
-              {student.linkStatus === "ended"
-                ? "Vínculo encerrado"
-                : "Vínculo ativo"}
-            </Badge>
-          )
-        }
-      />
+    <Page resetKey={tab}>
+      <ProfileHeader student={student} studentView={studentView} tab={tab} onNavigate={setTab}
+        onBack={() => router.push((studentView ? "/" : "/alunos") as Href)} />
       <Notice error>{failure || error}</Notice>
       {student.linkStatus === "ended" && (
         <Notice>
@@ -181,14 +151,16 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
           para consulta, exportação ou exclusão.
         </Notice>
       )}
-      <Choices
-        label="Prontuário"
-        options={tabs.map((value) => ({ value, label: value }))}
-        value={tab}
-        onChange={setTab}
-      />
+      {tab === "Início" && <ProfileHome student={student} studentView={studentView}
+        onNavigate={setTab} onAddNote={() => add("note")} />}
+      {tab === "Opções" && <ProfileMenu tabs={tabs} onNavigate={setTab}
+        onEdit={studentView ? undefined : () => setEditing(true)} />}
       {tab === "Visão geral" && (
         <>
+          <Notice>
+            Desde {formatDate(student.startDate)}
+            {studentView ? ` · Personal: ${student.personal?.name ?? "—"}` : ""}
+          </Notice>
           <View style={s.grid}>
             {[
               ["Objetivo principal", student.mainGoal],

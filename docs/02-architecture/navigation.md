@@ -11,6 +11,8 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/personal/profile-home.tsx",
+    "src/components/personal/profile.tsx",
     "src/components/personal/student-list-row.tsx",
     "src/components/personal/dashboard.tsx",
     "src/components/app-tabs.tsx",
@@ -24,7 +26,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -48,7 +50,7 @@ O layout raiz aplica tema, sessão e rotas protegidas. A autorização efetiva t
 | `/entrar` | Sem sessão | Login e criação de conta com papel personal ou aluno. |
 | `/` | Autenticado | Painel do personal ou acompanhamentos do aluno. |
 | `/alunos` | Personal | Lista, busca, filtros e cadastro. |
-| `/alunos/[id]` | Personal proprietário | Perfil com sete abas e histórico. |
+| `/alunos/[id]` | Personal proprietário | Perfil com Início, Opções e acesso ao prontuário. |
 | `/programas` | Personal | CRUD de programas próprios. |
 | `/modelos` | Personal | Modelo base e versões próprias de questionários. |
 | `/acompanhamento/[id]` | Aluno vinculado | Consulta, respostas em rascunho, exportação e revogação. |
@@ -70,3 +72,9 @@ O cabeçalho fica compacto no celular e a navegação usa rolagem horizontal em 
 ## Lista de alunos
 
 /alunos apresenta uma lista alfabética compacta com iniciais, nome, status e vínculo real da conta. A busca aceita nome sem acentos, e-mail e telefone com ou sem formatação; filtros Todos/Ativos/Pausados/Inativos mostram contagens do conjunto recebido da API, independentes da busca. Cada linha abre o acompanhamento existente. Adicionar aluno reutiliza o formulário, e Link de Cadastro e solicitações recebidas continuam acessíveis. Grupos, modalidade online/presencial e lixeira de excluídos não são simulados: não existem no cadastro atual.
+
+## Perfil do aluno
+
+O perfil abre em Início, com identificação compacta, atalhos para treinos, progresso e avaliações, frequência da semana (segunda a domingo), engajamento e última anotação. A frequência utiliza os registros de treinamento; dias sem registro ficam vazios. A média considera registros realizados nos últimos 28 dias, divididos por quatro semanas, sem atribuir risco automaticamente.
+
+Opções reúne edição do cadastro e todas as seções anteriores do prontuário. Dados do aluno e vínculo mantém o resumo detalhado, programa, exportação e controles de privacidade. Adicionar anotação usa o formulário existente e persiste no histórico; a visão do aluno continua somente leitura para esses registros. As cores acompanham o tema do Tá Pago.

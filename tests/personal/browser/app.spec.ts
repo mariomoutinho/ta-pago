@@ -227,7 +227,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + `/alunos/${studentId}`);
   await page
-    .getByRole("radio", { name: "Prontuário: Treinos", exact: true })
+    .getByRole("button", { name: "Treinos", exact: true })
     .click();
   await page
     .getByRole("button", { name: "+ Criar treino", exact: true })
@@ -276,7 +276,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   ).toBeVisible();
   await page.reload();
   await page
-    .getByRole("radio", { name: "Prontuário: Treinos", exact: true })
+    .getByRole("button", { name: "Treinos", exact: true })
     .click();
   await expect(
     page.getByText("Adaptação funcional", { exact: true }),
@@ -577,4 +577,38 @@ test("lista compacta busca nome, e-mail e telefone e filtra status", async ({
     path: "test-results/students-list-desktop.png",
     fullPage: true,
   });
+});
+
+test("perfil compacto preserva atalhos, opções e anotações", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", { headers, data: {
+    name: "Personal Perfil", email: "profile-browser@example.com", password: "senha-ficticia-12345", role: "personal",
+  } });
+  const response = await page.request.post(base + "/api/students", { headers, data: {
+    name: "Aluno Perfil", mainGoal: "Condicionamento", startDate: "2026-10-01", weeklyFrequency: 3,
+  } });
+  const id = (await response.json()).id;
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + `/alunos/${id}`);
+  await expect(page.getByRole("tab", { name: "Início", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByText("Sem registros", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar anotação", exact: true }).click();
+  await page.getByLabel("Observação profissional *", { exact: true }).fill("Revisar evolução no próximo encontro.");
+  await page.getByRole("button", { name: "Salvar registro", exact: true }).click();
+  await expect(page.getByText("Revisar evolução no próximo encontro.", { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("Revisar evolução no próximo encontro.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Opções", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Editar cadastro", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Dados do aluno e vínculo", exact: true }).click();
+  await expect(page.getByText("Condicionamento", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Início", exact: true }).click();
+  await page.getByRole("button", { name: "Avaliações", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Nova avaliação", exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Início", exact: true }).click();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.reload();
+  await expect(page.getByText("Frequência de treinos", { exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/profile-mobile.png", fullPage: true });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
