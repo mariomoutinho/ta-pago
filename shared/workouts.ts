@@ -100,6 +100,7 @@ export type Prescription = z.infer<typeof prescriptionSchema> & {
 };
 export type WorkoutData = Omit<z.infer<typeof workoutSchema>, "exercises"> & {
   exercises: Prescription[];
+  feedbacks?: WorkoutFeedback[];
 };
 export type PlanData = Omit<z.infer<typeof planSchema>, "workouts"> & {
   workouts: WorkoutData[];
@@ -108,5 +109,11 @@ export type Plan = PlanData & {
   id: string;
   studentId: string;
   publishedAt: string | null;
-  student?: { name: string; personal: { name: string } };
+  student?: { name: string; linkStatus?: string; personal: { name: string } };
 };
+
+export const workoutFeedbackSchema = z.object({
+  requestId: z.string().trim().min(8).max(100),
+  comment: z.string().trim().min(1, "Escreva seu feedback").max(2000, "Use até 2000 caracteres"),
+});
+export type WorkoutFeedback = { id: string; comment: string; createdAt: string };

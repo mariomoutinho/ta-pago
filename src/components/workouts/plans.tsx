@@ -1,3 +1,4 @@
+import { WorkoutFeedbacks } from "./feedbacks";
 import { useTheme } from "@/hooks/use-theme";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
@@ -14,8 +15,9 @@ import {
 import type { Plan } from "../../../shared/workouts";
 import { PlanForm } from "./plan-form";
 import { PrescriptionView } from "./exercise-view";
-function PlanDetails({ plan, edit, archive, add }: {
+function PlanDetails({ plan, edit, archive, add, studentView, reload }: {
   plan: Plan; edit?: () => void; archive?: () => void; add?: () => void;
+  studentView: boolean; reload: () => Promise<void>;
 }) {
   const t = useTheme();
   const [open, setOpen] = useState<string | number | null>(null);
@@ -54,6 +56,9 @@ function PlanDetails({ plan, edit, archive, add }: {
         </Pressable>
         <View style={{ marginVertical: 10 }}><Label size={12} muted>{w.exercises.length} exercício(s) na prescrição</Label></View>
         <Button variant="secondary" onPress={() => setOpen(expanded ? null : (w.id ?? i))}>{expanded ? "Recolher exercícios" : "Ver exercícios"}</Button>
+        <View style={{ gap: 8, marginTop: 8 }}>
+          <WorkoutFeedbacks workout={w} canSend={studentView && plan.status === "ativo" && plan.student?.linkStatus === "active"} reload={reload} />
+        </View>
         {expanded && <View style={{ gap: 10, marginTop: 12 }}>
           {!!w.instructions && <Notice>{w.instructions}</Notice>}
           {!w.exercises.length && <Label>Este treino ainda não possui exercícios.</Label>}
@@ -132,7 +137,7 @@ export function WorkoutPlans({
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       {selectedPlan ? <>
         <Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button>
-        <PlanDetails key={selectedPlan.id} plan={selectedPlan}
+        <PlanDetails key={selectedPlan.id} plan={selectedPlan} studentView={studentView} reload={reload}
           add={studentView ? undefined : () => {
             setInitialWorkout(selectedPlan.workouts.length);
             setEditing({ ...selectedPlan, workouts: [...selectedPlan.workouts, {

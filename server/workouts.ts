@@ -1,13 +1,14 @@
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
-import { exerciseSchema, planSchema } from "../shared/workouts";
+import { exerciseSchema, planSchema, workoutFeedbackSchema } from "../shared/workouts";
 
 export const planInclude = {
   workouts: {
     where: { deletedAt: null },
     orderBy: { orderIndex: "asc" as const },
     include: {
+      feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, createdAt: true } },
       exercises: {
         where: { deletedAt: null },
         orderBy: { orderIndex: "asc" as const },
@@ -31,12 +32,35 @@ export function workoutRoutes(db: Db) {
         include: {
           ...planInclude,
           student: {
-            select: { name: true, personal: { select: { name: true } } },
+            select: { name: true, linkStatus: true, personal: { select: { name: true } } },
           },
         },
         orderBy: { startsAt: "desc" },
       }),
     );
+  });
+  router.post("/me/workouts/:id/feedbacks", async (req, res) => {
+    if (res.locals.user.role !== "student")
+      throw new HttpError(403, "Somente o aluno pode enviar feedback");
+    const data = workoutFeedbackSchema.parse(req.body);
+    const feedback = await db.$transaction(async (tx) => {
+      const workout = await tx.workout.findFirst({
+        where: {
+          id: String(req.params.id), deletedAt: null,
+          plan: {
+            publishedAt: { not: null }, status: "ativo",
+            student: { accountId: res.locals.user.id, linkStatus: "active" },
+          },
+        },
+      });
+      if (!workout) throw new HttpError(404, "Treino indisponível para feedback");
+      return tx.workoutFeedback.upsert({
+        where: { workoutId_requestId: { workoutId: workout.id, requestId: data.requestId } },
+        create: { workoutId: workout.id, ...data }, update: {},
+        select: { id: true, comment: true, createdAt: true },
+      });
+    });
+    res.status(201).json(feedback);
   });
   // Aplicar o guard apenas às rotas deste módulo, sem interceptar as demais APIs.
   router.use(

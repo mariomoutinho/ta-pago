@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-22",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -110,3 +110,9 @@ npm run personal:start
 A suíte tests/personal/workouts.test.ts cobre CRUD da biblioteca, atribuição sem duplicação, publicação, exercícios por tempo, ordem, duplicação, autorização cruzada, validações, concorrência, soft-delete, revogação e integridade após exclusão do acompanhamento. O cenário Playwright em tests/personal/browser/app.spec.ts percorre a criação mobile e leitura pela conta do aluno. Usam bancos temporários com todas as migrations, sem dados reais.
 
 Imagem é cadastrada por URL, sem upload de mídia. Vídeos do YouTube (watch, youtu.be, Shorts, live e embed) são convertidos para o player incorporado, sem alterar o cadastro. Vídeos diretos MP4/WebM/OGV/M4V/MOV usam controles internos. Na web são usados iframe/vídeo HTML; Android/iOS usam react-native-webview 13.16.1 compatível com Expo 57. A reprodução começa por ação do usuário. Links não reconhecidos mantêm a alternativa externa. A disponibilidade e a permissão de incorporação dependem do provedor do vídeo. A CSP permite frames somente da própria aplicação e de www.youtube-nocookie.com. Testes nativos em dispositivos Android/iOS e publicação em hospedagem não fazem parte da execução local. O comando lint herdado necessita configuração/dependências ESLint, ausentes na base auditada.
+
+## Feedbacks após o treino
+
+Cada treino possui histórico de comentários com data e hora de registro no servidor. O aluno vinculado envia em Terminei: enviar feedback; o personal proprietário consulta no botão Feedbacks. O comentário é obrigatório, com limite de 2000 caracteres. Não há avaliação automática nem contagem de execução baseada no comentário.
+
+POST /api/me/workouts/:id/feedbacks exige aluno titular, vínculo ativo, treino não removido e rotina ativa publicada. Uma chave por tentativa evita duplicação ao reenviar após falha de rede. Rotinas arquivadas e vínculos encerrados preservam a leitura autorizada do histórico, mas não recebem novos comentários. A autorização do personal continua sendo revogada com o vínculo. A migration 20261022120000_workout_feedback cria a tabela ligada ao treino; exclusão definitiva do acompanhamento remove os registros em cascata. A exportação de planos inclui os feedbacks dos treinos presentes.

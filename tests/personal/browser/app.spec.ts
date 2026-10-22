@@ -309,6 +309,17 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await pupil.goto(base + "/treinos");
   await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
+  await pupil.getByRole("button", { name: "Terminei: enviar feedback", exact: true }).click();
+  await pupil.getByLabel("Seu feedback", { exact: true }).fill("Treino concluído. A última série foi desafiadora.");
+  await pupil.getByRole("button", { name: "Registrar feedback", exact: true }).click();
+  await expect(pupil.getByText("Feedback registrado e disponível para o personal.", { exact: true })).toBeVisible();
+  await pupil.reload();
+  await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
+  await pupil.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
+  await expect(pupil.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
+  await pupil.getByRole("button", { name: "Fechar", exact: true }).click();
+  await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
+
   await expect(
     pupil.getByText("Supino de teste", { exact: true }),
   ).toBeVisible();
@@ -360,6 +371,10 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await page.screenshot({ path: "test-results/routine-details-mobile.png", fullPage: true });
+  await page.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
+  await expect(page.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Registrar feedback", exact: true })).toHaveCount(0);
+
 
   expect(errors).toEqual([]);
   await context.close();

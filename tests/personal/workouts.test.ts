@@ -331,6 +331,25 @@ it("valida datas, números, nomes, ativação vazia e edição concorrente", asy
     ).status,
   ).toBe(400);
 });
+it("feedback é exclusivo do aluno vinculado, persistente e idempotente", async () => {
+  const endpoint = `/api/me/workouts/${plan.workouts[1].id}/feedbacks`;
+  const payload = { requestId: "feedback-test-1", comment: "Consegui concluir, mas a última série foi difícil." };
+  expect((await personal.post(endpoint).set(header).send(payload)).status).toBe(403);
+  expect((await stranger.post(endpoint).set(header).send(payload)).status).toBe(404);
+  expect((await student.post(endpoint).set(header).send({ ...payload, comment: " " })).status).toBe(400);
+  expect((await student.post(endpoint).set(header).send({ ...payload, comment: "a".repeat(2001) })).status).toBe(400);
+  const first = await student.post(endpoint).set(header).send(payload);
+  expect(first.status).toBe(201);
+  const repeated = await student.post(endpoint).set(header).send(payload);
+  expect(repeated.body.id).toBe(first.body.id);
+  expect(await db.workoutFeedback.count()).toBe(1);
+  const read = await personal.get(`/api/students/${studentId}/workout-plans`);
+  expect(read.body[0].workouts[1].feedbacks[0].comment).toBe(payload.comment);
+  expect((await stranger.get("/api/me/workout-plans")).body).toEqual([]);
+  await db.student.update({ where: { id: studentId }, data: { linkStatus: "ended" } });
+  expect((await student.post(endpoint).set(header).send({ ...payload, requestId: "feedback-ended" })).status).toBe(404);
+  await db.student.update({ where: { id: studentId }, data: { linkStatus: "active" } });
+});
 it("duplica treino, remove logicamente e arquiva sem quebrar relações", async () => {
   const w = plan.workouts[1];
   const copy = {
@@ -385,6 +404,8 @@ it("duplica treino, remove logicamente e arquiva sem quebrar relações", async 
     .send({ ...plan, status: "arquivado" });
   expect(result.status).toBe(200);
   plan = result.body;
+  expect((await student.post(`/api/me/workouts/${plan.workouts[0].id}/feedbacks`).set(header).send({ requestId: "archived-feedback", comment: "Teste" })).status).toBe(404);
+  expect((await student.get("/api/me/workout-plans")).body[0].workouts[0].feedbacks).toHaveLength(1);
   expect((await student.get("/api/me/workout-plans")).body[0].status).toBe(
     "arquivado",
   );
@@ -411,5 +432,6 @@ it("revogação remove acesso profissional, preserva leitura do aluno e exclusã
   expect(await db.workoutPlan.count()).toBe(0);
   expect(await db.workout.count()).toBe(0);
   expect(await db.workoutExercise.count()).toBe(0);
+  expect(await db.workoutFeedback.count()).toBe(0);
   expect(await db.exercise.count()).toBeGreaterThan(0);
 });

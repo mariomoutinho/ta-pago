@@ -245,6 +245,7 @@ model Workout {
   instructions String @default("")
   orderIndex Int
   deletedAt DateTime?
+  feedbacks WorkoutFeedback[]
   exercises WorkoutExercise[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -288,4 +289,15 @@ model WorkoutExercise {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([workoutId,orderIndex])
+}
+
+model WorkoutFeedback {
+  id String @id @default(cuid())
+  workoutId String
+  workout Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  requestId String
+  comment String
+  createdAt DateTime @default(now())
+  @@unique([workoutId, requestId])
+  @@index([workoutId, createdAt])
 }
