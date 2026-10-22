@@ -18,8 +18,10 @@ export function PlanForm({
   done,
   cancel,
   initialWorkout = null,
+  initialPicker = false,
 }: {
   initialWorkout?: number | null;
+  initialPicker?: boolean;
   studentId: string;
   plan?: Plan;
   done: () => void;
@@ -39,7 +41,8 @@ export function PlanForm({
   );
   const [open, setOpen] = useState<number | null>(initialWorkout);
   const [remove, setRemove] = useState<number | null>(null);
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(initialPicker);
+  const [pickerWorkout, setPickerWorkout] = useState(initialPicker ? initialWorkout : null);
   return (
     <SaveForm
       label="Salvar plano"
@@ -166,7 +169,8 @@ export function PlanForm({
           {open === index && (
             <WorkoutEditor
               workout={w}
-              pending={setPending}
+              initialPicker={index === pickerWorkout}
+              pending={(value) => { setPending(value); setPickerWorkout(null); }}
               change={(next) =>
                 setData({
                   ...data,

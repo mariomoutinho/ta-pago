@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/workout-window.tsx",
     "src/components/workouts/feedbacks.tsx",
     "src/components/workouts/plans.tsx",
     "src/components/personal/profile-home.tsx",
@@ -28,7 +29,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -86,3 +87,5 @@ Opções reúne edição do cadastro e todas as seções anteriores do prontuár
 A área Treinos mantém o cabeçalho compacto do aluno e volta diretamente ao início do perfil. Rotinas de treino e Arquivadas dividem a listagem; filtros Todas, Atuais, Futuras, Encerradas e Rascunhos usam status e vigência reais. Cada cartão mostra nome, datas, objetivo, dificuldade e quantidade de treinos. Abrir a rotina revela a prescrição existente; o menu de opções permite ver, editar ou arquivar. A criação reutiliza o formulário de planos. A conta do aluno consulta apenas os planos publicados autorizados pela API, sem ações de edição. Aeróbico separado e lixeira de rotinas não são funcionalidades implementadas.
 
 O detalhe da rotina separa resumo e cartões de treinos. O resumo apresenta status e visibilidade real conforme publicação; editar e arquivar ficam no menu. Reordenar treinos abre o editor existente, e Adicionar treino abre esse editor com um novo treino ainda não salvo. Cada cartão mostra nome, subtítulo e quantidade de exercícios, com expansão da prescrição. Contagens de execuções e evolução por treino não são simuladas. O botão Feedbacks mostra comentários persistidos por treino, com data e hora; somente o aluno vinculado pode enviar em rotinas ativas publicadas, usando Terminei: enviar feedback.
+
+Ao tocar no treino ou em Ver exercícios, uma janela lista os exercícios prescritos em linhas compactas. Cada linha expande a prescrição e o vídeo; Expandir todos abre a lista completa. Para o personal, Adicionar exercício abre a biblioteca em uma janela e Editar e reordenar abre o treino correspondente no editor. Selecionar um exercício mantém o fluxo de configurar, confirmar prescrição e salvar plano; cancelar não altera os dados persistidos.

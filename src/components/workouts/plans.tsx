@@ -14,10 +14,11 @@ import {
 } from "@/components/personal/ui";
 import type { Plan } from "../../../shared/workouts";
 import { PlanForm } from "./plan-form";
-import { PrescriptionView } from "./exercise-view";
-function PlanDetails({ plan, edit, archive, add, studentView, reload }: {
+import { WorkoutWindow } from "./workout-window";
+function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkout }: {
   plan: Plan; edit?: () => void; archive?: () => void; add?: () => void;
   studentView: boolean; reload: () => Promise<void>;
+  editWorkout?: (index: number, picker: boolean) => void;
 }) {
   const t = useTheme();
   const [open, setOpen] = useState<string | number | null>(null);
@@ -59,13 +60,10 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload }: {
         <View style={{ gap: 8, marginTop: 8 }}>
           <WorkoutFeedbacks workout={w} canSend={studentView && plan.status === "ativo" && plan.student?.linkStatus === "active"} reload={reload} />
         </View>
-        {expanded && <View style={{ gap: 10, marginTop: 12 }}>
-          {!!w.instructions && <Notice>{w.instructions}</Notice>}
-          {!w.exercises.length && <Label>Este treino ainda não possui exercícios.</Label>}
-          {w.exercises.map((e, index) => <Card key={e.id ?? index} style={{ padding: 12, borderRadius: 8 }}>
-            <Label bold>{index + 1}.</Label><PrescriptionView item={e} />
-          </Card>)}
-        </View>}
+        {expanded && <WorkoutWindow workout={w} close={() => setOpen(null)}
+          edit={editWorkout ? () => { setOpen(null); editWorkout(i, false); } : undefined}
+          add={editWorkout ? () => { setOpen(null); editWorkout(i, true); } : undefined} />}
+
       </Card>;
     })}
     {menu && <Dialog title="Opções da rotina" onClose={() => setMenu(false)}>
@@ -112,6 +110,7 @@ export function WorkoutPlans({
   const [filter, setFilter] = useState("Todas");
   const [selected, setSelected] = useState<string | null>(null);
   const [actions, setActions] = useState<Plan | null>(null);
+  const [initialPicker, setInitialPicker] = useState(false);
   const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
   const [archive, setArchive] = useState<Plan | null>(null);
@@ -138,6 +137,9 @@ export function WorkoutPlans({
       {selectedPlan ? <>
         <Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button>
         <PlanDetails key={selectedPlan.id} plan={selectedPlan} studentView={studentView} reload={reload}
+          editWorkout={studentView ? undefined : (index, picker) => {
+            setInitialWorkout(index); setInitialPicker(picker); setEditing(selectedPlan);
+          }}
           add={studentView ? undefined : () => {
             setInitialWorkout(selectedPlan.workouts.length);
             setEditing({ ...selectedPlan, workouts: [...selectedPlan.workouts, {
@@ -188,6 +190,7 @@ export function WorkoutPlans({
           <PlanForm
             studentId={studentId}
             initialWorkout={initialWorkout}
+            initialPicker={initialPicker}
             plan={editing === "new" ? undefined : editing}
             cancel={() => setDiscard(true)}
             done={() => {
@@ -196,7 +199,7 @@ export function WorkoutPlans({
                 setFilter("Todas");
                 setSelected(null);
               }
-              setInitialWorkout(null);
+              setInitialWorkout(null); setInitialPicker(false);
               setEditing(null);
               setSuccess("Plano salvo com sucesso.");
               void reload();
@@ -209,7 +212,7 @@ export function WorkoutPlans({
           title="Descartar alterações não salvas?"
           description="As alterações do plano ainda não foram enviadas."
           onClose={() => setDiscard(false)}
-          onConfirm={async () => { setEditing(null); setInitialWorkout(null); }}
+          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); }}
         />
       )}
       {archive && (

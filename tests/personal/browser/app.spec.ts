@@ -308,7 +308,6 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   );
   await pupil.goto(base + "/treinos");
   await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
-  await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
   await pupil.getByRole("button", { name: "Terminei: enviar feedback", exact: true }).click();
   await pupil.getByLabel("Seu feedback", { exact: true }).fill("Treino concluído. A última série foi desafiadora.");
   await pupil.getByRole("button", { name: "Registrar feedback", exact: true }).click();
@@ -320,8 +319,9 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await pupil.getByRole("button", { name: "Fechar", exact: true }).click();
   await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
 
+  await pupil.getByRole("button", { name: "Detalhes de Supino de teste", exact: true }).click();
   await expect(
-    pupil.getByText("Supino de teste", { exact: true }),
+    pupil.getByText("Supino de teste", { exact: true }).first(),
   ).toBeVisible();
   await expect(
     pupil.getByTitle("Vídeo: Supino de teste", { exact: true }),
@@ -371,6 +371,13 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await page.screenshot({ path: "test-results/routine-details-mobile.png", fullPage: true });
+  await page.getByRole("button", { name: "Treino A", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Detalhes de Supino de teste", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+  await expect(page.getByRole("button", { name: "+ Criar exercício", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Fechar", exact: true }).last().click();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await page.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
   await expect(page.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Registrar feedback", exact: true })).toHaveCount(0);
