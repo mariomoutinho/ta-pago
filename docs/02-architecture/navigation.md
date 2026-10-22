@@ -27,7 +27,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -83,3 +83,5 @@ Opções reúne edição do cadastro e todas as seções anteriores do prontuár
 ## Rotinas de treino do aluno
 
 A área Treinos mantém o cabeçalho compacto do aluno e volta diretamente ao início do perfil. Rotinas de treino e Arquivadas dividem a listagem; filtros Todas, Atuais, Futuras, Encerradas e Rascunhos usam status e vigência reais. Cada cartão mostra nome, datas, objetivo, dificuldade e quantidade de treinos. Abrir a rotina revela a prescrição existente; o menu de opções permite ver, editar ou arquivar. A criação reutiliza o formulário de planos. A conta do aluno consulta apenas os planos publicados autorizados pela API, sem ações de edição. Aeróbico separado e lixeira de rotinas não são funcionalidades implementadas.
+
+O detalhe da rotina separa resumo e cartões de treinos. O resumo apresenta status e visibilidade real conforme publicação; editar e arquivar ficam no menu. Reordenar treinos abre o editor existente, e Adicionar treino abre esse editor com um novo treino ainda não salvo. Cada cartão mostra nome, subtítulo e quantidade de exercícios, com expansão da prescrição. Contagens de execuções, evolução e feedbacks por treino não são simulados.

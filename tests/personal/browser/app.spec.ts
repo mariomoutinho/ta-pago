@@ -350,6 +350,17 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.screenshot({ path: "test-results/routines-mobile.png", fullPage: true });
   await page.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await expect(page.getByRole("button", { name: "Treino A", exact: true })).toBeVisible();
+  await expect(page.getByText("Visibilidade para o aluno", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Recolher treino", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  await page.getByRole("button", { name: "Reordenar treinos", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Subir treino 1", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  await page.screenshot({ path: "test-results/routine-details-mobile.png", fullPage: true });
+
   expect(errors).toEqual([]);
   await context.close();
 });

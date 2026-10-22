@@ -4,83 +4,72 @@ import { Pressable, View } from "react-native";
 import { useResource } from "@/features/personal/use-resource";
 import { api, formatDate, today } from "@/features/personal/api";
 import {
-  Badge,
   Button,
   Card,
   Confirm,
   Dialog,
   Label,
   Notice,
-  s,
 } from "@/components/personal/ui";
 import type { Plan } from "../../../shared/workouts";
 import { PlanForm } from "./plan-form";
 import { PrescriptionView } from "./exercise-view";
-function PlanDetails({
-  plan,
-  edit,
-  archive,
-}: {
-  plan: Plan;
-  edit?: () => void;
-  archive?: () => void;
+function PlanDetails({ plan, edit, archive, add }: {
+  plan: Plan; edit?: () => void; archive?: () => void; add?: () => void;
 }) {
+  const t = useTheme();
   const [open, setOpen] = useState<string | number | null>(null);
-  return (
-    <Card>
-      <Label size={22} bold>
-        {plan.title}
-      </Label>
-      {plan.student && (
-        <Label muted>Personal: {plan.student.personal.name}</Label>
-      )}
-      <Badge>
-        {plan.status} · {plan.difficulty}
-      </Badge>
-      <Label>{plan.objective}</Label>
-      <Label muted>
-        {formatDate(plan.startsAt)} →{" "}
-        {plan.endsAt ? formatDate(plan.endsAt) : "Sem término definido"}
-      </Label>
-      {!!plan.instructions && <Notice>{plan.instructions}</Notice>}
-      <View style={s.row}>
-        {edit && <Button onPress={edit}>Editar plano</Button>}
-        {archive && plan.status !== "arquivado" && (
-          <Button variant="secondary" onPress={archive}>
-            Arquivar plano
-          </Button>
-        )}
-      </View>
-      {!plan.workouts.length && (
-        <Notice>Este plano ainda não possui treinos.</Notice>
-      )}
-      {plan.workouts.map((w, i) => (
-        <View key={w.id ?? i} style={{ marginTop: 16, gap: 10 }}>
-          <Button
-            variant="secondary"
-            onPress={() => setOpen(open === (w.id ?? i) ? null : (w.id ?? i))}
-          >
-            {w.name}
-            {w.subtitle ? ` · ${w.subtitle}` : ""}
-          </Button>
-          {open === (w.id ?? i) && (
-            <>
-              {!!w.instructions && <Notice>{w.instructions}</Notice>}
-              {!w.exercises.length && (
-                <Label>Este treino ainda não possui exercícios.</Label>
-              )}
-              {w.exercises.map((e, index) => (
-                <Card key={e.id ?? index}>
-                  <Label bold>{index + 1}.</Label>
-                  <PrescriptionView item={e} />
-                </Card>
-              ))}
-            </>
-          )}
+  const [menu, setMenu] = useState(false);
+  const card = { padding: 16, borderRadius: 8, marginBottom: 0, backgroundColor: t.backgroundElement, borderWidth: 0 };
+  return <View style={{ gap: 14 }}>
+    <Card style={card}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingBottom: 14, marginBottom: 14, borderBottomWidth: 1, borderBottomColor: t.border }}>
+        <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: t.accentSoft, alignItems: "center", justifyContent: "center" }}><Label size={22}>↔</Label></View>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Label size={16} bold>{plan.title}</Label>
+          <Label size={11} muted>{formatDate(plan.startsAt)} – {plan.endsAt ? formatDate(plan.endsAt) : "Sem término definido"}</Label>
+          <Label size={12}>{plan.objective} · {plan.difficulty}</Label>
         </View>
-      ))}
+        {edit && <Pressable accessibilityRole="button" accessibilityLabel="Opções desta rotina" onPress={() => setMenu(true)} style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}><Label size={22}>⋮</Label></Pressable>}
+      </View>
+      <View style={{ gap: 12 }}>
+        <View><Label size={12} bold>Status da rotina</Label><Label size={13}>{plan.status === "ativo" ? "Ativa" : plan.status === "rascunho" ? "Rascunho" : "Arquivada"}</Label></View>
+        <View><Label size={12} bold>Visibilidade para o aluno</Label><Label size={13}>{plan.publishedAt ? "Publicada para o aluno vinculado" : "Ainda não publicada"}</Label></View>
+        {plan.student && <View><Label size={12} bold>Personal responsável</Label><Label size={13}>{plan.student.personal.name}</Label></View>}
+        {!!plan.instructions && <View><Label size={12} bold>Orientações</Label><Label size={13}>{plan.instructions}</Label></View>}
+      </View>
     </Card>
-  );
+    {edit && add && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      <View style={{ flex: 1, minWidth: 140 }}><Button variant="secondary" onPress={edit}>Reordenar treinos</Button></View>
+      <View style={{ flex: 1, minWidth: 140 }}><Button onPress={add}>+ Adicionar treino</Button></View>
+    </View>}
+    {!plan.workouts.length && <Notice>Esta rotina ainda não possui treinos.</Notice>}
+    {plan.workouts.map((w, i) => {
+      const expanded = open === (w.id ?? i);
+      return <Card key={w.id ?? i} style={card}>
+        <Pressable accessibilityRole="button" accessibilityLabel={w.name + (w.subtitle ? ` · ${w.subtitle}` : "")} aria-expanded={expanded}
+          onPress={() => setOpen(expanded ? null : (w.id ?? i))} style={{ minHeight: 44, gap: 5 }}>
+          <Label size={15} bold>{w.name}</Label>
+          {!!w.subtitle && <Label size={13}>{w.subtitle}</Label>}
+        </Pressable>
+        <View style={{ marginVertical: 10 }}><Label size={12} muted>{w.exercises.length} exercício(s) na prescrição</Label></View>
+        <Button variant="secondary" onPress={() => setOpen(expanded ? null : (w.id ?? i))}>{expanded ? "Recolher exercícios" : "Ver exercícios"}</Button>
+        {expanded && <View style={{ gap: 10, marginTop: 12 }}>
+          {!!w.instructions && <Notice>{w.instructions}</Notice>}
+          {!w.exercises.length && <Label>Este treino ainda não possui exercícios.</Label>}
+          {w.exercises.map((e, index) => <Card key={e.id ?? index} style={{ padding: 12, borderRadius: 8 }}>
+            <Label bold>{index + 1}.</Label><PrescriptionView item={e} />
+          </Card>)}
+        </View>}
+      </Card>;
+    })}
+    {menu && <Dialog title="Opções da rotina" onClose={() => setMenu(false)}>
+      <View style={{ gap: 12 }}>
+        <Button onPress={() => { setMenu(false); edit?.(); }}>Editar plano</Button>
+        {archive && plan.status !== "arquivado" && <Button variant="secondary" onPress={() => { setMenu(false); archive(); }}>Arquivar plano</Button>}
+      </View>
+    </Dialog>}
+  </View>;
 }
 function PlanCard({ plan, onOpen, onActions }: {
   plan: Plan; onOpen: () => void; onActions?: () => void;
@@ -118,6 +107,7 @@ export function WorkoutPlans({
   const [filter, setFilter] = useState("Todas");
   const [selected, setSelected] = useState<string | null>(null);
   const [actions, setActions] = useState<Plan | null>(null);
+  const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
   const [archive, setArchive] = useState<Plan | null>(null);
   const [discard, setDiscard] = useState(false);
@@ -142,7 +132,14 @@ export function WorkoutPlans({
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       {selectedPlan ? <>
         <Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button>
-        <PlanDetails plan={selectedPlan} edit={studentView ? undefined : () => setEditing(selectedPlan)}
+        <PlanDetails key={selectedPlan.id} plan={selectedPlan}
+          add={studentView ? undefined : () => {
+            setInitialWorkout(selectedPlan.workouts.length);
+            setEditing({ ...selectedPlan, workouts: [...selectedPlan.workouts, {
+              name: `Treino ${String.fromCharCode(65 + selectedPlan.workouts.length)}`,
+              subtitle: "", instructions: "", exercises: [],
+            }] });
+          }} edit={studentView ? undefined : () => setEditing(selectedPlan)}
           archive={studentView ? undefined : () => setArchive(selectedPlan)} />
       </> : <>
         <View style={{ flexDirection: "row", gap: 6 }}>
@@ -185,6 +182,7 @@ export function WorkoutPlans({
         >
           <PlanForm
             studentId={studentId}
+            initialWorkout={initialWorkout}
             plan={editing === "new" ? undefined : editing}
             cancel={() => setDiscard(true)}
             done={() => {
@@ -193,6 +191,7 @@ export function WorkoutPlans({
                 setFilter("Todas");
                 setSelected(null);
               }
+              setInitialWorkout(null);
               setEditing(null);
               setSuccess("Plano salvo com sucesso.");
               void reload();
@@ -205,7 +204,7 @@ export function WorkoutPlans({
           title="Descartar alterações não salvas?"
           description="As alterações do plano ainda não foram enviadas."
           onClose={() => setDiscard(false)}
-          onConfirm={async () => setEditing(null)}
+          onConfirm={async () => { setEditing(null); setInitialWorkout(null); }}
         />
       )}
       {archive && (

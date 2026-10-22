@@ -17,7 +17,9 @@ export function PlanForm({
   plan,
   done,
   cancel,
+  initialWorkout = null,
 }: {
+  initialWorkout?: number | null;
   studentId: string;
   plan?: Plan;
   done: () => void;
@@ -35,7 +37,7 @@ export function PlanForm({
       workouts: [],
     },
   );
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<number | null>(initialWorkout);
   const [remove, setRemove] = useState<number | null>(null);
   const [pending, setPending] = useState(false);
   return (
