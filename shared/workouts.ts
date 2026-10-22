@@ -26,7 +26,18 @@ export const exerciseSchema = z.object({
   notes: text,
   status: z.enum(["ativo", "arquivado"]).default("ativo"),
 });
+export const seriesRowSchema = z.object({
+  sets: z.number().int().min(1).max(100),
+  repetitions: z.string().trim().regex(/^\d+(?:\s*[-–]\s*\d+)?$/, "Informe repetições como 15 ou 8-12"),
+  load: number,
+  restSeconds: number.refine(v => v === null || Number.isInteger(v)),
+});
+export const seriesSchema = z.array(seriesRowSchema).min(1).max(50);
+export const prescriptionPresetSchema = z.object({ name, series: seriesSchema });
+export type SeriesRow = z.infer<typeof seriesRowSchema>;
+export type PrescriptionPreset = z.infer<typeof prescriptionPresetSchema> & { id: string };
 export const prescriptionSchema = z.object({
+  series: z.array(seriesRowSchema).max(50).default([]),
   id: z.string().optional(),
   exerciseId: z.string().min(1),
   sets: number.refine(

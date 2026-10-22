@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
-import { exerciseSchema, planSchema, workoutFeedbackSchema } from "../shared/workouts";
+import { exerciseSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
 
 export const planInclude = {
   workouts: {
@@ -64,13 +64,20 @@ export function workoutRoutes(db: Db) {
   });
   // Aplicar o guard apenas às rotas deste módulo, sem interceptar as demais APIs.
   router.use(
-    ["/exercises", "/workout-plans", "/students/:studentId/workout-plans"],
+    ["/prescription-presets", "/exercises", "/workout-plans", "/students/:studentId/workout-plans"],
     (_req, res, next) => {
       if (res.locals.user.role !== "personal")
         throw new HttpError(403, "Acesso exclusivo do personal");
       next();
     },
   );
+  router.get("/prescription-presets", async (_req, res) => {
+    res.json(await db.prescriptionPreset.findMany({ where: { ownerId: res.locals.user.id }, orderBy: { createdAt: "desc" } }));
+  });
+  router.post("/prescription-presets", async (req, res) => {
+    const data = prescriptionPresetSchema.parse(req.body);
+    res.status(201).json(await db.prescriptionPreset.create({ data: { ...data, ownerId: res.locals.user.id } }));
+  });
   router.get("/exercises", async (req, res) => {
     const query = (key: string) =>
       typeof req.query[key] === "string"

@@ -331,6 +331,27 @@ it("valida datas, números, nomes, ativação vazia e edição concorrente", asy
     ).status,
   ).toBe(400);
 });
+it("persiste linhas de séries e isola presets por personal", async () => {
+  const series = [{ sets: 3, repetitions: "8-12", load: 15, restSeconds: 60 }, { sets: 1, repetitions: "15", load: 10, restSeconds: 90 }];
+  const response = await personal.put(`/api/workout-plans/${plan.id}`).set(header).send({ ...plan,
+    workouts: plan.workouts.map((w: any, i: number) => i ? w : { ...w, exercises: w.exercises.map((e: any) => ({ ...e, series })) }),
+  });
+  expect(response.status).toBe(200);
+  plan = response.body;
+  expect(plan.workouts[0].exercises[0].series).toEqual(series);
+  expect((await student.get("/api/me/workout-plans")).body[0].workouts[0].exercises[0].series).toEqual(series);
+  const bad = await personal.put(`/api/workout-plans/${plan.id}`).set(header).send({ ...plan,
+    workouts: [{ ...plan.workouts[0], exercises: [{ ...plan.workouts[0].exercises[0], series: [{ ...series[0], load: -1 }] }] }],
+  });
+  expect(bad.status).toBe(400);
+  const preset = await personal.post("/api/prescription-presets").set(header).send({ name: "Séries de teste", series });
+  expect(preset.status).toBe(201);
+  expect((await personal.get("/api/prescription-presets")).body[0].series).toEqual(series);
+  expect((await other.get("/api/prescription-presets")).body).toEqual([]);
+  expect((await student.get("/api/prescription-presets")).status).toBe(403);
+  expect((await student.post("/api/prescription-presets").set(header).send({ name: "Teste", series })).status).toBe(403);
+  expect((await personal.post("/api/prescription-presets").set(header).send({ name: "", series })).status).toBe(400);
+});
 it("feedback é exclusivo do aluno vinculado, persistente e idempotente", async () => {
   const endpoint = `/api/me/workouts/${plan.workouts[1].id}/feedbacks`;
   const payload = { requestId: "feedback-test-1", comment: "Consegui concluir, mas a última série foi difícil." };

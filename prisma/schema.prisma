@@ -10,6 +10,7 @@ model User {
   name String
   email String @unique
   role String @default("personal")
+  prescriptionPresets PrescriptionPreset[]
   exercises Exercise[]
   students Student[] @relation("PersonalStudents")
   profiles Student[] @relation("StudentAccount")
@@ -276,6 +277,7 @@ model WorkoutExercise {
   exerciseId String
   exercise Exercise @relation(fields:[exerciseId], references:[id], onDelete:Restrict)
   orderIndex Int
+  series Json @default("[]")
   sets Int?
   repetitions String @default("")
   load Float?
@@ -300,4 +302,14 @@ model WorkoutFeedback {
   createdAt DateTime @default(now())
   @@unique([workoutId, requestId])
   @@index([workoutId, createdAt])
+}
+
+model PrescriptionPreset {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name String
+  series Json
+  createdAt DateTime @default(now())
+  @@index([ownerId])
 }

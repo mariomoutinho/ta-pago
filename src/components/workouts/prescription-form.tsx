@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { Field, Label, s } from "@/components/personal/ui";
+import { Field, Label, Notice, s } from "@/components/personal/ui";
 import {
   prescriptionSchema,
   type Prescription,
@@ -61,7 +61,7 @@ export function PrescriptionForm({
         orientações.
       </Label>
       <View style={s.row}>
-        {numbers.map(([key, label]) => (
+        {numbers.filter(([key]) => !item.series?.length || !["sets", "load", "restSeconds"].includes(key)).map(([key, label]) => (
           <Field
             key={key}
             label={label}
@@ -71,11 +71,12 @@ export function PrescriptionForm({
           />
         ))}
       </View>
-      <Field
+      {!!item.series?.length && <Notice>Este exercício usa linhas de séries. Para alterar séries, repetições, carga e intervalo, abra o exercício na janela do treino.</Notice>}
+      {!item.series?.length && <Field
         label="Repetições (ex.: 10 ou 8-12)"
         value={data.repetitions}
         onChangeText={(v) => setData({ ...data, repetitions: v })}
-      />
+      />}
       <Field
         label="Cadência"
         value={data.cadence}

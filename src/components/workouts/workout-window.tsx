@@ -1,11 +1,14 @@
+import { SeriesEditor } from "./series-editor";
+import { ExerciseDetails } from "./exercise-view";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { useTheme } from "@/hooks/use-theme";
 import { Button, Dialog, Label, Notice } from "@/components/personal/ui";
-import type { WorkoutData } from "../../../shared/workouts";
+import type { WorkoutData, SeriesRow } from "../../../shared/workouts";
 import { PrescriptionView } from "./exercise-view";
 
-export function WorkoutWindow({ workout, close, edit, add }: {
+export function WorkoutWindow({ workout, close, edit, add, saveSeries }: {
+  saveSeries?: (index: number, rows: SeriesRow[]) => Promise<void>;
   workout: WorkoutData; close: () => void; edit?: () => void; add?: () => void;
 }) {
   const t = useTheme();
@@ -34,7 +37,10 @@ export function WorkoutWindow({ workout, close, edit, add }: {
             <View style={{ flex: 1 }}><Label size={14} bold>{name}</Label></View>
             <Label muted>{open ? "⌃" : "⌄"}</Label>
           </Pressable>
-          {open && <View style={{ paddingTop: 10 }}><PrescriptionView item={item} /></View>}
+          {open && <View style={{ paddingTop: 10 }}>{saveSeries ? <>
+            {item.exercise && <ExerciseDetails exercise={item.exercise} />}
+            <SeriesEditor item={item} save={rows => saveSeries(i, rows)} />
+          </> : <PrescriptionView item={item} />}</View>}
         </View>;
       })}
     </View>

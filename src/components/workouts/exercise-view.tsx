@@ -60,7 +60,15 @@ export function PrescriptionView({ item }: { item: Prescription }) {
   return (
     <View style={{ gap: 8 }}>
       {item.exercise && <ExerciseDetails exercise={item.exercise} />}
-      {values.map((v) => (
+      {!!item.series?.length && <View style={{ gap: 8 }}>
+        <View style={{ flexDirection: "row", gap: 8 }}>{["Série/rep", "Carga", "Intervalo"].map(label => <View key={label} style={{ flex: 1 }}><Label size={12} bold>{label}</Label></View>)}</View>
+        {item.series.map((row, i) => <View key={i} style={{ flexDirection: "row", gap: 8 }}>
+          <View style={{ flex: 1 }}><Label>{row.sets}/{row.repetitions}</Label></View>
+          <View style={{ flex: 1 }}><Label>{row.load === null ? "—" : `${row.load} kg`}</Label></View>
+          <View style={{ flex: 1 }}><Label>{row.restSeconds === null ? "—" : `${row.restSeconds} s`}</Label></View>
+        </View>)}
+      </View>}
+      {values.filter(v => !item.series?.length || !(/ séries$| repetições$| kg$|^Descanso:/.test(v))).map((v) => (
         <Label key={v}>{v}</Label>
       ))}
       {!!item.notes && <Notice>{item.notes}</Notice>}

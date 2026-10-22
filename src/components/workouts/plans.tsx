@@ -61,6 +61,14 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkou
           <WorkoutFeedbacks workout={w} canSend={studentView && plan.status === "ativo" && plan.student?.linkStatus === "active"} reload={reload} />
         </View>
         {expanded && <WorkoutWindow workout={w} close={() => setOpen(null)}
+          saveSeries={studentView ? undefined : async (index, rows) => {
+            await api(`/workout-plans/${plan.id}`, "PUT", { ...plan,
+              workouts: plan.workouts.map((workout, wi) => wi !== i ? workout : { ...workout,
+                exercises: workout.exercises.map((exercise, ei) => ei !== index ? exercise : { ...exercise, series: rows }),
+              }),
+            });
+            await reload();
+          }}
           edit={editWorkout ? () => { setOpen(null); editWorkout(i, false); } : undefined}
           add={editWorkout ? () => { setOpen(null); editWorkout(i, true); } : undefined} />}
 

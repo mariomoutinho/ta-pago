@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/series-editor.tsx",
     "server/workouts.ts",
     "src/features/personal/exercise-video.ts",
     "src/components/workouts/exercise-video.web.tsx",
@@ -116,3 +117,9 @@ Imagem é cadastrada por URL, sem upload de mídia. Vídeos do YouTube (watch, y
 Cada treino possui histórico de comentários com data e hora de registro no servidor. O aluno vinculado envia em Terminei: enviar feedback; o personal proprietário consulta no botão Feedbacks. O comentário é obrigatório, com limite de 2000 caracteres. Não há avaliação automática nem contagem de execução baseada no comentário.
 
 POST /api/me/workouts/:id/feedbacks exige aluno titular, vínculo ativo, treino não removido e rotina ativa publicada. Uma chave por tentativa evita duplicação ao reenviar após falha de rede. Rotinas arquivadas e vínculos encerrados preservam a leitura autorizada do histórico, mas não recebem novos comentários. A autorização do personal continua sendo revogada com o vínculo. A migration 20261022120000_workout_feedback cria a tabela ligada ao treino; exclusão definitiva do acompanhamento remove os registros em cascata. A exportação de planos inclui os feedbacks dos treinos presentes.
+
+## Séries e presets no exercício expandido
+
+Na janela do treino, o personal edita linhas com série/repetições (por exemplo, 3/15 ou 3/8-12), carga em kg e intervalo em segundos. Adicionar série cria uma linha, Replicar séries duplica a última, e excluir remove uma linha mantendo pelo menos uma. Salvar prescrição persiste as linhas usando o controle de revisão da rotina; alterações ainda não salvas não mudam a prescrição do aluno. Campos vazios de carga e intervalo permanecem não informados. Até 50 linhas são aceitas.
+
+Salvar como preset grava as linhas na conta do personal, sem alterar o plano. Adicionar preset acrescenta as linhas escolhidas à edição atual; a lista é privada por proprietário e indisponível para alunos. O aluno consulta as linhas salvas, sem controles de edição. Prescrições antigas continuam legíveis pelos campos originais; não há conversão automática dos dados existentes. A migration 20261022130000_prescription_series adiciona series ao WorkoutExercise e a tabela PrescriptionPreset.
