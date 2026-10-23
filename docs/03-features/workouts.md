@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "server/app.ts",
     "src/components/workouts/exercise-view.tsx",
     "src/components/workouts/workout-editor.tsx",
     "src/components/workouts/series-editor.tsx",
@@ -30,7 +31,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "5.3.1",
+  "version": "5.4.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -69,6 +70,8 @@ A biblioteca de adição e o cadastro de exercícios aparecem dentro da edição
 Na biblioteca, os exercícios começam recolhidos, mantendo nome, grupo, categoria e ações visíveis. Expandir exercício mostra instruções, imagem e vídeo; recolher desmonta o player para interromper a reprodução. Cada exercício pode ser expandido independentemente.
 
 A biblioteca usa painel central com criação no topo, busca e filtros por grupos/categorias, opções derivadas dos exercícios cadastrados e limpeza de filtros. Linhas compactas mostram miniatura automática do YouTube, imagem cadastrada para outros vídeos (ou marcador de mídia quando indisponível), nome e etiquetas; expandir revela os detalhes e ações. As cores seguem o tema Tá Pago.
+
+O cadastro oferece listas de grupos musculares e categorias com opções predefinidas e valores já cadastrados, mantendo entrada livre. Os filtros da biblioteca usam as mesmas opções. A política CSP permite imagens HTTP/HTTPS para miniaturas do YouTube e imagens cadastradas; frames continuam limitados ao player permitido.
 
 ## Modelo e persistência
 

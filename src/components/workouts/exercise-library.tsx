@@ -23,6 +23,30 @@ import {
 } from "../../../shared/workouts";
 import { SaveForm, TextFields } from "./form";
 import { ExerciseDetails } from "./exercise-view";
+const muscleGroups = ["Peitoral", "Dorsal", "Bíceps", "Tríceps", "Inferiores", "Ombros", "Abdômen", "Antebraço"];
+const categories = ["Musculação", "Aeróbico", "Funcional", "Alongamento", "Em casa", "Mobilidade", "Elástico", "MAT Pilates", "Laboral"];
+function OptionField({ label, value, options, change }: {
+  label: string; value: string; options: string[]; change: (value: string) => void;
+}) {
+  const t = useTheme();
+  const [open, setOpen] = useState(false);
+  return <View style={{ gap: 6, marginBottom: 14 }}>
+    <Field label={label} value={value} onChangeText={change} />
+    <Pressable accessibilityRole="button" accessibilityLabel={`Listar ${label.replace(" *", "")}`}
+      aria-expanded={open} onPress={() => setOpen(current => !current)}
+      style={{ padding: 12, borderRadius: 8, borderWidth: 1, borderColor: t.border, backgroundColor: t.backgroundElement }}>
+      <Label>{open ? "Fechar opções ▴" : "Selecionar da lista ▾"}</Label>
+    </Pressable>
+    {open && <View style={{ borderWidth: 1, borderColor: t.border, borderRadius: 8, overflow: "hidden" }}>
+      {options.map(option => <Pressable key={option} accessibilityRole="button"
+        accessibilityLabel={`${label.replace(" *", "")}: ${option}`}
+        onPress={() => { change(option); setOpen(false); }}
+        style={({ pressed }) => ({ padding: 12, minHeight: 44, backgroundColor: pressed || value === option ? t.accentSoft : t.backgroundElement })}>
+        <Label>{option}</Label>
+      </Pressable>)}
+    </View>}
+  </View>;
+}
 const empty: ExerciseData = {
   name: "",
   muscleGroup: "",
@@ -38,7 +62,9 @@ function ExerciseForm({
   exercise,
   done,
   cancel,
+  exercises,
 }: {
+  exercises: Exercise[];
   exercise?: Exercise;
   done: (exercise: Exercise) => void;
   cancel: () => void;
@@ -72,8 +98,15 @@ function ExerciseForm({
           change={setData}
           fields={[
             ["name", "Nome do exercício *"],
-            ["muscleGroup", "Grupo muscular *"],
-            ["category", "Categoria *"],
+          ]}
+        />
+        <OptionField label="Grupo muscular *" value={data.muscleGroup}
+          options={[...new Set([...muscleGroups, ...exercises.map(e => e.muscleGroup)])].filter(Boolean)}
+          change={muscleGroup => setData(current => ({ ...current, muscleGroup }))} />
+        <OptionField label="Categoria *" value={data.category}
+          options={[...new Set([...categories, ...exercises.map(e => e.category)])].filter(Boolean)}
+          change={category => setData(current => ({ ...current, category }))} />
+        <TextFields value={data} change={setData} fields={[
             ["equipment", "Equipamento"],
             ["description", "Descrição / instruções"],
             ["imageUrl", "Imagem (URL http/https)"],
@@ -136,6 +169,7 @@ export function ExerciseLibrary({
       <View style={{ backgroundColor: t.background, borderColor: t.border, borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 }}>
       {edit ? (
         <ExerciseForm
+          exercises={data ?? []}
           exercise={edit === "new" ? undefined : edit}
           cancel={() => setEdit(null)}
           done={(e) => {
@@ -164,9 +198,9 @@ export function ExerciseLibrary({
         <Field label={filterPanel === "muscle" ? "Filtrar grupo muscular" : "Filtrar categoria"}
           value={filterPanel === "muscle" ? muscle : category}
           onChangeText={filterPanel === "muscle" ? setMuscle : setCategory} />
-        <View style={s.row}>
-          {[...new Set((data ?? []).map(e => filterPanel === "muscle" ? e.muscleGroup : e.category))].filter(Boolean).sort().map(value => (
-            <Button key={value} variant="secondary" onPress={() => filterPanel === "muscle" ? setMuscle(value) : setCategory(value)}>{value}</Button>
+        <View style={{ gap: 4 }}>
+          {[...new Set([...(filterPanel === "muscle" ? muscleGroups : categories), ...(data ?? []).map(e => filterPanel === "muscle" ? e.muscleGroup : e.category)])].filter(Boolean).sort().map(value => (
+            <Button key={value} variant="secondary" onPress={() => { if (filterPanel === "muscle") setMuscle(value); else setCategory(value); setFilterPanel(null); }}>{value}</Button>
           ))}
         </View>
       </View>}

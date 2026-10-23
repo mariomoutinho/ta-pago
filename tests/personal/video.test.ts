@@ -39,6 +39,9 @@ it("CSP permite o player e mantém restrição de frames", async () => {
       "frame-src 'self' https://www.youtube-nocookie.com;",
     );
     expect(result.headers["content-security-policy"]).toContain(
+      "img-src 'self' data: https: http:;",
+    );
+    expect(result.headers["content-security-policy"]).toContain(
       "media-src 'self' https: http:",
     );
   } finally {

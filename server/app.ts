@@ -53,6 +53,7 @@ export function createApp(db: Db) {
         directives: {
           "script-src": ["'self'", "'unsafe-inline'"],
           "frame-src": ["'self'", "https://www.youtube-nocookie.com"],
+          "img-src": ["'self'", "data:", "https:", "http:"],
           "media-src": ["'self'", "https:", "http:"],
         },
       },

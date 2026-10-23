@@ -247,8 +247,12 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page
     .getByLabel("Nome do exercício *", { exact: true })
     .fill("Supino de teste");
-  await page.getByLabel("Grupo muscular *", { exact: true }).fill("Peitoral");
-  await page.getByLabel("Categoria *", { exact: true }).fill("Musculação");
+  await page.getByRole("button", { name: "Listar Grupo muscular", exact: true }).click();
+  await page.getByRole("button", { name: "Grupo muscular: Peitoral", exact: true }).click();
+  await expect(page.getByLabel("Grupo muscular *", { exact: true })).toHaveValue("Peitoral");
+  await page.getByRole("button", { name: "Listar Categoria", exact: true }).click();
+  await page.getByRole("button", { name: "Categoria: Musculação", exact: true }).click();
+  await expect(page.getByLabel("Categoria *", { exact: true })).toHaveValue("Musculação");
   await page
     .getByLabel("Vídeo (URL http/https)", { exact: true })
     .fill("https://www.youtube.com/watch?v=M7lc1UVf-VE");
