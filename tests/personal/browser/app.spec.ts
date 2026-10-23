@@ -396,7 +396,14 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(page.getByLabel("Série/repetições 2", { exact: true })).toHaveValue("3/15");
   await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
   await expect(page.getByRole("button", { name: "+ Criar exercício", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Fechar", exact: true }).last().click();
+  await page.getByRole("button", { name: "+ Criar exercício", exact: true }).click();
+  const exerciseName = page.getByLabel("Nome do exercício *", { exact: true });
+  await exerciseName.click();
+  await exerciseName.pressSequentially("Exercício novo");
+  await expect(exerciseName).toHaveValue("Exercício novo");
+  await page.getByLabel("Grupo muscular *", { exact: true }).fill("Pernas");
+  await page.getByLabel("Categoria *", { exact: true }).fill("Força");
+  await page.getByRole("button", { name: "Fechar biblioteca", exact: true }).click();
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await page.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();

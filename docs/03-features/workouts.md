@@ -4,13 +4,14 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-22",
+  "updated_at": "2026-10-23",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/workout-editor.tsx",
     "src/components/workouts/series-editor.tsx",
     "server/workouts.ts",
     "src/features/personal/exercise-video.ts",
@@ -28,7 +29,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "authority": "code",
   "audience": [
     "developer",
@@ -61,6 +62,8 @@ Personal → Alunos → perfil → Treinos → Criar treino → dados do plano �
 Salvar com status ativo publica para a conta vinculada do aluno. Rascunhos permanecem privados. Datas distinguem planos atuais, futuros e encerrados; arquivamento mantém planos publicados acessíveis ao aluno. É possível ter vários planos ativos em paralelo. Um plano publicado não volta a rascunho.
 
 Aluno → Treinos, ou perfil do acompanhamento → Treinos → selecionar sessão. Leitura inclui exercícios ordenados, orientações, imagem opcional e player de vídeo incorporado. Não existe edição de prescrição pela conta do aluno.
+
+A biblioteca de adição e o cadastro de exercícios aparecem dentro da edição do plano, sem abrir um segundo modal. Isso evita disputa de foco entre janelas durante o preenchimento dos campos. Fechar biblioteca retorna à edição sem descartar o plano.
 
 ## Modelo e persistência
 

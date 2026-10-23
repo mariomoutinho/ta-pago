@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { Button, Card, Confirm, Dialog, Label, s } from "@/components/personal/ui";
+import { Button, Card, Confirm, Label, s } from "@/components/personal/ui";
 import {
   prescriptionSchema,
   type Prescription,
@@ -117,7 +117,9 @@ export function WorkoutEditor({
         </Card>
       )}
       {picker ? (
-        <Dialog title="Adicionar exercício" onClose={() => { setPicker(false); pending(false); }}>
+        <Card>
+          <Label size={20} bold>Adicionar exercício</Label>
+          <Button variant="secondary" onPress={() => { setPicker(false); pending(false); }}>Fechar biblioteca</Button>
           <ExerciseLibrary
             select={(exercise) => {
               setEdit({
@@ -130,7 +132,7 @@ export function WorkoutEditor({
               setPicker(false);
             }}
           />
-        </Dialog>
+        </Card>
       ) : (
         !edit && (
           <Button
