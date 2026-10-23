@@ -11,7 +11,8 @@ import {
 import { api, today } from "@/features/personal/api";
 import { planSchema, type Plan, type PlanData } from "../../../shared/workouts";
 import { SaveForm, TextFields } from "./form";
-import { move, WorkoutEditor } from "./workout-editor";
+import { identifyWorkout, prescriptionKey, move, WorkoutEditor } from "./workout-editor";
+import { PreparedWorkouts } from "./prepared-workouts";
 export function PlanForm({
   studentId,
   plan,
@@ -19,7 +20,9 @@ export function PlanForm({
   cancel,
   initialWorkout = null,
   initialPicker = false,
+  initialTemplatePicker = false,
 }: {
+  initialTemplatePicker?: boolean;
   initialWorkout?: number | null;
   initialPicker?: boolean;
   studentId: string;
@@ -28,7 +31,7 @@ export function PlanForm({
   cancel: () => void;
 }) {
   const [data, setData] = useState<PlanData>(
-    plan ?? {
+    plan ? { ...plan, workouts: plan.workouts.map(identifyWorkout) } : {
       title: "",
       objective: "Adaptação",
       difficulty: "Iniciante",
@@ -42,6 +45,7 @@ export function PlanForm({
   const [open, setOpen] = useState<number | null>(initialWorkout);
   const [remove, setRemove] = useState<number | null>(null);
   const [pending, setPending] = useState(initialPicker);
+  const [templatePicker, setTemplatePicker] = useState(initialTemplatePicker);
   const [pickerWorkout, setPickerWorkout] = useState(initialPicker ? initialWorkout : null);
   return (
     <SaveForm
@@ -107,6 +111,16 @@ export function PlanForm({
       {!data.workouts.length && (
         <Label>Este plano ainda não possui treinos.</Label>
       )}
+      <Button disabled={pending || data.workouts.length >= 30} variant="secondary" onPress={() => setTemplatePicker(!templatePicker)}>
+        {templatePicker ? "Fechar treinos preparados" : "Usar treino preparado"}
+      </Button>
+      {templatePicker && !pending && <Card>
+        <PreparedWorkouts select={workout => {
+          setData(current => ({ ...current, workouts: [...current.workouts, identifyWorkout(workout)] }));
+          setOpen(data.workouts.length);
+          setTemplatePicker(false);
+        }} />
+      </Card>}
       {data.workouts.map((w, index) => (
         <Card key={w.id ?? `new-${index}`}>
           <Label size={20} bold>
@@ -125,10 +139,10 @@ export function PlanForm({
               variant="secondary"
               onPress={() => {
                 const copy = {
-                  ...w,
+                  ...identifyWorkout({ ...w, exercises: w.exercises.map(e => ({ ...e, id: undefined, clientId: undefined })) }),
                   id: undefined,
                   name: `${w.name} (cópia)`,
-                  exercises: w.exercises.map((e) => ({ ...e, id: undefined })),
+
                 };
                 setData({ ...data, workouts: [...data.workouts, copy] });
                 setOpen(data.workouts.length);
@@ -169,15 +183,17 @@ export function PlanForm({
           {open === index && (
             <WorkoutEditor
               workout={w}
+              persistOrder={plan && w.id && w.exercises.every(item => !!item.id) && plan.workouts.find(previous => previous.id === w.id)?.exercises.length === w.exercises.length ? async items => {
+                const result = await api<{ revision: number }>("/workout-plans/" + plan.id + "/workouts/" + w.id + "/order", "PUT", { revision: data.revision, ids: items.map(prescriptionKey) });
+                setData(current => ({ ...current, revision: result.revision }));
+              } : undefined}
               initialPicker={index === pickerWorkout}
               pending={(value) => { setPending(value); setPickerWorkout(null); }}
               change={(next) =>
-                setData({
-                  ...data,
-                  workouts: data.workouts.map((x, i) =>
-                    i === index ? next : x,
-                  ),
-                })
+                setData(current => ({
+                  ...current,
+                  workouts: current.workouts.map((x, i) => i === index ? next : x),
+                }))
               }
             />
           )}

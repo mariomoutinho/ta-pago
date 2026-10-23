@@ -119,6 +119,7 @@ export function WorkoutPlans({
   const [selected, setSelected] = useState<string | null>(null);
   const [actions, setActions] = useState<Plan | null>(null);
   const [initialPicker, setInitialPicker] = useState(false);
+  const [initialTemplatePicker, setInitialTemplatePicker] = useState(false);
   const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
   const [archive, setArchive] = useState<Plan | null>(null);
@@ -171,6 +172,7 @@ export function WorkoutPlans({
             style={{ minHeight: 52, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: t.accent, backgroundColor: t.background, borderRadius: 6 }}>
             <Label size={14} bold>+ Criar rotina</Label>
           </Pressable>}
+          {!studentView && <Button variant="secondary" onPress={() => { setInitialTemplatePicker(true); setEditing("new"); }}>Usar treino preparado</Button>}
           {section !== "Arquivadas" && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
             {["Todas", "Atuais", "Futuras", "Encerradas", ...(!studentView ? ["Rascunhos"] : [])].map(value =>
               <Pressable key={value} accessibilityRole="button" accessibilityLabel={`Filtrar rotinas: ${value}`} aria-pressed={filter === value}
@@ -199,6 +201,7 @@ export function WorkoutPlans({
             studentId={studentId}
             initialWorkout={initialWorkout}
             initialPicker={initialPicker}
+            initialTemplatePicker={initialTemplatePicker}
             plan={editing === "new" ? undefined : editing}
             cancel={() => setDiscard(true)}
             done={() => {
@@ -208,6 +211,7 @@ export function WorkoutPlans({
                 setSelected(null);
               }
               setInitialWorkout(null); setInitialPicker(false);
+              setInitialTemplatePicker(false);
               setEditing(null);
               setSuccess("Plano salvo com sucesso.");
               void reload();
@@ -220,7 +224,7 @@ export function WorkoutPlans({
           title="Descartar alterações não salvas?"
           description="As alterações do plano ainda não foram enviadas."
           onClose={() => setDiscard(false)}
-          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); }}
+          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
         />
       )}
       {archive && (

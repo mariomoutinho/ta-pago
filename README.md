@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-23",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -29,7 +29,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -253,3 +253,5 @@ Preparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/
 ## Prescrição de treinos
 
 Personal → Alunos → perfil → Treinos permite criar planos e sessões com exercícios da biblioteca privada. Alunos leem planos publicados em Treinos. Consulte [fluxo, migration, autorização e teste manual](docs/03-features/workouts.md). A biblioteca começa vazia e é preenchida manualmente.
+
+A seção **Treinos preparados** permite ao personal montar modelos sem aluno e copiá-los para uma rotina pelo perfil → Treinos → Usar treino preparado. Ajustes nas cópias não alteram o modelo. Após atualizar, aplique as migrações e recompile a web conforme o guia de [treinos](docs/03-features/workouts.md).

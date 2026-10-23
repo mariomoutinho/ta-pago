@@ -33,10 +33,17 @@ export const seriesRowSchema = z.object({
   restSeconds: number.refine(v => v === null || Number.isInteger(v)),
 });
 export const seriesSchema = z.array(seriesRowSchema).min(1).max(50);
-export const prescriptionPresetSchema = z.object({ name, series: seriesSchema });
+export const prescriptionSettingsSchema = z.object({
+  sets: number, repetitions: z.string().trim().max(100).default(""), load: number,
+  durationSeconds: number, restSeconds: number, rir: number, rpe: number,
+  cadence: text, notes: text,
+});
+export const prescriptionPresetSchema = z.object({ name, series: z.array(seriesRowSchema).max(50), configuration: prescriptionSettingsSchema.nullable().default(null) });
 export type SeriesRow = z.infer<typeof seriesRowSchema>;
 export type PrescriptionPreset = z.infer<typeof prescriptionPresetSchema> & { id: string };
 export const prescriptionSchema = z.object({
+  clientId: z.string().min(1).max(100).optional(),
+  alternativeExerciseId: z.string().min(1).nullable().default(null),
   series: z.array(seriesRowSchema).max(50).default([]),
   id: z.string().optional(),
   exerciseId: z.string().min(1),
@@ -65,6 +72,23 @@ export const workoutSchema = z.object({
   instructions: text,
   exercises: z.array(prescriptionSchema).max(100).default([]),
 });
+export const workoutTemplateSchema = workoutSchema.omit({ id: true }).extend({
+  exercises: z.array(prescriptionSchema.omit({ id: true })).min(1, "Adicione pelo menos um exercício").max(100),
+  revision: z.number().int().positive().optional(),
+});
+export type WorkoutTemplate = WorkoutData & { id: string; revision: number };
+/** Copia somente a prescrição, sem IDs ou feedbacks do treino de origem. */
+export function copyPreparedWorkout(template: WorkoutData): WorkoutData {
+  return {
+    name: template.name,
+    subtitle: template.subtitle,
+    instructions: template.instructions,
+    exercises: template.exercises.map(({ id: _id, ...item }) => ({
+      ...item,
+      series: item.series.map(row => ({ ...row })),
+    })),
+  };
+}
 export const planSchema = z
   .object({
     title: name,
@@ -108,6 +132,7 @@ export type ExerciseData = z.infer<typeof exerciseSchema>;
 export type Exercise = ExerciseData & { id: string };
 export type Prescription = z.infer<typeof prescriptionSchema> & {
   exercise?: Exercise;
+  alternativeExercise?: Exercise | null;
 };
 export type WorkoutData = Omit<z.infer<typeof workoutSchema>, "exercises"> & {
   exercises: Prescription[];

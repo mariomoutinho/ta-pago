@@ -32,8 +32,7 @@ const planData = {
 beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
-    path.resolve("node_modules/.bin/prisma"),
-    ["migrate", "deploy"],
+    process.execPath, [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],
     { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" },
   );
   for (const [agent, email, role] of [
@@ -455,4 +454,29 @@ it("revogação remove acesso profissional, preserva leitura do aluno e exclusã
   expect(await db.workoutExercise.count()).toBe(0);
   expect(await db.workoutFeedback.count()).toBe(0);
   expect(await db.exercise.count()).toBeGreaterThan(0);
+});
+
+it("reordena somente associações autorizadas, preserva IDs e publica a ordem para o aluno", async () => {
+  const owner = request.agent(app), viewer = request.agent(app);
+  await owner.post("/api/auth/register").set(header).send({ name: "Ordem", email: "order-owner@example.com", role: "personal", password: "senha-ficticia-12345" });
+  await viewer.post("/api/auth/register").set(header).send({ name: "Aluno", email: "order-viewer@example.com", role: "student", password: "senha-ficticia-12345" });
+  const target = (await owner.post("/api/students").set(header).send({ name: "Aluno", mainGoal: "Força", startDate: "2026-10-23" })).body;
+  const invite = (await owner.post("/api/students/" + target.id + "/invite").set(header)).body;
+  await viewer.post("/api/me/claim").set(header).send({ code: invite.code });
+  const ex = (await owner.post("/api/exercises").set(header).send(exerciseData)).body;
+  const alt = (await owner.post("/api/exercises").set(header).send({ ...exerciseData, name: "Alternativa" })).body;
+  const result = await owner.post("/api/students/" + target.id + "/workout-plans").set(header).send({ ...planData, status: "ativo", workouts: [{ name: "A", exercises: [1, 2, 3].map(load => ({ exerciseId: ex.id, load, alternativeExerciseId: alt.id, notes: "Manter " + load })) }] });
+  expect(result.status).toBe(201);
+  const created = result.body, workout = created.workouts[0], ids = workout.exercises.map((item: { id: string }) => item.id);
+  const endpoint = "/api/workout-plans/" + created.id + "/workouts/" + workout.id + "/order";
+  expect((await other.put(endpoint).set(header).send({ revision: 1, ids })).status).toBe(404);
+  expect((await viewer.put(endpoint).set(header).send({ revision: 1, ids })).status).toBe(403);
+  expect((await owner.put(endpoint).set(header).send({ revision: 1, ids: [ids[0], ids[0], ids[2]] })).status).toBe(409);
+  expect((await owner.put(endpoint).set(header).send({ revision: 1, ids: [ids[2], ids[0], ids[1]] })).status).toBe(200);
+  const read = (await viewer.get("/api/me/workout-plans")).body[0].workouts[0].exercises;
+  expect(read.map((item: { id: string }) => item.id)).toEqual([ids[2], ids[0], ids[1]]);
+  expect(read[0].load).toBe(3); expect(read[0].notes).toBe("Manter 3");
+  expect(read[0].alternativeExercise.name).toBe("Alternativa");
+  expect((await owner.put(endpoint).set(header).send({ revision: 1, ids })).status).toBe(409);
+  expect(await db.exercise.count({ where: { id: ex.id } })).toBe(1);
 });

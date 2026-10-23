@@ -87,6 +87,7 @@ export function PrescriptionView({ item }: { item: Prescription }) {
         <Label key={v}>{v}</Label>
       ))}
       {!!item.notes && <Notice>{item.notes}</Notice>}
+      {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name + ". Utilize somente como alternativa ao exercício principal, seguindo a prescrição e as orientações do personal."}</Notice>}
     </View>
   );
 }

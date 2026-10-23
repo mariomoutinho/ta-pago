@@ -11,9 +11,18 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/workout-editor.tsx",
+    "src/components/workouts/sortable-exercises.web.tsx",
+    "src/components/workouts/sortable-exercises.tsx",
+    "server/workout-order.ts",
+    "prisma/migrations/20261023180000_workout_editor/migration.sql",
+    "server/workout-templates.ts",
+    "src/components/workouts/prepared-workouts.tsx",
+    "src/app/treinos-preparados.tsx",
+    "tests/personal/workout-templates.test.ts",
+    "prisma/migrations/20261023160000_workout_templates/migration.sql",
     "server/app.ts",
     "src/components/workouts/exercise-view.tsx",
-    "src/components/workouts/workout-editor.tsx",
     "src/components/workouts/series-editor.tsx",
     "server/workouts.ts",
     "src/features/personal/exercise-video.ts",
@@ -26,12 +35,14 @@
     "src/components/workouts/plan-form.tsx",
     "src/components/workouts/exercise-library.tsx",
     "tests/personal/workouts.test.ts",
-    "tests/personal/browser/app.spec.ts"
+    "tests/personal/browser/app.spec.ts",
+    "src/components/workouts/exercise-expansion.web.tsx",
+    "tests/personal/workout-editor-migration.test.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "5.4.0",
+  "version": "7.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -72,6 +83,16 @@ Na biblioteca, os exercícios começam recolhidos, mantendo nome, grupo, categor
 A biblioteca usa painel central com criação no topo, busca e filtros por grupos/categorias, opções derivadas dos exercícios cadastrados e limpeza de filtros. Linhas compactas mostram miniatura automática do YouTube, imagem cadastrada para outros vídeos (ou marcador de mídia quando indisponível), nome e etiquetas; expandir revela os detalhes e ações. As cores seguem o tema Tá Pago.
 
 O cadastro oferece listas de grupos musculares e categorias com opções predefinidas e valores já cadastrados, mantendo entrada livre. Os filtros da biblioteca usam as mesmas opções. A política CSP permite imagens HTTP/HTTPS para miniaturas do YouTube e imagens cadastradas; frames continuam limitados ao player permitido.
+
+## Treinos preparados do personal
+
+A seção **Treinos preparados** (`/treinos-preparados`) permite criar, buscar, visualizar, editar e excluir modelos privados sem selecionar aluno. O editor reutiliza a biblioteca de exercícios e a prescrição (séries, repetições, carga, intervalo e orientações). É preciso confirmar a prescrição aberta e adicionar ao menos um exercício ativo antes de salvar. Cancelar pede confirmação de descarte.
+
+No perfil do aluno → Treinos → **Usar treino preparado**, escolha um modelo para iniciar uma rotina. Também é possível usá-lo durante a edição de um plano existente. A seleção adiciona uma cópia independente, sem IDs de treino/prescrição ou feedbacks anteriores; revise nome do plano, datas e status e clique em **Salvar plano**. A rotina nova começa como rascunho e só é publicada quando salva como ativa. Alterar ou excluir o modelo não muda as cópias atribuídas; os dados descritivos do exercício continuam vindo da biblioteca compartilhada do personal.
+
+`WorkoutTemplate` pertence ao personal e armazena nome, subtítulo, orientações, prescrições em JSON e revisão. A API `/api/workout-templates` oferece GET/POST e PUT/DELETE por ID, exige personal autenticado e verifica propriedade; a gravação valida exercícios ativos da própria biblioteca. Edição com revisão antiga retorna 409. Modelos com exercícios posteriormente arquivados aparecem indisponíveis para seleção até serem corrigidos; salvar um plano também revalida os exercícios. Nenhum modelo é exposto diretamente ao aluno.
+
+A migration aditiva `20261023160000_workout_templates` cria somente a tabela e seu índice. Execute `npx prisma generate` e `npx prisma migrate deploy`, compile a web e reinicie a API. Não é necessário recriar alunos ou planos.
 
 ## Modelo e persistência
 
@@ -134,3 +155,16 @@ POST /api/me/workouts/:id/feedbacks exige aluno titular, vínculo ativo, treino 
 Na janela do treino, o personal edita linhas com série/repetições (por exemplo, 3/15 ou 3/8-12), carga em kg e intervalo em segundos. Adicionar série cria uma linha, Replicar séries duplica a última, e excluir remove uma linha mantendo pelo menos uma. Salvar prescrição persiste as linhas usando o controle de revisão da rotina; alterações ainda não salvas não mudam a prescrição do aluno. Campos vazios de carga e intervalo permanecem não informados. Até 50 linhas são aceitas.
 
 Salvar como preset grava as linhas na conta do personal, sem alterar o plano. Adicionar preset acrescenta as linhas escolhidas à edição atual; a lista é privada por proprietário e indisponível para alunos. O aluno consulta as linhas salvas, sem controles de edição. Prescrições antigas continuam legíveis pelos campos originais; não há conversão automática dos dados existentes. A migration 20261022130000_prescription_series adiciona series ao WorkoutExercise e a tabela PrescriptionPreset.
+
+
+## Edição compacta de exercícios
+
+O WorkoutEditor compartilhado por planos e modelos preparados apresenta handle, seleção, nome, ações e expansão individual. Os detalhes ficam montados e ocultos ao recolher, preservando os valores de séries ainda não confirmados. Expandir todos e Recolher todos alteram somente a visualização. Confirme séries e prescrições abertas antes de salvar o formulário.
+
+Na web, @dnd-kit/core, @dnd-kit/sortable e @dnd-kit/utilities permitem arrastar somente pelo handle com mouse ou toque prolongado. Alt + seta para cima/baixo e os botões no detalhe oferecem reordenação por teclado. A versão nativa reutiliza PanResponder do React Native, com toque prolongado no handle e prévia da posição. Transições da web respeitam movimento reduzido; a versão nativa não adiciona animação. Validação em dispositivos Android/iOS físicos permanece necessária.
+
+Ao soltar um item de uma lista já persistida e com as mesmas associações, o editor grava somente a ordem. PUT /api/workout-templates/:id/order e PUT /api/workout-plans/:id/workouts/:workoutId/order exigem revisão atual e permutação exata dos IDs. O backend valida proprietário e vínculo ativo, atualiza a revisão e grava em transação. Falhas restauram a ordem visual anterior e preservam o formulário. Listas novas, ou com associações adicionadas/removidas ainda não salvas, persistem junto com o formulário e informam esse estado ao personal. Modelos não alteram cópias já prescritas.
+
+O menu de ações fecha por Escape, clique fora ou botão Fechar. Trocar exercício abre a biblioteca e exige confirmação; mantém a prescrição para revisão profissional. Adicionar preset aplica a configuração salva; Salvar como preset guarda séries, campos originais e observações na biblioteca privada de presets existente. Presets antigos de séries continuam compatíveis. O backend reutiliza um preset idêntico com o mesmo nome, configuração e séries. A exclusão requer confirmação e remove somente a associação quando o formulário é salvo.
+
+Adicionar exercício alternativo vincula uma entrada ativa da mesma biblioteca ao principal, sem criar outra posição no treino. O aluno consulta a alternativa na prescrição expandida. A migration 20261023180000_workout_editor adiciona uma relação opcional em WorkoutExercise, configuration opcional em PrescriptionPreset e IDs estáveis às entradas JSON dos modelos existentes. Não remove registros nem altera suas prescrições.

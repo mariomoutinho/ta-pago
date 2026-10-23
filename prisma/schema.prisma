@@ -11,6 +11,7 @@ model User {
   email String @unique
   role String @default("personal")
   prescriptionPresets PrescriptionPreset[]
+  workoutTemplates WorkoutTemplate[]
   exercises Exercise[]
   students Student[] @relation("PersonalStudents")
   profiles Student[] @relation("StudentAccount")
@@ -266,6 +267,7 @@ model Exercise {
   notes String @default("")
   status String @default("ativo")
   prescriptions WorkoutExercise[]
+  alternatives WorkoutExercise[] @relation("AlternativeExercise")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([ownerId,status])
@@ -276,6 +278,8 @@ model WorkoutExercise {
   workout Workout @relation(fields:[workoutId], references:[id], onDelete:Cascade)
   exerciseId String
   exercise Exercise @relation(fields:[exerciseId], references:[id], onDelete:Restrict)
+  alternativeExerciseId String?
+  alternativeExercise Exercise? @relation("AlternativeExercise", fields:[alternativeExerciseId], references:[id], onDelete:Restrict)
   orderIndex Int
   series Json @default("[]")
   sets Int?
@@ -310,6 +314,21 @@ model PrescriptionPreset {
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   name String
   series Json
+  configuration Json?
   createdAt DateTime @default(now())
+  @@index([ownerId])
+}
+
+model WorkoutTemplate {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name String
+  subtitle String @default("")
+  instructions String @default("")
+  exercises Json
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   @@index([ownerId])
 }

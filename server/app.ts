@@ -1,30 +1,31 @@
-import { planInclude, workoutRoutes } from "./workouts";
-import {
-  publicEnrollmentRoutes,
-  privateEnrollmentRoutes,
-  enrollmentOrigin,
-} from "./enrollment";
-import express from "express";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import express from "express";
 import { rateLimit } from "express-rate-limit";
-import { z } from "zod";
+import helmet from "helmet";
 import path from "node:path";
-import type { Db } from "./db";
+import { z } from "zod";
 import {
-  studentSchema,
   programSchema,
-  templateSchema,
   recordSchema,
   recordSchemas,
+  studentSchema,
+  templateSchema,
 } from "../shared/validation";
-import { hashPassword, verifyPassword, sessionKey, newToken } from "./security";
+import type { Db } from "./db";
 import {
+  enrollmentOrigin,
+  privateEnrollmentRoutes,
+  publicEnrollmentRoutes,
+} from "./enrollment";
+import {
+  evaluationInclude,
   HttpError,
   saveEvaluation,
   templateInclude,
-  evaluationInclude,
 } from "./evaluations";
+import { hashPassword, newToken, sessionKey, verifyPassword } from "./security";
+import { workoutTemplateRoutes } from "./workout-templates";
+import { planInclude, workoutRoutes } from "./workouts";
 
 type Identity = { id: string; name: string; email: string; role: string };
 const identity = (res: express.Response) => res.locals.user as Identity;
@@ -191,8 +192,11 @@ export function createApp(db: Db) {
     res.locals.user = publicUser(user);
     next();
   });
+
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
   app.use("/api", workoutRoutes(db));
+  app.use("/api/workout-templates", workoutTemplateRoutes(db));
+
   app.post("/api/auth/logout", async (req, res) => {
     await db.session.deleteMany({ where: { id: sessionKey(tokenFrom(req)) } });
     res

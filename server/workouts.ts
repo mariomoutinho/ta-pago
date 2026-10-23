@@ -1,3 +1,4 @@
+import { orderSchema, ordered } from "./workout-order";
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
@@ -12,7 +13,7 @@ export const planInclude = {
       exercises: {
         where: { deletedAt: null },
         orderBy: { orderIndex: "asc" as const },
-        include: { exercise: true },
+        include: { exercise: true, alternativeExercise: true },
       },
     },
   },
@@ -76,7 +77,12 @@ export function workoutRoutes(db: Db) {
   });
   router.post("/prescription-presets", async (req, res) => {
     const data = prescriptionPresetSchema.parse(req.body);
-    res.status(201).json(await db.prescriptionPreset.create({ data: { ...data, ownerId: res.locals.user.id } }));
+    const ownerId = res.locals.user.id;
+    const presets = await db.prescriptionPreset.findMany({ where: { ownerId } });
+    const duplicate = presets.find(p => p.name === data.name && JSON.stringify(p.series) === JSON.stringify(data.series) && JSON.stringify(p.configuration) === JSON.stringify(data.configuration));
+    if (duplicate) { res.json(duplicate); return; }
+    const { configuration, ...fields } = data;
+    res.status(201).json(await db.prescriptionPreset.create({ data: { ...fields, ...(configuration ? { configuration } : {}), ownerId } }));
   });
   router.get("/exercises", async (req, res) => {
     const query = (key: string) =>
@@ -181,6 +187,10 @@ export function workoutRoutes(db: Db) {
           const previous = old?.exercises.find((x) => x.id === e.id);
           if (e.id && !previous)
             throw new HttpError(400, "Prescrição inválida");
+          if (e.alternativeExerciseId) {
+            const alternative = await tx.exercise.findFirst({ where: { id: e.alternativeExerciseId, ownerId, status: "ativo" } });
+            if (!alternative || alternative.id === e.exerciseId) throw new HttpError(400, "Alternativa indisponível");
+          }
           const exercise = await tx.exercise.findFirst({
             where: { id: e.exerciseId, ownerId },
           });
@@ -231,7 +241,7 @@ export function workoutRoutes(db: Db) {
           data: { deletedAt: now },
         });
         for (const [position, e] of exercises.entries()) {
-          const { id: prescriptionId, ...fields } = e;
+          const { id: prescriptionId, clientId: _clientId, ...fields } = e;
           if (prescriptionId)
             await tx.workoutExercise.update({
               where: { id: prescriptionId },
@@ -255,6 +265,21 @@ export function workoutRoutes(db: Db) {
       .json(
         await save(req.body, res.locals.user.id, String(req.params.studentId)),
       );
+  });
+  router.put("/workout-plans/:id/workouts/:workoutId/order", async (req, res) => {
+    const { revision, ids } = orderSchema.parse(req.body);
+    const result = await db.$transaction(async tx => {
+      const plan = await tx.workoutPlan.findFirst({ where: { id: String(req.params.id), student: { personalId: res.locals.user.id, linkStatus: { not: "ended" } } }, include: planInclude });
+      if (!plan) throw new HttpError(404, "Plano não encontrado");
+      if (plan.revision !== revision) throw new HttpError(409, "Plano atualizado em outra sessão. Abra novamente.");
+      const workout = plan.workouts.find(w => w.id === String(req.params.workoutId));
+      if (!workout) throw new HttpError(404, "Treino não encontrado");
+      const exercises = ordered(workout.exercises, ids, item => item.id);
+      await tx.workoutPlan.update({ where: { id: plan.id, revision }, data: { revision: { increment: 1 } } });
+      for (const [orderIndex, item] of exercises.entries()) await tx.workoutExercise.update({ where: { id: item.id }, data: { orderIndex } });
+      return { revision: revision + 1 };
+    });
+    res.json(result);
   });
   router.put("/workout-plans/:id", async (req, res) => {
     res.json(

@@ -13,6 +13,7 @@ export default function PersonalNavigation() {
           ["/alunos", "Alunos"],
           ["/programas", "Programas"],
           ["/exercicios", "Exercícios"],
+          ["/treinos-preparados", "Treinos preparados"],
           ["/modelos", "Avaliações"],
         ]
       : [

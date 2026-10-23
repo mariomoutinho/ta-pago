@@ -49,6 +49,7 @@ function Navigation() {
           <Stack.Screen name="alunos/[id]" />
           <Stack.Screen name="programas" />
           <Stack.Screen name="exercicios" />
+          <Stack.Screen name="treinos-preparados" />
           <Stack.Screen name="modelos" />
         </Stack.Protected>
         <Stack.Protected guard={user?.role === "student"}>

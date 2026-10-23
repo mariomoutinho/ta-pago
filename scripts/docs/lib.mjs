@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync, lstatSync } from 'node:fs';
-import { resolve, relative, dirname } from 'node:path';
+import { resolve, relative, dirname, sep } from 'node:path';
 import { ROOT, DOC_EXTRACTOR, safePath, fail, validateValue, readJSON, provenance, hash, emptyManifest, makeChunk, summaries, byId } from '../knowledge/common.mjs';
 export { ROOT, safePath, serialize, incrementalPlan, validateManifest } from '../knowledge/common.mjs';
 export const MANIFEST = 'knowledge/manifest.json';
@@ -42,7 +42,7 @@ export function validateLinks(root, file, body) {
     if (/^[a-z]+:/i.test(target) || target.startsWith('/')) fail(`${file}: link não permitido: ${target}`);
     const path = decodeURIComponent(target.split(/[?#]/)[0]);
     if (!path) continue;
-    const absolute = safePath(root, relative(root, resolve(root, dirname(file), path)));
+    const absolute = safePath(root, relative(root, resolve(root, dirname(file), path)).split(sep).join("/"));
     if (!existsSync(absolute)) fail(`${file}: link local quebrado: ${target}`);
   }
 }

@@ -16,18 +16,19 @@ function parse(rows: Row[]) {
       restSeconds: r.rest.trim() ? Number(r.rest.replace(",", ".")) : null };
   }));
 }
-export function SeriesEditor({ item, save }: { item: Prescription; save: (series: SeriesRow[]) => Promise<void> }) {
+export function SeriesEditor({ item, save, onDirty, draft = false, disabled = false }: { item: Prescription; save: (series: SeriesRow[]) => Promise<void>; onDirty?: (dirty: boolean) => void; draft?: boolean; disabled?: boolean }) {
   const t = useTheme();
   const [rows, setRows] = useState<Row[]>(() => item.series?.length ? display(item.series) : [{
     combined: `${item.sets ?? ""}/${item.repetitions || ""}`, load: item.load === null ? "" : String(item.load), rest: item.restSeconds === null ? "" : String(item.restSeconds),
   }]);
-  const [busy, setBusy] = useState(false);
+  const [saving, setBusy] = useState(false);
+  const busy = disabled || saving;
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [preset, setPreset] = useState<"save" | "load" | null>(null);
   const [name, setName] = useState("");
   const presets = useResource<PrescriptionPreset[]>(preset === "load" ? "/prescription-presets" : null);
-  const change = (next: Row[]) => { setRows(next); setSuccess(""); setError(""); };
+  const change = (next: Row[]) => { onDirty?.(true); setRows(next); setSuccess(""); setError(""); };
   async function run(action: () => Promise<void>) {
     setBusy(true); setError(""); setSuccess("");
     try { await action(); }
@@ -55,7 +56,7 @@ export function SeriesEditor({ item, save }: { item: Prescription; save: (series
     </View>
     <Label size={11} muted>Replicar séries duplica a última linha. Adicionar preset acrescenta suas linhas.</Label>
     <Notice error>{error}</Notice><Notice>{success}</Notice>
-    <Button disabled={busy} onPress={() => void run(async () => { await save(parse(rows)); setSuccess("Prescrição salva."); })}>{busy ? "Salvando…" : "Salvar prescrição"}</Button>
+    <Button disabled={busy} onPress={() => void run(async () => { await save(parse(rows)); onDirty?.(false); setSuccess(draft ? "Séries confirmadas. Salve o formulário para gravar." : "Prescrição salva."); })}>{busy ? "Salvando…" : draft ? "Confirmar séries" : "Salvar prescrição"}</Button>
     {preset && <Dialog title={preset === "save" ? "Salvar preset" : "Presets de séries"} onClose={() => { if (!busy) setPreset(null); }}>
       <View style={{ gap: 12 }}>
         <Notice error>{error || presets.error}</Notice>

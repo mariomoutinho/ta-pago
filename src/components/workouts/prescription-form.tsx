@@ -52,7 +52,7 @@ export function PrescriptionForm({
               .map((i) => `${i.path.join(".")}: ${i.message}`)
               .join(" · "),
           );
-        done({ ...parsed.data, exercise: item.exercise });
+        done({ ...parsed.data, exercise: item.exercise, alternativeExercise: item.alternativeExercise });
       }}
     >
       <Label bold>{item.exercise?.name}</Label>
