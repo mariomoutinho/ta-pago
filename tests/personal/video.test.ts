@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import request from "supertest";
-import { exerciseVideoSource } from "../../src/features/personal/exercise-video";
+import { exerciseVideoSource, exerciseVideoThumbnail } from "../../src/features/personal/exercise-video";
 import { createApp } from "../../server/app";
 import { createDb } from "../../server/db";
 it.each([
@@ -44,4 +44,11 @@ it("CSP permite o player e mantém restrição de frames", async () => {
   } finally {
     await db.$disconnect();
   }
+});
+
+it("gera miniatura de YouTube sem carregar o player", () => {
+  expect(exerciseVideoThumbnail("https://youtu.be/M7lc1UVf-VE")).toBe("https://i.ytimg.com/vi/M7lc1UVf-VE/mqdefault.jpg");
+  expect(exerciseVideoThumbnail("https://youtube.com/shorts/M7lc1UVf-VE")).toBe("https://i.ytimg.com/vi/M7lc1UVf-VE/mqdefault.jpg");
+  expect(exerciseVideoThumbnail("https://youtube.com.evil.example/watch?v=M7lc1UVf-VE")).toBeNull();
+  expect(exerciseVideoThumbnail("https://example.com/demo.mp4")).toBeNull();
 });

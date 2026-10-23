@@ -43,3 +43,11 @@ export function exerciseVideoSource(value: string): ExerciseVideoSource | null {
     return null;
   }
 }
+
+/** Miniatura estática: não carrega o player enquanto o exercício está recolhido. */
+export function exerciseVideoThumbnail(value: string): string | null {
+  const source = exerciseVideoSource(value);
+  if (source?.kind !== "youtube") return null;
+  const id = new URL(source.url).pathname.split("/")[2];
+  return `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+}

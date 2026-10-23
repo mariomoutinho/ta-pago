@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Image, Pressable, View } from "react-native";
+import { exerciseVideoThumbnail } from "@/features/personal/exercise-video";
 import { useTheme } from "@/hooks/use-theme";
 import { useResource } from "@/features/personal/use-resource";
 import { api } from "@/features/personal/api";
@@ -84,6 +85,15 @@ function ExerciseForm({
     </Card>
   );
 }
+function ExerciseThumbnail({ exercise }: { exercise: Exercise }) {
+  const [failed, setFailed] = useState(false);
+  const uri = exerciseVideoThumbnail(exercise.videoUrl) ?? exercise.imageUrl;
+  return uri && !failed ? (
+    <Image source={{ uri }} accessibilityLabel={`Miniatura: ${exercise.name}`}
+      style={{ width: 64, height: 64 }} resizeMode="cover" onError={() => setFailed(true)} />
+  ) : <Label size={24}>{exercise.videoUrl ? "▷" : "◇"}</Label>;
+}
+
 export function ExerciseLibrary({
   select,
 }: {
@@ -193,7 +203,7 @@ export function ExerciseLibrary({
             onPress={() => setExpanded(current => current.includes(e.id) ? current.filter(id => id !== e.id) : [...current, e.id])}
             style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 12, padding: 10, minHeight: 86, backgroundColor: pressed ? t.backgroundElement : t.background })}>
             <View style={{ width: 64, height: 64, backgroundColor: t.accentSoft, borderRadius: 6, alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-              {e.imageUrl ? <Image source={{ uri: e.imageUrl }} style={{ width: 64, height: 64 }} resizeMode="cover" /> : <Label size={24}>{e.videoUrl ? "▷" : "◇"}</Label>}
+              <ExerciseThumbnail key={`${e.videoUrl}:${e.imageUrl}`} exercise={e} />
             </View>
             <View style={{ flex: 1, minWidth: 0, gap: 6 }}>
               <Label bold size={15}>{e.name}</Label>
