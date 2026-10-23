@@ -1,10 +1,12 @@
 import { exerciseVideoSource } from "@/features/personal/exercise-video";
 import { ExerciseVideo } from "./exercise-video";
-import { Image, Linking, View } from "react-native";
+import { Image, Linking, Pressable, View } from "react-native";
 import { useState } from "react";
 import { Button, Label, Notice } from "@/components/personal/ui";
 import type { Exercise, Prescription } from "../../../shared/workouts";
-export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
+export function ExerciseDetails({ exercise, collapsible = false }: { exercise: Exercise; collapsible?: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const visible = !collapsible || expanded;
   const [error, setError] = useState("");
   const video = exerciseVideoSource(exercise.videoUrl);
   return (
@@ -16,6 +18,18 @@ export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
         {exercise.muscleGroup} · {exercise.category}
         {exercise.equipment ? ` · ${exercise.equipment}` : ""}
       </Label>
+      {collapsible && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${expanded ? "Recolher" : "Expandir"} exercício ${exercise.name}`}
+          aria-expanded={expanded}
+          onPress={() => setExpanded(value => !value)}
+          style={{ minHeight: 44, justifyContent: "center" }}
+        >
+          <Label bold>{expanded ? "Recolher exercício ▴" : "Expandir exercício ▾"}</Label>
+        </Pressable>
+      )}
+      {visible && <>
       {!!exercise.description && <Label>{exercise.description}</Label>}
       {!!exercise.notes && <Label>{exercise.notes}</Label>}
       {!!exercise.imageUrl && (
@@ -43,6 +57,7 @@ export function ExerciseDetails({ exercise }: { exercise: Exercise }) {
         </Button>
       )}
       <Notice error>{error}</Notice>
+      </>}
     </View>
   );
 }

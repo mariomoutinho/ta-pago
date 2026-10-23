@@ -173,7 +173,7 @@ export function ExerciseLibrary({
       )}
       {visible?.map((e) => (
         <Card key={e.id}>
-          <ExerciseDetails exercise={e} />
+          <ExerciseDetails exercise={e} collapsible />
           <View style={s.row}>
             {select && (
               <Button onPress={() => select(e)}>+ Adicionar ao treino</Button>

@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/exercise-view.tsx",
     "src/components/workouts/workout-editor.tsx",
     "src/components/workouts/series-editor.tsx",
     "server/workouts.ts",
@@ -29,7 +30,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -64,6 +65,8 @@ Salvar com status ativo publica para a conta vinculada do aluno. Rascunhos perma
 Aluno → Treinos, ou perfil do acompanhamento → Treinos → selecionar sessão. Leitura inclui exercícios ordenados, orientações, imagem opcional e player de vídeo incorporado. Não existe edição de prescrição pela conta do aluno.
 
 A biblioteca de adição e o cadastro de exercícios aparecem dentro da edição do plano, sem abrir um segundo modal. Isso evita disputa de foco entre janelas durante o preenchimento dos campos. Fechar biblioteca retorna à edição sem descartar o plano.
+
+Na biblioteca, os exercícios começam recolhidos, mantendo nome, grupo, categoria e ações visíveis. Expandir exercício mostra instruções, imagem e vídeo; recolher desmonta o player para interromper a reprodução. Cada exercício pode ser expandido independentemente.
 
 ## Modelo e persistência
 

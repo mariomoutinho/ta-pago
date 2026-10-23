@@ -449,6 +449,8 @@ test("vídeo YouTube aparece dentro da biblioteca sem navegar para outra página
     "https://www.youtube-nocookie.com",
   );
   const player = page.getByTitle("Vídeo: Supino com vídeo", { exact: true });
+  await expect(player).toHaveCount(0);
+  await page.getByRole("button", { name: "Expandir exercício Supino com vídeo", exact: true }).click();
   await expect(player).toBeVisible();
   await expect(player).toHaveAttribute(
     "src",
@@ -466,6 +468,8 @@ test("vídeo YouTube aparece dentro da biblioteca sem navegar para outra página
   const bounds = await player.boundingBox();
   expect(bounds!.width).toBeLessThanOrEqual(390);
   expect(bounds!.height).toBeGreaterThanOrEqual(200);
+  await page.getByRole("button", { name: "Recolher exercício Supino com vídeo", exact: true }).click();
+  await expect(player).toHaveCount(0);
 });
 
 test("home organiza ações do personal, mostra dados reais e adapta larguras", async ({
