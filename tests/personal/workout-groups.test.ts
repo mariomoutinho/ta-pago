@@ -39,3 +39,32 @@ it("ordem isolada só é salva se os blocos e as associações já estiverem per
   expect(canPersistExerciseOrder(items, combineExercises(items, new Set(["1", "2"]), "par"))).toBe(false);
   expect(canPersistExerciseOrder(items, items.slice(1))).toBe(false);
 });
+
+it("reordena membros sem alterar grupo, dados ou IDs", async () => {
+  const { reorderGroupExercises } = await import("../../shared/workout-groups");
+  const grouped = combineExercises(items, new Set(["1", "2", "3"]), "trio");
+  const next = reorderGroupExercises(grouped, "trio", 2, 0);
+  expect(next.map(item => item.id)).toEqual(["3", "1", "2", "4"]);
+  expect(next[0]).toEqual({ ...items[2], groupId: "trio" });
+  expect(validExerciseGroups(next)).toBe(true);
+});
+it("adiciona ocorrência existente ao grupo, retira e desfaz sem duplicações", async () => {
+  const { insertExerciseInGroup, detachExercise, detachSelectedExercises } = await import("../../shared/workout-groups");
+  const grouped = combineExercises(items, new Set(["1", "2"]), "par");
+  const next = insertExerciseInGroup(grouped, items[3], "par");
+  expect(next.map(item => item.id)).toEqual(["1", "2", "4", "3"]);
+  expect(new Set(next.map(item => item.id)).size).toBe(4);
+  const detached = detachExercise(next, "2");
+  expect(detached.map(item => item.id)).toEqual(["1", "4", "2", "3"]);
+  expect(detached[2].groupId).toBeNull(); expect(validExerciseGroups(detached)).toBe(true);
+  expect(detachSelectedExercises(next, new Set(["1", "2", "4"])).map(item => item.id)).toEqual(["1", "2", "4", "3"]);
+  expect(detachSelectedExercises(next, new Set(["1", "2", "4"])).every(item => item.groupId === null)).toBe(true);
+  expect(insertExerciseInGroup(next, next[0], "par")).toBe(next);
+});
+it("combina seleções parciais de grupos sem fragmentar o restante", () => {
+  const grouped = combineExercises(items, new Set(["1", "2", "3"]), "trio");
+  const next = combineExercises(grouped, new Set(["2", "4"]), "novo");
+  expect(validExerciseGroups(next)).toBe(true);
+  expect(next.filter(item => item.groupId === "novo").map(item => item.id)).toEqual(["2", "4"]);
+  expect(new Set(next.map(item => item.id)).size).toBe(4);
+});

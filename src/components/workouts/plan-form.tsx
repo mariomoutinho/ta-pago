@@ -21,11 +21,13 @@ export function PlanForm({
   cancel,
   initialWorkout = null,
   initialPicker = false,
+  initialGroup,
   initialTemplatePicker = false,
 }: {
   initialTemplatePicker?: boolean;
   initialWorkout?: number | null;
   initialPicker?: boolean;
+  initialGroup?: string;
   studentId: string;
   plan?: Plan;
   done: () => void;
@@ -189,6 +191,7 @@ export function PlanForm({
                 setData(current => ({ ...current, revision: result.revision }));
               } : undefined}
               initialPicker={index === pickerWorkout}
+              initialGroup={initialGroup}
               pending={(value) => { setPending(value); setPickerWorkout(null); }}
               change={(next) =>
                 setData(current => ({

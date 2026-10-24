@@ -43,6 +43,11 @@ const studentInclude = {
 export function createApp(db: Db) {
   const app = express();
   app.disable("x-powered-by");
+  app.use((_req, res, next) => {
+    const release = process.env.TAPAGO_RELEASE_ID;
+    if (release && /^[a-zA-Z0-9._-]{1,100}$/.test(release)) res.setHeader("X-TaPago-Release", release);
+    next();
+  });
   if (process.env.PERSONAL_TRUST_PROXY)
     app.set(
       "trust proxy",
@@ -727,10 +732,13 @@ export function createApp(db: Db) {
   app.use("/api", () => {
     throw new HttpError(404, "Recurso não encontrado");
   });
-  app.use(express.static(path.resolve("dist")));
-  app.get("/{*path}", (_req, res) =>
-    res.sendFile(path.resolve("dist/index.html")),
-  );
+  app.use(express.static(path.resolve("dist"), { setHeaders: (res, file) => {
+    if (file.endsWith(".html")) res.setHeader("Cache-Control", "no-store");
+  } }));
+  app.get("/{*path}", (_req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    res.sendFile("index.html", { root: path.resolve("dist") });
+  });
   app.use(
     (
       error: unknown,

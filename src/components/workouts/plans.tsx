@@ -18,7 +18,7 @@ import { WorkoutWindow } from "./workout-window";
 function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkout }: {
   plan: Plan; edit?: () => void; archive?: () => void; add?: () => void;
   studentView: boolean; reload: () => Promise<void>;
-  editWorkout?: (index: number, picker: boolean) => void;
+  editWorkout?: (index: number, picker: boolean, groupId?: string) => void;
 }) {
   const t = useTheme();
   const [open, setOpen] = useState<string | number | null>(null);
@@ -61,6 +61,7 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkou
           <WorkoutFeedbacks workout={w} canSend={studentView && plan.status === "ativo" && plan.student?.linkStatus === "active"} reload={reload} />
         </View>
         {expanded && <WorkoutWindow workout={w} close={() => setOpen(null)}
+          addToGroup={editWorkout ? groupId => { setOpen(null); editWorkout(i, true, groupId); } : undefined}
           saveExercises={studentView ? undefined : async (items, operation) => {
             if (operation === "order") {
               await api(`/workout-plans/${plan.id}/workouts/${w.id}/order`, "PUT", { revision: plan.revision, ids: items.map(item => item.id) });
@@ -128,6 +129,7 @@ export function WorkoutPlans({
   const [filter, setFilter] = useState("Todas");
   const [selected, setSelected] = useState<string | null>(null);
   const [actions, setActions] = useState<Plan | null>(null);
+  const [initialGroup, setInitialGroup] = useState<string | undefined>();
   const [initialPicker, setInitialPicker] = useState(false);
   const [initialTemplatePicker, setInitialTemplatePicker] = useState(false);
   const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
@@ -156,7 +158,8 @@ export function WorkoutPlans({
       {selectedPlan ? <>
         <Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button>
         <PlanDetails key={selectedPlan.id} plan={selectedPlan} studentView={studentView} reload={reload}
-          editWorkout={studentView ? undefined : (index, picker) => {
+          editWorkout={studentView ? undefined : (index, picker, groupId) => {
+            setInitialGroup(groupId);
             setInitialWorkout(index); setInitialPicker(picker); setEditing(selectedPlan);
           }}
           add={studentView ? undefined : () => {
@@ -211,6 +214,7 @@ export function WorkoutPlans({
             studentId={studentId}
             initialWorkout={initialWorkout}
             initialPicker={initialPicker}
+            initialGroup={initialGroup}
             initialTemplatePicker={initialTemplatePicker}
             plan={editing === "new" ? undefined : editing}
             cancel={() => setDiscard(true)}
@@ -220,7 +224,7 @@ export function WorkoutPlans({
                 setFilter("Todas");
                 setSelected(null);
               }
-              setInitialWorkout(null); setInitialPicker(false);
+              setInitialWorkout(null); setInitialPicker(false); setInitialGroup(undefined);
               setInitialTemplatePicker(false);
               setEditing(null);
               setSuccess("Plano salvo com sucesso.");

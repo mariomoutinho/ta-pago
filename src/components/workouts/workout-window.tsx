@@ -1,20 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
-import { Button, Dialog, Label, Notice } from "@/components/personal/ui";
+import { Button, Card, Dialog, Label, Notice } from "@/components/personal/ui";
 import { message } from "@/features/personal/api";
 import type { Prescription, WorkoutData, SeriesRow } from "../../../shared/workouts";
 import { exerciseKey } from "../../../shared/workout-groups";
 import { SeriesEditor } from "./series-editor";
 import { ExerciseDetails, PrescriptionView } from "./exercise-view";
+import { PrescriptionForm } from "./prescription-form";
 import { WorkoutExerciseList, type WorkoutChange } from "./workout-exercise-list";
 
-export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises }: {
+export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises, addToGroup }: {
+  addToGroup?: (groupId: string) => void;
   saveSeries?: (index: number, rows: SeriesRow[]) => Promise<void>;
   saveExercises?: (items: Prescription[], operation: WorkoutChange) => Promise<void>;
   workout: WorkoutData; close: () => void; edit?: () => void; add?: () => void;
 }) {
-  const [current, setCurrent] = useState(workout);
-  useEffect(() => setCurrent(workout), [workout]);
+  const [optimistic, setOptimistic] = useState<WorkoutData | null>(null);
+  const current = optimistic ?? workout;
+  const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
   const dirty = useRef(new Set<string>());
@@ -23,30 +26,29 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
   const [success, setSuccess] = useState("");
   async function change(items: Prescription[], operation: WorkoutChange) {
     if (lock.current) throw new Error("Aguarde o salvamento atual.");
-    const previous = current;
     lock.current = true; setBusy(true); setError(""); setSuccess("");
-    setCurrent({ ...current, exercises: items });
+    setOptimistic({ ...current, exercises: items });
     try {
       await saveExercises?.(items, operation);
-      setSuccess(operation === "order" ? "Ordem salva." : operation === "combine" ? "Exercícios combinados." : operation === "separate" ? "Exercícios separados." : "Exercícios removidos deste treino.");
-    } catch (e) { setCurrent(previous); setError(message(e)); throw e; }
-    finally { lock.current = false; setBusy(false); }
+      setSuccess(operation === "order" ? "Ordem salva." : operation === "combine" ? "Exercícios combinados." : operation === "separate" ? "Exercícios separados." : operation === "delete" ? "Exercícios removidos deste treino." : "Treino atualizado.");
+    } catch (e) { setOptimistic(null); setError(message(e)); throw e; }
+    finally { setOptimistic(null); lock.current = false; setBusy(false); }
   }
   return <Dialog title={current.name} onClose={() => { if (!busy) close(); }}>
     <View style={{ gap: 12 }}>
       {!!current.subtitle && <Label bold>{current.subtitle}</Label>}
       {!!current.instructions && <Notice>{current.instructions}</Notice>}
-      {(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        {edit && <Button disabled={busy || hasDirty} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
-        {add && <Button disabled={busy || hasDirty} onPress={add}>Adicionar exercício</Button>}
-      </View>}
       <Notice error>{error}</Notice><Notice>{success}</Notice>
       {!current.exercises.length && <Notice>Este treino ainda não possui exercícios. Adicione exercícios pela biblioteca.</Notice>}
-      <WorkoutExerciseList items={current.exercises} disabled={busy || hasDirty} change={saveExercises ? change : undefined} details={(item, index) => saveSeries ? <>
+      <WorkoutExerciseList items={current.exercises} disabled={busy || hasDirty || !!editing} change={saveExercises ? change : undefined} editItem={saveExercises ? setEditing : undefined} addToGroup={addToGroup} normalActions={(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        {edit && <Button disabled={busy || hasDirty || !!editing} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
+        {add && <Button disabled={busy || hasDirty || !!editing} onPress={add}>Adicionar exercício</Button>}
+      </View>} details={(item, index) => saveSeries ? <>
         {item.exercise && <ExerciseDetails exercise={item.exercise} />}
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}
-        <SeriesEditor item={item} disabled={busy} onDirty={value => { const key = exerciseKey(item); value ? dirty.current.add(key) : dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
+        <SeriesEditor item={item} disabled={busy || !!editing} onDirty={value => { const key = exerciseKey(item); if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
       </> : <PrescriptionView item={item} />} />
+      {editing && <Card><PrescriptionForm item={current.exercises.find(item => exerciseKey(item) === editing)!} cancel={() => setEditing(null)} done={async item => { await change(current.exercises.map(previous => exerciseKey(previous) === editing ? item : previous), "edit"); setEditing(null); }} /></Card>}
     </View>
   </Dialog>;
 }

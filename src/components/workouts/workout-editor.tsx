@@ -1,7 +1,6 @@
-import { useRef, useState } from "react";
-import { Modal, Pressable, ScrollView, View } from "react-native";
-import { Button, Card, Confirm, Dialog, Field, Label, Notice, s } from "@/components/personal/ui";
-import { useTheme } from "@/hooks/use-theme";
+import { useLayoutEffect, useRef, useState } from "react";
+import { View } from "react-native";
+import { Button, Card, Confirm, Dialog, Field, Label, Notice } from "@/components/personal/ui";
 import { api, message } from "@/features/personal/api";
 import { useResource } from "@/features/personal/use-resource";
 import { prescriptionSchema, prescriptionSettingsSchema, type Exercise, type Prescription, type PrescriptionPreset, type WorkoutData } from "../../../shared/workouts";
@@ -11,7 +10,7 @@ import { PrescriptionForm } from "./prescription-form";
 import { PrescriptionView } from "./exercise-view";
 import { SeriesEditor } from "./series-editor";
 import { WorkoutExerciseList, type WorkoutChange } from "./workout-exercise-list";
-import { removeExercises } from "../../../shared/workout-groups";
+import { insertExerciseInGroup } from "../../../shared/workout-groups";
 export function move<T>(items: T[], index: number, step: number) {
   const next = [...items];
   if (index + step < 0 || index + step >= next.length) return next;
@@ -23,18 +22,16 @@ export const prescriptionKey = (item: Prescription) => item.id ?? item.clientId!
 export function identifyWorkout(workout: WorkoutData): WorkoutData {
   return { ...workout, exercises: workout.exercises.map(item => ({ ...item, clientId: item.clientId ?? item.id ?? `draft-${Date.now()}-${++sequence}` })) };
 }
-export function WorkoutEditor({ workout, change, pending, initialPicker = false, persistOrder }: {
-  initialPicker?: boolean; workout: WorkoutData; change: (w: WorkoutData) => void; pending: (value: boolean) => void;
+export function WorkoutEditor({ workout, change, pending, initialPicker = false, initialGroup, persistOrder }: {
+  initialGroup?: string; initialPicker?: boolean; workout: WorkoutData; change: (w: WorkoutData) => void; pending: (value: boolean) => void;
   persistOrder?: (items: Prescription[]) => Promise<void>;
 }) {
-  const t = useTheme();
   const latestWorkout = useRef(workout);
-  latestWorkout.current = workout;
-  const [picker, setPicker] = useState<"add" | "replace" | "alternative" | null>(initialPicker ? "add" : null);
+  useLayoutEffect(() => { latestWorkout.current = workout; }, [workout]);
+  const [picker, setPicker] = useState<"add" | "group" | "replace" | "alternative" | null>(initialPicker ? initialGroup ? "group" : "add" : null);
   const [target, setTarget] = useState<string | null>(null);
   const [edit, setEdit] = useState<{ item: Prescription; key: string | null } | null>(null);
-  const [remove, setRemove] = useState<string | null>(null);
-  const [menu, setMenu] = useState<string | null>(null);
+  const [pickerGroup, setPickerGroup] = useState<string | undefined>(initialGroup);
   const [preset, setPreset] = useState<"save" | "load" | null>(null);
   const [name, setName] = useState("");
   const [replacement, setReplacement] = useState<Exercise | null>(null);
@@ -63,9 +60,8 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
     catch (e) { change({ ...latestWorkout.current, exercises: before.exercises }); setError(message(e)); throw e; }
     finally { lock.current = false; setBusy(false); pending(false); }
   }
-  function action(value: string) {
-    setTarget(menu); setMenu(null); setError(""); setSuccess("");
-    if (value === "Excluir") { setRemove(menu); return; }
+  function action(key: string, value: string) {
+    setTarget(key); setError(""); setSuccess("");
     pending(true);
     if (value === "Trocar exercício") setPicker("replace");
     if (value === "Adicionar exercício alternativo") setPicker("alternative");
@@ -76,40 +72,35 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
     <TextFields value={workout} change={change} fields={[["name", "Nome do treino *"], ["subtitle", "Subtítulo"], ["instructions", "Orientações do treino"]]} />
     <Notice error>{error}</Notice><Notice>{success}</Notice>
     {!workout.exercises.length && <Label muted>Este treino ainda não possui exercícios.</Label>}
-    <WorkoutExerciseList items={workout.exercises} disabled={disabled} change={changeList} itemMenu={setMenu} details={(item) => {
+    <WorkoutExerciseList items={workout.exercises} disabled={disabled} change={changeList} itemMenu={action} editItem={key => { setEdit({ item: workout.exercises.find(item => prescriptionKey(item) === key)!, key }); pending(true); }} addToGroup={groupId => { setPickerGroup(groupId); setPicker("group"); pending(true); }} normalActions={!picker && !edit && <Button disabled={disabled} onPress={() => { setPickerGroup(undefined); setPicker("add"); pending(true); }}>+ Adicionar exercício</Button>} details={(item) => {
       const key = prescriptionKey(item);
       return <>
         <PrescriptionView item={item} />
         <Button disabled={disabled} variant="secondary" onPress={() => { setEdit({ item, key }); pending(true); }}>Editar prescrição</Button>
-        <SeriesEditor key={JSON.stringify([item.series, item.sets, item.repetitions, item.load, item.restSeconds])} item={item} draft disabled={busy || !!edit || !!picker || !!preset} onDirty={value => { value ? dirty.current.add(key) : dirty.current.delete(key); setHasDirty(dirty.current.size > 0); pending(dirty.current.size > 0); }} save={async series => { update(key, { ...item, series }); }} />
+        <SeriesEditor key={JSON.stringify([item.series, item.sets, item.repetitions, item.load, item.restSeconds])} item={item} draft disabled={busy || !!edit || !!picker || !!preset} onDirty={value => { if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); pending(dirty.current.size > 0); }} save={async series => { update(key, { ...item, series }); }} />
       </>;
     }} />
     {edit && <Card><PrescriptionForm item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
       if (edit.key) update(edit.key, item);
-      else change({ ...workout, exercises: [...workout.exercises, identifyWorkout({ ...workout, exercises: [item] }).exercises[0]] });
+      else {
+        const identified = identifyWorkout({ ...workout, exercises: [item] }).exercises[0];
+        change({ ...workout, exercises: pickerGroup ? insertExerciseInGroup(workout.exercises, identified, pickerGroup) : [...workout.exercises, identified] });
+      }
       setEdit(null); pending(false);
     }} /></Card>}
     {picker ? <Card>
-      <Label size={20} bold>{picker === "add" ? "Adicionar exercício" : picker === "replace" ? "Trocar exercício" : "Adicionar exercício alternativo"}</Label>
+      <Label size={20} bold>{picker === "add" || picker === "group" ? "Adicionar exercício" : picker === "replace" ? "Trocar exercício" : "Adicionar exercício alternativo"}</Label>
       <Button variant="secondary" onPress={closeOperation}>Fechar biblioteca</Button>
       <ExerciseLibrary select={exercise => {
-        if (picker === "add") { setEdit({ item: { ...prescriptionSchema.parse({ exerciseId: exercise.id }), exercise }, key: null }); setPicker(null); }
+        if (picker === "add" || picker === "group") { setEdit({ item: { ...prescriptionSchema.parse({ exerciseId: exercise.id, groupId: picker === "group" ? pickerGroup : null }), exercise }, key: null }); setPicker(null); }
         else if (active && picker === "replace") setReplacement(exercise);
         else if (active) {
           if (exercise.id === active.exerciseId) { setError("Selecione uma alternativa diferente do exercício principal."); return; }
           update(target!, { ...active, alternativeExerciseId: exercise.id, alternativeExercise: exercise }); closeOperation();
         }
       }} />
-    </Card> : !edit && <Button disabled={disabled} onPress={() => { setPicker("add"); pending(true); }}>+ Adicionar exercício</Button>}
+    </Card> : null}
     {replacement && active && <Confirm title="Trocar exercício?" description={"Substituir " + active.exercise?.name + " por " + replacement.name + "? A prescrição será mantida. Revise sua compatibilidade antes de salvar."} onClose={() => setReplacement(null)} onConfirm={async () => { update(target!, { ...active, exerciseId: replacement.id, exercise: replacement, alternativeExerciseId: null, alternativeExercise: null }); closeOperation(); }} />}
-    {remove && <Confirm title="Remover exercício?" description={"Remover " + workout.exercises.find(item => prescriptionKey(item) === remove)?.exercise?.name + " deste treino? A biblioteca será preservada. A remoção será gravada ao salvar o formulário."} onClose={() => setRemove(null)} onConfirm={async () => change({ ...workout, exercises: removeExercises(workout.exercises, new Set([remove])) })} />}
-    {menu && <Modal transparent visible animationType="none" onRequestClose={() => setMenu(null)}>
-      <Pressable accessibilityLabel="Fechar menu de ações" onPress={() => setMenu(null)} style={{ flex: 1, backgroundColor: "#00000066", justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Pressable onPress={event => event.stopPropagation()} style={{ width: "100%", maxWidth: 360, maxHeight: "90%", padding: 16, borderRadius: 18, backgroundColor: t.background }}>
-          <ScrollView><Label bold>Ações do exercício</Label>{["Trocar exercício", "Adicionar preset", "Salvar como preset", "Adicionar exercício alternativo", "Excluir"].map(value => <View key={value} style={{ marginTop: 8 }}><Button variant={value === "Excluir" ? "danger" : "secondary"} onPress={() => action(value)}>{value}</Button></View>)}<Button variant="secondary" onPress={() => setMenu(null)}>Fechar menu</Button></ScrollView>
-        </Pressable>
-      </Pressable>
-    </Modal>}
     {preset && active && <Dialog title={preset === "save" ? "Salvar preset" : "Adicionar preset"} onClose={() => { if (!busy) closeOperation(); }}>
       <Notice error>{error || presets.error}</Notice>
       {preset === "save" ? <><Field label="Nome do preset" value={name} onChangeText={setName} /><Button disabled={busy || !name.trim()} onPress={async () => {

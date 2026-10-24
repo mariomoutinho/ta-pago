@@ -48,7 +48,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -148,7 +148,7 @@ npm run personal:start
 
 A suíte tests/personal/workouts.test.ts cobre CRUD da biblioteca, atribuição sem duplicação, publicação, exercícios por tempo, ordem, duplicação, autorização cruzada, validações, concorrência, soft-delete, revogação e integridade após exclusão do acompanhamento. O cenário Playwright em tests/personal/browser/app.spec.ts percorre a criação mobile e leitura pela conta do aluno. Usam bancos temporários com todas as migrations, sem dados reais.
 
-Imagem é cadastrada por URL, sem upload de mídia. Vídeos do YouTube (watch, youtu.be, Shorts, live e embed) são convertidos para o player incorporado, sem alterar o cadastro. Vídeos diretos MP4/WebM/OGV/M4V/MOV usam controles internos. Na web são usados iframe/vídeo HTML; Android/iOS usam react-native-webview 13.16.1 compatível com Expo 57. A reprodução começa por ação do usuário. Links não reconhecidos mantêm a alternativa externa. A disponibilidade e a permissão de incorporação dependem do provedor do vídeo. A CSP permite frames somente da própria aplicação e de www.youtube-nocookie.com. Testes nativos em dispositivos Android/iOS e publicação em hospedagem não fazem parte da execução local. O comando lint herdado necessita configuração/dependências ESLint, ausentes na base auditada.
+Imagem é cadastrada por URL, sem upload de mídia. Vídeos do YouTube (watch, youtu.be, Shorts, live e embed) são convertidos para o player incorporado, sem alterar o cadastro. Vídeos diretos MP4/WebM/OGV/M4V/MOV usam controles internos. Na web são usados iframe/vídeo HTML; Android/iOS usam react-native-webview 13.16.1 compatível com Expo 57. A reprodução começa por ação do usuário. Links não reconhecidos mantêm a alternativa externa. A disponibilidade e a permissão de incorporação dependem do provedor do vídeo. A CSP permite frames somente da própria aplicação e de www.youtube-nocookie.com. Testes nativos em dispositivos Android/iOS e publicação em hospedagem não fazem parte da execução local. O lint usa ESLint 9 e eslint-config-expo 57; diagnósticos herdados de migração dos hooks permanecem como avisos nos arquivos explicitados na configuração.
 
 ## Feedbacks após o treino
 
@@ -187,3 +187,12 @@ Na janela principal, reordenação, combinação, separação e exclusão salvam
 O arraste web usa prévia flutuante fora do recorte do modal, movimento vertical e reorganização dos demais blocos. Mouse, toque prolongado, Alt + setas e botões acessíveis são suportados. Animações respeitam movimento reduzido. A identidade visual existente é preservada.
 
 A migration 20261024120000_workout_groups adiciona groupId opcional em WorkoutExercise; modelos preparados armazenam o mesmo campo no JSON existente. Grupos precisam ser contíguos e conter pelo menos dois itens. Os schemas e os endpoints de ordem rejeitam fragmentação. Agrupamento e exclusão em lote reutilizam as transações e autorizações dos planos/modelos, mantendo a independência entre alunos e cópias.
+
+
+## Gestão dos membros combinados
+
+Ao selecionar uma ocorrência, a barra normal é substituída por Combinar e Excluir, com quantidade, limpeza de seleção e separação quando aplicável. A seleção usa IDs das ocorrências; duas prescrições do mesmo exercício continuam independentes. O checkbox do grupo permite selecionar ou desmarcar todos os membros.
+
+Dentro do grupo expandido, cada membro possui checkbox, handle, detalhes e menu próprios. É possível reordenar internamente, retirar um membro preservando sua prescrição, mover uma ocorrência existente para o grupo ou adicionar outra pela biblioteca e pelo formulário de prescrição existentes. Separar todos mantém os exercícios e a ordem; grupos unitários são dissolvidos. Duplicar cria outra ocorrência com cópia independente das séries. Editar usa PrescriptionForm.
+
+Na janela Ver exercícios, essas operações persistem no plano existente com revisão, autorização e rollback em erro. Adicionar pela biblioteca reaproveita PlanForm com o grupo de destino e exige Salvar plano. Não há nova página ou biblioteca paralela. O servidor pode identificar a release pelo header X-TaPago-Release e envia o HTML sem cache para evitar uma shell antiga.

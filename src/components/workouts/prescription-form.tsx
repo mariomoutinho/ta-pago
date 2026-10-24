@@ -20,7 +20,7 @@ export function PrescriptionForm({
   cancel,
 }: {
   item: Prescription;
-  done: (item: Prescription) => void;
+  done: (item: Prescription) => void | Promise<void>;
   cancel: () => void;
 }) {
   const [data, setData] = useState(item);
@@ -52,7 +52,7 @@ export function PrescriptionForm({
               .map((i) => `${i.path.join(".")}: ${i.message}`)
               .join(" · "),
           );
-        done({ ...parsed.data, exercise: item.exercise, alternativeExercise: item.alternativeExercise });
+        await done({ ...parsed.data, exercise: item.exercise, alternativeExercise: item.alternativeExercise });
       }}
     >
       <Label bold>{item.exercise?.name}</Label>
