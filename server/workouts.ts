@@ -1,4 +1,5 @@
 import { orderSchema, ordered } from "./workout-order";
+import { validExerciseGroups } from "../shared/workout-groups";
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
@@ -245,11 +246,11 @@ export function workoutRoutes(db: Db) {
           if (prescriptionId)
             await tx.workoutExercise.update({
               where: { id: prescriptionId },
-              data: { ...fields, orderIndex: position },
+              data: { ...fields, groupId: fields.groupId ?? null, orderIndex: position },
             });
           else
             await tx.workoutExercise.create({
-              data: { ...fields, orderIndex: position, workoutId: workout.id },
+              data: { ...fields, groupId: fields.groupId ?? null, orderIndex: position, workoutId: workout.id },
             });
         }
       }
@@ -275,6 +276,7 @@ export function workoutRoutes(db: Db) {
       const workout = plan.workouts.find(w => w.id === String(req.params.workoutId));
       if (!workout) throw new HttpError(404, "Treino não encontrado");
       const exercises = ordered(workout.exercises, ids, item => item.id);
+      if (!validExerciseGroups(exercises)) throw new HttpError(400, "Mova o bloco combinado inteiro");
       await tx.workoutPlan.update({ where: { id: plan.id, revision }, data: { revision: { increment: 1 } } });
       for (const [orderIndex, item] of exercises.entries()) await tx.workoutExercise.update({ where: { id: item.id }, data: { orderIndex } });
       return { revision: revision + 1 };

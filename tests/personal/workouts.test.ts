@@ -480,3 +480,37 @@ it("reordena somente associações autorizadas, preserva IDs e publica a ordem p
   expect((await owner.put(endpoint).set(header).send({ revision: 1, ids })).status).toBe(409);
   expect(await db.exercise.count({ where: { id: ex.id } })).toBe(1);
 });
+
+it("combina e exclui em lote apenas associações do próprio plano, mantendo biblioteca e outro aluno", async () => {
+  const owner = request.agent(app), viewer = request.agent(app);
+  await owner.post("/api/auth/register").set(header).send({ name: "Blocos", email: "groups-owner@example.com", role: "personal", password: "senha-ficticia-12345" });
+  await viewer.post("/api/auth/register").set(header).send({ name: "Aluno", email: "groups-viewer@example.com", role: "student", password: "senha-ficticia-12345" });
+  const ex = (await owner.post("/api/exercises").set(header).send(exerciseData)).body;
+  const targets = [];
+  for (let index = 0; index < 2; index++) targets.push((await owner.post("/api/students").set(header).send({ name: "Aluno " + index, mainGoal: "Força", startDate: "2026-10-24" })).body);
+  const invite = (await owner.post("/api/students/" + targets[0].id + "/invite").set(header)).body;
+  await viewer.post("/api/me/claim").set(header).send({ code: invite.code });
+  const plans = [];
+  for (const target of targets) plans.push((await owner.post("/api/students/" + target.id + "/workout-plans").set(header).send({ ...planData, status: "ativo", workouts: [{ name: "A", exercises: [1, 2, 3].map(load => ({ exerciseId: ex.id, load, notes: "Manter " + load })) }] })).body);
+  const original = plans[0], w = original.workouts[0];
+  const combined = { ...original, workouts: [{ ...w, exercises: w.exercises.map((item: { load: number }) => ({ ...item, groupId: item.load < 3 ? "dupla" : null })) }] };
+  expect((await other.put("/api/workout-plans/" + original.id).set(header).send(combined)).status).toBe(404);
+  expect((await viewer.put("/api/workout-plans/" + original.id).set(header).send(combined)).status).toBe(403);
+  const saved = await owner.put("/api/workout-plans/" + original.id).set(header).send(combined);
+  expect(saved.status).toBe(200);
+  expect(saved.body.workouts[0].exercises.map((item: { id: string }) => item.id)).toEqual(w.exercises.map((item: { id: string }) => item.id));
+  const endpoint = "/api/workout-plans/" + original.id + "/workouts/" + w.id + "/order";
+  expect((await owner.put(endpoint).set(header).send({ revision: saved.body.revision, ids: [w.exercises[0].id, w.exercises[2].id, w.exercises[1].id] })).status).toBe(400);
+  expect((await viewer.get("/api/me/workout-plans")).body[0].workouts[0].exercises[0].groupId).toBe("dupla");
+  const ungrouped = await owner.put("/api/workout-plans/" + original.id).set(header).send({ ...saved.body, workouts: [{ ...saved.body.workouts[0], exercises: saved.body.workouts[0].exercises.map(({ groupId: _groupId, ...item }: { groupId: string }) => item) }] });
+  expect(ungrouped.status).toBe(200);
+  expect(ungrouped.body.workouts[0].exercises.every((item: { groupId: string | null }) => item.groupId === null)).toBe(true);
+  saved.body = ungrouped.body;
+  const deleted = await owner.put("/api/workout-plans/" + original.id).set(header).send({ ...saved.body, workouts: [{ ...saved.body.workouts[0], exercises: [saved.body.workouts[0].exercises[2]] }] });
+  expect(deleted.status).toBe(200);
+  expect(deleted.body.workouts[0].exercises[0].load).toBe(3);
+  expect(await db.workoutExercise.count({ where: { workoutId: w.id, deletedAt: { not: null } } })).toBe(2);
+  expect(await db.exercise.count({ where: { id: ex.id } })).toBe(1);
+  const untouched = (await owner.get("/api/students/" + targets[1].id + "/workout-plans")).body[0];
+  expect(untouched.revision).toBe(1); expect(untouched.workouts[0].exercises).toHaveLength(3);
+});

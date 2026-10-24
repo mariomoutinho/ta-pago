@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { dateSchema } from "./validation";
+import { validExerciseGroups } from "./workout-groups";
 const text = z.string().trim().max(10000).default("");
 const name = z.string().trim().min(1, "Informe o nome").max(160);
 const url = z
@@ -42,6 +43,7 @@ export const prescriptionPresetSchema = z.object({ name, series: z.array(seriesR
 export type SeriesRow = z.infer<typeof seriesRowSchema>;
 export type PrescriptionPreset = z.infer<typeof prescriptionPresetSchema> & { id: string };
 export const prescriptionSchema = z.object({
+  groupId: z.string().min(1).max(100).nullable().optional(),
   clientId: z.string().min(1).max(100).optional(),
   alternativeExerciseId: z.string().min(1).nullable().default(null),
   series: z.array(seriesRowSchema).max(50).default([]),
@@ -70,10 +72,10 @@ export const workoutSchema = z.object({
   name,
   subtitle: text,
   instructions: text,
-  exercises: z.array(prescriptionSchema).max(100).default([]),
+  exercises: z.array(prescriptionSchema).max(100).refine(validExerciseGroups, "Mantenha os exercícios combinados juntos, em blocos de pelo menos dois").default([]),
 });
 export const workoutTemplateSchema = workoutSchema.omit({ id: true }).extend({
-  exercises: z.array(prescriptionSchema.omit({ id: true })).min(1, "Adicione pelo menos um exercício").max(100),
+  exercises: z.array(prescriptionSchema.omit({ id: true })).min(1, "Adicione pelo menos um exercício").max(100).refine(validExerciseGroups, "Bloco combinado inválido"),
   revision: z.number().int().positive().optional(),
 });
 export type WorkoutTemplate = WorkoutData & { id: string; revision: number };

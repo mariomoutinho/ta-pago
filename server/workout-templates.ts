@@ -1,4 +1,5 @@
 import { orderSchema, ordered } from "./workout-order";
+import { validExerciseGroups } from "../shared/workout-groups";
 import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import type { Db } from "./db";
@@ -54,6 +55,7 @@ export function workoutTemplateRoutes(db: Db) {
       if (!template) throw new HttpError(404, "Treino preparado não encontrado");
       if (template.revision !== revision) throw new HttpError(409, "Treino atualizado em outra sessão. Abra novamente.");
       const exercises = ordered(workoutTemplateSchema.parse(template).exercises, ids, item => item.clientId);
+      if (!validExerciseGroups(exercises)) throw new HttpError(400, "Mova o bloco combinado inteiro");
       await tx.workoutTemplate.update({ where: { id: template.id, revision }, data: { exercises, revision: { increment: 1 } } });
       return { revision: revision + 1 };
     });

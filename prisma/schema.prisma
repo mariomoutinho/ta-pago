@@ -281,6 +281,7 @@ model WorkoutExercise {
   alternativeExerciseId String?
   alternativeExercise Exercise? @relation("AlternativeExercise", fields:[alternativeExerciseId], references:[id], onDelete:Restrict)
   orderIndex Int
+  groupId String?
   series Json @default("[]")
   sets Int?
   repetitions String @default("")

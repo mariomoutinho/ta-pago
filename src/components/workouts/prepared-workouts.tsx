@@ -7,6 +7,7 @@ import { copyPreparedWorkout, workoutTemplateSchema, type WorkoutData, type Work
 import { identifyWorkout, prescriptionKey, WorkoutEditor } from "./workout-editor";
 import { SaveForm } from "./form";
 import { PrescriptionView } from "./exercise-view";
+import { canPersistExerciseOrder } from "../../../shared/workout-groups";
 
 function PreparedWorkoutForm({ template, done, cancel }: {
   template?: WorkoutTemplate; done: () => void; cancel: () => void;
@@ -26,7 +27,7 @@ function PreparedWorkoutForm({ template, done, cancel }: {
       await api(template ? `/workout-templates/${template.id}` : "/workout-templates", template ? "PUT" : "POST", parsed.data);
       done();
     }}>
-      <WorkoutEditor workout={data} change={setData} pending={setPending} persistOrder={template && template.exercises.length === data.exercises.length && data.exercises.every(item => template.exercises.some(previous => prescriptionKey(previous) === prescriptionKey(item))) ? async items => {
+      <WorkoutEditor workout={data} change={setData} pending={setPending} persistOrder={template && canPersistExerciseOrder(template.exercises, data.exercises) ? async items => {
         const result = await api<{ revision: number }>("/workout-templates/" + template.id + "/order", "PUT", { revision, ids: items.map(prescriptionKey) });
         setRevision(result.revision);
       } : undefined} />
@@ -71,7 +72,7 @@ export function PreparedWorkouts({ select }: { select?: (workout: WorkoutData) =
               {expanded === template.id ? "Recolher modelo" : "Ver modelo"}
             </Button>
             {select ? <Button disabled={unavailable} label={`Usar treino ${template.name}`} onPress={() => select(copyPreparedWorkout(template))}>Usar este treino</Button> : <>
-              <Button variant="secondary" label={`Editar treino preparado ${template.name}`} onPress={() => setEditing(template)}>Editar</Button>
+              <Button variant="secondary" label={`Editar treino preparado ${template.name}`} onPress={() => { setSuccess(""); setEditing(template); }}>Editar</Button>
               <Button variant="danger" label={`Excluir treino preparado ${template.name}`} onPress={() => setRemove(template)}>Excluir</Button>
             </>}
           </View>

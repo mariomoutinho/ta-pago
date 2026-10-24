@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-23",
+  "updated_at": "2026-10-24",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -37,12 +37,18 @@
     "tests/personal/workouts.test.ts",
     "tests/personal/browser/app.spec.ts",
     "src/components/workouts/exercise-expansion.web.tsx",
-    "tests/personal/workout-editor-migration.test.ts"
+    "tests/personal/workout-editor-migration.test.ts",
+    "shared/workout-groups.ts",
+    "src/components/workouts/workout-exercise-list.tsx",
+    "src/components/workouts/workout-window.tsx",
+    "src/components/workouts/exercise-checkbox.web.tsx",
+    "prisma/migrations/20261024120000_workout_groups/migration.sql",
+    "tests/personal/workout-groups.test.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -168,3 +174,16 @@ Ao soltar um item de uma lista já persistida e com as mesmas associações, o e
 O menu de ações fecha por Escape, clique fora ou botão Fechar. Trocar exercício abre a biblioteca e exige confirmação; mantém a prescrição para revisão profissional. Adicionar preset aplica a configuração salva; Salvar como preset guarda séries, campos originais e observações na biblioteca privada de presets existente. Presets antigos de séries continuam compatíveis. O backend reutiliza um preset idêntico com o mesmo nome, configuração e séries. A exclusão requer confirmação e remove somente a associação quando o formulário é salvo.
 
 Adicionar exercício alternativo vincula uma entrada ativa da mesma biblioteca ao principal, sem criar outra posição no treino. O aluno consulta a alternativa na prescrição expandida. A migration 20261023180000_workout_editor adiciona uma relação opcional em WorkoutExercise, configuration opcional em PrescriptionPreset e IDs estáveis às entradas JSON dos modelos existentes. Não remove registros nem altera suas prescrições.
+
+
+## Seleção, combinação e ações em lote
+
+WorkoutExerciseList é a lista compartilhada pela janela principal do treino e pelo WorkoutEditor dos formulários de plano/modelo. Cada exercício ou bloco tem checkbox real na web, seleção acessível no nativo e handle de arraste. A barra de seleção permite selecionar todos, limpar seleção, combinar, separar e excluir os marcados. A exclusão exige confirmação e afeta somente as associações do treino; não remove exercícios da biblioteca.
+
+Combinar preserva IDs e todas as prescrições individuais. Os selecionados são reunidos na posição do primeiro marcado, mantendo a ordem relativa dos selecionados e dos demais exercícios. Um bloco combinado mostra os nomes no mesmo cabeçalho e se move inteiro. Ao expandir, cada exercício mantém suas séries, cargas, descansos, observações e alternativas. Separar desfaz somente o agrupamento. Remover um membro de um par dissolve o bloco que ficaria unitário. O aluno vê os blocos e as prescrições, sem controles de seleção ou edição.
+
+Na janela principal, reordenação, combinação, separação e exclusão salvam imediatamente pelos endpoints existentes, com atualização otimista, bloqueio durante a gravação e restauração em erro. Os formulários completos preservam o salvamento explícito do plano/modelo; se houver grupos ainda não salvos, a ordem também aguarda esse salvamento. Prescrições de séries ainda não confirmadas bloqueiam operações que desmontariam os campos. A seleção e a expansão usam identidades estáveis.
+
+O arraste web usa prévia flutuante fora do recorte do modal, movimento vertical e reorganização dos demais blocos. Mouse, toque prolongado, Alt + setas e botões acessíveis são suportados. Animações respeitam movimento reduzido. A identidade visual existente é preservada.
+
+A migration 20261024120000_workout_groups adiciona groupId opcional em WorkoutExercise; modelos preparados armazenam o mesmo campo no JSON existente. Grupos precisam ser contíguos e conter pelo menos dois itens. Os schemas e os endpoints de ordem rejeitam fragmentação. Agrupamento e exclusão em lote reutilizam as transações e autorizações dos planos/modelos, mantendo a independência entre alunos e cópias.

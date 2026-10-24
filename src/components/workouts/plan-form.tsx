@@ -13,6 +13,7 @@ import { planSchema, type Plan, type PlanData } from "../../../shared/workouts";
 import { SaveForm, TextFields } from "./form";
 import { identifyWorkout, prescriptionKey, move, WorkoutEditor } from "./workout-editor";
 import { PreparedWorkouts } from "./prepared-workouts";
+import { canPersistExerciseOrder } from "../../../shared/workout-groups";
 export function PlanForm({
   studentId,
   plan,
@@ -183,7 +184,7 @@ export function PlanForm({
           {open === index && (
             <WorkoutEditor
               workout={w}
-              persistOrder={plan && w.id && w.exercises.every(item => !!item.id) && plan.workouts.find(previous => previous.id === w.id)?.exercises.length === w.exercises.length ? async items => {
+              persistOrder={plan && w.id && canPersistExerciseOrder(plan.workouts.find(previous => previous.id === w.id)?.exercises, w.exercises) ? async items => {
                 const result = await api<{ revision: number }>("/workout-plans/" + plan.id + "/workouts/" + w.id + "/order", "PUT", { revision: data.revision, ids: items.map(prescriptionKey) });
                 setData(current => ({ ...current, revision: result.revision }));
               } : undefined}

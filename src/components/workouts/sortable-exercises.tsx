@@ -2,7 +2,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { PanResponder, Pressable, View } from "react-native";
 import { Label } from "@/components/personal/ui";
 import { useTheme } from "@/hooks/use-theme";
-export type SortableProps = { ids: string[]; disabled: boolean; reorder: (from: number, to: number) => void; children: (id: string, handle: ReactNode) => ReactNode };
+export type SortableProps = { ids: string[]; labels?: Record<string, string>; disabled: boolean; reorder: (from: number, to: number) => void; children: (id: string, handle: ReactNode) => ReactNode };
 type Box = { y: number; height: number };
 function Handle({ id, disabled, begin, move, end }: { id: string; disabled: boolean; begin: () => void; move: (dy: number) => void; end: (cancel: boolean) => void }) {
   const armed = useRef(false), dragging = useRef(false);

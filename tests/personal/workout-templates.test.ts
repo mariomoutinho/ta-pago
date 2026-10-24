@@ -145,3 +145,20 @@ it("persiste alternativas privadas e presets completos sem duplicar o mesmo cada
   expect((await personal.get("/api/prescription-presets")).body[0].configuration).toEqual(preset.configuration);
   expect((await other.get("/api/prescription-presets")).body).toEqual([]);
 });
+
+it("persiste blocos combinados, impede fragmentar pela ordenação e preserva cópias independentes", async () => {
+  const created = (await personal.post("/api/workout-templates").set(header).send({ ...payload(), exercises: [1, 2, 3].map(load => ({ exerciseId, load, groupId: load < 3 ? "dupla" : null, series, notes: "nota " + load })) })).body;
+  expect(created.exercises).toHaveLength(3);
+  const ids = created.exercises.map((item: { clientId: string }) => item.clientId);
+  const endpoint = "/api/workout-templates/" + created.id + "/order";
+  expect((await personal.put(endpoint).set(header).send({ revision: 1, ids: [ids[0], ids[2], ids[1]] })).status).toBe(400);
+  expect((await personal.put(endpoint).set(header).send({ revision: 1, ids: [ids[2], ids[0], ids[1]] })).status).toBe(200);
+  const read = (await personal.get("/api/workout-templates")).body.find((item: WorkoutTemplate) => item.id === created.id);
+  expect(read.exercises.map((item: { load: number }) => item.load)).toEqual([3, 1, 2]);
+  expect(read.exercises.slice(1).every((item: { groupId: string }) => item.groupId === "dupla")).toBe(true);
+  const copy = copyPreparedWorkout(read);
+  expect(copy.exercises[1].series).toEqual(series);
+  expect(copy.exercises[1].groupId).toBe("dupla");
+  const invalid = { ...read, exercises: [read.exercises[1]] };
+  expect((await personal.put("/api/workout-templates/" + read.id).set(header).send(invalid)).status).toBe(400);
+});

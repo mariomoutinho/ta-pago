@@ -16,3 +16,13 @@ it("migração preserva entradas e ordem de modelos já preenchidos e atribui ID
     expect(JSON.parse(db.prepare("SELECT exercises FROM WorkoutTemplate").get().exercises)).toEqual(saved);
   } finally { db.close(); }
 });
+
+it("migração de blocos mantém prescrições existentes sem combinar automaticamente", () => {
+  const db = new SQLite(":memory:");
+  try {
+    db.exec('CREATE TABLE WorkoutExercise(id TEXT, workoutId TEXT, orderIndex INTEGER, notes TEXT);');
+    db.prepare("INSERT INTO WorkoutExercise VALUES (?, ?, ?, ?)").run("prescricao", "treino", 3, "Manter observações");
+    db.exec(readFileSync("prisma/migrations/20261024120000_workout_groups/migration.sql", "utf8"));
+    expect(db.prepare("SELECT * FROM WorkoutExercise").get()).toEqual({ id: "prescricao", workoutId: "treino", orderIndex: 3, notes: "Manter observações", groupId: null });
+  } finally { db.close(); }
+});
