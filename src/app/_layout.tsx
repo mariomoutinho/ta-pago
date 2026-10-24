@@ -47,6 +47,7 @@ function Navigation() {
           <Stack.Screen name="alunos/index" />
           <Stack.Screen name="alunos/link" />
           <Stack.Screen name="alunos/[id]" />
+          <Stack.Screen name="alunos/[id]/treinos" />
           <Stack.Screen name="programas" />
           <Stack.Screen name="exercicios" />
           <Stack.Screen name="treinos-preparados" />

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { api, message } from "@/features/personal/api";
-import { Button, Card, Dialog, Field, Label, Notice } from "@/components/personal/ui";
+import { Button, Card, Field, Label, Notice } from "@/components/personal/ui";
+import { WorkoutScreen } from "./workout-screen";
 import { workoutFeedbackSchema, type WorkoutData } from "../../../shared/workouts";
 
 export function WorkoutFeedbacks({ workout, canSend, reload }: {
@@ -29,12 +30,7 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
     } catch (e) { setError(message(e)); }
     finally { setBusy(false); }
   }
-  return <>
-    <Button variant="secondary" onPress={() => { setOpen(true); setSuccess(""); }}>
-      Feedbacks ({feedbacks.length})
-    </Button>
-    {canSend && <Button onPress={() => { setOpen(true); setSuccess(""); }}>Terminei: enviar feedback</Button>}
-    {open && <Dialog title={`Feedbacks · ${workout.name}`} onClose={() => { if (!busy) setOpen(false); }}>
+  if (open) return <WorkoutScreen title={`Feedbacks · ${workout.name}`} backLabel="Voltar aos treinos" back={() => { if (!busy) setOpen(false); }}>
       <View style={{ gap: 12 }}>
         {canSend && <>
           <Label>Após terminar o treino, conte ao personal como foi sua experiência.</Label>
@@ -49,6 +45,11 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
           <Label>{feedback.comment}</Label>
         </Card>)}
       </View>
-    </Dialog>}
+    </WorkoutScreen>;
+  return <>
+    <Button variant="secondary" onPress={() => { setOpen(true); setSuccess(""); }}>
+      Feedbacks ({feedbacks.length})
+    </Button>
+    {canSend && <Button onPress={() => { setOpen(true); setSuccess(""); }}>Terminei: enviar feedback</Button>}
   </>;
 }

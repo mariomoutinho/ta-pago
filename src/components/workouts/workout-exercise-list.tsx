@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from "react";
 import { Modal, Pressable, ScrollView, View } from "react-native";
-import { Button, Card, Confirm, Dialog, Label, s } from "@/components/personal/ui";
+import { Button, Card, Confirm, Label, s } from "@/components/personal/ui";
 import { useTheme } from "@/hooks/use-theme";
 import type { Prescription } from "../../../shared/workouts";
 import { combineExercises, detachExercise, detachSelectedExercises, exerciseBlocks, exerciseKey, insertExerciseInGroup, removeExercises, reorderGroupExercises, separateExercises } from "../../../shared/workout-groups";
+import { WorkoutScreen } from "./workout-screen";
 import { ExerciseCheckbox } from "./exercise-checkbox";
 import { ExerciseExpansion } from "./exercise-expansion";
 import { SortableExercises } from "./sortable-exercises";
@@ -62,6 +63,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
     {change && <Button label={"Ações de " + item.exercise?.name} disabled={disabled} variant="secondary" onPress={() => openItemMenu(exerciseKey(item))}>⋯</Button>}
   </View>;
   return <View style={{ gap: 10 }}>
+    <View style={[{ gap: 10 }, destination && { display: "none" }]}>
     {selectedItems.length === 0 ? normalActions : change && <Card style={{ padding: 12, marginBottom: 0, backgroundColor: t.accentSoft }}>
       <Label bold>{selectedItems.length} exercício(s) selecionado(s)</Label>
       <View style={[s.row, { gap: 8, marginTop: 8 }]}>
@@ -108,6 +110,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
         </ExerciseExpansion>
       </Card>;
     }}</SortableExercises>
+    </View>
     {(menuBlock || menuItem) && <ActionMenu title={menuBlock ? "Ações do bloco" : "Ações do exercício"} onClose={() => setMenu(null)}>
       <View style={{ gap: 12 }}>
         {menuBlock && <>
@@ -126,10 +129,10 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
         </>}
       </View>
     </ActionMenu>}
-    {destination && <Dialog title="Adicionar ao grupo" onClose={() => setDestination(null)}><View style={{ gap: 8 }}>
+    {destination && <WorkoutScreen title="Adicionar ao grupo" backLabel="Voltar ao treino" back={() => setDestination(null)}><View style={{ gap: 8 }}>
       {destination.itemKey ? blocks.filter(block => block.groupId).map(block => <Button key={block.id} disabled={disabled} variant="secondary" onPress={() => void apply(insertExerciseInGroup(items, items.find(item => exerciseKey(item) === destination.itemKey)!, block.groupId!), "membership").catch(() => {})}>{title(block)}</Button>) : items.filter(item => item.groupId !== destination.groupId).map(item => <Button key={exerciseKey(item)} disabled={disabled} variant="secondary" onPress={() => void apply(insertExerciseInGroup(items, item, destination.groupId!), "membership").catch(() => {})}>{item.exercise?.name}</Button>)}
       {!destination.itemKey && !items.some(item => item.groupId !== destination.groupId) && <Label>Todos os exercícios deste treino já estão no grupo. Use a biblioteca para adicionar um novo.</Label>}
-    </View></Dialog>}
+    </View></WorkoutScreen>}
     {remove && <Confirm title="Excluir exercícios selecionados?" description={"Remover deste treino: " + removeItems.map(item => item.exercise?.name ?? "Exercício").join(", ") + ". Os exercícios da biblioteca serão preservados."} onClose={() => setRemove(null)} onConfirm={async () => { await apply(removeExercises(items, remove), "delete"); }} />}
   </View>;
 }

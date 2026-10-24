@@ -3,7 +3,8 @@ import { TextInput, View } from "react-native";
 import { useTheme } from "@/hooks/use-theme";
 import { api, message } from "@/features/personal/api";
 import { useResource } from "@/features/personal/use-resource";
-import { Button, Dialog, Field, Label, Notice } from "@/components/personal/ui";
+import { Button, Field, Label, Notice } from "@/components/personal/ui";
+import { WorkoutScreen } from "./workout-screen";
 import { seriesSchema, type Prescription, type PrescriptionPreset, type SeriesRow } from "../../../shared/workouts";
 
 type Row = { combined: string; load: string; rest: string };
@@ -36,6 +37,7 @@ export function SeriesEditor({ item, save, onDirty, draft = false, disabled = fa
     finally { setBusy(false); }
   }
   return <View style={{ gap: 10 }}>
+    <View style={[{ gap: 10 }, preset && { display: "none" }]}>
     <View style={{ flexDirection: "row", gap: 6, paddingRight: 44 }}>
       {["Série/rep", "Carga (kg)", "Intervalo (s)"].map(label => <View key={label} style={{ flex: 1 }}><Label size={11} bold>{label}</Label></View>)}
     </View>
@@ -57,7 +59,8 @@ export function SeriesEditor({ item, save, onDirty, draft = false, disabled = fa
     <Label size={11} muted>Replicar séries duplica a última linha. Adicionar preset acrescenta suas linhas.</Label>
     <Notice error>{error}</Notice><Notice>{success}</Notice>
     <Button disabled={busy} onPress={() => void run(async () => { await save(parse(rows)); onDirty?.(false); setSuccess(draft ? "Séries confirmadas. Salve o formulário para gravar." : "Prescrição salva."); })}>{busy ? "Salvando…" : draft ? "Confirmar séries" : "Salvar prescrição"}</Button>
-    {preset && <Dialog title={preset === "save" ? "Salvar preset" : "Presets de séries"} onClose={() => { if (!busy) setPreset(null); }}>
+    </View>
+    {preset && <WorkoutScreen title={preset === "save" ? "Salvar preset" : "Presets de séries"} backLabel="Voltar às séries" back={() => { if (!busy) setPreset(null); }}>
       <View style={{ gap: 12 }}>
         <Notice error>{error || presets.error}</Notice>
         {preset === "save" ? <>
@@ -76,6 +79,6 @@ export function SeriesEditor({ item, save, onDirty, draft = false, disabled = fa
           }}>{p.name}</Button>)}
         </>}
       </View>
-    </Dialog>}
+    </WorkoutScreen>}
   </View>;
 }

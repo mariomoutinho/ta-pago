@@ -17,17 +17,18 @@ function PreparedWorkoutForm({ template, done, cancel }: {
   }));
   const [revision, setRevision] = useState(template?.revision);
   const [pending, setPending] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [discard, setDiscard] = useState(false);
   return <Card>
-    <Label size={20} bold>{template ? "Editar treino preparado" : "Criar treino preparado"}</Label>
-    <SaveForm label="Salvar treino preparado" cancel={() => setDiscard(true)} save={async () => {
+    {!focused && <Label size={20} bold>{template ? "Editar treino preparado" : "Criar treino preparado"}</Label>}
+    <SaveForm hideActions={focused} label="Salvar treino preparado" cancel={() => setDiscard(true)} save={async () => {
       if (pending) throw new Error("Confirme ou cancele a prescrição aberta antes de salvar.");
       const parsed = workoutTemplateSchema.safeParse({ ...data, revision });
       if (!parsed.success) throw new Error(parsed.error.issues.map(issue => issue.message).join(" · "));
       await api(template ? `/workout-templates/${template.id}` : "/workout-templates", template ? "PUT" : "POST", parsed.data);
       done();
     }}>
-      <WorkoutEditor workout={data} change={setData} pending={setPending} persistOrder={template && canPersistExerciseOrder(template.exercises, data.exercises) ? async items => {
+      <WorkoutEditor screenChanged={setFocused} workout={data} change={setData} pending={setPending} persistOrder={template && canPersistExerciseOrder(template.exercises, data.exercises) ? async items => {
         const result = await api<{ revision: number }>("/workout-templates/" + template.id + "/order", "PUT", { revision, ids: items.map(prescriptionKey) });
         setRevision(result.revision);
       } : undefined} />

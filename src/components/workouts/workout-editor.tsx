@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { Button, Card, Confirm, Dialog, Field, Label, Notice } from "@/components/personal/ui";
+import { Button, Card, Confirm, Field, Label, Notice } from "@/components/personal/ui";
+import { WorkoutScreen } from "./workout-screen";
 import { api, message } from "@/features/personal/api";
 import { useResource } from "@/features/personal/use-resource";
 import { prescriptionSchema, prescriptionSettingsSchema, type Exercise, type Prescription, type PrescriptionPreset, type WorkoutData } from "../../../shared/workouts";
@@ -22,7 +23,8 @@ export const prescriptionKey = (item: Prescription) => item.id ?? item.clientId!
 export function identifyWorkout(workout: WorkoutData): WorkoutData {
   return { ...workout, exercises: workout.exercises.map(item => ({ ...item, clientId: item.clientId ?? item.id ?? `draft-${Date.now()}-${++sequence}` })) };
 }
-export function WorkoutEditor({ workout, change, pending, initialPicker = false, initialGroup, persistOrder }: {
+export function WorkoutEditor({ workout, change, pending, initialPicker = false, initialGroup, persistOrder, screenChanged }: {
+  screenChanged?: (active: boolean) => void;
   initialGroup?: string; initialPicker?: boolean; workout: WorkoutData; change: (w: WorkoutData) => void; pending: (value: boolean) => void;
   persistOrder?: (items: Prescription[]) => Promise<void>;
 }) {
@@ -42,6 +44,8 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const presets = useResource<PrescriptionPreset[]>(preset === "load" ? "/prescription-presets" : null);
+  const focused = !!picker || !!edit || !!preset;
+  useEffect(() => { screenChanged?.(focused); }, [focused, screenChanged]);
   const active = workout.exercises.find(item => prescriptionKey(item) === target);
   const disabled = hasDirty || busy || !!edit || !!picker || !!preset;
   const update = (key: string, next: Prescription) => change({ ...workout, exercises: workout.exercises.map(item => prescriptionKey(item) === key ? next : item) });
@@ -69,6 +73,7 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
     if (value === "Salvar como preset") { setName(""); setPreset("save"); }
   }
   return <View style={{ gap: 12 }}>
+    <View style={[{ gap: 12 }, focused && { display: "none" }]}>
     <TextFields value={workout} change={change} fields={[["name", "Nome do treino *"], ["subtitle", "Subtítulo"], ["instructions", "Orientações do treino"]]} />
     <Notice error>{error}</Notice><Notice>{success}</Notice>
     {!workout.exercises.length && <Label muted>Este treino ainda não possui exercícios.</Label>}
@@ -80,16 +85,16 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
         <SeriesEditor key={JSON.stringify([item.series, item.sets, item.repetitions, item.load, item.restSeconds])} item={item} draft disabled={busy || !!edit || !!picker || !!preset} onDirty={value => { if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); pending(dirty.current.size > 0); }} save={async series => { update(key, { ...item, series }); }} />
       </>;
     }} />
-    {edit && <Card><PrescriptionForm item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
+    </View>
+    {edit && <WorkoutScreen title={edit.key ? "Editar prescrição" : "Prescrever exercício"} backLabel="Voltar ao treino" back={() => { setEdit(null); pending(false); }}><Card><PrescriptionForm item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
       if (edit.key) update(edit.key, item);
       else {
         const identified = identifyWorkout({ ...workout, exercises: [item] }).exercises[0];
         change({ ...workout, exercises: pickerGroup ? insertExerciseInGroup(workout.exercises, identified, pickerGroup) : [...workout.exercises, identified] });
       }
       setEdit(null); pending(false);
-    }} /></Card>}
-    {picker ? <Card>
-      <Label size={20} bold>{picker === "add" || picker === "group" ? "Adicionar exercício" : picker === "replace" ? "Trocar exercício" : "Adicionar exercício alternativo"}</Label>
+    }} /></Card></WorkoutScreen>}
+    {picker ? <WorkoutScreen title={picker === "add" || picker === "group" ? "Adicionar exercício" : picker === "replace" ? "Trocar exercício" : "Adicionar exercício alternativo"} backLabel="Voltar ao treino" back={closeOperation}><View style={{ gap: 12 }}>
       <Button variant="secondary" onPress={closeOperation}>Fechar biblioteca</Button>
       <ExerciseLibrary select={exercise => {
         if (picker === "add" || picker === "group") { setEdit({ item: { ...prescriptionSchema.parse({ exerciseId: exercise.id, groupId: picker === "group" ? pickerGroup : null }), exercise }, key: null }); setPicker(null); }
@@ -99,9 +104,9 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
           update(target!, { ...active, alternativeExerciseId: exercise.id, alternativeExercise: exercise }); closeOperation();
         }
       }} />
-    </Card> : null}
+    </View></WorkoutScreen> : null}
     {replacement && active && <Confirm title="Trocar exercício?" description={"Substituir " + active.exercise?.name + " por " + replacement.name + "? A prescrição será mantida. Revise sua compatibilidade antes de salvar."} onClose={() => setReplacement(null)} onConfirm={async () => { update(target!, { ...active, exerciseId: replacement.id, exercise: replacement, alternativeExerciseId: null, alternativeExercise: null }); closeOperation(); }} />}
-    {preset && active && <Dialog title={preset === "save" ? "Salvar preset" : "Adicionar preset"} onClose={() => { if (!busy) closeOperation(); }}>
+    {preset && active && <WorkoutScreen title={preset === "save" ? "Salvar preset" : "Adicionar preset"} backLabel="Voltar ao treino" back={() => { if (!busy) closeOperation(); }}>
       <Notice error>{error || presets.error}</Notice>
       {preset === "save" ? <><Field label="Nome do preset" value={name} onChangeText={setName} /><Button disabled={busy || !name.trim()} onPress={async () => {
         setBusy(true); setError("");
@@ -114,6 +119,6 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
         <Label muted>Aplicar um preset substitui a configuração atual. Confira a prescrição antes de salvar.</Label>
         {presets.data?.map(value => <Button key={value.id} variant="secondary" onPress={() => { update(target!, { ...active, ...(value.configuration ?? {}), series: value.series.map(row => ({ ...row })) }); closeOperation(); }}>{value.name}</Button>)}
       </>}
-    </Dialog>}
+    </WorkoutScreen>}
   </View>;
 }

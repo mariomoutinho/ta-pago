@@ -4,7 +4,7 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-23",
+  "updated_at": "2026-10-24",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
@@ -25,12 +25,17 @@
     "src/components/personal/navigation.tsx",
     "server/app.ts",
     "src/app/alunos/link.tsx",
-    "src/app/cadastro/[token].tsx"
+    "src/app/cadastro/[token].tsx",
+    "src/app/alunos/[id]/treinos.tsx",
+    "src/components/workouts/workout-screen.tsx",
+    "src/components/workouts/plan-form.tsx",
+    "src/components/workouts/workout-editor.tsx",
+    "src/components/workouts/series-editor.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -89,10 +94,15 @@ A área Treinos mantém o cabeçalho compacto do aluno e volta diretamente ao in
 
 O detalhe da rotina separa resumo e cartões de treinos. O resumo apresenta status e visibilidade real conforme publicação; editar e arquivar ficam no menu. Reordenar treinos abre o editor existente, e Adicionar treino abre esse editor com um novo treino ainda não salvo. Cada cartão mostra nome, subtítulo e quantidade de exercícios, com expansão da prescrição. Contagens de execuções e evolução por treino não são simuladas. O botão Feedbacks mostra comentários persistidos por treino, com data e hora; somente o aluno vinculado pode enviar em rotinas ativas publicadas, usando Terminei: enviar feedback.
 
-Ao tocar no treino ou em Ver exercícios, uma janela lista os exercícios prescritos em linhas compactas. Cada linha expande a prescrição e o vídeo; Expandir todos abre a lista completa. Para o personal, Adicionar exercício abre a biblioteca em uma janela e Editar e reordenar abre o treino correspondente no editor. Selecionar um exercício mantém o fluxo de configurar, confirmar prescrição e salvar plano; cancelar não altera os dados persistidos.
+O acesso Treinos no perfil do Personal navega para /alunos/[id]/treinos. Rotina e treino são identificados pelos parâmetros rotina e treino na URL; recarregar e voltar/avançar pelo navegador recuperam a etapa correspondente. Ver exercícios exibe o treino na área principal da página, com retorno à rotina. Adicionar exercício, editar plano, prescrever, escolher grupos e aplicar presets utilizam etapas no conteúdo, sem empilhar janelas. Selecionar um exercício mantém configurar, confirmar prescrição e salvar plano; cancelar não altera os dados persistidos.
 
 O exercício expandido mostra vídeo e tabela de séries. Para o personal, essa tabela é editável e oferece adicionar, replicar e excluir linhas, salvar prescrição e salvar/aplicar presets privados. Para o aluno, exibe apenas os valores persistidos.
 
 ## Treinos preparados
 
 A rota `/treinos-preparados` e seu item de navegação são exclusivos da conta personal. O perfil do aluno oferece seleção de um modelo durante a criação/edição da rotina; a seleção apenas preenche uma cópia local até salvar o plano.
+
+
+## Fluxo de treinos em telas
+
+WorkoutScreen organiza as etapas com título e retorno, sem Modal ou backdrop. O Personal navega do perfil à página de treinos, à rotina e ao treino. As etapas do formulário de plano, biblioteca, prescrição, presets e destino de grupo ocupam o conteúdo da página. Durante a biblioteca/prescrição, a lista e os demais campos do plano ficam ocultos e montados para preservar o rascunho; as ações gerais de salvar reaparecem ao confirmar ou cancelar a etapa. As confirmações destrutivas e os menus rápidos de ações permanecem sobreposições pontuais. A nova rota está no grupo protegido de Personal; a autorização dos dados continua nos endpoints existentes.

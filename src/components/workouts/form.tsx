@@ -8,11 +8,13 @@ export function SaveForm({
   save,
   cancel,
   label = "Salvar",
+  hideActions = false,
 }: {
   children: ReactNode;
   save: () => Promise<void>;
   cancel: () => void;
   label?: string;
+  hideActions?: boolean;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +22,7 @@ export function SaveForm({
     <View style={{ gap: 12 }}>
       {children}
       <Notice error>{error}</Notice>
-      <View style={s.row}>
+      <View style={[s.row, hideActions && { display: "none" }]}>
         <Button
           disabled={busy}
           onPress={async () => {

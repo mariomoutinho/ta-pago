@@ -43,12 +43,14 @@
     "src/components/workouts/workout-window.tsx",
     "src/components/workouts/exercise-checkbox.web.tsx",
     "prisma/migrations/20261024120000_workout_groups/migration.sql",
-    "tests/personal/workout-groups.test.ts"
+    "tests/personal/workout-groups.test.ts",
+    "src/app/alunos/[id]/treinos.tsx",
+    "src/components/workouts/workout-screen.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -196,3 +198,8 @@ Ao selecionar uma ocorrência, a barra normal é substituída por Combinar e Exc
 Dentro do grupo expandido, cada membro possui checkbox, handle, detalhes e menu próprios. É possível reordenar internamente, retirar um membro preservando sua prescrição, mover uma ocorrência existente para o grupo ou adicionar outra pela biblioteca e pelo formulário de prescrição existentes. Separar todos mantém os exercícios e a ordem; grupos unitários são dissolvidos. Duplicar cria outra ocorrência com cópia independente das séries. Editar usa PrescriptionForm.
 
 Na janela Ver exercícios, essas operações persistem no plano existente com revisão, autorização e rollback em erro. Adicionar pela biblioteca reaproveita PlanForm com o grupo de destino e exige Salvar plano. Não há nova página ou biblioteca paralela. O servidor pode identificar a release pelo header X-TaPago-Release e envia o HTML sem cache para evitar uma shell antiga.
+
+
+## Fluxo de treinos em telas
+
+WorkoutScreen organiza as etapas com título e retorno, sem Modal ou backdrop. O Personal navega do perfil à página de treinos, à rotina e ao treino. As etapas do formulário de plano, biblioteca, prescrição, presets e destino de grupo ocupam o conteúdo da página. Durante a biblioteca/prescrição, a lista e os demais campos do plano ficam ocultos e montados para preservar o rascunho; as ações gerais de salvar reaparecem ao confirmar ou cancelar a etapa. As confirmações destrutivas e os menus rápidos de ações permanecem sobreposições pontuais. A nova rota está no grupo protegido de Personal; a autorização dos dados continua nos endpoints existentes.

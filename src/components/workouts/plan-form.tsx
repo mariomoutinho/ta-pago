@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
   Button,
@@ -12,6 +12,7 @@ import { api, today } from "@/features/personal/api";
 import { planSchema, type Plan, type PlanData } from "../../../shared/workouts";
 import { SaveForm, TextFields } from "./form";
 import { identifyWorkout, prescriptionKey, move, WorkoutEditor } from "./workout-editor";
+import { WorkoutScreen } from "./workout-screen";
 import { PreparedWorkouts } from "./prepared-workouts";
 import { canPersistExerciseOrder } from "../../../shared/workout-groups";
 export function PlanForm({
@@ -23,7 +24,9 @@ export function PlanForm({
   initialPicker = false,
   initialGroup,
   initialTemplatePicker = false,
+  screenChanged,
 }: {
+  screenChanged?: (active: boolean) => void;
   initialTemplatePicker?: boolean;
   initialWorkout?: number | null;
   initialPicker?: boolean;
@@ -47,11 +50,15 @@ export function PlanForm({
   );
   const [open, setOpen] = useState<number | null>(initialWorkout);
   const [remove, setRemove] = useState<number | null>(null);
+  const [focused, setFocused] = useState(initialPicker);
   const [pending, setPending] = useState(initialPicker);
   const [templatePicker, setTemplatePicker] = useState(initialTemplatePicker);
   const [pickerWorkout, setPickerWorkout] = useState(initialPicker ? initialWorkout : null);
+  const childScreen = focused || templatePicker;
+  useEffect(() => { screenChanged?.(childScreen); }, [childScreen, screenChanged]);
   return (
     <SaveForm
+      hideActions={focused || templatePicker}
       label="Salvar plano"
       cancel={cancel}
       save={async () => {
@@ -76,7 +83,7 @@ export function PlanForm({
         done();
       }}
     >
-      <TextFields
+      <View style={focused || templatePicker ? { display: "none" } : undefined}><TextFields
         value={data}
         change={setData}
         fields={[
@@ -117,15 +124,17 @@ export function PlanForm({
       <Button disabled={pending || data.workouts.length >= 30} variant="secondary" onPress={() => setTemplatePicker(!templatePicker)}>
         {templatePicker ? "Fechar treinos preparados" : "Usar treino preparado"}
       </Button>
-      {templatePicker && !pending && <Card>
+      </View>
+      {templatePicker && !pending && <WorkoutScreen title="Escolher treino preparado" backLabel="Voltar ao plano" back={() => setTemplatePicker(false)}><Card>
         <PreparedWorkouts select={workout => {
           setData(current => ({ ...current, workouts: [...current.workouts, identifyWorkout(workout)] }));
           setOpen(data.workouts.length);
           setTemplatePicker(false);
         }} />
-      </Card>}
+      </Card></WorkoutScreen>}
       {data.workouts.map((w, index) => (
-        <Card key={w.id ?? `new-${index}`}>
+        <Card key={w.id ?? `new-${index}`} style={(focused && open !== index) || templatePicker ? { display: "none" } : focused ? { padding: 0, borderWidth: 0, marginBottom: 0, backgroundColor: "transparent" } : undefined}>
+          <View style={focused ? { display: "none" } : undefined}>
           <Label size={20} bold>
             {index + 1}. {w.name || "Novo treino"}
           </Label>
@@ -183,8 +192,10 @@ export function PlanForm({
               Excluir treino
             </Button>
           </View>
+          </View>
           {open === index && (
             <WorkoutEditor
+              screenChanged={setFocused}
               workout={w}
               persistOrder={plan && w.id && canPersistExerciseOrder(plan.workouts.find(previous => previous.id === w.id)?.exercises, w.exercises) ? async items => {
                 const result = await api<{ revision: number }>("/workout-plans/" + plan.id + "/workouts/" + w.id + "/order", "PUT", { revision: data.revision, ids: items.map(prescriptionKey) });
@@ -203,7 +214,7 @@ export function PlanForm({
           )}
         </Card>
       ))}
-      <Button
+      <View style={focused || templatePicker ? { display: "none" } : undefined}><Button
         disabled={pending}
         variant="secondary"
         onPress={() => {
@@ -223,7 +234,7 @@ export function PlanForm({
         }}
       >
         + Adicionar treino
-      </Button>
+      </Button></View>
       {remove !== null && (
         <Confirm
           title="Excluir este treino?"

@@ -319,7 +319,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await pupil.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
   await expect(pupil.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
-  await pupil.getByRole("button", { name: "Fechar", exact: true }).click();
+  await pupil.getByRole("button", { name: "Voltar aos treinos", exact: true }).click();
   await pupil.getByRole("button", { name: "Treino A", exact: true }).click();
 
   await pupil.getByRole("button", { name: "Detalhes de Supino de teste", exact: true }).click();
@@ -389,14 +389,14 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(page.getByText("Preset salvo. A prescrição do aluno só muda ao salvar a prescrição.", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Adicionar preset", exact: true }).click();
   await page.getByRole("button", { name: "Base de teste", exact: true }).click();
-  await expect(page.getByLabel("Série/repetições 2", { exact: true })).toHaveValue("3/15");
+  await expect(page.getByLabel("Série/repetições 2", { exact: true }).filter({ visible: true })).toHaveValue("3/15");
   await page.getByRole("button", { name: "Salvar prescrição", exact: true }).click();
   await expect(page.getByText("Prescrição salva.", { exact: true })).toBeVisible();
   await page.screenshot({ path: "test-results/series-mobile.png", fullPage: true });
-  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page.getByRole("button", { name: "Voltar aos treinos", exact: true }).click();
   await page.getByRole("button", { name: "Treino A", exact: true }).click();
   await page.getByRole("button", { name: "Detalhes de Supino de teste", exact: true }).click();
-  await expect(page.getByLabel("Série/repetições 2", { exact: true })).toHaveValue("3/15");
+  await expect(page.getByLabel("Série/repetições 2", { exact: true }).filter({ visible: true })).toHaveValue("3/15");
   await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
   await expect(page.getByRole("button", { name: "+ Criar exercício", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "+ Criar exercício", exact: true }).click();
@@ -409,6 +409,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.getByRole("button", { name: "Fechar biblioteca", exact: true }).click();
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  await page.getByRole("button", { name: "Voltar aos treinos", exact: true }).click();
   await page.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
   await expect(page.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Registrar feedback", exact: true })).toHaveCount(0);
@@ -938,7 +939,7 @@ test("modelo permite combinar, separar e salvar seleções sem gravar grupos inc
   expect(saved.exercises).toHaveLength(1); expect(saved.exercises[0].load).toBe(2); expect(saved.exercises[0].groupId).toBeNull();
 });
 
-test("janela real gerencia membros do grupo, duplica e adiciona pela biblioteca", async ({ page }) => {
+test("telas do treino preservam navegação, gerenciam grupos e adicionam pela biblioteca", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
   await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Gestão", email: "group-management@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const library = [];
@@ -947,6 +948,11 @@ test("janela real gerencia membros do grupo, duplica e adiciona pela biblioteca"
   const created = await (await page.request.post(base + "/api/students/" + student.id + "/workout-plans", { headers, data: { title: "Rotina Gestão", objective: "Força", difficulty: "Iniciante", startsAt: "2026-10-24", workouts: [{ name: "Sessão Gestão", exercises: library.map((ex, index) => ({ exerciseId: ex.id, groupId: index < 3 ? "circuito" : null, sets: 3, repetitions: "12", load: index + 10, notes: "Nota " + index })) }] } })).json();
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.goto(base + "/alunos/" + student.id); await page.getByRole("button", { name: "Treinos", exact: true }).click(); await page.getByRole("button", { name: "Abrir rotina Rotina Gestão", exact: true }).click(); await page.getByRole("button", { name: "Sessão Gestão", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp("/alunos/" + student.id + "/treinos\\?rotina=" + created.id + "&treino=" + created.workouts[0].id));
+  await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
+  await page.goBack(); await expect(page.getByText("Visibilidade para o aluno", { exact: true })).toBeVisible();
+  await page.goForward(); await page.reload();
+  await expect(page.getByRole("button", { name: "Detalhes de Remada", exact: true })).toBeVisible();
   const detail = (name: string) => page.getByRole("button", { name: "Detalhes de " + name, exact: true });
   const actions = (name: string) => page.getByRole("button", { name: "Ações de " + name, exact: true });
   const selected = (name: string) => page.getByRole("checkbox", { name: "Selecionar " + name, exact: true });
@@ -956,6 +962,7 @@ test("janela real gerencia membros do grupo, duplica e adiciona pela biblioteca"
   await detail("Leg press + Extensora + Supino").click();
   await selected("Extensora").check();
   const ids = created.workouts[0].exercises.map((item: { id: string }) => item.id);
+  await page.getByRole("button", { name: "Arrastar exercício " + ids[2], exact: true }).scrollIntoViewIfNeeded();
   const from = (await page.getByRole("button", { name: "Arrastar exercício " + ids[2], exact: true }).boundingBox())!;
   const to = (await page.getByRole("button", { name: "Arrastar exercício " + ids[0], exact: true }).boundingBox())!;
   await page.mouse.move(from.x + 20, from.y + 20); await page.mouse.down(); await page.mouse.move(to.x + 20, to.y + 20, { steps: 12 }); await page.mouse.up();
@@ -976,6 +983,8 @@ test("janela real gerencia membros do grupo, duplica e adiciona pela biblioteca"
   await actions("Leg press").last().click(); await page.getByRole("button", { name: "Editar exercício", exact: true }).click(); await page.getByLabel("Observações da prescrição", { exact: true }).fill("Nota da cópia"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
   await expect(page.getByRole("button", { name: "Confirmar prescrição", exact: true })).toHaveCount(0);
   await actions("Supino + Extensora + Remada").click(); await page.getByRole("button", { name: "Adicionar novo exercício ao grupo", exact: true }).last().click();
+  await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
+  await expect(page.getByLabel("Nome do plano *", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: "Expandir exercício Leg press", exact: true }).click(); await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
   await page.getByLabel("Séries", { exact: true }).fill("2"); await page.getByLabel("Repetições (ex.: 10 ou 8-12)", { exact: true }).fill("15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
   await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();

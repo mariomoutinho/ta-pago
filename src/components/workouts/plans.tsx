@@ -15,15 +15,46 @@ import {
 import type { Plan } from "../../../shared/workouts";
 import { PlanForm } from "./plan-form";
 import { WorkoutWindow } from "./workout-window";
-function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkout }: {
+import { WorkoutScreen } from "./workout-screen";
+export type WorkoutRoute = { planId?: string; workoutId?: string; selectPlan: (id?: string) => void; selectWorkout: (id?: string) => void };
+function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkout, route }: {
+  route?: WorkoutRoute;
   plan: Plan; edit?: () => void; archive?: () => void; add?: () => void;
   studentView: boolean; reload: () => Promise<void>;
   editWorkout?: (index: number, picker: boolean, groupId?: string) => void;
 }) {
   const t = useTheme();
-  const [open, setOpen] = useState<string | number | null>(null);
+  const [localOpen, setLocalOpen] = useState<string | number | null>(null);
+  const open = route ? route.workoutId ?? null : localOpen;
+  const setOpen = (id: string | number | null) => route ? route.selectWorkout(id === null ? undefined : String(id)) : setLocalOpen(id);
   const [menu, setMenu] = useState(false);
   const card = { padding: 16, borderRadius: 8, marginBottom: 0, backgroundColor: t.backgroundElement, borderWidth: 0 };
+  const workoutIndex = plan.workouts.findIndex((workout, index) => open === (workout.id ?? index));
+  if (workoutIndex >= 0) {
+    const i = workoutIndex, w = plan.workouts[i];
+    return <WorkoutWindow workout={w} close={() => setOpen(null)}
+          addToGroup={editWorkout ? groupId => { editWorkout(i, true, groupId); } : undefined}
+          saveExercises={studentView ? undefined : async (items, operation) => {
+            if (operation === "order") {
+              await api(`/workout-plans/${plan.id}/workouts/${w.id}/order`, "PUT", { revision: plan.revision, ids: items.map(item => item.id) });
+            } else {
+              await api(`/workout-plans/${plan.id}`, "PUT", { ...plan,
+                workouts: plan.workouts.map((workout, wi) => wi === i ? { ...workout, exercises: items } : workout),
+              });
+            }
+            await reload();
+          }}
+          saveSeries={studentView ? undefined : async (index, rows) => {
+            await api(`/workout-plans/${plan.id}`, "PUT", { ...plan,
+              workouts: plan.workouts.map((workout, wi) => wi !== i ? workout : { ...workout,
+                exercises: workout.exercises.map((exercise, ei) => ei !== index ? exercise : { ...exercise, series: rows }),
+              }),
+            });
+            await reload();
+          }}
+          edit={editWorkout ? () => { editWorkout(i, false); } : undefined}
+          add={editWorkout ? () => { editWorkout(i, true); } : undefined} />;
+  }
   return <View style={{ gap: 14 }}>
     <Card style={card}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingBottom: 14, marginBottom: 14, borderBottomWidth: 1, borderBottomColor: t.border }}>
@@ -60,28 +91,7 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkou
         <View style={{ gap: 8, marginTop: 8 }}>
           <WorkoutFeedbacks workout={w} canSend={studentView && plan.status === "ativo" && plan.student?.linkStatus === "active"} reload={reload} />
         </View>
-        {expanded && <WorkoutWindow workout={w} close={() => setOpen(null)}
-          addToGroup={editWorkout ? groupId => { setOpen(null); editWorkout(i, true, groupId); } : undefined}
-          saveExercises={studentView ? undefined : async (items, operation) => {
-            if (operation === "order") {
-              await api(`/workout-plans/${plan.id}/workouts/${w.id}/order`, "PUT", { revision: plan.revision, ids: items.map(item => item.id) });
-            } else {
-              await api(`/workout-plans/${plan.id}`, "PUT", { ...plan,
-                workouts: plan.workouts.map((workout, wi) => wi === i ? { ...workout, exercises: items } : workout),
-              });
-            }
-            await reload();
-          }}
-          saveSeries={studentView ? undefined : async (index, rows) => {
-            await api(`/workout-plans/${plan.id}`, "PUT", { ...plan,
-              workouts: plan.workouts.map((workout, wi) => wi !== i ? workout : { ...workout,
-                exercises: workout.exercises.map((exercise, ei) => ei !== index ? exercise : { ...exercise, series: rows }),
-              }),
-            });
-            await reload();
-          }}
-          edit={editWorkout ? () => { setOpen(null); editWorkout(i, false); } : undefined}
-          add={editWorkout ? () => { setOpen(null); editWorkout(i, true); } : undefined} />}
+
 
       </Card>;
     })}
@@ -117,7 +127,9 @@ function PlanCard({ plan, onOpen, onActions }: {
 export function WorkoutPlans({
   studentId,
   studentView = false,
+  route,
 }: {
+  route?: WorkoutRoute;
   studentId?: string;
   studentView?: boolean;
 }) {
@@ -127,7 +139,9 @@ export function WorkoutPlans({
   const t = useTheme();
   const [section, setSection] = useState("Rotinas de treino");
   const [filter, setFilter] = useState("Todas");
-  const [selected, setSelected] = useState<string | null>(null);
+  const [localSelected, setLocalSelected] = useState<string | null>(null);
+  const selected = route ? route.planId ?? null : localSelected;
+  const setSelected = (id: string | null) => route ? route.selectPlan(id ?? undefined) : setLocalSelected(id);
   const [actions, setActions] = useState<Plan | null>(null);
   const [initialGroup, setInitialGroup] = useState<string | undefined>();
   const [initialPicker, setInitialPicker] = useState(false);
@@ -136,6 +150,7 @@ export function WorkoutPlans({
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
   const [archive, setArchive] = useState<Plan | null>(null);
   const [discard, setDiscard] = useState(false);
+  const [childScreen, setChildScreen] = useState(false);
   const [success, setSuccess] = useState("");
   const plans =
     data?.filter((p) => !studentId || p.studentId === studentId) ?? [];
@@ -149,6 +164,45 @@ export function WorkoutPlans({
     if (filter === "Encerradas") return p.status === "ativo" && !!p.endsAt && p.endsAt < today();
     return true;
   });
+  if (editing && studentId) return <>
+        <WorkoutScreen
+          hideHeader={childScreen}
+          title={editing === "new" ? "Criar plano" : "Editar plano"}
+          backLabel="Voltar à rotina"
+          back={() => setDiscard(true)}
+        >
+          <PlanForm
+            screenChanged={setChildScreen}
+            studentId={studentId}
+            initialWorkout={initialWorkout}
+            initialPicker={initialPicker}
+            initialGroup={initialGroup}
+            initialTemplatePicker={initialTemplatePicker}
+            plan={editing === "new" ? undefined : editing}
+            cancel={() => setDiscard(true)}
+            done={() => {
+              if (editing === "new") {
+                setSection("Rotinas de treino");
+                setFilter("Todas");
+                setSelected(null);
+              }
+              setInitialWorkout(null); setInitialPicker(false); setInitialGroup(undefined);
+              setInitialTemplatePicker(false);
+              setEditing(null);
+              setSuccess("Plano salvo com sucesso.");
+              void reload();
+            }}
+          />
+        </WorkoutScreen>
+      {discard && (
+        <Confirm
+          title="Descartar alterações não salvas?"
+          description="As alterações do plano ainda não foram enviadas."
+          onClose={() => setDiscard(false)}
+          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
+        />
+      )}
+  </>;
   return (
     <View style={{ gap: 12 }}>
       <Notice>{success}</Notice>
@@ -156,8 +210,8 @@ export function WorkoutPlans({
       {loading && <Notice>Carregando rotinas…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       {selectedPlan ? <>
-        <Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button>
-        <PlanDetails key={selectedPlan.id} plan={selectedPlan} studentView={studentView} reload={reload}
+        {!route?.workoutId && <View style={{ alignSelf: "flex-start" }}><Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button></View>}
+        <PlanDetails key={selectedPlan.id} route={route} plan={selectedPlan} studentView={studentView} reload={reload}
           editWorkout={studentView ? undefined : (index, picker, groupId) => {
             setInitialGroup(groupId);
             setInitialWorkout(index); setInitialPicker(picker); setEditing(selectedPlan);
@@ -205,42 +259,6 @@ export function WorkoutPlans({
           {actions.status !== "arquivado" && <Button variant="secondary" onPress={() => { setArchive(actions); setActions(null); }}>Arquivar plano</Button>}
         </View>
       </Dialog>}
-      {editing && studentId && (
-        <Dialog
-          title={editing === "new" ? "Criar plano" : "Editar plano"}
-          onClose={() => setDiscard(true)}
-        >
-          <PlanForm
-            studentId={studentId}
-            initialWorkout={initialWorkout}
-            initialPicker={initialPicker}
-            initialGroup={initialGroup}
-            initialTemplatePicker={initialTemplatePicker}
-            plan={editing === "new" ? undefined : editing}
-            cancel={() => setDiscard(true)}
-            done={() => {
-              if (editing === "new") {
-                setSection("Rotinas de treino");
-                setFilter("Todas");
-                setSelected(null);
-              }
-              setInitialWorkout(null); setInitialPicker(false); setInitialGroup(undefined);
-              setInitialTemplatePicker(false);
-              setEditing(null);
-              setSuccess("Plano salvo com sucesso.");
-              void reload();
-            }}
-          />
-        </Dialog>
-      )}
-      {discard && (
-        <Confirm
-          title="Descartar alterações não salvas?"
-          description="As alterações do plano ainda não foram enviadas."
-          onClose={() => setDiscard(false)}
-          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
-        />
-      )}
       {archive && (
         <Confirm
           title="Arquivar plano?"

@@ -66,6 +66,10 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
     studentView ? null : "/templates",
   );
   const [tab, setTab] = useState("Início");
+  const navigate = (destination: string) => {
+    if (destination === "Treinos" && !studentView) router.push(`/alunos/${id}/treinos` as Href);
+    else setTab(destination);
+  };
   const [editing, setEditing] = useState(false);
   const [evaluation, setEvaluation] = useState<Evaluation | "new" | null>(null);
   const [record, setRecord] = useState<{
@@ -142,7 +146,7 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
   );
   return (
     <Page resetKey={tab}>
-      <ProfileHeader student={student} studentView={studentView} tab={tab} onNavigate={setTab}
+      <ProfileHeader student={student} studentView={studentView} tab={tab} onNavigate={navigate}
         onBack={() => router.push((studentView ? "/" : "/alunos") as Href)} />
       <Notice error>{failure || error}</Notice>
       {student.linkStatus === "ended" && (
@@ -152,8 +156,8 @@ export function Profile({ studentView = false }: { studentView?: boolean }) {
         </Notice>
       )}
       {tab === "Início" && <ProfileHome student={student} studentView={studentView}
-        onNavigate={setTab} onAddNote={() => add("note")} />}
-      {tab === "Opções" && <ProfileMenu tabs={tabs} onNavigate={setTab}
+        onNavigate={navigate} onAddNote={() => add("note")} />}
+      {tab === "Opções" && <ProfileMenu tabs={tabs} onNavigate={navigate}
         onEdit={studentView ? undefined : () => setEditing(true)} />}
       {tab === "Visão geral" && (
         <>
