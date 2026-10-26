@@ -147,6 +147,7 @@ export function WorkoutPlans({
   const [initialPicker, setInitialPicker] = useState(false);
   const [initialTemplatePicker, setInitialTemplatePicker] = useState(false);
   const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
+  const [addingWorkout, setAddingWorkout] = useState(false);
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
   const [archive, setArchive] = useState<Plan | null>(null);
   const [discard, setDiscard] = useState(false);
@@ -167,11 +168,12 @@ export function WorkoutPlans({
   if (editing && studentId) return <>
         <WorkoutScreen
           hideHeader={childScreen}
-          title={editing === "new" ? "Criar plano" : "Editar plano"}
+          title={addingWorkout ? "Adicionar treino" : editing === "new" ? "Criar plano" : "Editar plano"}
           backLabel="Voltar à rotina"
           back={() => setDiscard(true)}
         >
           <PlanForm
+            addingWorkout={addingWorkout}
             screenChanged={setChildScreen}
             studentId={studentId}
             initialWorkout={initialWorkout}
@@ -189,7 +191,8 @@ export function WorkoutPlans({
               setInitialWorkout(null); setInitialPicker(false); setInitialGroup(undefined);
               setInitialTemplatePicker(false);
               setEditing(null);
-              setSuccess("Plano salvo com sucesso.");
+              setAddingWorkout(false);
+              setSuccess(addingWorkout ? "Treino adicionado com sucesso." : "Plano salvo com sucesso.");
               void reload();
             }}
           />
@@ -197,9 +200,9 @@ export function WorkoutPlans({
       {discard && (
         <Confirm
           title="Descartar alterações não salvas?"
-          description="As alterações do plano ainda não foram enviadas."
+          description={addingWorkout ? "O novo treino ainda não foi salvo." : "As alterações do plano ainda não foram enviadas."}
           onClose={() => setDiscard(false)}
-          onConfirm={async () => { setEditing(null); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
+          onConfirm={async () => { setEditing(null); setAddingWorkout(false); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
         />
       )}
   </>;
@@ -217,6 +220,7 @@ export function WorkoutPlans({
             setInitialWorkout(index); setInitialPicker(picker); setEditing(selectedPlan);
           }}
           add={studentView ? undefined : () => {
+            setAddingWorkout(true);
             setInitialWorkout(selectedPlan.workouts.length);
             setEditing({ ...selectedPlan, workouts: [...selectedPlan.workouts, {
               name: `Treino ${String.fromCharCode(65 + selectedPlan.workouts.length)}`,

@@ -997,3 +997,29 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   await page.screenshot({ path: "test-results/editor-final-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 }); await page.screenshot({ path: "test-results/editor-final-mobile.png", fullPage: true });
 });
+
+test("adicionar treino mostra somente a nova sessão e preserva a rotina", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Sessão", email: "single-workout@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Sessão", mainGoal: "Força", startDate: "2026-10-26" } })).json();
+  const endpoint = base + "/api/students/" + student.id + "/workout-plans";
+  const original = await (await page.request.post(endpoint, { headers, data: { title: "Rotina preservada", objective: "Força", difficulty: "Iniciante", startsAt: "2026-10-26", instructions: "Manter orientações", workouts: [{ name: "Treino existente", exercises: [] }] } })).json();
+  await page.goto(base + "/alunos/" + student.id + "/treinos?rotina=" + original.id);
+  await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
+  await expect(page.getByLabel("Nome do plano *", { exact: true })).toBeHidden();
+  await expect(page.getByText("Treino existente", { exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Duplicar treino", exact: true }).last()).toBeHidden();
+  await page.getByLabel("Nome do treino *", { exact: true }).filter({ visible: true }).fill("Nova sessão isolada");
+  await page.getByLabel("Subtítulo", { exact: true }).filter({ visible: true }).fill("Novo subtítulo");
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Ver exercícios", exact: true })).toHaveCount(2);
+  const saved = (await (await page.request.get(endpoint)).json())[0];
+  expect(saved.title).toBe(original.title);
+  expect(saved.instructions).toBe(original.instructions);
+  expect(saved.workouts[0]).toMatchObject({ id: original.workouts[0].id, name: "Treino existente" });
+  expect(saved.workouts[1]).toMatchObject({ name: "Nova sessão isolada", subtitle: "Novo subtítulo" });
+  await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  expect((await (await page.request.get(endpoint)).json())[0].workouts).toHaveLength(2);
+});

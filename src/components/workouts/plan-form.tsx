@@ -24,8 +24,10 @@ export function PlanForm({
   initialPicker = false,
   initialGroup,
   initialTemplatePicker = false,
+  addingWorkout = false,
   screenChanged,
 }: {
+  addingWorkout?: boolean;
   screenChanged?: (active: boolean) => void;
   initialTemplatePicker?: boolean;
   initialWorkout?: number | null;
@@ -59,7 +61,7 @@ export function PlanForm({
   return (
     <SaveForm
       hideActions={focused || templatePicker}
-      label="Salvar plano"
+      label={addingWorkout ? "Salvar treino" : "Salvar plano"}
       cancel={cancel}
       save={async () => {
         if (pending)
@@ -83,7 +85,7 @@ export function PlanForm({
         done();
       }}
     >
-      <View style={focused || templatePicker ? { display: "none" } : undefined}><TextFields
+      <View style={addingWorkout || focused || templatePicker ? { display: "none" } : undefined}><TextFields
         value={data}
         change={setData}
         fields={[
@@ -133,12 +135,12 @@ export function PlanForm({
         }} />
       </Card></WorkoutScreen>}
       {data.workouts.map((w, index) => (
-        <Card key={w.id ?? `new-${index}`} style={(focused && open !== index) || templatePicker ? { display: "none" } : focused ? { padding: 0, borderWidth: 0, marginBottom: 0, backgroundColor: "transparent" } : undefined}>
+        <Card key={w.id ?? `new-${index}`} style={(addingWorkout && index !== initialWorkout) || (focused && open !== index) || templatePicker ? { display: "none" } : focused ? { padding: 0, borderWidth: 0, marginBottom: 0, backgroundColor: "transparent" } : undefined}>
           <View style={focused ? { display: "none" } : undefined}>
           <Label size={20} bold>
             {index + 1}. {w.name || "Novo treino"}
           </Label>
-          <View style={s.row}>
+          <View style={addingWorkout ? { display: "none" } : s.row}>
             <Button
               disabled={pending}
               variant="secondary"
@@ -214,7 +216,7 @@ export function PlanForm({
           )}
         </Card>
       ))}
-      <View style={focused || templatePicker ? { display: "none" } : undefined}><Button
+      <View style={addingWorkout || focused || templatePicker ? { display: "none" } : undefined}><Button
         disabled={pending}
         variant="secondary"
         onPress={() => {

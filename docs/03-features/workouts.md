@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-24",
+  "updated_at": "2026-10-26",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -50,7 +50,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -69,6 +69,8 @@
 ---
 
 # Treinos personalizados
+
+Ao abrir uma rotina e escolher Adicionar treino, a tela apresenta somente o novo treino: nome, subtítulo, orientações e exercícios. Salvar treino acrescenta a sessão à rotina existente e retorna aos detalhes. Cancelar exige confirmação para descartar o rascunho. Os dados gerais e os demais treinos ficam fora dessa edição; continuam disponíveis em Editar plano.
 
 ## Estado e auditoria
 
