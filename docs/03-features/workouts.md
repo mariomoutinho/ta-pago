@@ -24,6 +24,10 @@
     "server/app.ts",
     "src/components/workouts/exercise-view.tsx",
     "src/components/workouts/series-editor.tsx",
+    "src/components/workouts/preset-picker.tsx",
+    "src/components/workouts/prescription-form.tsx",
+    "shared/series.ts",
+    "tests/personal/series-types.test.ts",
     "server/workouts.ts",
     "src/features/personal/exercise-video.ts",
     "src/components/workouts/exercise-video.web.tsx",
@@ -50,7 +54,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "10.1.0",
+  "version": "11.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -69,6 +73,14 @@
 ---
 
 # Treinos personalizados
+
+## Presets e séries por tipo
+
+Ao selecionar um exercício para adicionar ao treino ou modelo preparado, a janela Escolha um preset permite buscar por nome, ver os campos salvos, usar um preset, adicionar sem preset ou criar um novo. Criar novo preset abre as linhas configuráveis com o nome e a ação Salvar preset; salvar na biblioteca não salva automaticamente a rotina. Aplicar um preset faz uma cópia independente. Presets antigos com configuração geral continuam sendo aceitos.
+
+As linhas exibem somente os atributos do tipo escolhido: Repetições e carga; Repetições, carga e tempo; Repetições e tempo; Tempo e inclinação; Corrida; Observações; Cadência. Adicionar série abre a seleção do tipo; Tipo permite trocar uma linha existente. Replicar séries duplica a última linha; excluir mantém pelo menos uma. Adicionar preset acrescenta linhas, até o limite de 50. Série/rep aceita 3/15 e 3/8-12; tempo e intervalo usam segundos, distância usa km e velocidade usa km/h.
+
+Para alongamento ou mobilidade, a sugestão inicial é Repetições e tempo. A escolha pode ser alterada pelo personal. Uma prescrição com duração e sem carga também recebe essa sugestão; séries já salvas preservam seus tipos. Opções adicionais reúne observações gerais, cadência, RIR e RPE fora do formulário principal. A visualização do aluno apresenta somente as colunas de cada linha, sem edição. O vídeo permanece na área expandida. Linhas antigas sem tipo mantêm repetições/carga/intervalo e o formato persistido anterior; novos atributos usam o JSON existente, sem migration.
 
 Ao abrir uma rotina e escolher Adicionar treino, a tela apresenta somente o novo treino: nome, subtítulo, orientações e exercícios. Salvar treino acrescenta a sessão à rotina existente e retorna aos detalhes. Cancelar exige confirmação para descartar o rascunho. Os dados gerais e os demais treinos ficam fora dessa edição; continuam disponíveis em Editar plano.
 

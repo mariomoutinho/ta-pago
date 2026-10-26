@@ -80,13 +80,12 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
     <WorkoutExerciseList items={workout.exercises} disabled={disabled} change={changeList} itemMenu={action} editItem={key => { setEdit({ item: workout.exercises.find(item => prescriptionKey(item) === key)!, key }); pending(true); }} addToGroup={groupId => { setPickerGroup(groupId); setPicker("group"); pending(true); }} normalActions={!picker && !edit && <Button disabled={disabled} onPress={() => { setPickerGroup(undefined); setPicker("add"); pending(true); }}>+ Adicionar exercício</Button>} details={(item) => {
       const key = prescriptionKey(item);
       return <>
-        <PrescriptionView item={item} />
-        <Button disabled={disabled} variant="secondary" onPress={() => { setEdit({ item, key }); pending(true); }}>Editar prescrição</Button>
+        <PrescriptionView item={item} hideSeries />
         <SeriesEditor key={JSON.stringify([item.series, item.sets, item.repetitions, item.load, item.restSeconds])} item={item} draft disabled={busy || !!edit || !!picker || !!preset} onDirty={value => { if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); pending(dirty.current.size > 0); }} save={async series => { update(key, { ...item, series }); }} />
       </>;
     }} />
     </View>
-    {edit && <WorkoutScreen title={edit.key ? "Editar prescrição" : "Prescrever exercício"} backLabel="Voltar ao treino" back={() => { setEdit(null); pending(false); }}><Card><PrescriptionForm item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
+    {edit && <WorkoutScreen title={edit.key ? "Editar prescrição" : "Prescrever exercício"} backLabel="Voltar ao treino" back={() => { setEdit(null); pending(false); }}><Card><PrescriptionForm choosePreset={!edit.key} item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
       if (edit.key) update(edit.key, item);
       else {
         const identified = identifyWorkout({ ...workout, exercises: [item] }).exercises[0];

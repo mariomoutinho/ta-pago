@@ -45,7 +45,8 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
         {edit && <Button disabled={busy || hasDirty || !!editing} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
         {add && <Button disabled={busy || hasDirty || !!editing} onPress={add}>Adicionar exercício</Button>}
       </View>} details={(item, index) => saveSeries ? <>
-        {item.exercise && <ExerciseDetails exercise={item.exercise} />}
+        {item.exercise && <ExerciseDetails exercise={item.exercise} compact />}
+        {!!item.notes && <Notice>{item.notes}</Notice>}
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}
         <SeriesEditor item={item} disabled={busy || !!editing} onDirty={value => { const key = exerciseKey(item); if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
       </> : <PrescriptionView item={item} />} /></View>

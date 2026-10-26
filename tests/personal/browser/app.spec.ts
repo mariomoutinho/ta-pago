@@ -258,12 +258,11 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page
     .getByRole("button", { name: "Salvar exercício", exact: true })
     .click();
-  await page.getByLabel("Séries", { exact: true }).fill("4");
-  await page
-    .getByLabel("Repetições (ex.: 10 ou 8-12)", { exact: true })
-    .fill("10");
-  await page.getByLabel("Carga (kg)", { exact: true }).fill("60");
-  await page.getByLabel("Descanso (segundos)", { exact: true }).fill("90");
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click();
+  await page.getByLabel("Série/repetições 1", { exact: true }).fill("4/10");
+  await page.getByLabel("Carga 1", { exact: true }).fill("60");
+  await page.getByLabel("Intervalo 1", { exact: true }).fill("90");
+  await page.getByRole("button", { name: "Opções adicionais", exact: true }).click();
   await page
     .getByLabel("Observações da prescrição", { exact: true })
     .fill("Controle o movimento");
@@ -329,10 +328,10 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(
     pupil.getByTitle("Vídeo: Supino de teste", { exact: true }),
   ).toBeVisible();
-  await expect(pupil.getByText("4 séries", { exact: true })).toBeVisible();
-  await expect(pupil.getByText("60 kg", { exact: true })).toBeVisible();
+  await expect(pupil.getByText("4/10", { exact: true })).toBeVisible();
+  await expect(pupil.getByText("60", { exact: true })).toBeVisible();
   await expect(
-    pupil.getByText("Descanso: 90 s", { exact: true }),
+    pupil.getByText("90", { exact: true }),
   ).toBeVisible();
   await expect(
     pupil.getByText("Controle o movimento", { exact: true }),
@@ -366,7 +365,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(page.getByRole("button", { name: "Treino A", exact: true })).toBeVisible();
   await expect(page.getByText("Visibilidade para o aluno", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Recolher treino", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salvar treino", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await page.getByRole("button", { name: "Reordenar treinos", exact: true }).click();
@@ -386,9 +385,9 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await page.getByRole("button", { name: "Salvar como preset", exact: true }).click();
   await page.getByLabel("Nome do preset", { exact: true }).fill("Base de teste");
   await page.getByRole("button", { name: "Salvar preset", exact: true }).click();
-  await expect(page.getByText("Preset salvo. A prescrição do aluno só muda ao salvar a prescrição.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Preset salvo.", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Adicionar preset", exact: true }).click();
-  await page.getByRole("button", { name: "Base de teste", exact: true }).click();
+  await page.getByRole("button", { name: "Usar preset Base de teste", exact: true }).click();
   await expect(page.getByLabel("Série/repetições 2", { exact: true }).filter({ visible: true })).toHaveValue("3/15");
   await page.getByRole("button", { name: "Salvar prescrição", exact: true }).click();
   await expect(page.getByText("Prescrição salva.", { exact: true })).toBeVisible();
@@ -708,8 +707,8 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
   await page.getByRole("button", { name: "Expandir exercício Agachamento modelo", exact: true }).click();
   await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
-  await page.getByLabel("Séries", { exact: true }).fill("3");
-  await page.getByLabel("Repetições (ex.: 10 ou 8-12)", { exact: true }).fill("12");
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click();
+  await page.getByLabel("Série/repetições 1", { exact: true }).fill("3/12");
   await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
   await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
   await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
@@ -717,7 +716,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   await expect(page.getByText("Treino de força preparado", { exact: true })).toBeVisible();
   const templates = await (await page.request.get(base + "/api/workout-templates")).json();
   expect(templates).toHaveLength(1);
-  expect(templates[0].exercises[0].sets).toBe(3);
+  expect(templates[0].exercises[0].series[0].sets).toBe(3);
   const created = await page.request.post(base + "/api/students", { headers, data: {
     name: "Aluno de modelo", mainGoal: "Força", startDate: "2026-10-23",
   } });
@@ -732,7 +731,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
   const plans = await (await page.request.get(base + `/api/students/${studentId}/workout-plans`)).json();
   expect(plans[0].workouts[0].name).toBe("Treino adaptado ao aluno");
-  expect(plans[0].workouts[0].exercises[0].sets).toBe(3);
+  expect(plans[0].workouts[0].exercises[0].series[0].sets).toBe(3);
   expect(plans[0].status).toBe("rascunho");
   expect((await (await page.request.get(base + "/api/workout-templates")).json())[0].name).toBe("Treino de força preparado");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -803,7 +802,7 @@ test("editor compacto reordena, preserva formulários, integra ações e restaur
   await actions("Terceiro").click(); await page.getByRole("button", { name: "Excluir", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click(); await expect(details("Terceiro")).toHaveCount(0);
   await page.getByRole("button", { name: "Expandir todos", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Editar prescrição", exact: true })).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Confirmar séries", exact: true })).toHaveCount(2);
   await page.getByRole("button", { name: "Recolher todos", exact: true }).click();
   await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
   await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
@@ -980,17 +979,17 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   let saved = await getPlan(); expect(saved.workouts[0].exercises).toHaveLength(5);
   expect(new Set(saved.workouts[0].exercises.map((item: { id: string }) => item.id)).size).toBe(5);
   expect(saved.workouts[0].exercises[4].notes).toBe("Nota 0");
-  await actions("Leg press").last().click(); await page.getByRole("button", { name: "Editar exercício", exact: true }).click(); await page.getByLabel("Observações da prescrição", { exact: true }).fill("Nota da cópia"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
+  await actions("Leg press").last().click(); await page.getByRole("button", { name: "Editar exercício", exact: true }).click(); await page.getByRole("button", { name: "Opções adicionais", exact: true }).click(); await page.getByLabel("Observações da prescrição", { exact: true }).fill("Nota da cópia"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
   await expect(page.getByRole("button", { name: "Confirmar prescrição", exact: true })).toHaveCount(0);
   await actions("Supino + Extensora + Remada").click(); await page.getByRole("button", { name: "Adicionar novo exercício ao grupo", exact: true }).last().click();
   await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
   await expect(page.getByLabel("Nome do plano *", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: "Expandir exercício Leg press", exact: true }).click(); await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
-  await page.getByLabel("Séries", { exact: true }).fill("2"); await page.getByLabel("Repetições (ex.: 10 ou 8-12)", { exact: true }).fill("15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click(); await page.getByLabel("Série/repetições 1", { exact: true }).fill("2/15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
   await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
   saved = await getPlan(); expect(saved.workouts[0].exercises).toHaveLength(6);
   expect(saved.workouts[0].exercises.filter((item: { groupId: string }) => item.groupId === "circuito")).toHaveLength(4);
-  expect(saved.workouts[0].exercises[3].sets).toBe(2);
+  expect(saved.workouts[0].exercises[3].series[0].sets).toBe(2);
   expect(saved.workouts[0].exercises[5].notes).toBe("Nota da cópia");
   await page.reload(); await page.getByRole("button", { name: "Treinos", exact: true }).click(); await page.getByRole("button", { name: "Abrir rotina Rotina Gestão", exact: true }).click(); await page.getByRole("button", { name: "Sessão Gestão", exact: true }).click();
   await expect(detail("Supino + Extensora + Remada + Leg press")).toBeVisible();
@@ -1022,4 +1021,51 @@ test("adicionar treino mostra somente a nova sessão e preserva a rotina", async
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   expect((await (await page.request.get(endpoint)).json())[0].workouts).toHaveLength(2);
+});
+
+test("presets e séries por tipo preservam alongamento e campos configuráveis", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Tipos", email: "typed-series@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Alongamento teste", muscleGroup: "Peitoral", category: "Alongamento" } })).json();
+  const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Tipos", mainGoal: "Mobilidade", startDate: "2026-10-26" } })).json();
+  const endpoint = base + "/api/students/" + student.id + "/workout-plans";
+  const original = await (await page.request.post(endpoint, { headers, data: { title: "Rotina tipos", objective: "Mobilidade", difficulty: "Iniciante", startsAt: "2026-10-26", workouts: [{ name: "Treino tipos", exercises: [] }] } })).json();
+  await page.goto(base + "/alunos/" + student.id + "/treinos?rotina=" + original.id);
+  await page.getByRole("button", { name: "Treino tipos", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+  await page.getByRole("button", { name: "Expandir exercício Alongamento teste", exact: true }).click();
+  await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+  await expect(page.getByText("Escolha um preset", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click();
+  await expect(page.getByLabel("Carga 1", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Tempo 1", { exact: true }).fill("20");
+  await page.getByRole("button", { name: "Adicionar série", exact: true }).click();
+  await page.getByRole("radio", { name: "Tipo da série: Corrida", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar tipo", exact: true }).click();
+  await page.getByLabel("Distância 2", { exact: true }).fill("2.5");
+  await page.getByLabel("Tempo 2", { exact: true }).fill("600");
+  await page.getByLabel("Velocidade 2", { exact: true }).fill("15");
+  await page.getByRole("button", { name: "Salvar como preset", exact: true }).click();
+  await page.getByLabel("Nome do preset", { exact: true }).fill("Mobilidade e corrida");
+  await page.getByRole("button", { name: "Salvar preset", exact: true }).click();
+  await expect(page.getByText("Preset salvo.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
+  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  const saved = (await (await page.request.get(endpoint)).json())[0];
+  expect(saved.workouts[0].exercises[0].series).toEqual([
+    { type: "repetitions-time", sets: 1, repetitions: "1", load: null, restSeconds: null, durationSeconds: 20 },
+    { type: "running", sets: 1, repetitions: "", load: null, restSeconds: null, durationSeconds: 600, distance: 2.5, speed: 15 },
+  ]);
+  await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+  await page.getByRole("button", { name: "Expandir exercício Alongamento teste", exact: true }).click();
+  await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+  await page.getByLabel("Pesquise por nome", { exact: true }).fill("Mobilidade");
+  await page.getByRole("button", { name: "Ver preset", exact: true }).click();
+  await expect(page.getByText(/Distância \(km\): 2.5/)).toBeVisible();
+  await page.getByRole("button", { name: "Usar preset Mobilidade e corrida", exact: true }).click();
+  await expect(page.getByLabel("Tempo 1", { exact: true }).filter({ visible: true })).toHaveValue("20");
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/series-types-mobile.png", fullPage: true });
 });

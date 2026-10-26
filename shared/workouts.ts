@@ -28,10 +28,20 @@ export const exerciseSchema = z.object({
   status: z.enum(["ativo", "arquivado"]).default("ativo"),
 });
 export const seriesRowSchema = z.object({
+  type: z.enum(["repetitions-load", "repetitions-load-time", "repetitions-time", "time-incline", "running", "notes", "cadence"]).optional(),
   sets: z.number().int().min(1).max(100),
-  repetitions: z.string().trim().regex(/^\d+(?:\s*[-–]\s*\d+)?$/, "Informe repetições como 15 ou 8-12"),
+  repetitions: z.string().trim().regex(/^(?:\d+(?:\s*[-–]\s*\d+)?)?$/, "Informe repetições como 15 ou 8-12"),
   load: number,
   restSeconds: number.refine(v => v === null || Number.isInteger(v)),
+  durationSeconds: z.number().int().min(0).max(1000000).nullable().optional(),
+  incline: z.number().finite().min(0).max(1000000).nullable().optional(),
+  distance: z.number().finite().min(0).max(1000000).nullable().optional(),
+  speed: z.number().finite().min(0).max(1000000).nullable().optional(),
+  notes: z.string().trim().max(10000).optional(),
+  cadence: z.string().trim().max(10000).optional(),
+}).superRefine((row, ctx) => {
+  if ((!row.type || row.type.startsWith("repetitions")) && !row.repetitions)
+    ctx.addIssue({ code: "custom", path: ["repetitions"], message: "Informe as repetições" });
 });
 export const seriesSchema = z.array(seriesRowSchema).min(1).max(50);
 export const prescriptionSettingsSchema = z.object({
