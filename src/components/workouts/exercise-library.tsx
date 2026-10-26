@@ -245,12 +245,12 @@ export function ExerciseLibrary({
             </View>
             <Label size={20}>{expanded.includes(e.id) ? "−" : "+"}</Label>
           </Pressable>
+          {select && <View style={{ padding: 8, borderTopWidth: 1, borderColor: t.border }}>
+            <Button variant="secondary" onPress={() => select(e)}>+ Adicionar ao treino</Button>
+          </View>}
           {expanded.includes(e.id) && <View style={{ padding: 14, borderTopWidth: 1, borderColor: t.border }}>
           <ExerciseDetails exercise={e} />
           <View style={s.row}>
-            {select && (
-              <Button onPress={() => select(e)}>+ Adicionar ao treino</Button>
-            )}
             <Button variant="secondary" onPress={() => setEdit(e)}>
               Editar exercício
             </Button>

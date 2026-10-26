@@ -27,6 +27,7 @@
     "src/components/workouts/preset-picker.tsx",
     "src/components/workouts/prescription-form.tsx",
     "shared/series.ts",
+    "shared/default-presets.ts",
     "tests/personal/series-types.test.ts",
     "server/workouts.ts",
     "src/features/personal/exercise-video.ts",
@@ -54,7 +55,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "11.0.0",
+  "version": "11.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -75,6 +76,10 @@
 # Treinos personalizados
 
 ## Presets e séries por tipo
+
+Na biblioteca aberta por um treino de aluno ou treino preparado, cada card mostra Adicionar ao treino permanentemente, sem exigir expansão do exercício. O botão abre a escolha de preset. Expandir continua disponível para consultar detalhes e gerenciar o cadastro.
+
+A janela oferece cinco modelos editáveis em Presets padrão: 1/8 mobilidade (uma série de oito, com campo de tempo), 2x15, 3/8, 3x8-12 e 3x8-60 (três séries de oito com intervalo de 60 segundos). Eles ficam disponíveis sem cadastro prévio e sem gravar registros na conta. Seus presets mantém os modelos privados criados pelo personal. A busca filtra ambas as listas; Ver preset mostra os valores antes de aplicar. Cada aplicação recebe uma cópia independente que pode ser ajustada antes de salvar.
 
 Ao selecionar um exercício para adicionar ao treino ou modelo preparado, a janela Escolha um preset permite buscar por nome, ver os campos salvos, usar um preset, adicionar sem preset ou criar um novo. Criar novo preset abre as linhas configuráveis com o nome e a ação Salvar preset; salvar na biblioteca não salva automaticamente a rotina. Aplicar um preset faz uma cópia independente. Presets antigos com configuração geral continuam sendo aceitos.
 

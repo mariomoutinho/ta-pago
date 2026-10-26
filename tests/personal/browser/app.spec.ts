@@ -1060,7 +1060,7 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
   await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
   await page.getByRole("button", { name: "Expandir exercício Alongamento teste", exact: true }).click();
   await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
-  await page.getByLabel("Pesquise por nome", { exact: true }).fill("Mobilidade");
+  await page.getByLabel("Pesquise por nome", { exact: true }).fill("Mobilidade e corrida");
   await page.getByRole("button", { name: "Ver preset", exact: true }).click();
   await expect(page.getByText(/Distância \(km\): 2.5/)).toBeVisible();
   await page.getByRole("button", { name: "Usar preset Mobilidade e corrida", exact: true }).click();
@@ -1069,3 +1069,47 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: "test-results/series-types-mobile.png", fullPage: true });
 });
+
+for (const destination of ["aluno", "preparado"] as const) {
+  test(`botão direto abre presets padrão e privados no treino ${destination}`, async ({ page }) => {
+    const headers = { "X-Requested-With": "TaPago" };
+    await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Direto", email: `direct-${destination}@example.com`, role: "personal", password: "senha-ficticia-12345" } });
+    await page.request.post(base + "/api/exercises", { headers, data: { name: "Exercício direto", muscleGroup: "Peitoral", category: "Musculação" } });
+    await page.request.post(base + "/api/prescription-presets", { headers, data: { name: "Meu preset particular", series: [{ sets: 2, repetitions: "10", load: null, restSeconds: 30 }] } });
+    let endpoint = base + "/api/workout-templates";
+    if (destination === "aluno") {
+      const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Direto", mainGoal: "Força", startDate: "2026-10-26" } })).json();
+      endpoint = base + "/api/students/" + student.id + "/workout-plans";
+      const plan = await (await page.request.post(endpoint, { headers, data: { title: "Rotina direta", objective: "Força", difficulty: "Iniciante", startsAt: "2026-10-26", workouts: [{ name: "Treino direto", exercises: [] }] } })).json();
+      await page.goto(base + "/alunos/" + student.id + "/treinos?rotina=" + plan.id);
+      await page.getByRole("button", { name: "Treino direto", exact: true }).click();
+      await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+    } else {
+      await page.goto(base + "/treinos-preparados");
+      await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+      await page.getByLabel("Nome do treino *", { exact: true }).fill("Modelo direto");
+      await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
+    }
+    await expect(page.getByRole("button", { name: "Expandir exercício Exercício direto", exact: true })).toHaveAttribute("aria-expanded", "false");
+    await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+    await expect(page.getByText("Escolha um preset", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Adicionar sem preset", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Criar novo preset", exact: true })).toBeVisible();
+    for (const name of ["1/8 mobilidade", "2x15", "3/8", "3x8-12", "3x8-60", "Meu preset particular"]) {
+      await expect(page.getByRole("button", { name: `Usar preset ${name}`, exact: true })).toBeVisible();
+    }
+    await page.getByLabel("Pesquise por nome", { exact: true }).fill("3/8");
+    await page.getByRole("button", { name: "Ver preset", exact: true }).click();
+    await expect(page.getByText(/Série\/rep: 3\/8/)).toBeVisible();
+    await page.screenshot({ path: `test-results/direct-presets-${destination}.png`, fullPage: true });
+    await page.getByRole("button", { name: "Usar preset 3/8", exact: true }).click();
+    await expect(page.getByLabel("Série/repetições 1", { exact: true }).filter({ visible: true })).toHaveValue("3/8");
+    await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
+    await page.getByRole("button", { name: destination === "aluno" ? "Salvar plano" : "Salvar treino preparado", exact: true }).click();
+    await expect(page.getByText(destination === "aluno" ? "Plano salvo com sucesso." : "Treino preparado salvo.", { exact: true })).toBeVisible();
+    const saved = (await (await page.request.get(endpoint)).json())[0];
+    const exercises = destination === "aluno" ? saved.workouts[0].exercises : saved.exercises;
+    expect(exercises[0].series[0]).toMatchObject({ sets: 3, repetitions: "8", type: "repetitions-load" });
+    expect((await (await page.request.get(base + "/api/prescription-presets")).json())).toHaveLength(1);
+  });
+}

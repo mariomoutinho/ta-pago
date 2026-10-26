@@ -1,7 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { prescriptionSchema, seriesRowSchema } from "../../shared/workouts";
 import { initialSeries, seriesFields, seriesTypes } from "../../shared/series";
+import { defaultPrescriptionPresets } from "../../shared/default-presets";
+import { prescriptionPresetSchema } from "../../shared/workouts";
 describe("tipos de séries", () => {
+  it("presets padrão são válidos e cada aplicação recebe uma cópia independente", () => {
+    const presets = defaultPrescriptionPresets();
+    expect(presets).toHaveLength(5);
+    for (const preset of presets) expect(prescriptionPresetSchema.safeParse(preset).success).toBe(true);
+    presets[0].series[0].sets = 10;
+    expect(defaultPrescriptionPresets()[0].series[0].sets).toBe(1);
+    expect(defaultPrescriptionPresets()[4].series[0]).toMatchObject({ sets: 3, repetitions: "8", restSeconds: 60 });
+  });
   it("mantém o formato legado sem acrescentar campos vazios", () => {
     const row = { sets: 3, repetitions: "8-12", load: 20, restSeconds: 60 };
     expect(seriesRowSchema.parse(row)).toEqual(row);
