@@ -11,7 +11,8 @@ import { SortableExercises } from "./sortable-exercises";
 export type WorkoutChange = "order" | "combine" | "separate" | "delete" | "duplicate" | "membership" | "edit";
 let sequence = 0;
 const nextOccurrenceKey = () => "local-" + Date.now() + "-" + ++sequence;
-export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details }: {
+export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false }: {
+  unmountCollapsed?: boolean;
   items: Prescription[]; disabled?: boolean;
   change?: (next: Prescription[], operation: WorkoutChange) => Promise<void>;
   itemMenu?: (key: string, action: string) => void;
@@ -91,7 +92,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
           {change && <Pressable accessibilityRole="button" accessibilityLabel={"Ações de " + name} disabled={disabled} onPress={() => block.groupId ? setMenu({ block: key }) : openItemMenu(keys[0])} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label size={22}>⋯</Label></Pressable>}
           <Pressable accessibilityRole="button" accessibilityLabel={(open ? "Recolher " : "Expandir ") + name} aria-expanded={open} onPress={() => toggle(key)} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label>{open ? "⌃" : "⌄"}</Label></Pressable>
         </View>
-        <ExerciseExpansion open={open}>
+        <ExerciseExpansion open={open} unmountOnClose={unmountCollapsed}>
           {block.groupId ? <>
             <Label muted>Grupo combinado · prescrições individuais</Label>
             {change && addToGroup && <Button disabled={disabled} variant="secondary" onPress={() => { setSelected(new Set()); addToGroup(block.groupId!); }}>Adicionar novo exercício ao grupo</Button>}
@@ -99,7 +100,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
               const member = block.items.find(item => exerciseKey(item) === memberKey)!;
               return <View style={{ marginTop: 10, padding: 8, borderWidth: 1, borderRadius: 10, borderColor: t.border }}>
                 {itemHeader(member, memberHandle)}
-                <ExerciseExpansion open={expanded.has(memberKey)}>{details(member, items.indexOf(member))}</ExerciseExpansion>
+                <ExerciseExpansion open={expanded.has(memberKey)} unmountOnClose={unmountCollapsed}>{details(member, items.indexOf(member))}</ExerciseExpansion>
               </View>;
             }}</SortableExercises>
           </> : details(block.items[0], items.indexOf(block.items[0]))}

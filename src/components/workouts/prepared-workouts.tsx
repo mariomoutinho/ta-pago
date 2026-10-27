@@ -8,6 +8,7 @@ import { identifyWorkout, prescriptionKey, WorkoutEditor } from "./workout-edito
 import { SaveForm } from "./form";
 import { PrescriptionView } from "./exercise-view";
 import { canPersistExerciseOrder } from "../../../shared/workout-groups";
+import { WorkoutExerciseList } from "./workout-exercise-list";
 
 function PreparedWorkoutForm({ template, done, cancel }: {
   template?: WorkoutTemplate; done: () => void; cancel: () => void;
@@ -79,7 +80,7 @@ export function PreparedWorkouts({ select }: { select?: (workout: WorkoutData) =
           </View>
           {expanded === template.id && <View style={{ gap: 12, paddingTop: 12 }}>
             {!!template.instructions && <Notice>{template.instructions}</Notice>}
-            {template.exercises.map((item, index) => <PrescriptionView key={index} item={item} />)}
+            <WorkoutExerciseList items={template.exercises} unmountCollapsed details={item => <PrescriptionView item={item} />} />
           </View>}
         </Card>;
       })}

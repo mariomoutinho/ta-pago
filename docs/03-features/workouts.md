@@ -61,7 +61,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -80,6 +80,8 @@
 ---
 
 # Treinos personalizados
+
+Em Treinos preparados → Ver modelo, os exercícios começam recolhidos, com os nomes visíveis. O cabeçalho ou a seta expande cada exercício/bloco; Expandir todos e Recolher todos controlam a lista inteira. Grupos combinados preservam a expansão individual dos membros. Essa prévia usa WorkoutExerciseList em leitura, sem seleção, arraste ou ações de edição. Vídeos e prescrições são montados somente quando expandidos e desmontados ao recolher, interrompendo os players. Fechar e reabrir o modelo reinicia a visualização recolhida. A edição mantém seus rascunhos montados como antes.
 
 ## Programas como rotinas
 
