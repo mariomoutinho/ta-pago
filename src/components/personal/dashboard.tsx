@@ -9,9 +9,7 @@ import {
 import { router, type Href } from "expo-router";
 import { useSession } from "@/features/personal/auth";
 import { useResource } from "@/features/personal/use-resource";
-import { today } from "@/features/personal/api";
 import type { Student, Program } from "@/features/personal/types";
-import type { EnrollmentSummary } from "../../../shared/enrollment";
 import { useTheme } from "@/hooks/use-theme";
 import { Fonts } from "@/constants/theme";
 import { Page } from "./shell";
@@ -87,16 +85,11 @@ export function PersonalDashboard() {
   const t = useTheme();
   const { width } = useWindowDimensions();
   const students = useResource<Student[]>("/students");
-  const requests = useResource<EnrollmentSummary[]>("/enrollment/requests");
   const [create, setCreate] = useState(false);
   const programs = useResource<Program[]>(create ? "/programs" : null);
   const active = (students.data ?? []).filter((x) => x.status === "ativo");
   const inactive = (students.data ?? []).filter((x) => x.status === "inativo");
   const paused = (students.data ?? []).filter((x) => x.status === "pausado");
-  const due = active.filter(
-    (x) => x.nextEvaluationDate && x.nextEvaluationDate <= today(),
-  );
-  const pending = (requests.data ?? []).filter((x) => x.status === "pending");
   const ready = !!students.data && !students.error;
   const count = (value: number) => (ready ? String(value) : "—");
   const go = (path: string) => router.push(path as Href);
@@ -118,51 +111,18 @@ export function PersonalDashboard() {
           <Label muted>Seu dia de trabalho começa aqui.</Label>
         </View>
       </View>
-      <Notice error>{students.error || requests.error}</Notice>
-      {(students.error || requests.error) && (
+      <Notice error>{students.error}</Notice>
+      {students.error && (
         <Button
           variant="secondary"
           onPress={() => {
             void students.reload();
-            void requests.reload();
           }}
         >
           Tentar novamente
         </Button>
       )}
       {students.loading && <Notice>Carregando seu painel…</Notice>}
-      <View
-        style={[
-          styles.summary,
-          { backgroundColor: t.background, borderColor: t.border },
-        ]}
-      >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Ver cadastros pendentes"
-          onPress={() => go("/alunos/link")}
-          style={styles.summaryItem}
-        >
-          <Text style={[styles.value, { color: t.accent }]}>
-            {requests.data && !requests.error ? pending.length : "—"}
-          </Text>
-          <Label size={11}>Cadastros pendentes</Label>
-        </Pressable>
-        <View style={[styles.divider, { backgroundColor: t.border }]} />
-        <View style={styles.summaryItem}>
-          <Text style={[styles.value, { color: t.text }]}>
-            {count(due.length)}
-          </Text>
-          <Label size={11}>Avaliações a fazer</Label>
-        </View>
-        <View style={[styles.divider, { backgroundColor: t.border }]} />
-        <View style={styles.summaryItem}>
-          <Text style={[styles.value, { color: t.text }]}>
-            {count(active.reduce((sum, x) => sum + x.weeklyFrequency, 0))}
-          </Text>
-          <Label size={11}>Sessões / semana</Label>
-        </View>
-      </View>
       <View
         style={{
           flexDirection: width >= 900 ? "row" : "column",
@@ -319,24 +279,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  summary: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingVertical: 16,
-    marginBottom: 20,
-  },
-  summaryItem: {
-    flex: 1,
-    paddingHorizontal: 8,
-    alignItems: "center",
-    minHeight: 60,
-    justifyContent: "center",
-    gap: 4,
-  },
-  divider: { width: 1, height: 32 },
-  value: { fontFamily: Fonts.sans, fontWeight: "700", fontSize: 24 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 16 },
   shortcut: {
     flexBasis: "46%",

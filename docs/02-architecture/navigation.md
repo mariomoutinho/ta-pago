@@ -38,7 +38,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.13.0",
+  "version": "4.14.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -77,7 +77,7 @@ AppTabs usa navegação compartilhada com tema claro/escuro e adaptação de lar
 
 ## Página inicial do personal
 
-O painel em src/components/personal/dashboard.tsx organiza as ações por seção: saudação, resumo de cadastros pendentes/avaliações/sessões semanais, Seus alunos, Treinos e Acompanhamento. A seção Próximos cuidados foi removida. Adicionar aluno abre o formulário existente diretamente; Link de cadastro abre /alunos/link. Os cards de treino abrem a seleção de aluno, biblioteca, programas, treinos preparados e modelos de avaliação. Os contadores vêm de /students e /enrollment/requests, com estados de carregamento, erro e nova tentativa; não simulam retenção ou engajamento.
+O painel em src/components/personal/dashboard.tsx organiza as ações por seção: saudação, Seus alunos, Treinos e Acompanhamento. O resumo de cadastros pendentes/avaliações/sessões semanais e a seção Próximos cuidados foram removidos. Adicionar aluno abre o formulário existente diretamente; Link de cadastro abre /alunos/link. Os cards de treino abrem a seleção de aluno, biblioteca, programas, treinos preparados e modelos de avaliação. A lista e as contagens de alunos vêm de /students, com estados de carregamento, erro e nova tentativa. A home não consulta solicitações de cadastro; a gestão permanece em /alunos/link.
 
 O cabeçalho fica compacto no celular. Abaixo de 900 px o menu horizontal não é exibido; o logo leva ao início, onde ficam os atalhos. A navegação do cabeçalho permanece nas telas a partir de 900 px. Em telas largas, os blocos do painel usam duas colunas. Tema, cores e componentes são os do Tá Pago. A home do aluno preserva seu fluxo de acompanhamento.
 
