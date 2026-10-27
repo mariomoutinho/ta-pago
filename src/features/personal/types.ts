@@ -4,7 +4,7 @@ import type {
   programSchema,
   RecordKind,
 } from "../../../shared/validation";
-export type Program = z.infer<typeof programSchema> & { id: string };
+export type Program = z.infer<typeof programSchema> & { id: string; revision?: number; workouts?: import("../../../shared/workouts").WorkoutData[] };
 export type Question = {
   id: string;
   position: number;

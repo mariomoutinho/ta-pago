@@ -12,7 +12,8 @@ import {
   Label,
   Notice,
 } from "@/components/personal/ui";
-import type { Plan } from "../../../shared/workouts";
+import { copyPreparedWorkout, type Plan, type PlanData } from "../../../shared/workouts";
+import type { Program } from "@/features/personal/types";
 import { PlanForm } from "./plan-form";
 import { WorkoutWindow } from "./workout-window";
 import { WorkoutScreen } from "./workout-screen";
@@ -149,6 +150,9 @@ export function WorkoutPlans({
   const [initialWorkout, setInitialWorkout] = useState<number | null>(null);
   const [addingWorkout, setAddingWorkout] = useState(false);
   const [editing, setEditing] = useState<Plan | "new" | null>(null);
+  const [programPicker, setProgramPicker] = useState(false);
+  const [programData, setProgramData] = useState<PlanData | undefined>();
+  const programs = useResource<Program[]>(programPicker ? "/programs" : null);
   const [archive, setArchive] = useState<Plan | null>(null);
   const [discard, setDiscard] = useState(false);
   const [childScreen, setChildScreen] = useState(false);
@@ -173,6 +177,7 @@ export function WorkoutPlans({
           back={() => setDiscard(true)}
         >
           <PlanForm
+            initialData={programData}
             addingWorkout={addingWorkout}
             screenChanged={setChildScreen}
             studentId={studentId}
@@ -191,6 +196,7 @@ export function WorkoutPlans({
               setInitialWorkout(null); setInitialPicker(false); setInitialGroup(undefined);
               setInitialTemplatePicker(false);
               setEditing(null);
+              setProgramData(undefined);
               setAddingWorkout(false);
               setSuccess(addingWorkout ? "Treino adicionado com sucesso." : "Plano salvo com sucesso.");
               void reload();
@@ -202,7 +208,7 @@ export function WorkoutPlans({
           title="Descartar alterações não salvas?"
           description={addingWorkout ? "O novo treino ainda não foi salvo." : "As alterações do plano ainda não foram enviadas."}
           onClose={() => setDiscard(false)}
-          onConfirm={async () => { setEditing(null); setAddingWorkout(false); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
+          onConfirm={async () => { setEditing(null); setProgramData(undefined); setAddingWorkout(false); setInitialWorkout(null); setInitialPicker(false); setInitialTemplatePicker(false); }}
         />
       )}
   </>;
@@ -244,6 +250,7 @@ export function WorkoutPlans({
             <Label size={14} bold>+ Criar rotina</Label>
           </Pressable>}
           {!studentView && <Button variant="secondary" onPress={() => { setInitialTemplatePicker(true); setEditing("new"); }}>Usar treino preparado</Button>}
+          {!studentView && <Button variant="secondary" onPress={() => setProgramPicker(true)}>Usar rotina de Programas</Button>}
           {section !== "Arquivadas" && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
             {["Todas", "Atuais", "Futuras", "Encerradas", ...(!studentView ? ["Rascunhos"] : [])].map(value =>
               <Pressable key={value} accessibilityRole="button" accessibilityLabel={`Filtrar rotinas: ${value}`} aria-pressed={filter === value}
@@ -256,6 +263,19 @@ export function WorkoutPlans({
             onActions={studentView ? undefined : () => setActions(plan)} />)}
         </View>
       </>}
+      {programPicker && <Dialog title="Escolher rotina" onClose={() => setProgramPicker(false)}>
+        <Notice error>{programs.error}</Notice>
+        {programs.loading && <Notice>Carregando rotinas…</Notice>}
+        {programs.error && <Button onPress={() => void programs.reload()}>Tentar novamente</Button>}
+        {!programs.loading && !programs.error && !programs.data?.length && <Notice>Crie uma rotina com treinos na página Programas.</Notice>}
+        {programs.data?.map(program => <Card key={program.id}>
+          <Label bold>{program.name}</Label><Label muted>{program.workouts?.length ?? 0} treino(s)</Label>
+          <Button disabled={!program.workouts?.length || program.workouts.some(w => w.exercises.some(e => !e.exercise || e.exercise.status !== "ativo" || e.alternativeExerciseId && (!e.alternativeExercise || e.alternativeExercise.status !== "ativo")))} label={`Usar rotina ${program.name}`} onPress={() => {
+            setProgramData({ title: program.name, objective: program.description || "Adaptação", difficulty: "Iniciante", startsAt: today(), endsAt: null, instructions: program.sessions, status: "rascunho", workouts: program.workouts!.map(copyPreparedWorkout) });
+            setProgramPicker(false); setEditing("new");
+          }}>Usar esta rotina</Button>
+        </Card>)}
+      </Dialog>}
       {actions && <Dialog title={actions.title} onClose={() => setActions(null)}>
         <View style={{ gap: 12 }}>
           <Button variant="secondary" onPress={() => { setSelected(actions.id); setActions(null); }}>Ver treinos</Button>

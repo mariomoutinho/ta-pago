@@ -25,8 +25,10 @@ export function PlanForm({
   initialGroup,
   initialTemplatePicker = false,
   addingWorkout = false,
+  initialData,
   screenChanged,
 }: {
+  initialData?: PlanData;
   addingWorkout?: boolean;
   screenChanged?: (active: boolean) => void;
   initialTemplatePicker?: boolean;
@@ -39,7 +41,7 @@ export function PlanForm({
   cancel: () => void;
 }) {
   const [data, setData] = useState<PlanData>(
-    plan ? { ...plan, workouts: plan.workouts.map(identifyWorkout) } : {
+    plan ? { ...plan, workouts: plan.workouts.map(identifyWorkout) } : initialData ? { ...initialData, workouts: initialData.workouts.map(identifyWorkout) } : {
       title: "",
       objective: "Adaptação",
       difficulty: "Iniciante",

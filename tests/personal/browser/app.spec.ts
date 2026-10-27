@@ -1113,3 +1113,44 @@ for (const destination of ["aluno", "preparado"] as const) {
     expect((await (await page.request.get(base + "/api/prescription-presets")).json())).toHaveLength(1);
   });
 }
+
+test("Programas organiza rotinas com treinos e copia para o aluno sem alterar a origem", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Rotinas", email: "program-routines-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await page.request.post(base + "/api/exercises", { headers, data: { name: "Supino da rotina", muscleGroup: "Peitoral", category: "Musculação" } });
+  const legacy = await (await page.request.post(base + "/api/programs", { headers, data: { name: "Programa antigo", description: "Preservar descrição", cycleDays: 30, weeklyFrequency: 3, sessions: "Segunda e quarta" } })).json();
+  await page.goto(base + "/programas");
+  await page.getByRole("button", { name: "Abrir rotina Programa antigo", exact: true }).click();
+  await expect(page.getByText("Segunda e quarta", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
+  await expect(page.getByLabel("Nome da rotina *", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
+  await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+  await page.getByRole("button", { name: "Usar preset 3/8", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Rotina salva com sucesso.", { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Abrir rotina Programa antigo", exact: true }).click();
+  await page.getByRole("button", { name: "Ver exercícios", exact: true }).click();
+  await expect(page.getByText("3/8", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "+ Adicionar treino", exact: true }).click();
+  await page.getByLabel("Nome do treino *", { exact: true }).fill("Treino B");
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Rotina salva com sucesso.", { exact: true })).toBeVisible();
+  const routine = (await (await page.request.get(base + "/api/programs")).json())[0];
+  expect(routine.id).toBe(legacy.id); expect(routine.sessions).toBe("Segunda e quarta"); expect(routine.workouts).toHaveLength(2);
+  const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Rotina", mainGoal: "Força", startDate: "2026-10-27" } })).json();
+  await page.goto(base + "/alunos/" + student.id + "/treinos");
+  await page.getByRole("button", { name: "Usar rotina de Programas", exact: true }).click();
+  await page.getByRole("button", { name: "Usar rotina Programa antigo", exact: true }).click();
+  await page.getByLabel("Nome do plano *", { exact: true }).fill("Rotina adaptada");
+  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
+  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  const plans = await (await page.request.get(base + "/api/students/" + student.id + "/workout-plans")).json();
+  expect(plans[0].workouts).toHaveLength(2); expect(plans[0].workouts[0].exercises[0].series[0].sets).toBe(3);
+  expect((await (await page.request.get(base + "/api/programs")).json())[0].name).toBe("Programa antigo");
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/program-routine-mobile.png", fullPage: true });
+});

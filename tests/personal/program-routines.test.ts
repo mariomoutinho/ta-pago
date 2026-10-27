@@ -1,0 +1,44 @@
+import { beforeAll, afterAll, it, expect } from "vitest";
+import request from "supertest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { execFileSync } from "node:child_process";
+import { createDb } from "../../server/db";
+import { createApp } from "../../server/app";
+const folder = mkdtempSync(path.join(tmpdir(), "tapago-program-routines-"));
+const url = `file:${folder}/test.db`, db = createDb(url), app = createApp(db);
+const personal = request.agent(app), other = request.agent(app), pupil = request.agent(app);
+const headers = { "X-Requested-With": "TaPago" };
+beforeAll(async () => {
+  writeFileSync(path.join(folder, "test.db"), "");
+  execFileSync(process.execPath, [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"], { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" });
+  for (const [agent, email, role] of [[personal, "routine-owner@example.com", "personal"], [other, "routine-other@example.com", "personal"], [pupil, "routine-pupil@example.com", "student"]] as const)
+    expect((await agent.post("/api/auth/register").set(headers).send({ name: "Teste Rotina", email, role, password: "senha-ficticia-12345" })).status).toBe(201);
+});
+afterAll(async () => { await db.$disconnect(); rmSync(folder, { recursive: true, force: true }); });
+it("rotinas guardam treinos, validam propriedade e revisão e preservam vínculos", async () => {
+  const exercise = (await personal.post("/api/exercises").set(headers).send({ name: "Supino Rotina", muscleGroup: "Peitoral", category: "Musculação" })).body;
+  const foreign = (await other.post("/api/exercises").set(headers).send({ name: "Privado", muscleGroup: "Peitoral", category: "Musculação" })).body;
+  const payload = { name: "Rotina estruturada", description: "Força", cycleDays: 30, weeklyFrequency: 3, workouts: [{ name: "Treino A", exercises: [{ exerciseId: exercise.id, series: [{ type: "repetitions-load", sets: 3, repetitions: "8", load: 10, restSeconds: 60 }] }] }] };
+  const created = await personal.post("/api/programs").set(headers).send(payload);
+  expect(created.status).toBe(201);
+  const id = created.body.id;
+  let saved = (await personal.get("/api/programs")).body[0];
+  expect(saved.workouts[0].exercises[0].exercise.name).toBe("Supino Rotina");
+  expect(saved.workouts[0].exercises[0].series[0].load).toBe(10);
+  expect((await other.get("/api/programs")).body).toEqual([]);
+  expect((await other.put(`/api/programs/${id}`).set(headers).send(saved)).status).toBe(404);
+  expect((await pupil.get("/api/programs")).status).toBe(403);
+  expect((await personal.post("/api/programs").set(headers).send({ ...payload, workouts: [{ name: "Treino privado", exercises: [{ exerciseId: foreign.id }] }] })).status).toBe(400);
+  const update = await personal.put(`/api/programs/${id}`).set(headers).send({ ...saved, name: "Rotina revisada" });
+  expect(update.status).toBe(200);
+  expect((await personal.put(`/api/programs/${id}`).set(headers).send(saved)).status).toBe(409);
+  expect((await personal.put(`/api/programs/${id}`).set(headers).send({ ...payload })).status).toBe(409);
+  expect((await personal.put(`/api/programs/${id}`).set(headers).send({ name: "Nome legado", description: "Preservar", cycleDays: 30, weeklyFrequency: 3, sessions: "Sessões históricas" })).status).toBe(200);
+  saved = (await personal.get("/api/programs")).body[0];
+  expect(saved.workouts).toHaveLength(1);
+  const student = await personal.post("/api/students").set(headers).send({ name: "Aluno da rotina", mainGoal: "Força", startDate: "2026-10-27", programId: id });
+  expect(student.status).toBe(201);
+  expect((await personal.delete(`/api/programs/${id}`).set(headers)).status).toBe(409);
+});

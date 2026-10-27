@@ -1,3 +1,4 @@
+import { programRoutes } from "./programs";
 import cookieParser from "cookie-parser";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
@@ -5,7 +6,6 @@ import helmet from "helmet";
 import path from "node:path";
 import { z } from "zod";
 import {
-  programSchema,
   recordSchema,
   recordSchemas,
   studentSchema,
@@ -386,47 +386,7 @@ export function createApp(db: Db) {
       throw new HttpError(403, "Acesso exclusivo do personal");
     next();
   });
-  app.get("/api/programs", async (_req, res) =>
-    res.json(
-      await db.program.findMany({
-        where: { ownerId: identity(res).id },
-        orderBy: { createdAt: "desc" },
-      }),
-    ),
-  );
-  app.post("/api/programs", async (req, res) =>
-    res.status(201).json(
-      await db.program.create({
-        data: { ...programSchema.parse(req.body), ownerId: identity(res).id },
-      }),
-    ),
-  );
-  app.use("/api/programs/:id", async (req, res, next) => {
-    if (
-      !(await db.program.findFirst({
-        where: { id: String(req.params.id), ownerId: identity(res).id },
-      }))
-    )
-      throw new HttpError(404, "Programa não encontrado");
-    next();
-  });
-  app.put("/api/programs/:id", async (req, res) =>
-    res.json(
-      await db.program.update({
-        where: { id: String(req.params.id) },
-        data: programSchema.parse(req.body),
-      }),
-    ),
-  );
-  app.delete("/api/programs/:id", async (req, res) => {
-    if (await db.student.count({ where: { programId: String(req.params.id) } }))
-      throw new HttpError(
-        409,
-        "Remova o programa dos alunos antes de excluí-lo",
-      );
-    await db.program.delete({ where: { id: String(req.params.id) } });
-    res.json({ ok: true });
-  });
+  app.use("/api/programs", programRoutes(db));
   app.get("/api/templates", async (_req, res) =>
     res.json(
       await db.evaluationTemplate.findMany({

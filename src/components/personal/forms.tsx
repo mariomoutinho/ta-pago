@@ -6,7 +6,6 @@ import { recordFields, type Descriptor } from "@/features/personal/fields";
 import { technicalCriteria } from "../../../shared/questionnaire";
 import {
   studentSchema,
-  programSchema,
   recordSchemas,
   adherence,
   type RecordKind,
@@ -153,80 +152,7 @@ export function StudentForm({
     </>
   );
 }
-export function ProgramForm({
-  program,
-  onSaved,
-}: {
-  program?: Program;
-  onSaved: () => void;
-}) {
-  const [values, setValues] = useState<Record<string, string>>(
-    program
-      ? Object.fromEntries(
-          Object.entries(program).map(([k, v]) => [k, String(v)]),
-        )
-      : { weeklyFrequency: "3", cycleDays: "30" },
-  );
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
-  return (
-    <>
-      <Fields
-        values={values}
-        setValues={setValues}
-        fields={[
-          { key: "name", label: "Nome", required: true },
-          { key: "description", label: "Descrição", type: "textarea" },
-          {
-            key: "cycleDays",
-            label: "Duração do ciclo (dias)",
-            type: "number",
-            required: true,
-          },
-          {
-            key: "weeklyFrequency",
-            label: "Sessões por semana",
-            type: "number",
-            required: true,
-          },
-          {
-            key: "sessions",
-            label: "Organização das sessões",
-            type: "textarea",
-            required: true,
-          },
-        ]}
-      />
-      <Notice error>{error}</Notice>
-      <Button
-        disabled={busy}
-        onPress={async () => {
-          setError("");
-          const data = programSchema.safeParse(values);
-          if (!data.success) {
-            setError(data.error.issues.map((i) => i.message).join("; "));
-            return;
-          }
-          setBusy(true);
-          try {
-            await api(
-              program ? `/programs/${program.id}` : "/programs",
-              program ? "PUT" : "POST",
-              data.data,
-            );
-            onSaved();
-          } catch (e) {
-            setError(message(e));
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        Salvar programa
-      </Button>
-    </>
-  );
-}
+export { ProgramForm } from "../workouts/program-form";
 export function RecordForm({
   studentId,
   kind,

@@ -4,13 +4,15 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-24",
+  "updated_at": "2026-10-27",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
   ],
   "indexable": true,
   "sources": [
+    "src/app/programas.tsx",
+    "src/components/workouts/program-form.tsx",
     "src/app/treinos-preparados.tsx",
     "src/components/workouts/workout-window.tsx",
     "src/components/workouts/feedbacks.tsx",
@@ -35,7 +37,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.11.0",
+  "version": "4.12.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -60,7 +62,7 @@ O layout raiz aplica tema, sessão e rotas protegidas. A autorização efetiva t
 | `/` | Autenticado | Painel do personal ou acompanhamentos do aluno. |
 | `/alunos` | Personal | Lista, busca, filtros e cadastro. |
 | `/alunos/[id]` | Personal proprietário | Perfil com Início, Opções e acesso ao prontuário. |
-| `/programas` | Personal | CRUD de programas próprios. |
+| `/programas` | Personal | Rotinas próprias com treinos, exercícios, presets e frequência; preserva programas e vínculos anteriores. |
 | `/modelos` | Personal | Modelo base e versões próprias de questionários. |
 | `/acompanhamento/[id]` | Aluno vinculado | Consulta, respostas em rascunho, exportação e revogação. |
 | `/explore` | Autenticado | Redireciona ao painel. |

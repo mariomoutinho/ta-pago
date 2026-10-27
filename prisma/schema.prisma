@@ -75,6 +75,8 @@ model Program {
   weeklyFrequency Int
   cycleDays Int @default(30)
   sessions String
+  workouts Json @default("[]")
+  revision Int @default(1)
   students Student[]
   evaluations Evaluation[]
   createdAt DateTime @default(now())

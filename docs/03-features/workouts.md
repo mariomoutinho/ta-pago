@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-26",
+  "updated_at": "2026-10-27",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -34,6 +34,12 @@
     "src/components/workouts/exercise-video.web.tsx",
     "src/components/workouts/exercise-video.tsx",
     "shared/workouts.ts",
+    "shared/programs.ts",
+    "server/programs.ts",
+    "src/app/programas.tsx",
+    "src/components/workouts/program-form.tsx",
+    "prisma/migrations/20261027120000_program_routines/migration.sql",
+    "tests/personal/program-routines.test.ts",
     "prisma/schema.prisma",
     "prisma/migrations/20261020120000_workout_prescription/migration.sql",
     "src/components/workouts/plans.tsx",
@@ -55,7 +61,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "11.1.0",
+  "version": "12.0.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -75,6 +81,14 @@
 
 # Treinos personalizados
 
+## Programas como rotinas
+
+A página Programas apresenta Rotinas de treinamento. Cada rotina mantém nome, descrição, frequência e duração e contém até 30 treinos estruturados. Ver treinos abre a rotina; Adicionar treino abre somente a sessão nova, usando WorkoutEditor com biblioteca, presets, séries e grupos existentes. Editar rotina permite alterar dados gerais, organizar sessões e incluir treinos preparados. A edição fica na página, com confirmação para descartar alterações. Remover do rascunho só é persistido ao salvar.
+
+Program.workouts armazena as sessões em JSON, e revision controla conflitos de edição. A migration 20261027120000_program_routines acrescenta essas colunas sem remover registros, vínculos ou snapshots de avaliações. O texto anterior em sessions permanece visível. A API valida o papel profissional, a propriedade da rotina e os exercícios ativos da biblioteca do proprietário. Atualizações antigas sem workouts preservam os treinos existentes; atualizar treinos exige revisão atual. Rotinas associadas a alunos continuam protegidas contra exclusão.
+
+Nos treinos do aluno, Usar rotina de Programas copia as sessões para um plano em rascunho. O personal ajusta objetivo, datas, status e prescrições antes de salvar/publicar. A cópia não altera a rotina original. Selecionar Programa vigente no cadastro continua mantendo o vínculo existente; essa associação, por si só, não publica nem sincroniza uma prescrição. Rotinas sem treinos ou com exercícios indisponíveis não podem ser copiadas.
+
 ## Presets e séries por tipo
 
 Na biblioteca aberta por um treino de aluno ou treino preparado, cada card mostra Adicionar ao treino permanentemente, sem exigir expansão do exercício. O botão abre a escolha de preset. Expandir continua disponível para consultar detalhes e gerenciar o cadastro.
@@ -93,7 +107,7 @@ Ao abrir uma rotina e escolher Adicionar treino, a tela apresenta somente o novo
 
 Prescrição integrada ao módulo Personal existente: Expo 57/React Native, Expo Router, Express, Prisma 7/SQLite e Zod. Sessões usam cookies HttpOnly na web e SecureStore no nativo. User.role diferencia personal/student; Student.personalId e Student.accountId vinculam o cadastro profissional à conta do aluno, inclusive nos convites e cadastros públicos existentes.
 
-Program não era uma rotina estruturada: guarda sessões em texto e é usado também por avaliações. Foi preservado, assim como registros de treinamento e demais abas. Cards, botões, campos, diálogos, tema claro/escuro, fontes e espaçamentos são reutilizados de personal/ui e constants/theme. Não há nova biblioteca visual nem dependência de drag-and-drop. Feed, desafios, GPS e geração automática continuam fora do escopo.
+Program contém treinos estruturados e preserva o texto anterior de sessões e seus vínculos com avaliações. Registros de treinamento e demais abas continuam preservados. Cards, botões, campos, diálogos, tema claro/escuro, fontes e espaçamentos são reutilizados de personal/ui e constants/theme. Feed, desafios, GPS e geração automática continuam fora do escopo.
 
 ## Fluxo implementado
 
