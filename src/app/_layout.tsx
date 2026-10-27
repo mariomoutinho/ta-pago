@@ -1,13 +1,10 @@
 import { useEffect } from "react";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
   Stack,
   usePathname,
 } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useColorScheme } from "react-native";
+import { AppThemeProvider } from "@/hooks/theme-preference";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider, useSession } from "@/features/personal/auth";
 import { PersonalShell } from "@/components/personal/shell";
@@ -63,14 +60,13 @@ function Navigation() {
   );
 }
 export default function RootLayout() {
-  const scheme = useColorScheme();
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={scheme === "dark" ? DarkTheme : DefaultTheme}>
+      <AppThemeProvider>
         <SessionProvider>
           <Navigation />
         </SessionProvider>
-      </ThemeProvider>
+      </AppThemeProvider>
     </SafeAreaProvider>
   );
 }

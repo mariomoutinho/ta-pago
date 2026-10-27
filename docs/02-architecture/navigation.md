@@ -11,6 +11,9 @@
   ],
   "indexable": true,
   "sources": [
+    "src/hooks/theme-preference.tsx",
+    "src/hooks/use-color-scheme.ts",
+    "src/hooks/use-color-scheme.web.ts",
     "src/components/personal/shell.tsx",
     "src/app/programas.tsx",
     "src/components/workouts/program-form.tsx",
@@ -38,7 +41,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.14.0",
+  "version": "4.15.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -54,6 +57,8 @@
 ---
 
 # Navegação
+
+O botão de sol/lua à esquerda de Sair alterna entre os temas claro e escuro em todo o aplicativo. Seu rótulo acessível informa o tema que será ativado. A primeira abertura segue o sistema; após alternar, a escolha manual prevalece e persiste no dispositivo (localStorage na web e SecureStore no nativo). Se o armazenamento estiver indisponível, a troca permanece válida na sessão. AppThemeProvider compartilha a escolha entre Expo Router e useTheme; ela se mantém ao navegar e não depende da conta. O cabeçalho mantém o botão ao lado de Sair em telas pequenas.
 
 O layout raiz aplica tema, sessão e rotas protegidas. A autorização efetiva também acontece na API; esconder uma tela não concede nem remove acesso a dados.
 

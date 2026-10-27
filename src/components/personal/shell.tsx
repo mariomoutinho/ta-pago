@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/hooks/use-theme";
+import { useThemePreference } from "@/hooks/theme-preference";
 import { useSession } from "@/features/personal/auth";
 import AppTabs from "@/components/app-tabs";
 import { Button, Label, Notice, s } from "./ui";
@@ -48,6 +49,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
 }
 export function PersonalShell({ children }: { children: ReactNode }) {
   const t = useTheme();
+  const { scheme, toggleTheme } = useThemePreference();
   const { user, logout } = useSession();
   const [error, setError] = useState("");
   const { width } = useWindowDimensions();
@@ -81,6 +83,9 @@ export function PersonalShell({ children }: { children: ReactNode }) {
                   : "Conta do aluno"}
               </Label>
             </View>
+            <Button variant="secondary" label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>
+              {scheme === "dark" ? "☀" : "☾"}
+            </Button>
             <Button
               variant="secondary"
               onPress={async () => {

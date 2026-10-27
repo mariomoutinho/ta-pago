@@ -1195,3 +1195,32 @@ test("Ver modelo recolhe vídeos e permite expandir exercícios e blocos sem alt
   expect(saved.revision).toBe(template.revision);
   expect(saved.exercises.map((item: { exerciseId: string }) => item.exerciseId)).toEqual(exercises.map(exercise => exercise.id));
 });
+
+test("botão ao lado de Sair alterna o tema e mantém a escolha ao navegar e recarregar", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.request.post(base + "/api/auth/register", { headers: { "X-Requested-With": "TaPago" }, data: { name: "Personal Tema", email: "theme-toggle@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await page.goto(base);
+  const card = page.getByRole("button", { name: "Programas", exact: true });
+  await expect(card).toHaveCSS("background-color", "rgb(0, 0, 0)");
+  await page.getByRole("button", { name: "Ativar tema claro", exact: true }).click();
+  await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await page.reload();
+  await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await page.getByRole("button", { name: "Treinos preparados", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Ativar tema escuro", exact: true })).toBeVisible();
+  for (const width of [320, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    const theme = (await page.getByRole("button", { name: "Ativar tema escuro", exact: true }).boundingBox())!;
+    const exit = (await page.getByRole("button", { name: "Sair", exact: true }).boundingBox())!;
+    expect(theme.x + theme.width).toBeLessThanOrEqual(exit.x);
+    expect(Math.abs(theme.y - exit.y)).toBeLessThan(2);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.getByRole("button", { name: "Ativar tema escuro", exact: true }).click();
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Ativar tema claro", exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.style.colorScheme)).toBe("dark");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: "test-results/theme-toggle-mobile-dark.png", fullPage: true });
+});
