@@ -1,0 +1,190 @@
+{
+    "date":  "2026-10-27",
+    "timezone":  "America/Sao_Paulo",
+    "periodStart":  "2026-08-27",
+    "periodEnd":  "2026-10-27",
+    "revision":  "f3633e10cd5419fb9875d0c62ef81bfc3a442036",
+    "branch":  "main",
+    "commitsInPeriod":  36,
+    "environment":  "Windows; PowerShell; Node.js 24.19.0; Edge via Playwright",
+    "checks":  [
+                   {
+                       "command":  "npm run typecheck",
+                       "result":  "passed"
+                   },
+                   {
+                       "command":  "npm run personal:typecheck",
+                       "result":  "passed"
+                   },
+                   {
+                       "command":  "npm run docs:validate",
+                       "result":  "passed",
+                       "documents":  46
+                   },
+                   {
+                       "command":  "npm run docs:test",
+                       "passed":  31,
+                       "failed":  2,
+                       "skipped":  0
+                   },
+                   {
+                       "command":  "npm run code:test",
+                       "passed":  17,
+                       "failed":  3,
+                       "skipped":  0
+                   },
+                   {
+                       "command":  "npm run personal:test",
+                       "passed":  58,
+                       "failed":  2,
+                       "skipped":  32,
+                       "filesPassed":  8,
+                       "filesFailed":  5,
+                       "totalFiles":  13
+                   },
+                   {
+                       "command":  "npm run rag:test",
+                       "passed":  22,
+                       "failed":  1,
+                       "skipped":  0
+                   },
+                   {
+                       "command":  "npx playwright test --reporter=json",
+                       "passed":  17,
+                       "failed":  3,
+                       "skipped":  0,
+                       "flaky":  0
+                   },
+                   {
+                       "command":  "npm run personal:build",
+                       "result":  "passed"
+                   }
+               ],
+    "browserCases":  [
+                         {
+                             "name":  "cadastro, navegação, aluno persistente e layout móvel",
+                             "file":  "app.spec.ts",
+                             "line":  33,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "link local, formulário público em cinco etapas e aprovação",
+                             "file":  "app.spec.ts",
+                             "line":  86,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "prescrição completa no mobile e leitura do aluno em conta própria",
+                             "file":  "app.spec.ts",
+                             "line":  201,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "vídeo YouTube aparece dentro da biblioteca sem navegar para outra página",
+                             "file":  "app.spec.ts",
+                             "line":  421,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "home organiza ações do personal, mostra dados reais e adapta larguras",
+                             "file":  "app.spec.ts",
+                             "line":  478,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "lista compacta busca nome, e-mail e telefone e filtra status",
+                             "file":  "app.spec.ts",
+                             "line":  560,
+                             "status":  "failed"
+                         },
+                         {
+                             "name":  "perfil compacto preserva atalhos, opções e anotações",
+                             "file":  "app.spec.ts",
+                             "line":  667,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "personal prepara treino sem aluno e copia para o perfil sem alterar o modelo",
+                             "file":  "app.spec.ts",
+                             "line":  701,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "editor compacto reordena, preserva formulários, integra ações e restaura ordem em falha",
+                             "file":  "app.spec.ts",
+                             "line":  747,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "handle reordena com mouse e toque prolongado sem expandir os cards",
+                             "file":  "app.spec.ts",
+                             "line":  822,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "seleção em lote combina, arrasta e exclui na janela do aluno sem perder prescrições",
+                             "file":  "app.spec.ts",
+                             "line":  854,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "modelo permite combinar, separar e salvar seleções sem gravar grupos incompletos",
+                             "file":  "app.spec.ts",
+                             "line":  916,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "telas do treino preservam navegação, gerenciam grupos e adicionam pela biblioteca",
+                             "file":  "app.spec.ts",
+                             "line":  947,
+                             "status":  "failed"
+                         },
+                         {
+                             "name":  "adicionar treino mostra somente a nova sessão e preserva a rotina",
+                             "file":  "app.spec.ts",
+                             "line":  1006,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "presets e séries por tipo preservam alongamento e campos configuráveis",
+                             "file":  "app.spec.ts",
+                             "line":  1032,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "botão direto abre presets padrão e privados no treino aluno",
+                             "file":  "app.spec.ts",
+                             "line":  1080,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "botão direto abre presets padrão e privados no treino preparado",
+                             "file":  "app.spec.ts",
+                             "line":  1080,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "Programas organiza rotinas com treinos e copia para o aluno sem alterar a origem",
+                             "file":  "app.spec.ts",
+                             "line":  1123,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "Ver modelo recolhe vídeos e permite expandir exercícios e blocos sem alterar o treino",
+                             "file":  "app.spec.ts",
+                             "line":  1164,
+                             "status":  "passed"
+                         },
+                         {
+                             "name":  "botão ao lado de Sair alterna o tema e mantém a escolha ao navegar e recarregar",
+                             "file":  "app.spec.ts",
+                             "line":  1199,
+                             "status":  "failed"
+                         }
+                     ],
+    "limitations":  [
+                        "Resultados locais; CI remota e dispositivos nativos não auditados.",
+                        "Testes de RAG usam providers exclusivos de teste, sem comprovar qualidade de modelos reais.",
+                        "O total de documentos é o anterior à inclusão deste relatório."
+                    ]
+}
