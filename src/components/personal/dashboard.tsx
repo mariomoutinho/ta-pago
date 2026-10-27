@@ -9,7 +9,7 @@ import {
 import { router, type Href } from "expo-router";
 import { useSession } from "@/features/personal/auth";
 import { useResource } from "@/features/personal/use-resource";
-import { today, formatDate } from "@/features/personal/api";
+import { today } from "@/features/personal/api";
 import type { Student, Program } from "@/features/personal/types";
 import type { EnrollmentSummary } from "../../../shared/enrollment";
 import { useTheme } from "@/hooks/use-theme";
@@ -170,7 +170,7 @@ export function PersonalDashboard() {
           alignItems: "stretch",
         }}
       >
-        <View style={{ flex: 1, minWidth: 0 }}>
+        <View style={{ flex: width >= 900 ? 1 : undefined, minWidth: 0 }}>
           <Card>
             <Label size={18} bold>
               Seus alunos
@@ -242,6 +242,12 @@ export function PersonalDashboard() {
                 onPress={() => go("/programas")}
               />
               <Shortcut
+                title="Treinos preparados"
+                caption="Modelos para reutilizar"
+                icon="≡"
+                onPress={() => go("/treinos-preparados")}
+              />
+              <Shortcut
                 title="Modelos de avaliação"
                 caption="Questionários e versões"
                 icon="✓"
@@ -250,30 +256,7 @@ export function PersonalDashboard() {
             </View>
           </Card>
         </View>
-        <View style={{ flex: 1, minWidth: 0 }}>
-          <Card>
-            <Label size={18} bold>
-              Próximos cuidados
-            </Label>
-            <Label muted>Avaliações previstas para hoje ou em atraso.</Label>
-            {ready && !due.length && (
-              <Notice>Nenhuma avaliação pendente.</Notice>
-            )}
-            {due.map((student) => (
-              <View key={student.id} style={styles.listItem}>
-                <Label bold>{student.name}</Label>
-                <Label size={12} muted>
-                  {formatDate(student.nextEvaluationDate)}
-                </Label>
-                <Button
-                  variant="secondary"
-                  onPress={() => go(`/alunos/${student.id}`)}
-                >
-                  Ver prontuário
-                </Button>
-              </View>
-            ))}
-          </Card>
+        <View style={{ flex: width >= 900 ? 1 : undefined, minWidth: 0 }}>
           {!!students.data?.length && (
             <Card>
               <Label size={18} bold>
@@ -373,5 +356,4 @@ const styles = StyleSheet.create({
     marginTop: 12,
     minHeight: 64,
   },
-  listItem: { gap: 8, marginTop: 18 },
 });

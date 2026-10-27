@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/personal/shell.tsx",
     "src/app/programas.tsx",
     "src/components/workouts/program-form.tsx",
     "src/app/treinos-preparados.tsx",
@@ -37,7 +38,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.12.0",
+  "version": "4.13.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -76,9 +77,9 @@ AppTabs usa navegação compartilhada com tema claro/escuro e adaptação de lar
 
 ## Página inicial do personal
 
-O painel em src/components/personal/dashboard.tsx organiza as ações por seção: saudação, resumo de cadastros pendentes/avaliações/sessões semanais, Seus alunos, Treinos, Próximos cuidados e Acompanhamento. Adicionar aluno abre o formulário existente diretamente; Link de cadastro abre /alunos/link. Os cards de treino abrem a seleção de aluno, biblioteca, programas e modelos existentes. Os contadores vêm de /students e /enrollment/requests, com estados de carregamento, erro e nova tentativa; não simulam retenção ou engajamento.
+O painel em src/components/personal/dashboard.tsx organiza as ações por seção: saudação, resumo de cadastros pendentes/avaliações/sessões semanais, Seus alunos, Treinos e Acompanhamento. A seção Próximos cuidados foi removida. Adicionar aluno abre o formulário existente diretamente; Link de cadastro abre /alunos/link. Os cards de treino abrem a seleção de aluno, biblioteca, programas, treinos preparados e modelos de avaliação. Os contadores vêm de /students e /enrollment/requests, com estados de carregamento, erro e nova tentativa; não simulam retenção ou engajamento.
 
-O cabeçalho fica compacto no celular e a navegação usa rolagem horizontal em uma linha. Em telas largas, os blocos do painel usam duas colunas. Tema, cores e componentes são os do Tá Pago. A home do aluno preserva seu fluxo de acompanhamento.
+O cabeçalho fica compacto no celular. Abaixo de 900 px o menu horizontal não é exibido; o logo leva ao início, onde ficam os atalhos. A navegação do cabeçalho permanece nas telas a partir de 900 px. Em telas largas, os blocos do painel usam duas colunas. Tema, cores e componentes são os do Tá Pago. A home do aluno preserva seu fluxo de acompanhamento.
 
 ## Lista de alunos
 

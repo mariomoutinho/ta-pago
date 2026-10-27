@@ -522,11 +522,18 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
     .click();
   await expect(page).toHaveURL(base + "/alunos");
   await page.goto(base);
+  await page.getByRole("button", { name: "Treinos preparados", exact: true }).click();
+  await expect(page).toHaveURL(base + "/treinos-preparados");
+  await expect(page.getByRole("link", { name: "Programas", exact: true })).toHaveCount(0);
+  await page.getByRole("link", { name: "Ir para o início", exact: true }).click();
+  await expect(page).toHaveURL(base + "/");
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await expect(
       page.getByRole("button", { name: "Adicionar aluno", exact: true }),
     ).toBeVisible();
+    await expect(page.getByText("Próximos cuidados", { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Programas", exact: true })).toHaveCount(width < 900 ? 0 : 1);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -542,9 +549,8 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ colorScheme: "dark" });
   await page.reload();
-  await expect(
-    page.getByRole("link", { name: "Início", exact: true }),
-  ).toHaveCSS("background-color", "rgb(57, 22, 29)");
+  await expect(page.getByRole("link", { name: "Início", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Ir para o início", exact: true })).toBeVisible();
   await page.screenshot({
     path: "test-results/dashboard-dark.png",
     fullPage: true,

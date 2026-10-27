@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import {
   Image,
+  Pressable,
   ScrollView,
   View,
   useWindowDimensions,
@@ -12,6 +13,7 @@ import { useSession } from "@/features/personal/auth";
 import AppTabs from "@/components/app-tabs";
 import { Button, Label, Notice, s } from "./ui";
 import { message } from "@/features/personal/api";
+import { router } from "expo-router";
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <View style={s.row}>
@@ -64,7 +66,9 @@ export function PersonalShell({ children }: { children: ReactNode }) {
         ]}
       >
         <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>
-          <Brand compact={width < 700} />
+          <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => router.push("/")} style={{ flexShrink: 1 }}>
+            <Brand compact={width < 700} />
+          </Pressable>
           {width >= 900 && <AppTabs />}
           <View style={[s.row, { marginLeft: "auto" }]}>
             <View style={width < 700 ? { display: "none" } : undefined}>
@@ -90,11 +94,6 @@ export function PersonalShell({ children }: { children: ReactNode }) {
               Sair
             </Button>
           </View>
-          {width < 900 && (
-            <View style={{ width: "100%" }}>
-              <AppTabs />
-            </View>
-          )}
         </View>
       </View>
       <Notice error>{error}</Notice>
