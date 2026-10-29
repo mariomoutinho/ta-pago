@@ -1,0 +1,59 @@
+name: PHP e MySQL — validar e preparar pacote
+
+# Não faz deploy. Execução manual para revisão antes de qualquer publicação.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: synthetic_ci_only
+        ports:
+          - 33316:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -psynthetic_ci_only"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      TAPAGO_TEST_DSN: mysql:host=127.0.0.1;port=33316;charset=utf8mb4
+      TAPAGO_TEST_USER: root
+      TAPAGO_TEST_PASSWORD: synthetic_ci_only
+      PHP_BIN: php
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, mbstring, openssl, sodium
+          coverage: none
+      - run: npm ci
+      - run: npm run php:generate
+      - run: git diff --exit-code -- backend-php/generated backend-php/schema.sql
+      - run: npm run typecheck
+      - run: npm run php:lint
+      - run: npm run php:test
+      - run: npm run php:build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run php:browser
+      - name: Preparar diretório do artifact (somente código e assets)
+        run: |
+          mkdir -p artifact
+          cp -a "$(cat data/php-last-release.txt)/." artifact/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tapago-php-validado
+          path: artifact/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error

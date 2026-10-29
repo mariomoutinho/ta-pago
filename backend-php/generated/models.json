@@ -1,0 +1,1763 @@
+{
+  "User": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "email": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "role": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "personal"
+      },
+      "passwordHash": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [],
+    "unique": [
+      [
+        "email"
+      ]
+    ],
+    "indexes": []
+  },
+  "Session": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false
+      },
+      "userId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "expiresAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [
+      {
+        "field": "userId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "Student": {
+    "fields": {
+      "personalId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "accountId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "linkStatus": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "unlinked"
+      },
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "birthDate": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "phone": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "email": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "sex": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "startDate": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "ativo"
+      },
+      "mainGoal": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "secondaryGoals": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "experience": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "weeklyFrequency": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 3
+      },
+      "availability": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "notes": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "injuries": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "limitations": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "surgeries": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "conditions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "medications": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "restrictions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "emergencyContact": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "nextEvaluationDate": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "programId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "personalId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Restrict"
+      },
+      {
+        "field": "accountId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "SetNull"
+      },
+      {
+        "field": "programId",
+        "target": "Program",
+        "reference": "id",
+        "onDelete": "SetNull"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "Program": {
+    "fields": {
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "description": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "weeklyFrequency": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "cycleDays": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 30
+      },
+      "sessions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "workouts": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "[]"
+      },
+      "revision": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 1
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Restrict"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "EvaluationTemplate": {
+    "fields": {
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "system"
+      },
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "version": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "cycleDays": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 30
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [],
+    "unique": [
+      [
+        "name",
+        "version",
+        "ownerId"
+      ]
+    ],
+    "indexes": []
+  },
+  "EvaluationQuestion": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "templateId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "position": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "dimension": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "text": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "type": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "required": {
+        "type": "Boolean",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": true
+      },
+      "min": {
+        "type": "Float",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "max": {
+        "type": "Float",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [
+      {
+        "field": "templateId",
+        "target": "EvaluationTemplate",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "templateId",
+        "position"
+      ]
+    ],
+    "indexes": []
+  },
+  "EvaluationOption": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "questionId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "position": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "label": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [
+      {
+        "field": "questionId",
+        "target": "EvaluationQuestion",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "Evaluation": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "templateId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "programId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "programSnapshot": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "date": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "cycle": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "evaluator": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "rascunho"
+      },
+      "notes": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "conclusion": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "actionPlan": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      },
+      {
+        "field": "templateId",
+        "target": "EvaluationTemplate",
+        "reference": "id",
+        "onDelete": "Restrict"
+      },
+      {
+        "field": "programId",
+        "target": "Program",
+        "reference": "id",
+        "onDelete": "SetNull"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "studentId",
+        "date"
+      ]
+    ]
+  },
+  "EvaluationAnswer": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "evaluationId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "questionId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "value": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [
+      {
+        "field": "evaluationId",
+        "target": "Evaluation",
+        "reference": "id",
+        "onDelete": "Cascade"
+      },
+      {
+        "field": "questionId",
+        "target": "EvaluationQuestion",
+        "reference": "id",
+        "onDelete": "Restrict"
+      }
+    ],
+    "unique": [
+      [
+        "evaluationId",
+        "questionId"
+      ]
+    ],
+    "indexes": []
+  },
+  "TrackingRecord": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "kind": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "date": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "data": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "studentId",
+        "kind",
+        "date"
+      ]
+    ]
+  },
+  "HistoryEntry": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "action": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "detail": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "studentId",
+        "createdAt"
+      ]
+    ]
+  },
+  "Invitation": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "tokenHash": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "expiresAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "consumedAt": {
+        "type": "DateTime",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "tokenHash"
+      ]
+    ],
+    "indexes": []
+  },
+  "EnrollmentLink": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "personalId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "token": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "active": {
+        "type": "Boolean",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": true
+      },
+      "publicName": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "contact": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "personalId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "personalId"
+      ],
+      [
+        "token"
+      ]
+    ],
+    "indexes": []
+  },
+  "EnrollmentChallenge": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false
+      },
+      "linkId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "expiresAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      }
+    },
+    "relations": [
+      {
+        "field": "linkId",
+        "target": "EnrollmentLink",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "EnrollmentRequest": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "personalId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "emailHash": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "payload": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "healthPayload": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "pending"
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "policyVersion": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "consentAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "healthConsentAt": {
+        "type": "DateTime",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "personalId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Restrict"
+      },
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "studentId"
+      ],
+      [
+        "personalId",
+        "emailHash"
+      ]
+    ],
+    "indexes": [
+      [
+        "personalId",
+        "status",
+        "createdAt"
+      ]
+    ]
+  },
+  "EnrollmentEvent": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "requestId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "requestId",
+        "target": "EnrollmentRequest",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": []
+  },
+  "WorkoutPlan": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "studentId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "title": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "objective": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "difficulty": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "startsAt": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "endsAt": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "instructions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "rascunho"
+      },
+      "publishedAt": {
+        "type": "DateTime",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "revision": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 1
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "studentId",
+        "target": "Student",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "studentId",
+        "status"
+      ]
+    ]
+  },
+  "Workout": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "planId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "subtitle": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "instructions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "orderIndex": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "deletedAt": {
+        "type": "DateTime",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "planId",
+        "target": "WorkoutPlan",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "planId",
+        "orderIndex"
+      ]
+    ]
+  },
+  "Exercise": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "muscleGroup": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "category": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "equipment": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "description": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "imageUrl": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "videoUrl": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "notes": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "status": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "ativo"
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Restrict"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "ownerId",
+        "status"
+      ]
+    ]
+  },
+  "WorkoutExercise": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "workoutId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "exerciseId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "alternativeExerciseId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "orderIndex": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "groupId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "series": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "[]"
+      },
+      "sets": {
+        "type": "Int",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "repetitions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "load": {
+        "type": "Float",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "durationSeconds": {
+        "type": "Int",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "restSeconds": {
+        "type": "Int",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "rir": {
+        "type": "Float",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "rpe": {
+        "type": "Float",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "cadence": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "notes": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "deletedAt": {
+        "type": "DateTime",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "workoutId",
+        "target": "Workout",
+        "reference": "id",
+        "onDelete": "Cascade"
+      },
+      {
+        "field": "exerciseId",
+        "target": "Exercise",
+        "reference": "id",
+        "onDelete": "Restrict"
+      },
+      {
+        "field": "alternativeExerciseId",
+        "target": "Exercise",
+        "reference": "id",
+        "onDelete": "Restrict"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "workoutId",
+        "orderIndex"
+      ]
+    ]
+  },
+  "WorkoutFeedback": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "workoutId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "requestId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "comment": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "workoutId",
+        "target": "Workout",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "workoutId",
+        "requestId"
+      ]
+    ],
+    "indexes": [
+      [
+        "workoutId",
+        "createdAt"
+      ]
+    ]
+  },
+  "PrescriptionPreset": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "series": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "configuration": {
+        "type": "Json",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "ownerId"
+      ]
+    ]
+  },
+  "WorkoutTemplate": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "subtitle": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "instructions": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "exercises": {
+        "type": "Json",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "revision": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": 1
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      },
+      "updatedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": true
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": [
+      [
+        "ownerId"
+      ]
+    ]
+  }
+}

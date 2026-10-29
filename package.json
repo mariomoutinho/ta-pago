@@ -105,7 +105,14 @@
     "production:build": "prisma generate && expo export --platform web",
     "production:check": "tsx server/check-production.ts",
     "production:setup": "npm run production:check && npm run personal:setup",
-    "production:start": "node hostinger.mjs"
+    "production:start": "node hostinger.mjs",
+    "php:generate": "tsx scripts/php/generate.ts",
+    "php:lint": "node scripts/php/lint.mjs",
+    "php:test": "node scripts/php/test.mjs",
+    "php:build": "node scripts/php/build.mjs",
+    "php:browser": "node scripts/php/browser-test.mjs",
+    "php:export": "node scripts/php/export-sqlite.mjs",
+    "php:sql": "node scripts/php/export-sql.mjs"
   },
   "private": true,
   "engines": {

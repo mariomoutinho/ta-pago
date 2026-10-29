@@ -1,0 +1,830 @@
+{
+  "initialQuestions": [
+    {
+      "position": 1,
+      "dimension": "Adaptação neuromuscular",
+      "text": "Como você avalia sua adaptação aos treinos neste primeiro mês?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito difícil",
+          "position": 0
+        },
+        {
+          "label": "Difícil",
+          "position": 1
+        },
+        {
+          "label": "Razoável",
+          "position": 2
+        },
+        {
+          "label": "Boa",
+          "position": 3
+        },
+        {
+          "label": "Muito boa",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "dimension": "Adaptação neuromuscular",
+      "text": "Você percebe que os exercícios estão mais fáceis de executar?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Não percebo diferença",
+          "position": 0
+        },
+        {
+          "label": "Um pouco",
+          "position": 1
+        },
+        {
+          "label": "Moderadamente",
+          "position": 2
+        },
+        {
+          "label": "Bastante",
+          "position": 3
+        },
+        {
+          "label": "Muito",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 3,
+      "dimension": "Adaptação neuromuscular",
+      "text": "Como você avalia sua confiança para executar os movimentos?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito baixa",
+          "position": 0
+        },
+        {
+          "label": "Baixa",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Alta",
+          "position": 3
+        },
+        {
+          "label": "Muito alta",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "dimension": "Adaptação neuromuscular",
+      "text": "Você percebe alguma melhora na força muscular?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nenhuma",
+          "position": 0
+        },
+        {
+          "label": "Pequena",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Grande",
+          "position": 3
+        },
+        {
+          "label": "Muito grande",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "dimension": "Recuperação e disposição",
+      "text": "Como costuma ser sua recuperação após os treinos?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito difícil",
+          "position": 0
+        },
+        {
+          "label": "Difícil",
+          "position": 1
+        },
+        {
+          "label": "Razoável",
+          "position": 2
+        },
+        {
+          "label": "Boa",
+          "position": 3
+        },
+        {
+          "label": "Muito boa",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "dimension": "Recuperação e disposição",
+      "text": "Quanto tempo a dor muscular habitual costuma durar?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Não sinto",
+          "position": 0
+        },
+        {
+          "label": "Menos de 24 horas",
+          "position": 1
+        },
+        {
+          "label": "24 a 48 horas",
+          "position": 2
+        },
+        {
+          "label": "48 a 72 horas",
+          "position": 3
+        },
+        {
+          "label": "Mais de 72 horas",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 7,
+      "dimension": "Recuperação e disposição",
+      "text": "Como está sua disposição para as atividades diárias?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito pior",
+          "position": 0
+        },
+        {
+          "label": "Pior",
+          "position": 1
+        },
+        {
+          "label": "Sem mudanças",
+          "position": 2
+        },
+        {
+          "label": "Melhor",
+          "position": 3
+        },
+        {
+          "label": "Muito melhor",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 8,
+      "dimension": "Recuperação e disposição",
+      "text": "Como você avalia a qualidade do seu sono?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito ruim",
+          "position": 0
+        },
+        {
+          "label": "Ruim",
+          "position": 1
+        },
+        {
+          "label": "Regular",
+          "position": 2
+        },
+        {
+          "label": "Boa",
+          "position": 3
+        },
+        {
+          "label": "Muito boa",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 9,
+      "dimension": "Treinamento de força",
+      "text": "Como você avalia a dificuldade do treino com ênfase anterior?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito fácil",
+          "position": 0
+        },
+        {
+          "label": "Fácil",
+          "position": 1
+        },
+        {
+          "label": "Adequado",
+          "position": 2
+        },
+        {
+          "label": "Difícil",
+          "position": 3
+        },
+        {
+          "label": "Muito difícil",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 10,
+      "dimension": "Treinamento de força",
+      "text": "Como você avalia a dificuldade do treino com ênfase posterior?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito fácil",
+          "position": 0
+        },
+        {
+          "label": "Fácil",
+          "position": 1
+        },
+        {
+          "label": "Adequado",
+          "position": 2
+        },
+        {
+          "label": "Difícil",
+          "position": 3
+        },
+        {
+          "label": "Muito difícil",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 11,
+      "dimension": "Treinamento de força",
+      "text": "Você sente mais estabilidade e controle durante os exercícios?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nunca",
+          "position": 0
+        },
+        {
+          "label": "Raramente",
+          "position": 1
+        },
+        {
+          "label": "Às vezes",
+          "position": 2
+        },
+        {
+          "label": "Frequentemente",
+          "position": 3
+        },
+        {
+          "label": "Sempre",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 12,
+      "dimension": "Treinamento de força",
+      "text": "Você sente desconforto nas articulações durante ou após os exercícios?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nunca",
+          "position": 0
+        },
+        {
+          "label": "Raramente",
+          "position": 1
+        },
+        {
+          "label": "Às vezes",
+          "position": 2
+        },
+        {
+          "label": "Frequentemente",
+          "position": 3
+        },
+        {
+          "label": "Sempre",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 13,
+      "dimension": "Condicionamento cardiovascular",
+      "text": "Como você avalia a dificuldade do treino cardiovascular?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito fácil",
+          "position": 0
+        },
+        {
+          "label": "Fácil",
+          "position": 1
+        },
+        {
+          "label": "Adequado",
+          "position": 2
+        },
+        {
+          "label": "Difícil",
+          "position": 3
+        },
+        {
+          "label": "Muito difícil",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 14,
+      "dimension": "Condicionamento cardiovascular",
+      "text": "Percebe melhora na respiração durante o exercício?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nenhuma",
+          "position": 0
+        },
+        {
+          "label": "Pequena",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Grande",
+          "position": 3
+        },
+        {
+          "label": "Muito grande",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 15,
+      "dimension": "Condicionamento cardiovascular",
+      "text": "Percebe melhora no fôlego em atividades cotidianas?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nenhuma",
+          "position": 0
+        },
+        {
+          "label": "Pequena",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Grande",
+          "position": 3
+        },
+        {
+          "label": "Muito grande",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 16,
+      "dimension": "Adesão e motivação",
+      "text": "Como está sua motivação para continuar treinando?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito baixa",
+          "position": 0
+        },
+        {
+          "label": "Baixa",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Alta",
+          "position": 3
+        },
+        {
+          "label": "Muito alta",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 17,
+      "dimension": "Adesão e motivação",
+      "text": "Quanto os treinos estão se encaixando na sua rotina?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nada",
+          "position": 0
+        },
+        {
+          "label": "Pouco",
+          "position": 1
+        },
+        {
+          "label": "Razoavelmente",
+          "position": 2
+        },
+        {
+          "label": "Bem",
+          "position": 3
+        },
+        {
+          "label": "Muito bem",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 18,
+      "dimension": "Adesão e motivação",
+      "text": "Qual seu grau de satisfação com o primeiro mês?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito insatisfeita",
+          "position": 0
+        },
+        {
+          "label": "Insatisfeita",
+          "position": 1
+        },
+        {
+          "label": "Neutra",
+          "position": 2
+        },
+        {
+          "label": "Satisfeita",
+          "position": 3
+        },
+        {
+          "label": "Muito satisfeita",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 19,
+      "dimension": "Adaptação social",
+      "text": "Como você se sente no ambiente da academia atualmente?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito desconfortável",
+          "position": 0
+        },
+        {
+          "label": "Desconfortável",
+          "position": 1
+        },
+        {
+          "label": "Indiferente",
+          "position": 2
+        },
+        {
+          "label": "Confortável",
+          "position": 3
+        },
+        {
+          "label": "Muito confortável",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 20,
+      "dimension": "Adaptação social",
+      "text": "Você percebe que está mais à vontade na academia em comparação com o primeiro dia?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Não percebo diferença",
+          "position": 0
+        },
+        {
+          "label": "Um pouco",
+          "position": 1
+        },
+        {
+          "label": "Moderadamente",
+          "position": 2
+        },
+        {
+          "label": "Bastante",
+          "position": 3
+        },
+        {
+          "label": "Completamente",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 21,
+      "dimension": "Adaptação social",
+      "text": "Como você avalia sua interação com outras pessoas na academia?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Evito interações",
+          "position": 0
+        },
+        {
+          "label": "Interajo pouco",
+          "position": 1
+        },
+        {
+          "label": "Interajo ocasionalmente",
+          "position": 2
+        },
+        {
+          "label": "Interajo com facilidade",
+          "position": 3
+        },
+        {
+          "label": "Sinto-me integrada ao ambiente",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 22,
+      "dimension": "Adaptação social",
+      "text": "Você sente vergonha, insegurança ou receio de ser observada durante os exercícios?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nunca",
+          "position": 0
+        },
+        {
+          "label": "Raramente",
+          "position": 1
+        },
+        {
+          "label": "Às vezes",
+          "position": 2
+        },
+        {
+          "label": "Frequentemente",
+          "position": 3
+        },
+        {
+          "label": "Sempre",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 23,
+      "dimension": "Adaptação social",
+      "text": "Como você avalia sua autonomia para circular pela academia e utilizar os equipamentos?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Muito baixa",
+          "position": 0
+        },
+        {
+          "label": "Baixa",
+          "position": 1
+        },
+        {
+          "label": "Moderada",
+          "position": 2
+        },
+        {
+          "label": "Alta",
+          "position": 3
+        },
+        {
+          "label": "Muito alta",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 24,
+      "dimension": "Adaptação social",
+      "text": "Você sente que é respeitada e acolhida pelos profissionais e demais frequentadores da academia?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nunca",
+          "position": 0
+        },
+        {
+          "label": "Raramente",
+          "position": 1
+        },
+        {
+          "label": "Às vezes",
+          "position": 2
+        },
+        {
+          "label": "Frequentemente",
+          "position": 3
+        },
+        {
+          "label": "Sempre",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 25,
+      "dimension": "Adaptação social",
+      "text": "A convivência com outras pessoas influencia sua motivação para frequentar a academia?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Prejudica muito",
+          "position": 0
+        },
+        {
+          "label": "Prejudica um pouco",
+          "position": 1
+        },
+        {
+          "label": "Não influencia",
+          "position": 2
+        },
+        {
+          "label": "Ajuda um pouco",
+          "position": 3
+        },
+        {
+          "label": "Ajuda muito",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 26,
+      "dimension": "Adaptação social",
+      "text": "Você se sentiria confortável em realizar parte do treinamento sem acompanhamento direto do personal, caso recebesse orientações?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        {
+          "label": "Nada confortável",
+          "position": 0
+        },
+        {
+          "label": "Pouco confortável",
+          "position": 1
+        },
+        {
+          "label": "Moderadamente confortável",
+          "position": 2
+        },
+        {
+          "label": "Confortável",
+          "position": 3
+        },
+        {
+          "label": "Muito confortável",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "position": 27,
+      "dimension": "Respostas abertas",
+      "text": "Em quais exercícios você percebeu maior dificuldade ou facilidade?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 28,
+      "dimension": "Respostas abertas",
+      "text": "Sentiu alguma dor diferente da dor muscular habitual? Onde, quando e qual intensidade de 0 a 10?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 29,
+      "dimension": "Respostas abertas",
+      "text": "O que você mais gostou e o que gostaria de mudar nos treinos?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 30,
+      "dimension": "Respostas abertas",
+      "text": "Qual resultado você mais gostaria de alcançar nos próximos 30 dias?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 31,
+      "dimension": "Respostas abertas",
+      "text": "Existe alguma situação na academia que ainda provoca desconforto, vergonha ou insegurança?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 32,
+      "dimension": "Respostas abertas",
+      "text": "O que poderia tornar sua experiência na academia mais agradável e acolhedora?",
+      "type": "text",
+      "required": true,
+      "options": []
+    },
+    {
+      "position": 33,
+      "dimension": "Respostas abertas",
+      "text": "Você percebe alguma mudança na sua autoestima, confiança ou maneira de se relacionar desde que começou a treinar?",
+      "type": "text",
+      "required": true,
+      "options": []
+    }
+  ],
+  "technicalCriteria": [
+    "Coordenação dos movimentos",
+    "Controle das fases concêntrica e excêntrica",
+    "Estabilidade corporal",
+    "Amplitude sem dor",
+    "Técnica nas últimas repetições",
+    "Tolerância ao volume de treino",
+    "Necessidade de correções verbais",
+    "Condicionamento cardiovascular",
+    "Carga e repetições nos exercícios principais",
+    "RPE — esforço percebido de 0 a 10",
+    "Tempo, intensidade e distância do cardio",
+    "Sessões realizadas e previstas",
+    "Fadiga, dor e recuperação"
+  ],
+  "policyVersion": "2026-10-16.v1"
+}

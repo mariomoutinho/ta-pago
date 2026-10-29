@@ -2,14 +2,14 @@
 {
   "id": "ta-pago.docs.06-operations.hostinger-deployment",
   "title": "Publicação do Tá Pago na Hostinger",
-  "status": "current",
+  "status": "deprecated",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-10-29",
   "language": "pt-BR",
   "tags": [
     "06-operations"
   ],
-  "indexable": true,
+  "indexable": false,
   "sources": [
     "hostinger.mjs",
     "server/runtime.ts",
@@ -21,7 +21,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -37,6 +37,8 @@
 ---
 
 # Publicação do Tá Pago na Hostinger
+
+**Procedimento antigo, destinado ao runtime Node. Não usar no Single Web Hosting.** O destino atual é PHP 8.3/MySQL em `public_html/tapago`; seguir o [guia PHP](php-hostinger-deployment.md). O conteúdo abaixo permanece somente como referência da preparação anterior, não como autorização de deploy, upgrade ou outra hospedagem.
 
 ## Destino e estado
 

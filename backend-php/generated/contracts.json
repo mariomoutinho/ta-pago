@@ -1,0 +1,3056 @@
+{
+  "dateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "string",
+    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+  },
+  "evaluationSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "templateId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "date": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "cycle": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "evaluator": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 10000
+      },
+      "programId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "rascunho",
+          "concluida"
+        ]
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "conclusion": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "actionPlan": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "answers": {
+        "maxItems": 100,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "questionId": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "questionId",
+            "value"
+          ]
+        }
+      }
+    },
+    "required": [
+      "templateId",
+      "date",
+      "cycle",
+      "evaluator",
+      "status",
+      "answers"
+    ]
+  },
+  "monthlySchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "cycle": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      },
+      "planned": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "completed": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "rpe": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "cardioMinutes": {
+        "type": "number",
+        "minimum": 0
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "cycle",
+      "planned",
+      "completed",
+      "rpe",
+      "cardioMinutes"
+    ]
+  },
+  "noteSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "notes": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "notes"
+    ]
+  },
+  "physicalSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "weight": {
+        "anyOf": [
+          {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "waist": {
+        "anyOf": [
+          {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 500
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "weight",
+      "waist"
+    ]
+  },
+  "programSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160
+      },
+      "description": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "weeklyFrequency": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 14,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "cycleDays": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 365,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "sessions": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "name",
+      "weeklyFrequency",
+      "cycleDays",
+      "sessions"
+    ]
+  },
+  "recordSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "kind": {
+        "type": "string",
+        "enum": [
+          "monthly",
+          "physical",
+          "training",
+          "technical",
+          "social",
+          "note"
+        ]
+      },
+      "date": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "data": {}
+    },
+    "required": [
+      "kind",
+      "date",
+      "data"
+    ]
+  },
+  "socialSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "environment": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "confidence": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "autonomy": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "motivation": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "sleep": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "notes": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "notes"
+    ]
+  },
+  "studentSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160
+      },
+      "birthDate": {
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "phone": {
+        "default": "",
+        "type": "string",
+        "maxLength": 40
+      },
+      "email": {
+        "default": "",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          {
+            "type": "string",
+            "const": ""
+          }
+        ]
+      },
+      "sex": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "startDate": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "status": {
+        "default": "ativo",
+        "type": "string",
+        "enum": [
+          "ativo",
+          "pausado",
+          "inativo"
+        ]
+      },
+      "mainGoal": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 10000
+      },
+      "secondaryGoals": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "experience": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "weeklyFrequency": {
+        "default": 3,
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 14,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "availability": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "injuries": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "limitations": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "surgeries": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "conditions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "medications": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "restrictions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "emergencyContact": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "nextEvaluationDate": {
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "programId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "startDate",
+      "mainGoal"
+    ]
+  },
+  "technicalSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "criteria": {
+        "minItems": 13,
+        "maxItems": 13,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "criterion": {
+              "type": "string",
+              "enum": [
+                "Coordenação dos movimentos",
+                "Controle das fases concêntrica e excêntrica",
+                "Estabilidade corporal",
+                "Amplitude sem dor",
+                "Técnica nas últimas repetições",
+                "Tolerância ao volume de treino",
+                "Necessidade de correções verbais",
+                "Condicionamento cardiovascular",
+                "Carga e repetições nos exercícios principais",
+                "RPE — esforço percebido de 0 a 10",
+                "Tempo, intensidade e distância do cardio",
+                "Sessões realizadas e previstas",
+                "Fadiga, dor e recuperação"
+              ]
+            },
+            "observation": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "initial": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "current": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "nextAction": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "criterion"
+          ]
+        }
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "criteria"
+    ]
+  },
+  "templateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160
+      },
+      "cycleDays": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 365
+      },
+      "questions": {
+        "minItems": 1,
+        "maxItems": 100,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "dimension": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "choice",
+                "text",
+                "number",
+                "scale"
+              ]
+            },
+            "required": {
+              "default": true,
+              "type": "boolean"
+            },
+            "min": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "options": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  }
+                },
+                "required": [
+                  "label"
+                ]
+              }
+            }
+          },
+          "required": [
+            "dimension",
+            "text",
+            "type"
+          ]
+        }
+      }
+    },
+    "required": [
+      "name",
+      "cycleDays",
+      "questions"
+    ]
+  },
+  "trainingSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 10000
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "previsto",
+          "realizado",
+          "ausente"
+        ]
+      },
+      "focus": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      },
+      "duration": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rpe": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "exercises": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "exerciseName": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "loadKg": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "repetitions": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "distanceKm": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "title",
+      "status",
+      "focus",
+      "duration",
+      "rpe"
+    ]
+  },
+  "exerciseSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "muscleGroup": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "category": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "equipment": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "description": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "imageUrl": {
+        "default": "",
+        "anyOf": [
+          {
+            "type": "string",
+            "const": ""
+          },
+          {
+            "type": "string",
+            "format": "uri"
+          }
+        ]
+      },
+      "videoUrl": {
+        "default": "",
+        "anyOf": [
+          {
+            "type": "string",
+            "const": ""
+          },
+          {
+            "type": "string",
+            "format": "uri"
+          }
+        ]
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "status": {
+        "default": "ativo",
+        "type": "string",
+        "enum": [
+          "ativo",
+          "arquivado"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "muscleGroup",
+      "category"
+    ]
+  },
+  "planSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "objective": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "difficulty": {
+        "type": "string",
+        "enum": [
+          "Iniciante",
+          "Intermediário",
+          "Avançado"
+        ]
+      },
+      "startsAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "endsAt": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "string",
+            "const": ""
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "instructions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "status": {
+        "default": "rascunho",
+        "type": "string",
+        "enum": [
+          "rascunho",
+          "ativo",
+          "arquivado"
+        ]
+      },
+      "revision": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      },
+      "workouts": {
+        "default": [],
+        "maxItems": 30,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "subtitle": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "instructions": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "exercises": {
+              "default": [],
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "clientId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "alternativeExerciseId": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "series": {
+                    "default": [],
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "repetitions-load",
+                            "repetitions-load-time",
+                            "repetitions-time",
+                            "time-incline",
+                            "running",
+                            "notes",
+                            "cadence"
+                          ]
+                        },
+                        "sets": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "repetitions": {
+                          "type": "string",
+                          "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                        },
+                        "load": {
+                          "default": null,
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "restSeconds": {
+                          "default": null,
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "durationSeconds": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "incline": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "distance": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "speed": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "maxLength": 10000
+                        },
+                        "cadence": {
+                          "type": "string",
+                          "maxLength": 10000
+                        }
+                      },
+                      "required": [
+                        "sets",
+                        "repetitions"
+                      ]
+                    }
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "exerciseId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sets": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "repetitions": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                  },
+                  "load": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "durationSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "restSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rir": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rpe": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cadence": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 10000
+                  },
+                  "notes": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                },
+                "required": [
+                  "exerciseId"
+                ]
+              }
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      }
+    },
+    "required": [
+      "title",
+      "objective",
+      "difficulty",
+      "startsAt"
+    ]
+  },
+  "prescriptionPresetSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "series": {
+        "maxItems": 50,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "repetitions-load",
+                "repetitions-load-time",
+                "repetitions-time",
+                "time-incline",
+                "running",
+                "notes",
+                "cadence"
+              ]
+            },
+            "sets": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "repetitions": {
+              "type": "string",
+              "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+            },
+            "load": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "restSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "durationSeconds": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "incline": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "distance": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "speed": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 10000
+            },
+            "cadence": {
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "sets",
+            "repetitions"
+          ]
+        }
+      },
+      "configuration": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "sets": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "repetitions": {
+                "default": "",
+                "type": "string",
+                "maxLength": 100
+              },
+              "load": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "durationSeconds": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "restSeconds": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "rir": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "rpe": {
+                "default": null,
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "cadence": {
+                "default": "",
+                "type": "string",
+                "maxLength": 10000
+              },
+              "notes": {
+                "default": "",
+                "type": "string",
+                "maxLength": 10000
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "series"
+    ]
+  },
+  "prescriptionSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "groupId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "clientId": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "alternativeExerciseId": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "series": {
+        "default": [],
+        "maxItems": 50,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "repetitions-load",
+                "repetitions-load-time",
+                "repetitions-time",
+                "time-incline",
+                "running",
+                "notes",
+                "cadence"
+              ]
+            },
+            "sets": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "repetitions": {
+              "type": "string",
+              "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+            },
+            "load": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "restSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "durationSeconds": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "incline": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "distance": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "speed": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 10000
+            },
+            "cadence": {
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "sets",
+            "repetitions"
+          ]
+        }
+      },
+      "id": {
+        "type": "string"
+      },
+      "exerciseId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sets": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "repetitions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 100,
+        "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+      },
+      "load": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "durationSeconds": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "restSeconds": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rir": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rpe": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "cadence": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "exerciseId"
+    ]
+  },
+  "prescriptionSettingsSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "sets": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "repetitions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 100
+      },
+      "load": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "durationSeconds": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "restSeconds": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rir": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "rpe": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "cadence": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      }
+    }
+  },
+  "seriesRowSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "type": {
+        "type": "string",
+        "enum": [
+          "repetitions-load",
+          "repetitions-load-time",
+          "repetitions-time",
+          "time-incline",
+          "running",
+          "notes",
+          "cadence"
+        ]
+      },
+      "sets": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "repetitions": {
+        "type": "string",
+        "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+      },
+      "load": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "restSeconds": {
+        "default": null,
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "durationSeconds": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "incline": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "distance": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "speed": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "notes": {
+        "type": "string",
+        "maxLength": 10000
+      },
+      "cadence": {
+        "type": "string",
+        "maxLength": 10000
+      }
+    },
+    "required": [
+      "sets",
+      "repetitions"
+    ]
+  },
+  "seriesSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "minItems": 1,
+    "maxItems": 50,
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "repetitions-load",
+            "repetitions-load-time",
+            "repetitions-time",
+            "time-incline",
+            "running",
+            "notes",
+            "cadence"
+          ]
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "repetitions": {
+          "type": "string",
+          "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+        },
+        "load": {
+          "default": null,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "restSeconds": {
+          "default": null,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "durationSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "incline": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "distance": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "speed": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "cadence": {
+          "type": "string",
+          "maxLength": 10000
+        }
+      },
+      "required": [
+        "sets",
+        "repetitions"
+      ]
+    }
+  },
+  "workoutFeedbackSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "requestId": {
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 100
+      },
+      "comment": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      }
+    },
+    "required": [
+      "requestId",
+      "comment"
+    ]
+  },
+  "workoutSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "subtitle": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "instructions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "exercises": {
+        "default": [],
+        "maxItems": 100,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "clientId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "alternativeExerciseId": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "series": {
+              "default": [],
+              "maxItems": 50,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "repetitions-load",
+                      "repetitions-load-time",
+                      "repetitions-time",
+                      "time-incline",
+                      "running",
+                      "notes",
+                      "cadence"
+                    ]
+                  },
+                  "sets": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "repetitions": {
+                    "type": "string",
+                    "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                  },
+                  "load": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "restSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "durationSeconds": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "incline": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "distance": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "speed": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 10000
+                  },
+                  "cadence": {
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                },
+                "required": [
+                  "sets",
+                  "repetitions"
+                ]
+              }
+            },
+            "id": {
+              "type": "string"
+            },
+            "exerciseId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sets": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "repetitions": {
+              "default": "",
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+            },
+            "load": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "durationSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "restSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rir": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rpe": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cadence": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "notes": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "exerciseId"
+          ]
+        }
+      }
+    },
+    "required": [
+      "name"
+    ]
+  },
+  "workoutTemplateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "subtitle": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "instructions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "exercises": {
+        "minItems": 1,
+        "maxItems": 100,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "clientId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "alternativeExerciseId": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "series": {
+              "default": [],
+              "maxItems": 50,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "repetitions-load",
+                      "repetitions-load-time",
+                      "repetitions-time",
+                      "time-incline",
+                      "running",
+                      "notes",
+                      "cadence"
+                    ]
+                  },
+                  "sets": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                  },
+                  "repetitions": {
+                    "type": "string",
+                    "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                  },
+                  "load": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "restSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "durationSeconds": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "incline": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "distance": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "speed": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 10000
+                  },
+                  "cadence": {
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                },
+                "required": [
+                  "sets",
+                  "repetitions"
+                ]
+              }
+            },
+            "exerciseId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sets": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "repetitions": {
+              "default": "",
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+            },
+            "load": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "durationSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "restSeconds": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rir": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rpe": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cadence": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "notes": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            }
+          },
+          "required": [
+            "exerciseId"
+          ]
+        }
+      },
+      "revision": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "name",
+      "exercises"
+    ]
+  },
+  "programRoutineSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160
+      },
+      "description": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "weeklyFrequency": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 14,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "cycleDays": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 365,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "sessions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "workouts": {
+        "maxItems": 30,
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "subtitle": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "instructions": {
+              "default": "",
+              "type": "string",
+              "maxLength": 10000
+            },
+            "exercises": {
+              "default": [],
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "clientId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "alternativeExerciseId": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "series": {
+                    "default": [],
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "repetitions-load",
+                            "repetitions-load-time",
+                            "repetitions-time",
+                            "time-incline",
+                            "running",
+                            "notes",
+                            "cadence"
+                          ]
+                        },
+                        "sets": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        },
+                        "repetitions": {
+                          "type": "string",
+                          "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                        },
+                        "load": {
+                          "default": null,
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "restSeconds": {
+                          "default": null,
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "durationSeconds": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "incline": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "distance": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "speed": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1000000
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "maxLength": 10000
+                        },
+                        "cadence": {
+                          "type": "string",
+                          "maxLength": 10000
+                        }
+                      },
+                      "required": [
+                        "sets",
+                        "repetitions"
+                      ]
+                    }
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "exerciseId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sets": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "repetitions": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^(?:\\d+(?:\\s*[-–]\\s*\\d+)?)?$"
+                  },
+                  "load": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "durationSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "restSeconds": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rir": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "rpe": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cadence": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 10000
+                  },
+                  "notes": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 10000
+                  }
+                },
+                "required": [
+                  "exerciseId"
+                ]
+              }
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      },
+      "revision": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "name",
+      "weeklyFrequency",
+      "cycleDays"
+    ]
+  },
+  "enrollmentSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 120
+      },
+      "email": {
+        "type": "string",
+        "maxLength": 254,
+        "format": "email",
+        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+      },
+      "phone": {
+        "type": "string",
+        "maxLength": 25
+      },
+      "birthDate": {
+        "default": "",
+        "type": "string"
+      },
+      "city": {
+        "default": "",
+        "type": "string",
+        "maxLength": 100
+      },
+      "state": {
+        "default": "",
+        "type": "string",
+        "maxLength": 40
+      },
+      "gender": {
+        "default": "Não informar",
+        "type": "string",
+        "enum": [
+          "Não informar",
+          "Feminino",
+          "Masculino",
+          "Outro"
+        ]
+      },
+      "goals": {
+        "minItems": 1,
+        "maxItems": 8,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "Emagrecimento",
+            "Hipertrofia",
+            "Condicionamento físico",
+            "Saúde e qualidade de vida",
+            "Mobilidade e flexibilidade",
+            "Melhora do desempenho esportivo",
+            "Criação de hábitos saudáveis",
+            "Outro"
+          ]
+        }
+      },
+      "specificGoals": {
+        "default": "",
+        "type": "string",
+        "maxLength": 1500
+      },
+      "practicing": {
+        "type": "string",
+        "enum": [
+          "Sim",
+          "Não"
+        ]
+      },
+      "daysPerWeek": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 7
+      },
+      "experienceDuration": {
+        "default": "",
+        "type": "string",
+        "maxLength": 1500
+      },
+      "previousTrainer": {
+        "type": "string",
+        "enum": [
+          "Sim",
+          "Não"
+        ]
+      },
+      "preferredActivity": {
+        "default": "",
+        "type": "string",
+        "maxLength": 1500
+      },
+      "availability": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 1500
+      },
+      "health": {
+        "type": "object",
+        "properties": {
+          "restrictions": {
+            "default": "",
+            "type": "string",
+            "maxLength": 1500
+          },
+          "injuries": {
+            "default": "",
+            "type": "string",
+            "maxLength": 1500
+          },
+          "adaptations": {
+            "default": "",
+            "type": "string",
+            "maxLength": 1500
+          }
+        }
+      },
+      "consent": {
+        "type": "boolean",
+        "const": true
+      },
+      "healthConsent": {
+        "type": "boolean"
+      },
+      "policyVersion": {
+        "type": "string",
+        "const": "2026-10-16.v1"
+      }
+    },
+    "required": [
+      "name",
+      "email",
+      "phone",
+      "goals",
+      "practicing",
+      "daysPerWeek",
+      "previousTrainer",
+      "availability",
+      "health",
+      "consent",
+      "healthConsent",
+      "policyVersion"
+    ]
+  }
+}

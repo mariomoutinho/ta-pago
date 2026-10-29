@@ -56,3 +56,4 @@ data/
 server/generated/
 test-results/
 playwright-report/
+backend-php/config.php

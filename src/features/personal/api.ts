@@ -42,7 +42,7 @@ export async function api<T>(
     });
   } catch (error) {
     throw new Error(
-      `Não foi possível acessar a API Personal. Confirme que ela está iniciada. ${error instanceof Error ? error.message : ""}`,
+      `Não foi possível acessar o servidor. Confira sua conexão e tente novamente. ${error instanceof Error ? error.message : ""}`,
     );
   }
   const body = await response.json();

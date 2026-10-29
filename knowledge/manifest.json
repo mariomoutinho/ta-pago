@@ -13,7 +13,7 @@
       "title": "Tá Pago",
       "status": "current",
       "owner": "mariomoutinho",
-      "updated_at": "2026-10-23",
+      "updated_at": "2026-10-29",
       "language": "pt-BR",
       "tags": [
         "project"
@@ -33,12 +33,14 @@
         "server/enrollment.ts",
         "src/app/alunos/link.tsx",
         "hostinger.mjs",
-        "server/runtime.ts"
+        "server/runtime.ts",
+        "backend-php/bootstrap.php",
+        "scripts/php/build.mjs"
       ],
       "repository": "mariomoutinho/ta-pago",
       "branch": "main",
       "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "4.4.0",
+      "version": "4.5.0",
       "authority": "product",
       "audience": [
         "developer",
@@ -86,7 +88,7 @@
       "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
       "domain": "product",
       "path": "README.md",
-      "sha256": "e6e95e26b6f3f57fe0271cfdd0da10dc5b7d28543dab044f08d918963a6b0794"
+      "sha256": "5633c428877fda6498e1653c06d564e38f7462e53b7aad0e07a60ffbd9cbe264"
     },
     {
       "id": "ta-pago.docs.00-context.glossary",
@@ -1089,43 +1091,6 @@
       "sha256": "2101f2734a41606c887b3f46b5621461d4d65469ad2c15293a2f68ec87a570c9"
     },
     {
-      "id": "ta-pago.docs.06-operations.hostinger-deployment",
-      "title": "Publicação do Tá Pago na Hostinger",
-      "status": "current",
-      "owner": "mariomoutinho",
-      "updated_at": "2026-10-16",
-      "language": "pt-BR",
-      "tags": [
-        "06-operations"
-      ],
-      "indexable": true,
-      "sources": [
-        "hostinger.mjs",
-        "server/runtime.ts",
-        "server/index.ts",
-        "server/app.ts",
-        "deploy/hostinger.env.example",
-        "package.json"
-      ],
-      "repository": "mariomoutinho/ta-pago",
-      "branch": "main",
-      "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "1.0.0",
-      "authority": "code",
-      "audience": [
-        "developer",
-        "ai_agent",
-        "reviewer"
-      ],
-      "sensitivity": "internal",
-      "supersedes": [],
-      "related_documents": [],
-      "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-      "domain": "operations",
-      "path": "docs/06-operations/hostinger-deployment.md",
-      "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
-    },
-    {
       "id": "ta-pago.docs.06-operations.incident-response",
       "title": "Resposta a incidentes",
       "status": "proposed",
@@ -1154,6 +1119,101 @@
       "domain": "operations",
       "path": "docs/06-operations/incident-response.md",
       "sha256": "a88c4ab9ff815a6cc1546907066e5f3c21b40436ec69a02fb421f61d824f65f7"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-hostinger-deployment",
+      "title": "Hostinger Single — implantação PHP em tapago",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-10-29",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations",
+        "php",
+        "migration"
+      ],
+      "indexable": true,
+      "sources": [
+        "backend-php/bootstrap.php",
+        "backend-php/config.example.php",
+        "backend-php/public/.htaccess",
+        "backend-php/public/api/index.php",
+        "backend-php/bin/console.php",
+        "scripts/php/build.mjs",
+        "scripts/php/export-sqlite.mjs",
+        "scripts/php/export-sql.mjs",
+        ".github/workflows/php-validation.yml",
+        "app.config.ts"
+      ],
+      "repository": "mariomoutinho/ta-pago",
+      "branch": "main",
+      "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+      "version": "1.0.0",
+      "authority": "code",
+      "audience": [
+        "developer",
+        "operations",
+        "reviewer"
+      ],
+      "sensitivity": "internal",
+      "supersedes": [
+        "ta-pago.docs.06-operations.hostinger-deployment"
+      ],
+      "related_documents": [
+        "ta-pago.docs.06-operations.php-migration"
+      ],
+      "framework_version": "Expo 57; PHP 8.3; MySQL 8; MariaDB 10.4",
+      "domain": "operations",
+      "path": "docs/06-operations/php-hostinger-deployment.md",
+      "sha256": "c4d8b0371254ab6f1bf4b76c3e7f962f4ce85ad014e5c8e915787c5093b2a81c"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-migration",
+      "title": "Migração PHP e MySQL — execução e pendências",
+      "status": "current",
+      "owner": "mariomoutinho",
+      "updated_at": "2026-10-29",
+      "language": "pt-BR",
+      "tags": [
+        "06-operations",
+        "migration",
+        "testing"
+      ],
+      "indexable": true,
+      "sources": [
+        "prisma/schema.prisma",
+        "server/app.ts",
+        "server/workouts.ts",
+        "backend-php/src/App.php",
+        "backend-php/src/Auth.php",
+        "backend-php/src/Students.php",
+        "backend-php/src/Evaluations.php",
+        "backend-php/src/Workouts.php",
+        "backend-php/src/Enrollment.php",
+        "scripts/php/test.mjs",
+        "scripts/php/migration-test.mjs",
+        "scripts/php/browser-test.mjs",
+        ".github/workflows/php-validation.yml"
+      ],
+      "repository": "mariomoutinho/ta-pago",
+      "branch": "main",
+      "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+      "version": "1.0.0",
+      "authority": "code",
+      "audience": [
+        "developer",
+        "operations",
+        "reviewer"
+      ],
+      "sensitivity": "internal",
+      "supersedes": [],
+      "related_documents": [
+        "ta-pago.docs.06-operations.php-hostinger-deployment"
+      ],
+      "framework_version": "Expo 57; PHP 8.3; MySQL 8; MariaDB 10.4",
+      "domain": "testing",
+      "path": "docs/06-operations/php-migration.md",
+      "sha256": "0b35722fe80a9ffc57025afffb50bd83d3d2935116c8c2fc3f8691c11d5b6a06"
     },
     {
       "id": "ta-pago.docs.06-operations.relatorio-evolucao-2026-10-27",
@@ -394446,8 +394506,8 @@
       "section": "whole",
       "name": "Tá Pago",
       "entity_type": null,
-      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.\n\nO modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- \"Como useTheme seleciona as cores?\"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Evolução futura dos treinos: registro de execução associado à prescrição.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nUsar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm run personal:setup\nnpm run personal:build\nnpm run personal:start\n```\n\nAbra http://localhost:3003. Use Node 24 da `.nvmrc`. Para recarga automática, `npm run personal:dev` (web na porta 8081). Consulte [ambiente local](docs/04-development/local-setup.md) e [módulo Personal](docs/03-features/personal-integration.md) para migração e configuração nativa.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar o módulo Personal com usuários e dispositivos reais; evoluir os recursos sociais planejados com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:api:ingest -- --dry-run\nnpm run knowledge:api:ingest\nnpm run knowledge:api:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n\n## Link de Cadastro de Alunos\n\nEm Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).\n\n## Publicação no Coletivo Pindorama\n\nPreparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.\n\n## Prescrição de treinos\n\nPersonal → Alunos → perfil → Treinos permite criar planos e sessões com exercícios da biblioteca privada. Alunos leem planos publicados em Treinos. Consulte [fluxo, migration, autorização e teste manual](docs/03-features/workouts.md). A biblioteca começa vazia e é preenchida manualmente.\n\nA seção **Treinos preparados** permite ao personal montar modelos sem aluno e copiá-los para uma rotina pelo perfil → Treinos → Usar treino preparado. Ajustes nas cópias não alteram o modelo. Após atualizar, aplique as migrações e recompile a web conforme o guia de [treinos](docs/03-features/workouts.md).\n",
-      "token_estimate": 2839,
+      "content": "# Tá Pago\n\nO Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.\n\n## Estado atual\n\n**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.\n\nO modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- \"Como useTheme seleciona as cores?\"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).\n\nEsta base inclui documentação, contratos para agentes e um pipeline RAG executável pelo terminal em `scripts/rag`: ingestão incremental, PostgreSQL/pgvector, recuperação híbrida, contexto e geração com fontes. O modo opcional com API requer banco e credenciais; consulte [RAG.md](knowledge/RAG.md).\n\n## Objetivos e visão geral\n\nIncentivar constância, interação entre amigos e acompanhamento individual. Conectar o registro de atividades ao trabalho do professor, preservando a diferença entre histórico privado e publicação social.\n\n## Funcionalidades planejadas\n\n- Rede social fitness: fotos de treinos e compartilhamento de atividades com amigos.\n- Grupos: comunidades de participantes e atividades coletivas.\n- Sistema de pontos e rankings: regras transparentes de participação e comparação por período.\n- Desafios: objetivos coletivos e acompanhamento do progresso.\n- Títulos e conquistas: medalhas e reconhecimento por marcos verificáveis.\n- Evolução futura dos treinos: registro de execução associado à prescrição.\n- Acompanhamento de alunos: cadastro pelo professor, vínculo autorizado, treinos concluídos e evolução.\n- Registro de corridas: quilômetros e evolução ao longo do tempo; origem manual ou GPS ainda a decidir.\n\n## Perfis de usuário planejados\n\n| Perfil | Objetivo |\n| --- | --- |\n| Aluno | Treinar, registrar atividades, compartilhar progresso e participar de grupos. |\n| Professor | Cadastrar alunos, prescrever treinos, criar desafios e acompanhar execução e corridas. |\n| Administrador | Suporte e moderação; escopo de permissões ainda proposto. |\n\n## Tecnologias utilizadas\n\nVersões declaradas em [package.json](package.json): [Expo 57](https://docs.expo.dev/versions/v57.0.0/), [React Native 0.86](https://reactnative.dev/), [React 19.2](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Expo Router 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/) e [React Native Web 0.21](https://necolas.github.io/react-native-web/).\n\n## Instalação e execução\n\nA preparação para Hostinger Single usa PHP 8.3/MySQL e Expo Web em `/tapago`, sem Node no servidor. Consulte o [guia de build e implantação](docs/06-operations/php-hostinger-deployment.md) e o [relatório de testes e pendências](docs/06-operations/php-migration.md). A implementação paralela ainda não substituiu o backend Express em produção; nenhum deploy foi feito.\n\nUsar o Node.js indicado em `.nvmrc` e npm no desenvolvimento/build. A CI documental usa Node 24.\n\n```bash\ngit clone https://github.com/mariomoutinho/ta-pago.git\ncd ta-pago\nnpm ci\nnpm run personal:setup\nnpm run personal:build\nnpm run personal:start\n```\n\nAbra http://localhost:3003. Use Node 24 da `.nvmrc`. Para recarga automática, `npm run personal:dev` (web na porta 8081). Consulte [ambiente local](docs/04-development/local-setup.md) e [módulo Personal](docs/03-features/personal-integration.md) para migração e configuração nativa.\n\n## Scripts disponíveis\n\n| Script (`npm run …`) | Finalidade |\n| --- | --- |\n| `start` | Inicia o servidor de desenvolvimento Expo. |\n| `android` / `ios` / `web` | Inicia o Expo na plataforma escolhida. |\n| `reset-project` | Move ou remove `src` e `scripts` e recria a base; não usar no fluxo normal. |\n| `lint` | Comando herdado `expo lint`; ESLint ainda não está configurado. |\n| `typecheck` | Verifica tipos sem gerar arquivos. |\n| `docs:validate` | Valida estrutura, metadados e links locais por arquivo. |\n| `docs:test` | Executa testes dos scripts documentais. |\n| `knowledge:build` | Gera manifesto principal consolidado e determinístico. |\n| `knowledge:check` | Detecta manifesto desatualizado sem modificá-lo. |\n| `knowledge:plan -- --baseline caminho.json` | Compara manifesto anterior com atual; imprime plano, sem executar ingestão. |\n\n## Estrutura inicial\n\n```text\nsrc/app/           Rotas de exemplo e layout\nsrc/components/    Interface compartilhada e variantes web\nsrc/constants/     Tema\nsrc/hooks/         Hooks de tema\nassets/            Imagens e ícones\nscripts/           Utilitários do template e da documentação\ndocs/              Contexto, requisitos, arquitetura, funcionalidades e políticas\nknowledge/         Metadados, manifesto e avaliações futuras\n.github/workflows/ Validação documental\n```\n\n## Princípios do produto\n\nPrivacidade, acessibilidade, incentivo à constância, cooperação e transparência nas regras. Preservar autonomia do aluno e acesso restrito do professor. Não tratar pontos como valor financeiro ou substituir acompanhamento profissional por respostas de IA.\n\n## Documentação e evolução planejada\n\nOs documentos abaixo registram o estado observado e propostas a validar. O detalhamento acompanhará as próximas implementações.\n\n- [Glossário](./docs/00-context/glossary.md)\n- [Perfis de usuário](./docs/00-context/personas.md)\n- [Visão do produto](./docs/00-context/product-brief.md)\n- [Critérios de aceitação](./docs/01-requirements/acceptance-criteria.md)\n- [Requisitos funcionais](./docs/01-requirements/functional-requirements.md)\n- [Requisitos não funcionais](./docs/01-requirements/non-functional-requirements.md)\n- [Estrutura do aplicativo](./docs/02-architecture/app-structure.md)\n- [Modelo conceitual de dados](./docs/02-architecture/data-model.md)\n- [Integrações](./docs/02-architecture/integrations.md)\n- [Navegação](./docs/02-architecture/navigation.md)\n- [Visão da arquitetura](./docs/02-architecture/system-overview.md)\n- [Títulos e conquistas](./docs/03-features/achievements.md)\n- [Desafios coletivos](./docs/03-features/challenges.md)\n- [Grupos](./docs/03-features/groups.md)\n- [Pontos e rankings](./docs/03-features/points-and-ranking.md)\n- [Registro de corridas](./docs/03-features/running-records.md)\n- [Rede social fitness](./docs/03-features/social-feed.md)\n- [Acompanhamento de alunos](./docs/03-features/teacher-student-monitoring.md)\n- [Treinos personalizados](./docs/03-features/workouts.md)\n- [Diretrizes de desenvolvimento](./docs/04-development/coding-guidelines.md)\n- [Diagnóstico](./docs/04-development/debugging.md)\n- [Ambiente local](./docs/04-development/local-setup.md)\n- [Estratégia de testes](./docs/04-development/testing.md)\n- [ADR-0001 — Expo e Expo Router](./docs/05-decisions/ADR-0001-expo-and-expo-router.md)\n- [Variáveis de ambiente](./docs/06-operations/environment-variables.md)\n- [Resposta a incidentes](./docs/06-operations/incident-response.md)\n- [Processo de entrega](./docs/06-operations/release-process.md)\n- [Contrato para agentes](./docs/07-ai/agent-contract.md)\n- [Política de avaliação de IA](./docs/07-ai/evaluation-policy.md)\n- [Política da base de conhecimento e RAG](./docs/07-ai/rag-policy.md)\n- [Protocolo de tarefas](./docs/07-ai/task-protocol.md)\n- [Modelo de tarefa de engenharia](./docs/07-ai/task-template.md)\n- [Política de ferramentas](./docs/07-ai/tool-policy.md)\n\nO [guia da base de conhecimento](knowledge/README.md) explica metadados, geração e atualização incremental. O [AGENTS.md](AGENTS.md) orienta agentes de código.\n\n## Próximas etapas\n\nValidar o módulo Personal com usuários e dispositivos reais; evoluir os recursos sociais planejados com critérios de aceitação e testes. Configurar o RAG e avaliar respostas reais antes de integrá-lo a interfaces ou serviços do produto.\n\n## Licença e autor\n\nLicença [MIT](LICENSE), preservando o aviso original de copyright da Expo. Projeto mantido por [Mario Moutinho](https://github.com/mariomoutinho).\n\n## Base de conhecimento v2\n\nA documentação e o código têm extratores locais separados e são consolidados em `knowledge/manifest.json`. O manifesto principal contém `code_entities` e `symbol_relations` preenchidos, além de chunks com `source_type: code`; o catálogo dedicado `knowledge/code-manifest.json` usa `entities` no formato v1. Os 35 documentos receberam metadados de origem, versão, autoridade, público, sensibilidade, relacionamentos e domínio. O inventário estático identifica componentes, hooks, rotas, funções, constantes, comportamentos da interface e relações, com evidências e confiança.\n\nOs manifestos são snapshots determinísticos da extração, sem vetores embutidos. Seus placeholders não representam o estado de um banco instalado. O RAG lê esse corpus, aplica ingestão incremental e registra a indexação no PostgreSQL; `knowledge:api:health` consulta o estado real. A CLI `knowledge:api:ask` recupera contexto e chama o LLM, preservando fontes verificadas.\n\n| Script adicional | Finalidade |\n| --- | --- |\n| `code:inventory` | Gera inventário e manifesto de código locais. |\n| `code:check` | Confere inventário e manifesto sem modificá-los. |\n| `code:test` | Testa extração, relações, segurança e comparação incremental. |\n| `knowledge:plan-code -- --baseline caminho.json` | Produz plano de diferenças do código, sem aplicá-lo. |\n\nO extrator usa o TypeScript já instalado, sem novas dependências. A CI executa `npm ci`, verificações documentais, inventário de código e TypeScript. O [guia da base](knowledge/README.md) explica hashes, revisão-base Git, IDs, versões do extrator e chunking, resumos, limites da análise estática e atualização incremental. Essas ferramentas não modificam o comportamento do aplicativo.\n\n## Consultas ao conhecimento\n\nConfigure o banco e os providers conforme [knowledge/RAG.md](knowledge/RAG.md). Depois execute:\n\n```bash\nnpm run knowledge:migrate\nnpm run knowledge:api:ingest -- --dry-run\nnpm run knowledge:api:ingest\nnpm run knowledge:api:ask -- \"Como Collapsible alterna o conteúdo?\"\n```\n\nOs comandos `knowledge:api:search`, `knowledge:api:health` e `knowledge:evaluate` permitem depurar e avaliar a recuperação; `rag:test` executa testes isolados, sem consumir API externa. Sem configuração, os comandos reportam `REQUIRES_EXTERNAL_CONFIGURATION`.\n\n## Link de Cadastro de Alunos\n\nEm Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerencie solicitações pendentes. O modo atual usa localhost:3003, conforme solicitado. Veja [configuração, migração, endpoints e testes](docs/03-features/enrollment-links.md).\n\n## Publicação no Coletivo Pindorama\n\nPreparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.\n\n## Prescrição de treinos\n\nPersonal → Alunos → perfil → Treinos permite criar planos e sessões com exercícios da biblioteca privada. Alunos leem planos publicados em Treinos. Consulte [fluxo, migration, autorização e teste manual](docs/03-features/workouts.md). A biblioteca começa vazia e é preenchida manualmente.\n\nA seção **Treinos preparados** permite ao personal montar modelos sem aluno e copiá-los para uma rotina pelo perfil → Treinos → Usar treino preparado. Ajustes nas cópias não alteram o modelo. Após atualizar, aplique as migrações e recompile a web conforme o guia de [treinos](docs/03-features/workouts.md).\n",
+      "token_estimate": 2936,
       "semantic_summary": {
         "representation": "Documento: Tá Pago",
         "responsibility": "Registra tá pago sob autoridade product; domínio product.",
@@ -394493,7 +394553,7 @@
           {
             "source_path": "README.md",
             "section": "whole",
-            "sha256": "e6e95e26b6f3f57fe0271cfdd0da10dc5b7d28543dab044f08d918963a6b0794"
+            "sha256": "5633c428877fda6498e1653c06d564e38f7462e53b7aad0e07a60ffbd9cbe264"
           }
         ],
         "confidence": "observed"
@@ -394503,7 +394563,7 @@
         "repository": "mariomoutinho/ta-pago",
         "branch": "main",
         "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "4.4.0",
+        "version": "4.5.0",
         "status": "current",
         "domain": "product",
         "confidence": null,
@@ -394515,11 +394575,11 @@
         ],
         "sensitivity": "internal",
         "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-        "source_sha256": "e6e95e26b6f3f57fe0271cfdd0da10dc5b7d28543dab044f08d918963a6b0794",
+        "source_sha256": "5633c428877fda6498e1653c06d564e38f7462e53b7aad0e07a60ffbd9cbe264",
         "extractor_version": "document-json-v2",
         "chunking_version": "atomic-source-v1"
       },
-      "sha256": "a3764e08593f99b607728ccaa61752b2e980e0165bd655ff4a779dfa3ce0dbe0"
+      "sha256": "c781ef3a7f537eead896d463ea94e7fded7c2e254b692a31a02c52cbfb349fea"
     },
     {
       "id": "ta-pago.code:src/app/_layout.tsx:component:Navigation::chunk:whole",
@@ -588091,54 +588151,6 @@
       "sha256": "c3700df2f2c2b0483c3777704d1f48a284a261fb175242b1c46bcac682e5cf41"
     },
     {
-      "id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole",
-      "source_id": "ta-pago.docs.06-operations.hostinger-deployment",
-      "source_type": "document",
-      "source_path": "docs/06-operations/hostinger-deployment.md",
-      "section": "whole",
-      "name": "Publicação do Tá Pago na Hostinger",
-      "entity_type": null,
-      "content": "# Publicação do Tá Pago na Hostinger\n\n## Destino e estado\n\nDestino solicitado: https://tapago.coletivopindorama.com.br. A preparação está versionada; não implica publicação concluída. Na inspeção inicial, o subdomínio não resolvia no DNS e o acesso disponível era o deploy FTP do site principal, em outro repositório. Ele não oferece, sozinho, a execução da API Node.js. O usuário confirmou que pode conectar o painel/Hostinger Connector; a criação da aplicação, DNS e SSL depende dessa conexão.\n\nNão reutilizar o deploy FTP do site principal para servir apenas dist: login, fichas, aprovações e persistência dependem de Express. Não modificar a raiz do Coletivo Pindorama nem outros subdomínios.\n\n## Aplicação gerenciada\n\nSegundo a [documentação da Hostinger](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/), Express e Node.js 24 são suportados nos planos compatíveis com Web Apps. Confirmar a capacidade da conta pelo painel antes de criar recursos.\n\n- Repositório: mariomoutinho/ta-pago; branch main; raiz do projeto.\n- Aplicação: backend Express/Other, Node.js 24. Não selecionar hospedagem somente estática.\n- Instalação: npm ci, incluindo dependências de build.\n- Build: npm run production:build (Prisma generate e exportação web).\n- Entrada Node: hostinger.mjs; comando equivalente: npm run production:start.\n- A pasta dist contém somente os assets web; server, shared e dependências permanecem necessários no runtime.\n- Inicialização usa PORT do provedor e escuta em 0.0.0.0 em produção.\n- GET /api/health retorna 200 se o banco e o schema User estiverem acessíveis; 503 em falha, sem revelar dados.\n\n## Configuração obrigatória\n\nUse deploy/hostinger.env.example como referência para cadastrar variáveis no painel; não coloque valores secretos no Git. Defina NODE_ENV=production, PERSONAL_ENROLLMENT_ORIGIN e PERSONAL_APP_ORIGINS com o destino HTTPS exato. Cookies de sessão são Secure em produção. A web usa a mesma origem; deixe EXPO_PUBLIC_PERSONAL_API_URL ausente.\n\nPERSONAL_DATABASE_URL deve apontar para SQLite em caminho absoluto privado e persistente, fora da pasta da release. Confirmar no provedor permissões, persistência entre deploys e backup; não assumir que public_html, dist ou a pasta temporária do build são armazenamento permanente. Se a hospedagem não oferecer esse volume, escolher VPS/armazenamento compatível antes de publicar.\n\nPERSONAL_ENROLLMENT_KEY deve conter 32 bytes em hexadecimal, armazenados no painel como segredo. Para migrar fichas cifradas existentes, preservar a chave original; trocar a chave torna essas fichas ilegíveis. Não transportar o .env local inteiro: ele também pode conter configuração RAG independente.\n\nPERSONAL_TRUST_PROXY aceita IPs/sub-redes separados por vírgula. Configurar somente após confirmar a topologia e o tratamento dos cabeçalhos pelo proxy, conforme [Express atrás de proxies](https://expressjs.com/en/guide/behind-proxies/). Sem isso, limites de requisição podem agregar usuários no IP do proxy. Não usar confiança irrestrita.\n\n## Banco, migração e publicação\n\n1. Criar a aplicação dedicada e associar tapago.coletivopindorama.com.br. Confirmar registros DNS e emissão de certificado pelo painel.\n2. Definir volume privado persistente e variáveis, sem tornar arquivos SQLite ou chave acessíveis por HTTP.\n3. Para instalação vazia: npm run production:setup. Esse comando verifica configuração, gera Prisma, aplica migrations e cria somente o modelo de avaliação base.\n4. Para levar os dados locais: preparar snapshot consistente do SQLite, transferir por canal autenticado e cifrado e preservar a chave de fichas. Nunca incluir banco, sessões ou chave no pacote de código/Git. Preservar a origem e backup; confirmar o destino antes de importar.\n5. Iniciar com NODE_ENV=production e npm run production:start. Verificar /api/health, login, links diretos, cookies Secure, formulário público e isolamento entre profissionais.\n6. Criar uma solicitação de teste sem dados reais e confirmar aprovação. Verificar que dados persistem após reiniciar/republicar. Só então considerar a migração concluída.\n\nO código local continua funcionando com personal:start na porta 3003. Nenhum dado local foi migrado para a internet na preparação.\n\n## Verificação local da preparação\n\nproduction.test.ts executa hostinger.mjs em processo real com SQLite temporário, verifica a API, rota SPA e cookie Secure, além de rejeitar configuração insegura ou banco dentro da release. Isso valida a entrada de produção; não comprova DNS, SSL, permissões ou persistência do provedor.\n",
-      "token_estimate": 1140,
-      "semantic_summary": {
-        "representation": "Documento: Publicação do Tá Pago na Hostinger",
-        "responsibility": "Registra publicação do tá pago na hostinger sob autoridade code; domínio operations.",
-        "related_symbols": [],
-        "related_documents": [],
-        "status": "current",
-        "evidence": [
-          {
-            "source_path": "docs/06-operations/hostinger-deployment.md",
-            "section": "whole",
-            "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
-          }
-        ],
-        "confidence": "observed"
-      },
-      "metadata": {
-        "entity_type": null,
-        "repository": "mariomoutinho/ta-pago",
-        "branch": "main",
-        "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-        "version": "1.0.0",
-        "status": "current",
-        "domain": "operations",
-        "confidence": null,
-        "authority": "code",
-        "audience": [
-          "developer",
-          "ai_agent",
-          "reviewer"
-        ],
-        "sensitivity": "internal",
-        "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-        "source_sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843",
-        "extractor_version": "document-json-v2",
-        "chunking_version": "atomic-source-v1"
-      },
-      "sha256": "eedc3c6462aff60d2db1d1d07bd3490482cccb394c6ba7d7f92ca4187cb84ae4"
-    },
-    {
       "id": "ta-pago.docs.06-operations.incident-response::chunk:whole",
       "source_id": "ta-pago.docs.06-operations.incident-response",
       "source_type": "document",
@@ -588185,6 +588197,106 @@
         "chunking_version": "atomic-source-v1"
       },
       "sha256": "36a44698dbda2f376412000d772477e8fd1c829032671ded343684f1ce131940"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-hostinger-deployment::chunk:whole",
+      "source_id": "ta-pago.docs.06-operations.php-hostinger-deployment",
+      "source_type": "document",
+      "source_path": "docs/06-operations/php-hostinger-deployment.md",
+      "section": "whole",
+      "name": "Hostinger Single — implantação PHP em tapago",
+      "entity_type": null,
+      "content": "# Hostinger Single — implantação PHP em tapago\n\n## Destino e limite desta entrega\n\nDestino: hospedagem **Single Web Hosting existente**, em `public_html/tapago`. Endereço: `https://SEU-DOMINIO/tapago/`. O frontend continua Expo Web; o servidor recebe somente arquivos estáticos e PHP. Não executar Node, npm, Prisma, Express ou serviços RAG na hospedagem.\n\nEsta é uma preparação local. **Nenhum deploy, alteração de DNS ou importação de produção foi feito.** A liberação depende das pendências do [relatório de migração](php-migration.md). Os comandos `production:*` e `hostinger.mjs` continuam como referência do Express anterior; não usar no Single.\n\nA Hostinger informa que [Single não oferece SSH](https://www.hostinger.com/support/1583245-how-to-connect-to-a-hosting-plan-via-ssh-in-hostinger/). Este procedimento usa GitHub para build, Gerenciador de Arquivos para upload e phpMyAdmin para dados, sem depender de SSH, SFTP, upgrade ou outra hospedagem.\n\n## Etapa 1 — validar e gerar localmente\n\nUsar Node da `.nvmrc` somente na máquina local/CI, PHP 8.3 com `pdo_mysql`, `mbstring`, `openssl`, `sodium` e MySQL/MariaDB exclusivo de teste.\n\n```bash\nnpm ci\nnpm run php:generate\nnpm run typecheck\nnpm run php:lint\nnpm run php:test\nnpm run php:build\nnpm run php:browser\n```\n\n`PHP_BIN` pode apontar para o executável PHP. Os testes usam banco em `127.0.0.1:33316` e servidor PHP temporário em `33317`. Definir `TAPAGO_TEST_DSN`, `TAPAGO_TEST_USER` e `TAPAGO_TEST_PASSWORD` para o banco isolado. **Nunca apontar testes para produção.** O usuário de testes precisa de CREATE DATABASE: são criados bancos novos `tapago_test_*`, preservados para inspeção, sem apagar bases existentes. A API de produção não precisa desse privilégio.\n\n`php:browser` exige Chromium do Playwright ou `PLAYWRIGHT_CHROMIUM_EXECUTABLE` apontando para navegador compatível. Usa configuração sintética de `php:test` e pacote de `php:build`. O servidor embutido PHP é exclusivo de teste.\n\nO build cria `data/php-release-*`; seu caminho fica em `data/php-last-release.txt`:\n\n```text\nmanifest.json                    hashes do pacote\npublic_html/tapago/              HTML, JS, CSS, imagens, .htaccess\npublic_html/tapago/api/index.php\ntapago-private/                  irmão de public_html\n  bootstrap.php\n  src/\n  generated/\n  bin/console.php\n  schema.sql\n  config.example.php\n```\n\nO build configura `TAPAGO_WEB_BASE_PATH=/tapago` e `EXPO_PUBLIC_PERSONAL_API_URL=/tapago`. Não são segredos. O pacote exclui configuração real, dados, sessões, chaves, dependências Node e testes. Assets estáticos do Expo podem conter `assets/node_modules` no caminho; são imagens/fontes, não dependências de runtime.\n\n## Etapa 2 — GitHub sem publicação automática\n\n1. Após revisar/enviar o código, abrir Actions → **PHP e MySQL — validar e preparar pacote** → Run workflow na revisão desejada.\n2. O workflow manual testa PHP 8.3/MySQL 8, migração sintética e navegador. Só gera `tapago-php-validado` se tudo passar.\n3. Baixar o artifact, conferir `manifest.json` e revisão. Expira em sete dias e não contém dados reais.\n4. Não há credenciais Hostinger, job de deploy, FTP ou importação remota. Não usar automações de outros sites.\n\nÉ possível gerar o mesmo pacote localmente. Não contratar build pago nem habilitar faturamento adicional no GitHub; se a franquia não estiver disponível, usar build local. Workflow configurado não significa CI executada.\n\n## Etapa 3 — ensaio dos dados\n\nO exportador abre SQLite somente para leitura, em transação consistente. Para o ensaio, usar backup consistente validado. Não copiar apenas `.db` em uso ignorando o WAL. O snapshot privado deve permanecer em `data/`, fora do Git.\n\n```bash\n# Simulação: mostra contagens, sem gravar snapshot.\nnpm run php:export -- CAMINHO-DO-BACKUP.db\n# Arquivo novo; recusa sobrescrever.\nnpm run php:export -- CAMINHO-DO-BACKUP.db data/migracao.json\n```\n\nPreserva IDs, vínculos, hashes de senha, históricos, séries/presets, revisões, datas, JSON e fichas cifradas. Não transfere `Session`, `Invitation` nem `EnrollmentChallenge`: todos entram novamente e convites pendentes precisam ser reemitidos. **Preservar a chave AES original em enrollmentKey**; trocar a chave torna fichas existentes ilegíveis.\n\nCopiar `config.example.php` para arquivo privado local, configurar **outro banco local vazio** e definir `TAPAGO_CONFIG` com esse caminho:\n\n```bash\nphp backend-php/bin/console.php check\nphp backend-php/bin/console.php schema\nphp backend-php/bin/console.php schema --apply\nphp backend-php/bin/console.php import data/migracao.json\nphp backend-php/bin/console.php import data/migracao.json --apply\nphp backend-php/bin/console.php verify data/migracao.json\nnpm run php:sql -- data/migracao.json data/importacao.sql\n```\n\n`schema`/`import` sem `--apply` simulam. Importação PDO exige destino vazio, valida checksum/contrato/chave das fichas e usa transação com FKs habilitadas. `verify` compara os registros, não apenas as contagens; executar antes de abrir o banco à aplicação, pois logins atualizam hashes antigos. DDL não é transacional: falha ao criar esquema exige outro destino vazio.\n\nO SQL inclui esquema e dados para phpMyAdmin, sem instalador HTTP. Não enviá-lo ao GitHub nem a `public_html`. Não contém DROP, REPLACE, INSERT IGNORE ou desativação de FKs. Importar somente em banco vazio e interromper no primeiro erro. Como phpMyAdmin pode executar lotes e DDL faz commit implícito, não presumir rollback integral: abandonar destino parcial e repetir em banco vazio depois da correção. Nunca reparar importação parcial sobre base em uso.\n\nPara instalação totalmente vazia, `seed --apply` cria apenas o questionário inicial. Na migração, importar primeiro; não fazer seed antes de importar.\n\n## Etapa 4 — publicação manual após validação e autorização\n\n1. No hPanel, confirmar domínio, capacidade do banco existente e acesso a pasta privada fora de `public_html`. Não ocupar/substituir banco de outro site. Se o limite da conta impedir destino seguro, revisar o estado da conta sem contratar outro plano.\n2. Configurar [PHP 8.3/extensões](https://www.hostinger.com/support/1575755-how-to-change-the-php-version-of-your-hostinger-hosting-plan/), confirmar sodium, SSL e redirecionamento obrigatório HTTPS. Verificar impacto sobre outros aplicativos do mesmo site antes de alterar configurações.\n3. Fazer backup dos arquivos/banco atuais. Na transferência final, suspender gravações na origem, produzir novo snapshot consistente e repetir o ensaio/comparação.\n4. No [phpMyAdmin da Hostinger](https://www.hostinger.com/support/1884149-how-to-import-a-database-with-phpmyadmin-in-hostinger/), selecionar explicitamente o banco vazio aprovado e importar o SQL validado. Conferir contagens, relacionamentos e dados antes de liberar acesso. Uma exportação SQL do destino pode ser reimportada localmente em banco vazio para executar `verify` sem SSH remoto. Upload concluído não comprova importação correta.\n5. Pelo Gerenciador de Arquivos HTTPS, enviar apenas `public_html/tapago` para essa subpasta, incluindo `.htaccess`. Não sobrescrever a raiz ou outros diretórios do site principal.\n6. Colocar `tapago-private` como **irmão de public_html**. Criar `config.php` privado usando o exemplo: origem HTTPS sem caminho, basePath `/tapago`, DSN, usuário, senha, chave AES e retenção. Não copiar `.env` inteiro. Usar permissões restritas à conta/PHP, sem 777. Confirmar que `open_basedir` permite o include privado; caso contrário, publicação pendente.\n7. A API precisa somente SELECT, INSERT, UPDATE e DELETE nas tabelas próprias. Separar credenciais de esquema/importação quando o painel permitir. Desabilitar `registrationEnabled` para fechar autoinscrição; contas existentes continuam entrando.\n8. Conferir `/tapago/api/health`, login, professor/aluno, rascunho invisível, treino publicado visível, séries, avaliações e cadastro público. Testar links diretos/recarga, logout e cookies Secure/HttpOnly/SameSite. Verificar bloqueio de arquivos privados, MIME, CSP, vídeos e cache. PHP local não interpreta Apache/LiteSpeed.\n9. Só liberar gravações após homologação. Não manter Express e PHP aceitando gravações independentes. Guardar origem, chave e backup protegido.\n\n## Segurança, manutenção e recuperação\n\nSessões PHP duram 12h; apenas o hash do token é persistido. Senhas scrypt legadas são verificadas com sodium e convertidas após login para bcrypt sobre SHA-384, sem truncar senhas longas. Origem e `X-Requested-With` são conferidos, com autorização no servidor e sem CORS externo. Limites de autenticação/cadastro usam o IP fornecido pelo servidor, sem confiar em `X-Forwarded-For` do cliente; validar o proxy para não agregar usuários indevidamente.\n\nQueries são parametrizadas e erros internos não expõem dados. `.htaccess` bloqueia arquivos privados/índices, define headers e separa API de fallback SPA. TLS, backups e permissões dependem da configuração real e ainda exigem homologação.\n\n`php bin/console.php purge` simula a remoção de cadastros pendentes/recusados vencidos; `--apply` executa. Se houver cron PHP no painel, configurar o caminho privado exato após testar. A listagem aplica retenção ao proprietário consultado; sem cron, a limpeza global periódica permanece tarefa operacional. Não expor endpoint de importação/limpeza.\n\nAntes de liberar gravações, falhas permitem retirar a nova versão e restaurar arquivos/origem preservados. Após novas gravações MySQL, retornar apenas ao SQLite perde alterações: exportar e reconciliar primeiro. Não há migração reversa automática nesta entrega.\n",
+      "token_estimate": 2383,
+      "semantic_summary": {
+        "representation": "Documento: Hostinger Single — implantação PHP em tapago",
+        "responsibility": "Registra hostinger single — implantação php em tapago sob autoridade code; domínio operations.",
+        "related_symbols": [],
+        "related_documents": [
+          "ta-pago.docs.06-operations.php-migration"
+        ],
+        "status": "current",
+        "evidence": [
+          {
+            "source_path": "docs/06-operations/php-hostinger-deployment.md",
+            "section": "whole",
+            "sha256": "c4d8b0371254ab6f1bf4b76c3e7f962f4ce85ad014e5c8e915787c5093b2a81c"
+          }
+        ],
+        "confidence": "observed"
+      },
+      "metadata": {
+        "entity_type": null,
+        "repository": "mariomoutinho/ta-pago",
+        "branch": "main",
+        "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+        "version": "1.0.0",
+        "status": "current",
+        "domain": "operations",
+        "confidence": null,
+        "authority": "code",
+        "audience": [
+          "developer",
+          "operations",
+          "reviewer"
+        ],
+        "sensitivity": "internal",
+        "framework_version": "Expo 57; PHP 8.3; MySQL 8; MariaDB 10.4",
+        "source_sha256": "c4d8b0371254ab6f1bf4b76c3e7f962f4ce85ad014e5c8e915787c5093b2a81c",
+        "extractor_version": "document-json-v2",
+        "chunking_version": "atomic-source-v1"
+      },
+      "sha256": "6caa43c0febda48cd13aec5c431bba7e2849392dca706a5db24b44c9ea9d2835"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-migration::chunk:whole",
+      "source_id": "ta-pago.docs.06-operations.php-migration",
+      "source_type": "document",
+      "source_path": "docs/06-operations/php-migration.md",
+      "section": "whole",
+      "name": "Migração PHP e MySQL — execução e pendências",
+      "entity_type": null,
+      "content": "# Migração PHP e MySQL — execução e pendências\n\n## Objetivo e evidências iniciais\n\nPreparar o módulo Personal para PHP 8.3/PDO/MySQL no Single existente, preservando Expo Web, autenticação, alunos, treinos, avaliações e permissões. Sem deploy, mudança de produção ou serviço pago. Estado inicial: branch `main`, backend Express/Prisma/SQLite e metadado de imagem não rastreado preexistente, preservado.\n\nA implementação PHP permanece paralela à original para comparação/recuperação. Os 23 modelos Prisma originam o esquema MySQL; duas tabelas adicionais guardam limites de requisições e recibos de migração. O runtime PHP não depende de Node ou Composer. RAG não faz parte da API do produto e não entra no pacote.\n\n## Etapas e validação local\n\n| Área | Implementado | Evidência executada | Limite |\n| --- | --- | --- | --- |\n| Contratos/esquema | SQL InnoDB/utf8mb4, JSON Schema e refinamentos PHP explícitos | 23 modelos e 24 contratos gerados | Alterar regras compartilhadas exige revisar refinamentos nos dois backends |\n| Autenticação | Cadastro, login/logout, cookie, bearer e atualização de hash | Vetor scrypt Node/PHP; login legado atualiza hash; senha longa Unicode sem truncamento | Aplicativo nativo não homologado |\n| Alunos/permissões | Isolamento por professor, convite, vínculo/revogação, exportação e histórico | Acesso cruzado negado; convite consumido; atualização/exclusão de cadastro sem vínculo; professor perde acesso após revogação, aluno mantém histórico | Concorrência e exclusão de cadastro vinculado pelo aluno precisam de regressão ampliada |\n| Rotinas/treinos | Publicação, revisões, séries, alternativas, grupos, ordem, exclusão lógica, feedback | Rascunho invisível; treino publicado visível; vazio/exercício alheio rejeitados; revisão antiga bloqueada; feedback idempotente | Ordem de grupos em paralelo e alternativas arquivadas exigem mais casos |\n| Biblioteca | Exercícios, programas com treinos, modelos preparados, presets | Presets das sete modalidades; criação/edição/exclusão de programa; ordem válida, grupo separado e revisão antiga testados em modelo | Combinações de valores e edição concorrente ainda exigem mais casos |\n| Avaliações | Questionários versionados, rascunho, resposta do aluno, conclusão imutável | Obrigatoriedade; aluno responde; conclusão preservada contra exclusão | Todos os tipos de questões e concorrência ainda exigem regressão |\n| Acompanhamento | Seis tipos: monthly, physical, training, technical, social, note | Criação dos seis; correção/exclusão de nota; aluno não cria registro profissional | Extremos numéricos e edição dos demais tipos exigem mais casos |\n| Cadastro público | Link/challenge, consentimento, AES-GCM, aprovação e retenção | Challenge único; payload PHP legível pelo Node; isolamento; aprovação; ativo não pode ser excluído | Cron e ciclo de recusa/inativação no hPanel pendentes |\n| Migração | SQLite somente leitura; importação PDO; SQL para phpMyAdmin; comparação | Origem intacta; simulação sem escrita; PDO/SQL comparados em 20 tabelas; rollback de FK; corrupção/repetição bloqueadas | Algumas tabelas sintéticas vazias; backup real ainda não ensaiado |\n| Expo Web | Build/API em `/tapago`; pacote público/privado | Login, página protegida, recarga e logout em 390px/1280px | PHP local não valida Apache/LiteSpeed, SSL ou CSP |\n| GitHub | Workflow manual PHP 8.3/MySQL 8, testes e artifact | Configuração e pacote preparados | CI remota MySQL 8 ainda não comprovada; sem deploy automático |\n\nForam executadas **82 verificações HTTP**, além de asserções de dados, com **PHP 8.3.36 e MariaDB 10.4.32 local isolado**. Testes PHP adicionais verificaram limite de 20 tentativas e rejeição de sessão expirada. MariaDB não comprova execução em MySQL 8. O workflow prepara essa validação; não se afirma sucesso remoto.\n\nValidações do repositório: `typecheck`, `docs:validate` (50 documentos), `code:inventory`, `code:check`, `knowledge:build` e `knowledge:check` passaram. `docs:test` teve 31 aprovações e 2 falhas por EPERM ao criar symlinks no Windows. `code:test` teve 17 aprovações e 3 falhas: 2 EPERM/symlink e 1 asserção de proveniência SHA. Essas falhas também estavam registradas antes da migração; não foram mascaradas nem corrigidas alterando o escopo RAG/documental.\n\n## Falhas encontradas e soluções\n\n- JSON Schema não representava coerção numérica Zod: marca explícita preserva coerção/limites/inteiros. Cadastro com frequência textual foi testado.\n- Alternativa `null` poderia aceitar tipos indevidos: passa a rejeitar valores não nulos. Medidas inválidas foram testadas.\n- Empacotamento rejeitou imagens legítimas Expo em `assets/node_modules`: exceção restrita a mídia/fontes estáticas; dependências de runtime seguem excluídas.\n- TypeScript apontou referências Node e tipos internos Zod no gerador: ajustados; typecheck passou.\n- Importação preserva objetos JSON vazios, verifica a chave antes de gravar e reverte a transação PDO diante de FK inválida.\n\n## Pendências antes de produção\n\n1. Executar CI manual MySQL 8 e confirmar resultados no GitHub.\n2. Ampliar regressão de grupos/alternativas, edições dos registros, tipos de questões, combinações de atributos, concorrência e expiração de convites. Resolver separadamente as falhas das suítes documentais no Windows.\n3. Ensaiar backup real autorizado: comparar 20 tabelas, IDs, datas, JSON, históricos, fichas e login. Nenhum dado real foi importado nesta etapa.\n4. Confirmar hPanel: PHP/extensões, banco disponível, pasta privada, open_basedir, SSL, reescrita e impacto no site principal. Nenhum acesso/alteração Hostinger nesta tarefa.\n5. Homologar phpMyAdmin, cookies HTTPS, headers, assets, vídeos, links diretos, backup/restauração e persistência. Publicação exige validação e autorização posteriores.\n\n## Conhecimento e entrega\n\nSeguir o [guia de implantação](php-hostinger-deployment.md). Sessões, convites pendentes e challenges são invalidados na transferência. Express permanece disponível localmente: existência do PHP não significa migração de tráfego/dados.\n\nSnapshots, senhas, chaves e logs ficam fora do Git/artifacts. Metadados documentais usam a revisão-base real de `knowledge/config.json`, sem inventar SHA futuro. O inventário de conhecimento mantém suas coleções documental/código; fontes privadas não são indexadas.\n",
+      "token_estimate": 1574,
+      "semantic_summary": {
+        "representation": "Documento: Migração PHP e MySQL — execução e pendências",
+        "responsibility": "Registra migração php e mysql — execução e pendências sob autoridade code; domínio testing.",
+        "related_symbols": [],
+        "related_documents": [
+          "ta-pago.docs.06-operations.php-hostinger-deployment"
+        ],
+        "status": "current",
+        "evidence": [
+          {
+            "source_path": "docs/06-operations/php-migration.md",
+            "section": "whole",
+            "sha256": "0b35722fe80a9ffc57025afffb50bd83d3d2935116c8c2fc3f8691c11d5b6a06"
+          }
+        ],
+        "confidence": "observed"
+      },
+      "metadata": {
+        "entity_type": null,
+        "repository": "mariomoutinho/ta-pago",
+        "branch": "main",
+        "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
+        "version": "1.0.0",
+        "status": "current",
+        "domain": "testing",
+        "confidence": null,
+        "authority": "code",
+        "audience": [
+          "developer",
+          "operations",
+          "reviewer"
+        ],
+        "sensitivity": "internal",
+        "framework_version": "Expo 57; PHP 8.3; MySQL 8; MariaDB 10.4",
+        "source_sha256": "0b35722fe80a9ffc57025afffb50bd83d3d2935116c8c2fc3f8691c11d5b6a06",
+        "extractor_version": "document-json-v2",
+        "chunking_version": "atomic-source-v1"
+      },
+      "sha256": "54fec42df4dfed211a26619ea1ea56734f49a45829d1ec93fb0dfbec7f7cd534"
     },
     {
       "id": "ta-pago.docs.06-operations.relatorio-evolucao-2026-10-27::chunk:whole",
@@ -588467,7 +588579,7 @@
         {
           "source_path": "README.md",
           "section": "whole",
-          "sha256": "e6e95e26b6f3f57fe0271cfdd0da10dc5b7d28543dab044f08d918963a6b0794"
+          "sha256": "5633c428877fda6498e1653c06d564e38f7462e53b7aad0e07a60ffbd9cbe264"
         }
       ],
       "confidence": "observed"
@@ -674069,23 +674181,6 @@
       "confidence": "observed"
     },
     {
-      "id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole::summary",
-      "chunk_id": "ta-pago.docs.06-operations.hostinger-deployment::chunk:whole",
-      "representation": "Documento: Publicação do Tá Pago na Hostinger",
-      "responsibility": "Registra publicação do tá pago na hostinger sob autoridade code; domínio operations.",
-      "related_symbols": [],
-      "related_documents": [],
-      "status": "current",
-      "evidence": [
-        {
-          "source_path": "docs/06-operations/hostinger-deployment.md",
-          "section": "whole",
-          "sha256": "85c28a63f61d68cdb46cfd5995ffc880705952221376765a8e18f23272701843"
-        }
-      ],
-      "confidence": "observed"
-    },
-    {
       "id": "ta-pago.docs.06-operations.incident-response::chunk:whole::summary",
       "chunk_id": "ta-pago.docs.06-operations.incident-response::chunk:whole",
       "representation": "Documento: Resposta a incidentes",
@@ -674098,6 +674193,44 @@
           "source_path": "docs/06-operations/incident-response.md",
           "section": "whole",
           "sha256": "a88c4ab9ff815a6cc1546907066e5f3c21b40436ec69a02fb421f61d824f65f7"
+        }
+      ],
+      "confidence": "observed"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-hostinger-deployment::chunk:whole::summary",
+      "chunk_id": "ta-pago.docs.06-operations.php-hostinger-deployment::chunk:whole",
+      "representation": "Documento: Hostinger Single — implantação PHP em tapago",
+      "responsibility": "Registra hostinger single — implantação php em tapago sob autoridade code; domínio operations.",
+      "related_symbols": [],
+      "related_documents": [
+        "ta-pago.docs.06-operations.php-migration"
+      ],
+      "status": "current",
+      "evidence": [
+        {
+          "source_path": "docs/06-operations/php-hostinger-deployment.md",
+          "section": "whole",
+          "sha256": "c4d8b0371254ab6f1bf4b76c3e7f962f4ce85ad014e5c8e915787c5093b2a81c"
+        }
+      ],
+      "confidence": "observed"
+    },
+    {
+      "id": "ta-pago.docs.06-operations.php-migration::chunk:whole::summary",
+      "chunk_id": "ta-pago.docs.06-operations.php-migration::chunk:whole",
+      "representation": "Documento: Migração PHP e MySQL — execução e pendências",
+      "responsibility": "Registra migração php e mysql — execução e pendências sob autoridade code; domínio testing.",
+      "related_symbols": [],
+      "related_documents": [
+        "ta-pago.docs.06-operations.php-hostinger-deployment"
+      ],
+      "status": "current",
+      "evidence": [
+        {
+          "source_path": "docs/06-operations/php-migration.md",
+          "section": "whole",
+          "sha256": "0b35722fe80a9ffc57025afffb50bd83d3d2935116c8c2fc3f8691c11d5b6a06"
         }
       ],
       "confidence": "observed"

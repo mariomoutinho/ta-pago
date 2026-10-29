@@ -1,0 +1,3 @@
+# Contratos usados no checksum da transferência devem ser idênticos em Windows/Linux.
+backend-php/generated/*.json text eol=lf
+backend-php/schema.sql text eol=lf

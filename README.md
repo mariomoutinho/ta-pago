@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-23",
+  "updated_at": "2026-10-29",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -24,12 +24,14 @@
     "server/enrollment.ts",
     "src/app/alunos/link.tsx",
     "hostinger.mjs",
-    "server/runtime.ts"
+    "server/runtime.ts",
+    "backend-php/bootstrap.php",
+    "scripts/php/build.mjs"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -120,7 +122,9 @@ Versões declaradas em [package.json](package.json): [Expo 57](https://docs.expo
 
 ## Instalação e execução
 
-Usar Node.js 22.13 ou superior compatível e npm. A CI documental usa Node 24.
+A preparação para Hostinger Single usa PHP 8.3/MySQL e Expo Web em `/tapago`, sem Node no servidor. Consulte o [guia de build e implantação](docs/06-operations/php-hostinger-deployment.md) e o [relatório de testes e pendências](docs/06-operations/php-migration.md). A implementação paralela ainda não substituiu o backend Express em produção; nenhum deploy foi feito.
+
+Usar o Node.js indicado em `.nvmrc` e npm no desenvolvimento/build. A CI documental usa Node 24.
 
 ```bash
 git clone https://github.com/mariomoutinho/ta-pago.git
