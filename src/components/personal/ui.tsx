@@ -44,16 +44,18 @@ export function Heading({
   title,
   subtitle,
   action,
+  eyebrow = "ÁREA PERSONAL / TÁ PAGO",
 }: {
   title: string;
   subtitle?: string;
   action?: ReactNode;
+  eyebrow?: string;
 }) {
   return (
     <View style={s.heading}>
       <View style={{ flex: 1, minWidth: 200 }}>
         <Label size={11} muted>
-          ÁREA PERSONAL / TÁ PAGO
+          {eyebrow}
         </Label>
         <Text
           accessibilityRole="header"

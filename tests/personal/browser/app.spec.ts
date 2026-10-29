@@ -30,6 +30,72 @@ test.afterAll(async () => {
   await db.$disconnect();
   rmSync(folder, { recursive: true, force: true });
 });
+test("início do aluno conecta professor e mostra somente treinos liberados no celular", async ({ page, browser }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  const teacher = await browser.newContext();
+  try {
+    const registered = await teacher.request.post(base + "/api/auth/register", { headers, data: {
+      name: "Professor do Portal", email: "teacher-portal@example.com", role: "personal", password: "senha-ficticia-12345",
+    } });
+    expect(registered.status()).toBe(201);
+    const student = await (await teacher.request.post(base + "/api/students", { headers, data: {
+      name: "Aluno Portal", mainGoal: "Condicionamento", startDate: "2026-10-29",
+    } })).json();
+    const exercise = await (await teacher.request.post(base + "/api/exercises", { headers, data: {
+      name: "Exercício Portal", muscleGroup: "Peitoral", category: "Musculação",
+    } })).json();
+    const draftResponse = await teacher.request.post(base + `/api/students/${student.id}/workout-plans`, { headers, data: {
+      title: "Rotina do portal", objective: "Condicionamento", difficulty: "Iniciante", startsAt: "2026-10-29",
+      workouts: [{ name: "Treino do portal", exercises: [{ exerciseId: exercise.id, sets: 3, repetitions: "10" }] }],
+    } });
+    expect(draftResponse.status()).toBe(201);
+    const draft = await draftResponse.json();
+    const invitation = await (await teacher.request.post(base + `/api/students/${student.id}/invite`, { headers })).json();
+    expect((await page.request.post(base + "/api/auth/register", { headers, data: {
+      name: "Aluno Portal", email: "student-portal@example.com", role: "student", password: "senha-ficticia-12345",
+    } })).status()).toBe(201);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(base);
+    await expect(page.getByRole("heading", { name: "Olá, Aluno" })).toBeVisible();
+    await page.getByLabel("Código de convite", { exact: true }).fill(invitation.code);
+    await page.getByRole("button", { name: "Aceitar convite", exact: true }).click();
+    await expect(page.getByText("Professor do Portal", { exact: true })).toBeVisible();
+    await expect(page.getByText(/Aguardando liberação do professor/)).toBeVisible();
+    await expect(page.getByLabel("Código de convite", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Conectar com outro professor", exact: true }).click();
+    await expect(page.getByLabel("Código de convite", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Fechar convite", exact: true }).click();
+    expect(await (await page.request.get(base + "/api/me/workout-plans")).json()).toEqual([]);
+    await page.getByRole("button", { name: "Ver meus treinos", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Meus treinos" })).toBeVisible();
+    await expect(page.getByText("Rotina do portal", { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Criar rotina", exact: true })).toHaveCount(0);
+    expect((await page.request.get(base + "/api/students")).status()).toBe(403);
+    const published = await teacher.request.put(base + `/api/workout-plans/${draft.id}`, { headers, data: { ...draft, status: "ativo" } });
+    expect(published.status()).toBe(200);
+    await page.getByRole("button", { name: "Voltar ao meu início", exact: true }).click();
+    await expect(page.getByText(/Consulte as rotinas e as orientações/)).toBeVisible();
+    await page.screenshot({ path: "test-results/student-home-mobile.png", fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.getByRole("button", { name: "Ver meus treinos", exact: true }).click();
+    await page.getByRole("button", { name: "Abrir rotina Rotina do portal", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Treino do portal", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "+ Adicionar treino", exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Voltar ao meu início", exact: true }).click();
+    await page.getByRole("button", { name: "Abrir meu acompanhamento", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Aluno Portal", exact: true })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "Aluno Portal", exact: true })).toBeVisible();
+    await page.goto(base);
+    await page.setViewportSize({ width: 320, height: 740 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.screenshot({ path: "test-results/student-home-desktop.png", fullPage: true });
+  } finally {
+    await teacher.close();
+  }
+});
+
 test("cadastro, navegação, aluno persistente e layout móvel", async ({
   page,
 }) => {

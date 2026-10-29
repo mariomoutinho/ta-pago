@@ -4,13 +4,16 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-27",
+  "updated_at": "2026-10-29",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
   ],
   "indexable": true,
   "sources": [
+    "src/app/index.tsx",
+    "src/app/treinos.tsx",
+    "src/components/personal/ui.tsx",
     "src/hooks/theme-preference.tsx",
     "src/hooks/use-color-scheme.ts",
     "src/hooks/use-color-scheme.web.ts",
@@ -41,7 +44,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.15.0",
+  "version": "4.16.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -57,6 +60,12 @@
 ---
 
 # Navegação
+
+## Início do aluno
+
+A conta de aluno recebe uma saudação e o acesso **Ver meus treinos**, disponível também no celular. Os cartões identificam cada professor vinculado, o estado do vínculo, o objetivo e **Abrir meu acompanhamento**. O início consulta `/me/students` e `/me/workout-plans`, com carregamento, erro e nova tentativa independentes. Sem rotina ativa publicada, um vínculo ativo mostra **Aguardando liberação do professor**. Rascunhos continuam restritos ao professor; o histórico publicado permanece consultável conforme as regras existentes da API.
+
+Sem vínculo, o formulário de convite aparece no início. Havendo acompanhamento, **Conectar com outro professor** abre esse formulário sob demanda. Aceitar um convite atualiza os vínculos e os treinos. `/treinos` identifica a área do aluno e oferece **Voltar ao meu início**, sem depender do menu horizontal. A criação de uma conta, o aceite de um convite e a publicação de uma rotina são etapas distintas; cadastrar ou vincular um aluno não publica seus rascunhos.
 
 O botão de sol/lua à esquerda de Sair alterna entre os temas claro e escuro em todo o aplicativo. Seu rótulo acessível informa o tema que será ativado. A primeira abertura segue o sistema; após alternar, a escolha manual prevalece e persiste no dispositivo (localStorage na web e SecureStore no nativo). Se o armazenamento estiver indisponível, a troca permanece válida na sessão. AppThemeProvider compartilha a escolha entre Expo Router e useTheme; ela se mantém ao navegar e não depende da conta. O cabeçalho mantém o botão ao lado de Sair em telas pequenas.
 
