@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-27",
+  "updated_at": "2026-10-29",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -61,7 +61,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.1.0",
+  "version": "12.2.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -80,6 +80,10 @@
 ---
 
 # Treinos personalizados
+
+Na biblioteca, **Editar exercício** abre um diálogo sobre a área visível da tela, com rolagem própria. A lista mantém sua posição, busca e filtros ao salvar ou cancelar, inclusive quando aberta dentro de Treinos preparados ou da rotina de um aluno. Salvar a edição atualiza o cadastro na biblioteca; adicionar ao treino continua sendo uma ação explícita. O cadastro de um exercício novo mantém seu fluxo anterior.
+
+Validação de 29/10/2026: dois cenários de navegador em Treinos preparados (390 e 1280 px) verificaram abertura após rolar a lista, descarte, persistência da edição, preservação da posição e da busca e ausência de inclusão automática no treino. Typecheck, build web e verificações de catálogos passaram. Os testes documentais e de extração repetiram as falhas preexistentes de links simbólicos no Windows e proveniência, descritas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md). Dispositivos nativos não foram testados.
 
 Em Treinos preparados → Ver modelo, os exercícios começam recolhidos, com os nomes visíveis. O cabeçalho ou a seta expande cada exercício/bloco; Expandir todos e Recolher todos controlam a lista inteira. Grupos combinados preservam a expansão individual dos membros. Essa prévia usa WorkoutExerciseList em leitura, sem seleção, arraste ou ações de edição. Vídeos e prescrições são montados somente quando expandidos e desmontados ao recolher, interrompendo os players. Fechar e reabrir o modelo reinicia a visualização recolhida. A edição mantém seus rascunhos montados como antes.
 

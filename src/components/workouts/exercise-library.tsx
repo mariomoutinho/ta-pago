@@ -10,6 +10,7 @@ import {
   Card,
   Choices,
   Confirm,
+  Dialog,
   Empty,
   Field,
   Label,
@@ -167,10 +168,9 @@ export function ExerciseLibrary({
       {loading && <Notice>Carregando exercícios…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       <View style={{ backgroundColor: t.background, borderColor: t.border, borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 }}>
-      {edit ? (
+      {edit === "new" ? (
         <ExerciseForm
           exercises={data ?? []}
-          exercise={edit === "new" ? undefined : edit}
           cancel={() => setEdit(null)}
           done={(e) => {
             setEdit(null);
@@ -264,6 +264,18 @@ export function ExerciseLibrary({
         </View>
       ))}
       </View>
+      {edit && edit !== "new" && <Dialog title={`Editar ${edit.name}`} onClose={() => setEdit(null)}>
+        <ExerciseForm
+          key={edit.id}
+          exercises={data ?? []}
+          exercise={edit}
+          cancel={() => setEdit(null)}
+          done={() => {
+            setEdit(null);
+            void reload();
+          }}
+        />
+      </Dialog>}
       {archive && (
         <Confirm
           title={

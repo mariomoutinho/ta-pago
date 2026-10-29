@@ -30,6 +30,52 @@ test.afterAll(async () => {
   await db.$disconnect();
   rmSync(folder, { recursive: true, force: true });
 });
+for (const width of [390, 1280]) {
+  test(`edição na biblioteca de treino preparado mantém a posição em ${width}px`, async ({ page }) => {
+    const headers = { "X-Requested-With": "TaPago" };
+    await page.request.post(base + "/api/auth/register", { headers, data: {
+      name: "Personal Modal", email: `edit-modal-${width}@example.com`, role: "personal", password: "senha-ficticia-12345",
+    } });
+    for (let i = 0; i < 12; i++) {
+      expect((await page.request.post(base + "/api/exercises", { headers, data: {
+        name: `Exercício modal ${String(i).padStart(2, "0")}`, muscleGroup: "Peitoral", category: "Musculação",
+      } })).status()).toBe(201);
+    }
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(base + "/treinos-preparados");
+    await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+    await page.getByLabel("Nome do treino *", { exact: true }).fill("Modelo em edição");
+    await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
+    await page.getByLabel("Buscar exercícios...", { exact: true }).fill("modal");
+    await page.getByRole("button", { name: "Expandir exercício Exercício modal 11", exact: true }).click();
+    const edit = page.getByRole("button", { name: "Editar exercício", exact: true });
+    await edit.scrollIntoViewIfNeeded();
+    const before = await edit.boundingBox();
+    expect(before).not.toBeNull();
+    await edit.click();
+    const input = page.getByLabel("Nome do exercício *", { exact: true });
+    await expect(input).toBeInViewport();
+    await expect(input).toHaveValue("Exercício modal 11");
+    await input.fill("Alteração descartada");
+    await page.getByRole("button", { name: "Fechar", exact: true }).click();
+    await expect(edit).toBeInViewport();
+    expect(Math.abs((await edit.boundingBox())!.y - before!.y)).toBeLessThan(3);
+    await edit.click();
+    await expect(input).toHaveValue("Exercício modal 11");
+    await page.getByLabel("Grupo muscular *", { exact: true }).fill("Dorsal");
+    await page.screenshot({ path: `test-results/exercise-edit-dialog-${width}.png`, fullPage: true, animations: "disabled" });
+    await page.getByRole("button", { name: "Salvar exercício", exact: true }).click();
+    await expect(input).toHaveCount(0);
+    await expect(edit).toBeInViewport();
+    expect(Math.abs((await edit.boundingBox())!.y - before!.y)).toBeLessThan(3);
+    await expect(page.getByText("Escolha um preset", { exact: true })).toHaveCount(0);
+    await expect(page.getByLabel("Buscar exercícios...", { exact: true })).toHaveValue("modal");
+    const saved = await (await page.request.get(base + "/api/exercises")).json();
+    expect(saved.find((e: { name: string }) => e.name === "Exercício modal 11").muscleGroup).toBe("Dorsal");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
+
 test("início do aluno conecta professor e mostra somente treinos liberados no celular", async ({ page, browser }) => {
   const headers = { "X-Requested-With": "TaPago" };
   const teacher = await browser.newContext();
