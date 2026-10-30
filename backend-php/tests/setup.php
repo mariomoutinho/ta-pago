@@ -6,7 +6,7 @@ $name=$argv[1]??'';
 if (!preg_match('/^tapago_test_[a-z0-9_]+$/D',$name)) throw new RuntimeException('Nome de teste inválido');
 $pdo=new PDO(getenv('TAPAGO_TEST_DSN')?:'mysql:host=127.0.0.1;port=33316;charset=utf8mb4',getenv('TAPAGO_TEST_USER')?:'root',getenv('TAPAGO_TEST_PASSWORD')?:'isolated_test_only',[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
 $pdo->exec("CREATE DATABASE `$name` CHARACTER SET utf8mb4 COLLATE utf8mb4_bin");
-$config=['environment'=>'test','origin'=>'http://127.0.0.1:33317','basePath'=>'/tapago',
+$config=['environment'=>'test','origin'=>'http://127.0.0.1:33317','basePath'=>'',
     'dsn'=>(getenv('TAPAGO_TEST_DSN')?:'mysql:host=127.0.0.1;port=33316;charset=utf8mb4').';dbname='.$name,
     'dbUser'=>getenv('TAPAGO_TEST_USER')?:'root','dbPassword'=>getenv('TAPAGO_TEST_PASSWORD')?:'isolated_test_only',
     'enrollmentKey'=>str_repeat('ab',32),'retentionDays'=>90,'registrationEnabled'=>true];

@@ -25,14 +25,14 @@ let checks=0;
 const client=()=>({cookie:''});
 const teacher=client(), other=client(), pupil=client(), anon=client();
 async function req(c,method,url,body,status=200,headers={}) {
-  const res=await fetch('http://127.0.0.1:33317/tapago/api'+url,{method,headers:{'Content-Type':'application/json','X-Requested-With':'TaPago',Cookie:c.cookie,...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  const res=await fetch('http://127.0.0.1:33317/api'+url,{method,headers:{'Content-Type':'application/json','X-Requested-With':'TaPago',Cookie:c.cookie,...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});
   const data=await res.json();
   assert.equal(res.status,status,`${method} ${url}: ${JSON.stringify(data)}`);
   const cookie=res.headers.get('set-cookie'); if(cookie)c.cookie=cookie.split(';')[0];
   checks++; return data;
 }
 try {
-  for(let i=0;i<60;i++){try{await fetch('http://127.0.0.1:33317/tapago/api/health');break;}catch{await new Promise(r=>setTimeout(r,100));}}
+  for(let i=0;i<60;i++){try{await fetch('http://127.0.0.1:33317/api/health');break;}catch{await new Promise(r=>setTimeout(r,100));}}
   await req(anon,'GET','/health');
   await req(anon,'GET','/students',undefined,401);
   const legacyClient=client();
@@ -97,7 +97,7 @@ try {
     social:{notes:'Registro social'},
   })) await req(teacher,'POST',`/students/${student.id}/records`,{kind,date:'2026-10-01',data},201);
   await req(teacher,'POST','/enrollment/link',{publicName:'Professor Teste',contact:'contato@example.test'},201);
-  const link=await req(teacher,'GET','/enrollment/link'); assert.match(link.url,/\/tapago\/cadastro\//);
+  const link=await req(teacher,'GET','/enrollment/link'); assert.equal(new URL(link.url).pathname,'/cadastro/'+link.token);
   const challenge=await req(anon,'GET','/public/enrollment/'+link.token);
   await new Promise(r=>setTimeout(r,2100));
   const enrollment={name:'Cadastro Sintético',email:'cadastro@example.test',phone:'41999990000',goals:['Hipertrofia'],practicing:'Não',daysPerWeek:3,previousTrainer:'Não',availability:'Manhã',health:{restrictions:'Sintética'},consent:true,healthConsent:true,policyVersion:challenge.policyVersion,challenge:challenge.challenge};

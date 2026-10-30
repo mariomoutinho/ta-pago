@@ -4,7 +4,7 @@
   "title": "Migração PHP e MySQL — execução e pendências",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-10-30",
   "language": "pt-BR",
   "tags": ["06-operations", "migration", "testing"],
   "indexable": true,
@@ -12,7 +12,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": ["developer", "operations", "reviewer"],
   "sensitivity": "internal",
@@ -24,6 +24,8 @@
 ---
 
 # Migração PHP e MySQL — execução e pendências
+
+> Registro histórico da migração inicial. O responsável publicou manualmente depois desta etapa. Caminhos /tapago e pendências de Apache abaixo descrevem a validação anterior; a consolidação atual usa a raiz do subdomínio e foi testada em Apache local. Para atualizar a instalação existente, seguir o [guia atual](php-hostinger-deployment.md) e o [relatório de consolidação](hostinger-consolidation.md), sem repetir criação/importação do banco.
 
 ## Objetivo e evidências iniciais
 

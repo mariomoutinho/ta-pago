@@ -3,7 +3,7 @@
 return [
     'environment' => 'production',
     'origin' => 'https://SEU-DOMINIO',
-    'basePath' => '/tapago',
+    'basePath' => '', // Raiz do subdomínio; public_html/tapago é apenas o diretório físico.
     'dsn' => 'mysql:host=localhost;port=3306;dbname=SEU_BANCO;charset=utf8mb4',
     'dbUser' => 'SEU_USUARIO',
     'dbPassword' => '',

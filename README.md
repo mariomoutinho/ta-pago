@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-10-30",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -31,7 +31,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -87,7 +87,7 @@ O Tá Pago será uma rede social fitness para amigos compartilharem treinos, par
 
 ## Estado atual
 
-**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. A API Express usa Prisma/SQLite e autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
+**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. O backend PHP/MySQL atende à hospedagem Single; Express/Prisma/SQLite permanece como implementação anterior e para desenvolvimento local. Ambos implementam autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
 
 O modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- "Como useTheme seleciona as cores?"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).
 
@@ -122,7 +122,7 @@ Versões declaradas em [package.json](package.json): [Expo 57](https://docs.expo
 
 ## Instalação e execução
 
-A preparação para Hostinger Single usa PHP 8.3/MySQL e Expo Web em `/tapago`, sem Node no servidor. Consulte o [guia de build e implantação](docs/06-operations/php-hostinger-deployment.md) e o [relatório de testes e pendências](docs/06-operations/php-migration.md). A implementação paralela ainda não substituiu o backend Express em produção; nenhum deploy foi feito.
+A instalação PHP/MySQL em https://tapago.coletivopindorama.com.br foi confirmada pelo responsável após deploy manual. O build usa a raiz do subdomínio, preserva a configuração privada e inclui PWA sem cache offline. Consulte o [guia de atualização, backup e rollback](docs/06-operations/php-hostinger-deployment.md) e o [relatório de testes e pendências](docs/06-operations/hostinger-consolidation.md). Esta consolidação não executa publicação remota; o servidor recebe somente PHP e Expo Web compilado.
 
 Usar o Node.js indicado em `.nvmrc` e npm no desenvolvimento/build. A CI documental usa Node 24.
 
@@ -252,7 +252,7 @@ Em Meus alunos → Link de Cadastro, gere o formulário em cinco etapas e gerenc
 
 ## Publicação no Coletivo Pindorama
 
-Preparação para tapago.coletivopindorama.com.br em [deploy na Hostinger](docs/06-operations/hostinger-deployment.md). A criação do site, DNS/SSL e armazenamento persistente depende da conexão com a hospedagem. Não há publicação pública confirmada nesta etapa.
+Para a instalação PHP atual, seguir o [guia Hostinger Single](docs/06-operations/php-hostinger-deployment.md). O procedimento Express anterior é histórico e não deve ser usado neste plano.
 
 ## Prescrição de treinos
 

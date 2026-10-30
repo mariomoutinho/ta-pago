@@ -2,17 +2,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
+import { validateRelease } from './validate-release.mjs';
+import { preparePwa } from './pwa.mjs';
+import { archiveRelease } from './archive.mjs';
 
 const root=path.resolve('data/php-release-'+randomBytes(6).toString('hex'));
 const publicDir=path.join(root,'public_html','tapago');
 const privateDir=path.join(root,'tapago-private');
 fs.mkdirSync(publicDir,{recursive:true});
 const result=spawnSync(process.execPath,['node_modules/expo/bin/cli','export','--platform','web','--output-dir',publicDir],{
-  stdio:'inherit',env:{...process.env,NODE_ENV:'production',EXPO_NO_DOTENV:'1',TAPAGO_WEB_BASE_PATH:'/tapago',EXPO_PUBLIC_PERSONAL_API_URL:'/tapago'},
+  // O subdomínio já aponta para public_html/tapago. Pasta física não é prefixo de URL.
+  stdio:'inherit',env:{...process.env,NODE_ENV:'production',EXPO_NO_DOTENV:'1',TAPAGO_WEB_BASE_PATH:'',EXPO_PUBLIC_PERSONAL_API_URL:'/'},
 });
 if(result.status!==0) process.exit(result.status||1);
+await preparePwa(publicDir);
 // Lista positiva: nenhum banco, senha, dependência Node ou configuração real entra no pacote.
-for(const file of ['bootstrap.php','config.example.php','schema.sql','src','generated','bin']) {
+for(const file of ['bootstrap.php','src','generated']) {
   fs.cpSync(path.join('backend-php',file),path.join(privateDir,file),{recursive:true});
 }
 fs.copyFileSync('backend-php/public/.htaccess',path.join(publicDir,'.htaccess'));
@@ -29,8 +34,9 @@ function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){
   }
 }}
 walk(root);
-const html=fs.readFileSync(path.join(publicDir,'index.html'),'utf8');
-if(!html.includes('/tapago/_expo/'))throw new Error('Base URL ausente no HTML');
-fs.writeFileSync(path.join(root,'manifest.json'),JSON.stringify({target:'/tapago',files},null,2)+'\n');
+fs.writeFileSync(path.join(root,'manifest.json'),JSON.stringify({publicBasePath:'',publicDirectory:'public_html/tapago',privateDirectory:'tapago-private',files},null,2)+'\n');
+validateRelease(root);
+const archive=archiveRelease(root);
 fs.writeFileSync('data/php-last-release.txt',root);
 console.log(`Pacote local preparado (sem deploy): ${root}`);
+console.log(`ZIP verificado por extração e hashes: ${archive}`);

@@ -4,20 +4,45 @@
   "title": "Hostinger Single — implantação PHP em tapago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-10-30",
   "language": "pt-BR",
-  "tags": ["06-operations", "php", "migration"],
+  "tags": [
+    "06-operations",
+    "php",
+    "migration"
+  ],
   "indexable": true,
-  "sources": ["backend-php/bootstrap.php", "backend-php/config.example.php", "backend-php/public/.htaccess", "backend-php/public/api/index.php", "backend-php/bin/console.php", "scripts/php/build.mjs", "scripts/php/export-sqlite.mjs", "scripts/php/export-sql.mjs", ".github/workflows/php-validation.yml", "app.config.ts"],
+  "sources": [
+    "backend-php/bootstrap.php",
+    "backend-php/config.example.php",
+    "backend-php/public/.htaccess",
+    "backend-php/public/api/index.php",
+    "scripts/php/build.mjs",
+    "scripts/php/pwa.mjs",
+    "scripts/php/archive.mjs",
+    "scripts/php/validate-release.mjs",
+    "scripts/php/browser-test.mjs",
+    "scripts/php/apache-test.mjs",
+    ".github/workflows/php-validation.yml",
+    "app.config.ts"
+  ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "authority": "code",
-  "audience": ["developer", "operations", "reviewer"],
+  "audience": [
+    "developer",
+    "operations",
+    "reviewer"
+  ],
   "sensitivity": "internal",
-  "supersedes": ["ta-pago.docs.06-operations.hostinger-deployment"],
-  "related_documents": ["ta-pago.docs.06-operations.php-migration"],
+  "supersedes": [
+    "ta-pago.docs.06-operations.hostinger-deployment"
+  ],
+  "related_documents": [
+    "ta-pago.docs.06-operations.php-migration"
+  ],
   "framework_version": "Expo 57; PHP 8.3; MySQL 8; MariaDB 10.4",
   "domain": "operations"
 }
@@ -25,17 +50,28 @@
 
 # Hostinger Single — implantação PHP em tapago
 
-## Destino e limite desta entrega
+## Destino existente e limites
 
-Destino: hospedagem **Single Web Hosting existente**, em `public_html/tapago`. Endereço: `https://SEU-DOMINIO/tapago/`. O frontend continua Expo Web; o servidor recebe somente arquivos estáticos e PHP. Não executar Node, npm, Prisma, Express ou serviços RAG na hospedagem.
+O responsável informou que já publicou manualmente o aplicativo em **https://tapago.coletivopindorama.com.br**, com PHP/MySQL funcionando. Esta entrega consolida as correções no código e prepara uma atualização; não executa deploy remoto.
 
-Esta é uma preparação local. **Nenhum deploy, alteração de DNS ou importação de produção foi feito.** A liberação depende das pendências do [relatório de migração](php-migration.md). Os comandos `production:*` e `hostinger.mjs` continuam como referência do Express anterior; não usar no Single.
+O subdomínio aponta diretamente para public_html/tapago. A URL pública é **/**, sem prefixo /tapago. A consulta da hospedagem confirmou esse document root; a configuração privada não foi lida.
 
-A Hostinger informa que [Single não oferece SSH](https://www.hostinger.com/support/1583245-how-to-connect-to-a-hosting-plan-via-ssh-in-hostinger/). Este procedimento usa GitHub para build, Gerenciador de Arquivos para upload e phpMyAdmin para dados, sem depender de SSH, SFTP, upgrade ou outra hospedagem.
+| Item | Valor esperado |
+| --- | --- |
+| Público | public_html/tapago, dentro do diretório do domínio principal |
+| Privado | tapago-private, irmão de public_html |
+| Configuração preservada | tapago-private/config.php |
+| Origem | https://tapago.coletivopindorama.com.br |
+| basePath | string vazia |
+| API | /api/health e demais rotas /api/* na mesma origem |
+| Banco existente | u234997903_tapago; preservar estrutura e dados |
+| PHP | 8.3+, pdo_mysql, mbstring, openssl e sodium |
 
-## Etapa 1 — validar e gerar localmente
+Não usar comandos production:* do Express, implantação Git simples, schema.sql, importação inicial ou seed nesta atualização. O servidor não executará Node/npm/Prisma. A extensão sodium foi habilitada manualmente pelo responsável e precisa continuar ativa. Não contratar novos serviços.
 
-Usar Node da `.nvmrc` somente na máquina local/CI, PHP 8.3 com `pdo_mysql`, `mbstring`, `openssl`, `sodium` e MySQL/MariaDB exclusivo de teste.
+## Validar e gerar o pacote
+
+Usar Node da .nvmrc e dependências do lockfile somente localmente/CI. PHP e MySQL/MariaDB são necessários para testes. ZIP exige PowerShell/.NET no Windows ou zip/unzip no Linux, disponíveis no runner Ubuntu do workflow.
 
 ```bash
 npm ci
@@ -44,88 +80,83 @@ npm run typecheck
 npm run php:lint
 npm run php:test
 npm run php:build
+npm run php:package-check
+npm run php:package-test
 npm run php:browser
 ```
 
-`PHP_BIN` pode apontar para o executável PHP. Os testes usam banco em `127.0.0.1:33316` e servidor PHP temporário em `33317`. Definir `TAPAGO_TEST_DSN`, `TAPAGO_TEST_USER` e `TAPAGO_TEST_PASSWORD` para o banco isolado. **Nunca apontar testes para produção.** O usuário de testes precisa de CREATE DATABASE: são criados bancos novos `tapago_test_*`, preservados para inspeção, sem apagar bases existentes. A API de produção não precisa desse privilégio.
+PHP_BIN seleciona PHP 8.3. TAPAGO_TEST_DSN, TAPAGO_TEST_USER e TAPAGO_TEST_PASSWORD devem apontar exclusivamente para banco de teste local, por padrão porta 33316. A suíte cria bases sintéticas novas tapago_test_*, exigindo CREATE DATABASE. Não apontar essas variáveis para produção. O navegador usa localhost:33317 e a configuração sintética produzida pela suíte. Instalar Chromium com npx playwright install chromium ou definir PLAYWRIGHT_CHROMIUM_EXECUTABLE.
 
-`php:browser` exige Chromium do Playwright ou `PLAYWRIGHT_CHROMIUM_EXECUTABLE` apontando para navegador compatível. Usa configuração sintética de `php:test` e pacote de `php:build`. O servidor embutido PHP é exclusivo de teste.
+Para validar o .htaccess com Apache real, definir TAPAGO_TEST_APACHE_ROOT e PHP_CGI_BIN, então executar node scripts/php/apache-test.mjs. Esse teste usa portas locais 33317/33319 e configuração isolada; não altera os serviços instalados. O servidor embutido PHP sozinho não valida regras Apache.
 
-O build cria `data/php-release-*`; seu caminho fica em `data/php-last-release.txt`:
+O comando final de empacotamento é **npm run php:build**. Exporta Expo Web com TAPAGO_WEB_BASE_PATH vazio e EXPO_PUBLIC_PERSONAL_API_URL=/, ignora arquivos dotenv, acrescenta PWA, valida conteúdo, cria ZIP e o descompacta para verificar hashes. Não modifica bundles manualmente. O cliente transforma a barra final em base vazia e solicita /api/*; configurações de desenvolvimento e nativas continuam disponíveis fora desse build.
+
+O caminho do ZIP está em data/php-last-archive.txt; o diretório original está em data/php-last-release.txt. O checksum fica junto ao ZIP com sufixo .sha256. Arquivos gerados ficam ignorados pelo Git.
 
 ```text
-manifest.json                    hashes do pacote
-public_html/tapago/              HTML, JS, CSS, imagens, .htaccess
-public_html/tapago/api/index.php
-tapago-private/                  irmão de public_html
+manifest.json                  inventário SHA-256; não é o manifesto PWA
+public_html/tapago/
+  index.html, .htaccess, favicon.ico, metadata.json
+  manifest.webmanifest
+  api/index.php
+  _expo/, assets/              inclui ícones PWA 180/192/512
+tapago-private/                irmão de public_html
   bootstrap.php
   src/
   generated/
-  bin/console.php
-  schema.sql
-  config.example.php
 ```
 
-O build configura `TAPAGO_WEB_BASE_PATH=/tapago` e `EXPO_PUBLIC_PERSONAL_API_URL=/tapago`. Não são segredos. O pacote exclui configuração real, dados, sessões, chaves, dependências Node e testes. Assets estáticos do Expo podem conter `assets/node_modules` no caminho; são imagens/fontes, não dependências de runtime.
+O pacote de atualização NÃO contém config.php, config.example.php, bin, schema.sql, SQLite, SQL de dados, chaves, credenciais, sessões, testes ou dependências Node de runtime. A lista positiva e os hashes são verificados antes e depois da compactação. Assets de imagens/fontes do Expo podem ter assets/node_modules no nome: são estáticos.
 
-## Etapa 2 — GitHub sem publicação automática
+## GitHub Actions sem deploy
 
-1. Após revisar/enviar o código, abrir Actions → **PHP e MySQL — validar e preparar pacote** → Run workflow na revisão desejada.
-2. O workflow manual testa PHP 8.3/MySQL 8, migração sintética e navegador. Só gera `tapago-php-validado` se tudo passar.
-3. Baixar o artifact, conferir `manifest.json` e revisão. Expira em sete dias e não contém dados reais.
-4. Não há credenciais Hostinger, job de deploy, FTP ou importação remota. Não usar automações de outros sites.
+1. Enviar a revisão revisada ao GitHub. O workflow **PHP e MySQL — validar e preparar pacote** é exclusivamente workflow_dispatch, sem publicação ao receber push.
+2. Em Actions, executá-lo na revisão desejada. Faz geração/verificação de contratos, typecheck, lint, testes PHP 8.3/MySQL 8, build, validação do pacote e navegador.
+3. Baixar o artifact tapago-php-validado, liberado somente após os testes passarem. Ele contém o ZIP interno e seu SHA-256; expira em sete dias. Descompactar o artifact do GitHub localmente para obter o ZIP de implantação.
+4. Guardar junto ao pacote a revisão Git e o resultado da execução. Workflow configurado não comprova que uma execução remota passou.
 
-É possível gerar o mesmo pacote localmente. Não contratar build pago nem habilitar faturamento adicional no GitHub; se a franquia não estiver disponível, usar build local. Workflow configurado não significa CI executada.
+Nenhuma credencial de hospedagem entra no workflow. Não habilitar cobrança adicional: se a franquia do GitHub não estiver disponível, executar o mesmo build localmente.
 
-## Etapa 3 — ensaio dos dados
+## Backup antes de qualquer futura publicação
 
-O exportador abre SQLite somente para leitura, em transação consistente. Para o ensaio, usar backup consistente validado. Não copiar apenas `.db` em uso ignorando o WAL. O snapshot privado deve permanecer em `data/`, fora do Git.
+1. Confirmar o subdomínio e as duas pastas no hPanel. Não trabalhar na raiz pública do site principal.
+2. Baixar cópia completa da versão atual de public_html/tapago e de tapago-private, incluindo config.php real, para armazenamento privado restrito, fora de Git/artefatos/pastas públicas. Preservar a chave AES existente.
+3. Exportar o banco existente por phpMyAdmin para backup privado. Não importar, recriar nem executar schema.sql. Registrar data, versão e contagens; ensaiar restauração em ambiente isolado.
+4. Guardar o pacote anterior e seus hashes. Combinar janela breve de manutenção para evitar solicitações enquanto arquivos PHP são substituídos. Upload de arquivos não é atualização atômica.
+5. Conferir PHP, extensões, HTTPS, permissões privadas e open_basedir. O front controller procura tapago-private três níveis acima de api/index.php; essa disposição foi testada localmente.
 
-```bash
-# Simulação: mostra contagens, sem gravar snapshot.
-npm run php:export -- CAMINHO-DO-BACKUP.db
-# Arquivo novo; recusa sobrescrever.
-npm run php:export -- CAMINHO-DO-BACKUP.db data/migracao.json
-```
+## Atualização manual com preservação
 
-Preserva IDs, vínculos, hashes de senha, históricos, séries/presets, revisões, datas, JSON e fichas cifradas. Não transfere `Session`, `Invitation` nem `EnrollmentChallenge`: todos entram novamente e convites pendentes precisam ser reemitidos. **Preservar a chave AES original em enrollmentKey**; trocar a chave torna fichas existentes ilegíveis.
+Executar somente depois da validação e da decisão de publicar. **Esta tarefa não executou estes passos na hospedagem.**
 
-Copiar `config.example.php` para arquivo privado local, configurar **outro banco local vazio** e definir `TAPAGO_CONFIG` com esse caminho:
+1. Conferir SHA-256 do ZIP baixado. No PowerShell: Get-FileHash -Algorithm SHA256 CAMINHO-DO-ZIP. Comparar com .sha256.
+2. Extrair localmente ou em pasta temporária PRIVADA fora de public_html. Nunca enviar o ZIP completo para a pasta pública: inclui código privado. Não usar a função de substituir/importar o site inteiro.
+3. Pelo Gerenciador de Arquivos, copiar somente os conteúdos correspondentes: public_html/tapago do pacote para public_html/tapago existente; bootstrap.php, src e generated privados para tapago-private existente. Confirmar cada destino. Não criar outra pasta tapago dentro da atual.
+4. Mesclar arquivos, preservando config.php real e arquivos/dados desconhecidos. Não substituir nem apagar toda a pasta privada. Não enviar exemplo sobre a configuração. Não alterar site principal, banco ou DNS.
+5. Enviar assets com hash primeiro; durante a janela, atualizar PHP privado, api/index.php, .htaccess e index.html. HTML/manifesto usam no-store; não há service worker. Conservar assets anteriores para rollback, sem apagar automaticamente arquivos existentes.
+6. Validar raiz, /entrar, /api/health JSON, login/logout, sessão após recarga, aluno, treino publicado, avaliações e mídia em desktop/celular. Rascunhos não devem aparecer para alunos. Validar TLS/cookies Secure e permissões com conta de teste autorizada, sem dados de alunos em logs.
+7. Registrar o resultado e encerrar a manutenção. Remover apenas temporários desta atualização após conferir caminhos. ZIP/pasta aninhada antiga encontrada deve ser revisada separadamente antes de remoção.
 
-```bash
-php backend-php/bin/console.php check
-php backend-php/bin/console.php schema
-php backend-php/bin/console.php schema --apply
-php backend-php/bin/console.php import data/migracao.json
-php backend-php/bin/console.php import data/migracao.json --apply
-php backend-php/bin/console.php verify data/migracao.json
-npm run php:sql -- data/migracao.json data/importacao.sql
-```
+O .htaccess define RewriteBase /, DirectoryIndex index.html index.php, API antes do fallback SPA, 404 para assets inexistentes, bloqueio de arquivos privados e cabeçalhos de segurança. O arquivo original de produção não foi recuperado pelo conector; as duas diretivas corrigidas foram informadas pelo responsável. O pacote foi testado com Apache local; a verificação final em LiteSpeed/HTTPS permanece etapa de publicação.
 
-`schema`/`import` sem `--apply` simulam. Importação PDO exige destino vazio, valida checksum/contrato/chave das fichas e usa transação com FKs habilitadas. `verify` compara os registros, não apenas as contagens; executar antes de abrir o banco à aplicação, pois logins atualizam hashes antigos. DDL não é transacional: falha ao criar esquema exige outro destino vazio.
+## Rollback sem perda de dados
 
-O SQL inclui esquema e dados para phpMyAdmin, sem instalador HTTP. Não enviá-lo ao GitHub nem a `public_html`. Não contém DROP, REPLACE, INSERT IGNORE ou desativação de FKs. Importar somente em banco vazio e interromper no primeiro erro. Como phpMyAdmin pode executar lotes e DDL faz commit implícito, não presumir rollback integral: abandonar destino parcial e repetir em banco vazio depois da correção. Nunca reparar importação parcial sobre base em uso.
+Se a nova versão falhar, manter a manutenção, restaurar arquivos públicos/privados do backup nos mesmos destinos e preservar config.php. Conferir /api/health, login e navegação antes de reabrir. Esta atualização não muda o esquema: rollback dos arquivos utiliza o banco atual. Não restaurar SQL antigo automaticamente: isso descartaria gravações posteriores ao backup. Restauração de dados exige decisão e procedimento próprios.
 
-Para instalação totalmente vazia, `seed --apply` cria apenas o questionário inicial. Na migração, importar primeiro; não fazer seed antes de importar.
+Futuras alterações de esquema precisam de migrações incrementais identificadas, ensaio em cópia isolada, backup e plano de compatibilidade. O pipeline atual não aplica migrações em produção.
 
-## Etapa 4 — publicação manual após validação e autorização
+## PWA e verificação em aparelhos
 
-1. No hPanel, confirmar domínio, capacidade do banco existente e acesso a pasta privada fora de `public_html`. Não ocupar/substituir banco de outro site. Se o limite da conta impedir destino seguro, revisar o estado da conta sem contratar outro plano.
-2. Configurar [PHP 8.3/extensões](https://www.hostinger.com/support/1575755-how-to-change-the-php-version-of-your-hostinger-hosting-plan/), confirmar sodium, SSL e redirecionamento obrigatório HTTPS. Verificar impacto sobre outros aplicativos do mesmo site antes de alterar configurações.
-3. Fazer backup dos arquivos/banco atuais. Na transferência final, suspender gravações na origem, produzir novo snapshot consistente e repetir o ensaio/comparação.
-4. No [phpMyAdmin da Hostinger](https://www.hostinger.com/support/1884149-how-to-import-a-database-with-phpmyadmin-in-hostinger/), selecionar explicitamente o banco vazio aprovado e importar o SQL validado. Conferir contagens, relacionamentos e dados antes de liberar acesso. Uma exportação SQL do destino pode ser reimportada localmente em banco vazio para executar `verify` sem SSH remoto. Upload concluído não comprova importação correta.
-5. Pelo Gerenciador de Arquivos HTTPS, enviar apenas `public_html/tapago` para essa subpasta, incluindo `.htaccess`. Não sobrescrever a raiz ou outros diretórios do site principal.
-6. Colocar `tapago-private` como **irmão de public_html**. Criar `config.php` privado usando o exemplo: origem HTTPS sem caminho, basePath `/tapago`, DSN, usuário, senha, chave AES e retenção. Não copiar `.env` inteiro. Usar permissões restritas à conta/PHP, sem 777. Confirmar que `open_basedir` permite o include privado; caso contrário, publicação pendente.
-7. A API precisa somente SELECT, INSERT, UPDATE e DELETE nas tabelas próprias. Separar credenciais de esquema/importação quando o painel permitir. Desabilitar `registrationEnabled` para fechar autoinscrição; contas existentes continuam entrando.
-8. Conferir `/tapago/api/health`, login, professor/aluno, rascunho invisível, treino publicado visível, séries, avaliações e cadastro público. Testar links diretos/recarga, logout e cookies Secure/HttpOnly/SameSite. Verificar bloqueio de arquivos privados, MIME, CSP, vídeos e cache. PHP local não interpreta Apache/LiteSpeed.
-9. Só liberar gravações após homologação. Não manter Express e PHP aceitando gravações independentes. Guardar origem, chave e backup protegido.
+O manifesto usa nome Tá Pago, início/escopo / e display standalone. Ícones PNG reais da marca são gerados em 192/512; iOS usa apple-touch-icon 180 e metadados próprios. Não há cache offline ou service worker. A instalação precisa de conexão para consultar dados.
 
-## Segurança, manutenção e recuperação
+Depois de publicar, no Android abrir o site HTTPS em navegador compatível e usar Instalar aplicativo/Adicionar à tela inicial; no iPhone usar Compartilhar → Adicionar à Tela de Início. Abrir pelo novo ícone e conferir ausência de barra de endereço, login e atualização. A interface varia por navegador/versão. Testar em aparelhos reais: validação automatizada do manifesto em Chromium não comprova instalação nem modo standalone em iOS/Android.
 
-Sessões PHP duram 12h; apenas o hash do token é persistido. Senhas scrypt legadas são verificadas com sodium e convertidas após login para bcrypt sobre SHA-384, sem truncar senhas longas. Origem e `X-Requested-With` são conferidos, com autorização no servidor e sem CORS externo. Limites de autenticação/cadastro usam o IP fornecido pelo servidor, sem confiar em `X-Forwarded-For` do cliente; validar o proxy para não agregar usuários indevidamente.
+Referências: [critérios de instalação do Edge](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/) e [configuração web app da Apple](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html).
 
-Queries são parametrizadas e erros internos não expõem dados. `.htaccess` bloqueia arquivos privados/índices, define headers e separa API de fallback SPA. TLS, backups e permissões dependem da configuração real e ainda exigem homologação.
+## Transferência automatizada: investigação e pendências
 
-`php bin/console.php purge` simula a remoção de cadastros pendentes/recusados vencidos; `--apply` executa. Se houver cron PHP no painel, configurar o caminho privado exato após testar. A listagem aplica retenção ao proprietário consultado; sem cron, a limpeza global periódica permanece tarefa operacional. Não expor endpoint de importação/limpeza.
+O conector Hostinger oferece geração de URL de upload TUS para o diretório público. Isso não comprova acesso à pasta privada externa. Deploy Git pode habilitar auto-deploy; não substitui build Expo e não é adequado para publicar o repositório cru. Importação de site inteiro sobrescreve conteúdo e não foi usada.
 
-Antes de liberar gravações, falhas permitem retirar a nova versão e restaurar arquivos/origem preservados. Após novas gravações MySQL, retornar apenas ao SQLite perde alterações: exportar e reconciliar primeiro. Não há migração reversa automática nesta entrega.
+A consulta da implantação retornou gitAutoDeployment null. Nenhuma transferência, criação de token ou alteração de configuração foi executada. Antes de automatizar: verificar acesso restrito às DUAS pastas, mesclagem sem excluir config.php, transporte seguro, backup, rollback e proteção do domínio principal. Se FTPS for utilizado futuramente, verificar disponibilidade e escopo no painel e guardar credenciais somente em Secrets com ambiente de aprovação, nunca em código. Não pressupor SSH/SFTP no plano atual.
+
+Até essas verificações, usar o pacote validado e o procedimento manual. Pendentes no painel/aparelhos: ensaio do backup real, transferência privada segura, validação LiteSpeed/HTTPS da nova versão e instalação PWA real. A CI remota precisa ser executada explicitamente; nenhum deploy está autorizado por este guia.
