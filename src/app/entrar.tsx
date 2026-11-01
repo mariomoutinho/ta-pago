@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, useWindowDimensions } from "react-native";
-import { router } from "expo-router";
+import { router, type Href } from "expo-router";
 import { useSession } from "@/features/personal/auth";
 import { message } from "@/features/personal/api";
 import { Brand, Page } from "@/components/personal/shell";
@@ -13,7 +13,7 @@ import {
   Notice,
   s,
 } from "@/components/personal/ui";
-export default function SignIn() {
+export default function SignIn({ afterLogin = "/" }: { afterLogin?: Href } = {}) {
   const { authenticate } = useSession();
   const [register, setRegister] = useState(false);
   const [name, setName] = useState("");
@@ -34,7 +34,7 @@ export default function SignIn() {
         password,
         role: "student",
       });
-      router.replace("/");
+      router.replace(afterLogin);
     } catch (e) {
       setError(message(e));
     } finally {

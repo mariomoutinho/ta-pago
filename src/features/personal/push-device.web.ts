@@ -41,7 +41,7 @@ export async function testPushNotification(){
   const registration=await navigator.serviceWorker.ready;
   await registration.showNotification('Teste do Tá Pago',{
     body:'As notificações do Tá Pago podem aparecer neste aparelho.',
-    icon:'/assets/pwa/icon-192.png',tag:'tapago-device-test',data:{url:'/?novidades=1'},
+    icon:'/assets/pwa/icon-192.png',tag:'tapago-device-test',data:{url:'/notificacao'},
   });
 }
 export async function testBackgroundNotification(){

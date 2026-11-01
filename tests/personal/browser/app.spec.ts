@@ -69,6 +69,33 @@ test("avisos mostram treino concluído, marcam leitura e registram worker sem ca
   expect(notice).toBe('Novidade no Tá Pago');await cdp.detach();
 });
 
+test('destino da notificação abre aceite do cadastro e continua após login',async({page})=>{
+ const headers={'X-Requested-With':'TaPago'},email='notification-click@example.test',password='senha-ficticia-12345';
+ await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:'Personal Clique',email,password,role:'personal'}});
+ const enrollment={id:'click-fixture',kind:'enrollment',title:'Aluno Sintético enviou um cadastro.',createdAt:'2026-11-01T12:00:00.000Z',url:'/alunos/cadastros',read:false};
+ let news=enrollment;
+ await page.route('**/api/notifications/feed',route=>route.fulfill({json:[news]}));
+ await page.route('**/api/notifications/read',route=>route.fulfill({json:{ok:true}}));
+ await page.route('**/api/enrollment/requests',route=>route.fulfill({json:[{id:'click-fixture',name:'Aluno do Aviso',email:'notice-student@example.test',phone:'11999990000',goals:['Outro'],status:'pending',createdAt:'2026-11-01T12:00:00.000Z',studentId:null},{id:'other-fixture',name:'Outro Cadastro',email:'other-notice@example.test',phone:'11999990001',goals:['Outro'],status:'pending',createdAt:'2026-11-01T11:00:00.000Z',studentId:null}]}));
+ await page.goto(base+'/notificacao?aviso=click-fixture');
+ await expect(page).toHaveURL(base+'/alunos/cadastros?cadastro=click-fixture');
+ await expect(page.getByText('Cadastros recebidos',{exact:true})).toBeVisible();
+ await expect(page.getByText('Aluno do Aviso',{exact:true})).toBeVisible();
+ await expect(page.getByText('Outro Cadastro',{exact:true})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Aprovar',exact:true})).toBeVisible();
+ await expect(page.getByRole('button',{name:'Recusar',exact:true})).toBeVisible();
+ const student=await(await page.request.post(base+'/api/students',{headers,data:{name:'Aluno Destino',startDate:'2026-11-01',mainGoal:'Mobilidade'}})).json();
+ news={...enrollment,id:'completion-fixture',kind:'workout_completed',url:`/alunos/${student.id}/treinos`};
+ await page.goto(base+'/notificacao?aviso=completion-fixture');await expect(page).toHaveURL(base+`/alunos/${student.id}/treinos`);
+ news=enrollment;
+ await page.request.post(base+'/api/auth/logout',{headers,data:{}});
+ await page.goto(base+'/notificacao?aviso=click-fixture');
+ await page.getByLabel('E-mail',{exact:true}).fill(email);await page.getByLabel('Senha',{exact:true}).fill(password);
+ await page.getByRole('button',{name:'Entrar',exact:true}).click();
+ await expect(page).toHaveURL(base+'/alunos/cadastros?cadastro=click-fixture');
+ await expect(page.getByText('Cadastros recebidos',{exact:true})).toBeVisible();
+});
+
 test("analisar cadastros abre diretamente aprovação e recusa sem mostrar o link", async ({ page }) => {
   const headers={"X-Requested-With":"TaPago"};
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Revisão",email:"review-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});

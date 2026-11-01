@@ -13,6 +13,8 @@
   ],
   "indexable": true,
   "sources": [
+    "src/app/notificacao.tsx",
+    "tests/personal/notification-worker.test.ts",
     "backend-php/src/Auth.php",
     "backend-php/src/Enrollment.php",
     "backend-php/src/App.php",
@@ -42,7 +44,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "authority": "code",
   "audience": [
     "developer",
@@ -219,3 +221,7 @@ Publicar News.php e bootstrap antes das classes dependentes, atualizar generated
 Esta atualiza??o n?o exige DDL: reutiliza Invitation e o armazenamento privado de inscri??es. Publicar Auth.php, Enrollment.php, Push.php e App.php, seguidos pelo bundle web. Preservar configura??o, lista de personals, chaves, inscri??es e cron. A aprova??o abre uma mensagem no WhatsApp do professor para confirma??o do envio, conforme prefer?ncia expl?cita; n?o requer credencial WhatsApp Business. Links individuais e n?meros reais n?o devem entrar no reposit?rio ou em diagn?sticos.
 
 O teste em segundo plano adiciona testAt e lastTestAt ? inscri??o selecionada, sob a mesma trava de arquivo do despachante. O cron existente processa o teste vencido e o remove ap?s aceite do provedor; n?o duplicar o cron e n?o limpar inscri??es para testar. O bot?o local verifica a solicita??o de exibi??o no aparelho; nenhum dos testes garante percep??o pelo usu?rio.
+
+## Corre??o da abertura ao tocar no aviso
+
+Atualizar o bundle e notifications-sw.js na raiz, sem altera??o de banco ou runtime PHP. Publicar JavaScript antes do HTML e depois o worker; conferir hashes, resposta 200 de /notificacao e sa?de da API. O worker agora consulta a API autenticada para identificar o destino, sem interceptar requisi??es nem criar cache offline. Abrir novamente o aplicativo solicita a atualiza??o do worker. Alertas j? apresentados podem ter dados do worker anterior; para conferir a corre??o, testar com um aviso novo ap?s reabrir o app.

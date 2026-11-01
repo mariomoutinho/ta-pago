@@ -11,6 +11,8 @@
   ],
   "indexable": true,
   "sources": [
+    "src/app/notificacao.tsx",
+    "tests/personal/notification-worker.test.ts",
     "server/student-access.ts",
     "src/app/ativar.tsx",
     "src/features/personal/whatsapp-window.ts",
@@ -54,7 +56,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -131,7 +133,7 @@ Abrir a janela n?o apaga os avisos. Tocar em um item registra sua leitura e abre
 
 No primeiro acesso compat?vel, o aplicativo apresenta Receber notifica??es?, com Permitir notifica??es e Agora n?o. O pedido do sistema acontece somente ao tocar em Permitir, exig?ncia dos navegadores. A escolha ? lembrada neste aparelho; instalar o PWA permite um novo convite espec?fico da instala??o. O sino mant?m as op??es de ativar/desativar. No iPhone/iPad, Web Push exige iOS/iPadOS 16.4 ou superior e abertura pelo ?cone da tela inicial. A vers?o nativa n?o possui provedor push configurado nesta entrega.
 
-O PWA usa Push API, VAPID ES256 e worker dedicado sem cache offline. A notifica??o do sistema diz Novidade no T? Pago, com texto gen?rico, sem nomes ou informa??es de sa?de; tocar abre /?novidades=1 e a central ap?s autentica??o. Sair remove a inscri??o deste aparelho. Chaves e inscri??es cifradas permanecem no armazenamento privado existente; leituras ficam no subdiret?rio read. Preservar ambos nos deploys e backups.
+O PWA usa Push API, VAPID ES256 e worker dedicado sem cache offline. A notifica??o do sistema diz Novidade no T? Pago, com texto gen?rico, sem nomes ou informa??es de sa?de; tocar abre /notificacao e o setor do aviso ap?s autentica??o. Sair remove a inscri??o deste aparelho. Chaves e inscri??es cifradas permanecem no armazenamento privado existente; leituras ficam no subdiret?rio read. Preservar ambos nos deploys e backups.
 
 Cadastro, conclus?o e feedback disparam somente ap?s a confirma??o da transa??o. Duplicatas preservam o ID e n?o geram novo evento. O despachante mant?m IDs enviados por aparelho, repete falhas com espera progressiva e descarta inscri??es 404/410. Eventos anteriores ? ativa??o ou com mais de 24 horas n?o geram push. V?rios eventos podem ser agrupados em um aviso gen?rico. A entrega depende de permiss?o, conex?o e configura??es do aparelho. Somente endpoints HTTPS de Google, Apple, Mozilla e Windows explicitamente permitidos s?o aceitos; redirecionamentos s?o rejeitados.
 
@@ -166,3 +168,13 @@ Se j? existe conta com esse e-mail, a tela exige a senha atual e usa o fluxo aut
 Notifica??es ativadas confirma a inscri??o e a permiss?o informada pelo navegador; n?o comprova exibi??o pelo Android. A interface revalida o estado ao retornar ao primeiro plano e ao abrir as op??es. Testar alerta no celular solicita uma notifica??o local ao worker, sem criar cadastro nem enviar dados a outro aparelho. Testar alerta com app fechado agenda um aviso somente para a inscri??o atual: POST /notifications/test exige propriet?rio, inscri??o v?lida e intervalo m?nimo de 90 segundos entre testes.
 
 O teste fica persistido na inscri??o privada com vencimento em 15 segundos. O cron existente envia na pr?xima execu??o, normalmente em at? 90 segundos; repeti??o ap?s aceite do provedor n?o envia outro teste. Falhas seguem o retry existente. O agendamento n?o cria evento na central nem altera cadastro. A inscri??o de outro personal n?o pode ser usada. Testes usam apenas endpoints sint?ticos e transporte simulado. Aceite do provedor n?o equivale a alerta exibido, e a entrega no celular do respons?vel permanece dependente de teste f?sico.
+
+## Destino ao tocar na notifica??o do celular
+
+O worker consulta o feed autenticado na mesma origem ao receber o push, com limite de tr?s segundos, e guarda somente o ID do evento mais recente em notification.data. O aviso continua gen?rico e o push do provedor continua sem payload. Em sess?o expirada ou falha de rede, o aviso ainda aparece e o destino ser? resolvido ao abrir. N?o adiciona cache offline nem intercepta??o de requisi??es.
+
+Ao tocar, abre URL absoluta na mesma origem por clients.openWindow, que pode retomar o PWA instalado no Android, e tenta focar a janela retornada. Se a abertura falhar, tenta focar e navegar uma janela existente; erros de uma janela n?o interrompem a tentativa nas demais. Destinos externos ou fora de /notificacao s?o ignorados.
+
+A tela p?blica /notificacao mant?m o ID durante a autentica??o e consulta novamente o feed do personal autenticado antes de navegar. Um cadastro pendente abre /alunos/cadastros?cadastro=ID, filtrando a ficha correspondente com Aprovar, Recusar e Ver ficha. Ver todos os cadastros recebidos remove o filtro. Treino conclu?do ou feedback abre os treinos do aluno; cadastro j? aprovado segue o destino atual do feed. A leitura do evento ? registrada ao abrir. N?o permite que par?metros de URL escolham destinos externos ou acessem avisos de outro profissional. Sem evento dispon?vel, abre a central de novidades. Conta de aluno segue para a pr?pria p?gina inicial.
+
+Valida??o: tr?s testes do worker cobrem abertura com app fechado, retorno a janela existente, consulta indispon?vel e bloqueio de URL externa. Cen?rios de navegador verificam entrada pelo aviso, tela espec?fica do cadastro, destino de treino e retomada ap?s login. O toque real no alerta do Android ainda precisa ser conferido ap?s a atualiza??o do worker no aparelho.

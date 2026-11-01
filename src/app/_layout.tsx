@@ -13,7 +13,7 @@ void SplashScreen.preventAutoHideAsync().catch(() => {});
 function Navigation() {
   const { user, loading, error, refresh } = useSession();
   const pathname=usePathname();
-  const publicForm = pathname.startsWith("/cadastro/") || pathname==='/ativar';
+  const publicForm = pathname.startsWith("/cadastro/") || pathname==='/ativar' || pathname==='/notificacao';
   useEffect(() => {
     if (!loading || publicForm) void SplashScreen.hideAsync();
   }, [loading, publicForm]);
@@ -22,6 +22,7 @@ function Navigation() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="cadastro/[token]" />
         <Stack.Screen name="ativar" />
+        <Stack.Screen name="notificacao" />
       </Stack>
     );
   if (loading) return <Label>Carregando Tá Pago…</Label>;
@@ -59,6 +60,7 @@ function Navigation() {
         </Stack.Protected>
         <Stack.Screen name="cadastro/[token]" />
         <Stack.Screen name="ativar" />
+        <Stack.Screen name="notificacao" />
       </Stack>
     </PersonalShell>
   );

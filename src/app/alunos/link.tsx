@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Linking } from "react-native";
-import { router, type Href } from "expo-router";
+import { router, useLocalSearchParams, type Href } from "expo-router";
 import { Page } from "@/components/personal/shell";
 import {
   Button,
@@ -37,6 +37,7 @@ import {
   type EnrollmentDetail,
 } from "../../../shared/enrollment";
 export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?: boolean } = {}) {
+  const {cadastro}=useLocalSearchParams<{cadastro?:string}>();
   const { user } = useSession();
   const link = useResource<LinkInfo | null>(reviewOnly ? null : "/enrollment/link");
   const contacts = useResource<EnrollmentSummary[]>("/enrollment/requests");
@@ -103,6 +104,7 @@ export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?
   const rows = (contacts.data ?? []).filter(
     (x) =>
       (!status || x.status === status) &&
+      (!reviewOnly||!cadastro||x.id===cadastro) &&
       x.name
         .toLocaleLowerCase("pt-BR")
         .includes(search.toLocaleLowerCase("pt-BR")),
@@ -119,6 +121,7 @@ export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?
         title={reviewOnly ? "Cadastros recebidos" : "Link de Cadastro"}
         subtitle={reviewOnly ? "Confira a ficha e aprove ou recuse cada solicitação." : "Receba fichas e aprove cada novo acompanhamento."}
       />
+      {reviewOnly&&!!cadastro&&<Button variant="secondary" onPress={()=>router.replace('/alunos/cadastros')}>Ver todos os cadastros recebidos</Button>}
       {!reviewOnly && <Choices
         label="Seção"
         value={tab}
