@@ -5,7 +5,7 @@ self.addEventListener('push', event => {
   event.waitUntil(self.registration.showNotification('Novo cadastro recebido', {
     body: 'Um aluno enviou sua ficha. Abra o Tá Pago para analisar e aprovar.',
     icon: '/assets/pwa/icon-192.png', badge: '/assets/pwa/icon-192.png',
-    tag: 'enrollment-received', renotify: true, data: { url: '/alunos/link' },
+    tag: 'enrollment-received', renotify: true, data: { url: '/alunos/cadastros' },
   }));
 });
 self.addEventListener('notificationclick', event => {
@@ -14,9 +14,9 @@ self.addEventListener('notificationclick', event => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const client of windows) {
       if (new URL(client.url).origin === self.location.origin) {
-        await client.navigate('/alunos/link'); await client.focus(); return;
+        await client.navigate('/alunos/cadastros'); await client.focus(); return;
       }
     }
-    await self.clients.openWindow('/alunos/link');
+    await self.clients.openWindow('/alunos/cadastros');
   })());
 });

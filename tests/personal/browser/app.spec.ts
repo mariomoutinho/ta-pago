@@ -28,7 +28,7 @@ test("avisos mostram cadastro recebido, atualizam após aprovação e registram 
   await page.getByRole("button",{name:"Atualizar avisos",exact:true}).click();
   await expect(page.getByText("1 cadastro(s) aguardando sua aprovação.",{exact:true})).toBeVisible();
   await page.getByRole("button",{name:"Ver cadastros recebidos",exact:true}).click();
-  await expect(page).toHaveURL(base+"/alunos/link");
+  await expect(page).toHaveURL(base+"/alunos/cadastros");
   await expect(page.getByText("Você recebeu um novo cadastro de aluno.",{exact:true})).toBeVisible();
   pending=0;
   await page.getByRole("button",{name:"Notificações de cadastro: 1 pendentes",exact:true}).click();
@@ -50,6 +50,33 @@ test("avisos mostram cadastro recebido, atualizam após aprovação e registram 
     const notifications=await registration.getNotifications();const title=notifications[0]?.title;notifications.forEach(notification=>notification.close());return title;
   });
   expect(notice).toBe('Novo cadastro recebido');await cdp.detach();
+});
+
+test("analisar cadastros abre diretamente aprovação e recusa sem mostrar o link", async ({ page }) => {
+  const headers={"X-Requested-With":"TaPago"};
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Revisão",email:"review-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
+  let status="pending";
+  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending:status==="pending"?1:0}}));
+  await page.route("**/api/enrollment/requests",route=>route.fulfill({json:[{id:"review-fixture",name:"Aluno Revisão",email:"review@example.test",phone:"00000000000",goals:["Outro"],status,createdAt:"2026-11-01T12:00:00.000Z",studentId:null}]}));
+  await page.route("**/api/enrollment/requests/review-fixture/status",route=>{status=route.request().postDataJSON().status;return route.fulfill({json:{ok:true}});});
+  await page.setViewportSize({width:390,height:740});
+  await page.goto(base+"/");
+  await page.getByRole("button",{name:"Analisar cadastros recebidos",exact:true}).click();
+  await expect(page).toHaveURL(base+"/alunos/cadastros");
+  await expect(page.getByText("Cadastros recebidos",{exact:true})).toBeVisible();
+  await expect(page.getByLabel("URL de cadastro",{exact:true})).toHaveCount(0);
+  await expect(page.getByRole("radio",{name:"Seção: Link",exact:true})).toHaveCount(0);
+  for(const name of ["Aprovar","Recusar"]){
+    const button=page.getByRole("button",{name,exact:true});await expect(button).toBeVisible();
+    const bounds=await button.boundingBox();expect(bounds!.y+bounds!.height).toBeLessThanOrEqual(740);
+  }
+  await page.getByRole("button",{name:"Recusar",exact:true}).click();
+  await page.getByRole("button",{name:"Confirmar",exact:true}).click();
+  await expect(page.getByText("Nenhum cadastro aguardando aprovação.",{exact:true})).toBeVisible();
+  status="pending";await page.reload();
+  await page.getByRole("button",{name:"Aprovar",exact:true}).click();
+  await expect(page.getByText("Aluno aprovado.",{exact:true})).toBeVisible();
+  await expect(page.getByText("Nenhum cadastro aguardando aprovação.",{exact:true})).toBeVisible();
 });
 
 test("upload de MP4 salva e reproduz no player próprio sem iframe do YouTube", async ({ page }) => {

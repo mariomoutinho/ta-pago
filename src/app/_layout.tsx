@@ -43,6 +43,7 @@ function Navigation() {
         <Stack.Protected guard={user?.role === "personal"}>
           <Stack.Screen name="alunos/index" />
           <Stack.Screen name="alunos/link" />
+          <Stack.Screen name="alunos/cadastros" />
           <Stack.Screen name="alunos/[id]" />
           <Stack.Screen name="alunos/[id]/treinos" />
           <Stack.Screen name="programas" />

@@ -4,6 +4,7 @@ export function pushSupported() { return typeof window !== "undefined" && window
 export async function pushState(): Promise<PushState> {
   if (!pushSupported()) return { supported: false, enabled: false, blocked: false };
   const registration = await navigator.serviceWorker.getRegistration("/");
+  if (registration) void registration.update().catch(() => {});
   const subscription = await registration?.pushManager.getSubscription();
   if (subscription && Notification.permission === "granted") await api("/notifications/subscribe", "POST", { endpoint: subscription.endpoint });
   return { supported: true, enabled: !!subscription && Notification.permission === "granted", blocked: Notification.permission === "denied" };

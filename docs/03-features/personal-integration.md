@@ -11,6 +11,9 @@
   ],
   "indexable": true,
   "sources": [
+    "src/app/alunos/cadastros.tsx",
+    "src/app/alunos/link.tsx",
+    "src/app/_layout.tsx",
     "backend-php/src/Push.php",
     "backend-php/src/PushCron.php",
     "backend-php/public/notifications-sw.js",
@@ -40,7 +43,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -111,7 +114,9 @@ Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verifi
 
 O cabeçalho profissional mostra avisos de cadastro e a contagem de fichas pendentes. Com o app ativo, GET /notifications/summary atualiza a contagem a cada 15 segundos e ao voltar para o aplicativo. O botão Analisar cadastros recebidos abre a página do link e das aprovações; a contagem cai quando a ficha deixa de estar pendente. A API retorna somente a quantidade, filtra pelo profissional autenticado e respeita a retenção configurada. Alunos não acessam esses endpoints.
 
-O diálogo Notificações de cadastro permite ativar ou desativar os avisos neste aparelho. A permissão do sistema só é solicitada após o toque. O PWA usa Push API, VAPID ES256 e um worker dedicado sem interceptação de requisições nem cache offline. O aviso do sistema contém apenas “Novo cadastro recebido” e texto genérico, sem nome, contato ou dados de saúde. Tocar no aviso abre /alunos/link; se a sessão expirou, o login continua obrigatório. Sair da conta remove a inscrição desse aparelho.
+O diálogo Notificações de cadastro permite ativar ou desativar os avisos neste aparelho. A permissão do sistema só é solicitada após o toque. O PWA usa Push API, VAPID ES256 e um worker dedicado sem interceptação de requisições nem cache offline. O aviso do sistema contém apenas “Novo cadastro recebido” e texto genérico, sem nome, contato ou dados de saúde. Tocar no aviso abre /alunos/cadastros; se a sessão expirou, o login continua obrigatório. Sair da conta remove a inscrição desse aparelho.
+
+Analisar cadastros recebidos e Ver cadastros recebidos abrem diretamente /alunos/cadastros, protegida para o personal. A tela mostra somente pendências e mantém Ver ficha, Aprovar e Recusar; não apresenta a geração do link ou os filtros da tela administrativa. Reutiliza o mesmo fluxo de análise, confirma a recusa e retira a ficha da lista após a decisão. O teste em 390 × 740 verifica os botões de decisão na primeira tela, sem rolagem. Link de Cadastro permanece disponível para compartilhar o formulário e consultar os demais status. O app verifica atualizações do worker ao abrir para aplicar também o novo destino das notificações.
 
 O servidor mantém a chave de assinatura e inscrições cifradas fora da pasta pública e do repositório. O cadastro só dispara o aviso após a confirmação da transação; duplicatas não criam outro aviso. Um despachante periódico consulta fichas pendentes recentes, conserva os IDs já enviados por aparelho, repete falhas com espera progressiva e descarta inscrições com resposta 404/410. Fichas anteriores à ativação ou com mais de 24 horas não geram push. Múltiplos cadastros podem ser agrupados em um aviso genérico, enquanto a contagem no aplicativo continua refletindo todas as pendências. Entrega depende da permissão, conexão, navegador, provedor push e configurações do aparelho.
 

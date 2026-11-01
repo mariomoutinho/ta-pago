@@ -31,10 +31,10 @@ export function EnrollmentNotifications() {
       </View>
       <Button variant="secondary" label={`Notificações de cadastro${pending ? `: ${pending} pendentes` : ""}`} onPress={() => setOpen(true)}>{pending ? `🔔 ${pending}` : "🔔"}</Button>
     </View>
-    {pending > 0 && <Button variant="secondary" onPress={() => router.push("/alunos/link")}>Analisar cadastros recebidos</Button>}
+    {pending > 0 && <Button variant="secondary" onPress={() => router.push("/alunos/cadastros")}>Analisar cadastros recebidos</Button>}
     {open && <Dialog title="Notificações de cadastro" onClose={() => setOpen(false)}>
       <Label>{pending ? `${pending} cadastro(s) aguardando sua aprovação.` : "Nenhum cadastro pendente no momento."}</Label>
-      <Button onPress={() => { setOpen(false); router.push("/alunos/link"); }}>Ver cadastros recebidos</Button>
+      <Button onPress={() => { setOpen(false); router.push("/alunos/cadastros"); }}>Ver cadastros recebidos</Button>
       <Notice>{device?.enabled ? "Notificações ativadas neste aparelho. Você receberá um aviso quando um aluno enviar sua ficha, mesmo com o Tá Pago fechado." : "Ative as notificações neste aparelho para receber avisos com o Tá Pago fechado. No iPhone, abra pelo ícone instalado na tela inicial (iOS 16.4 ou superior)."}</Notice>
       {device?.blocked && <Notice>As notificações estão bloqueadas. Libere a permissão nas configurações do navegador ou do celular e tente novamente.</Notice>}
       {device && !device.supported && <Notice>Este ambiente não oferece notificações. Abra o Tá Pago pelo ícone da tela inicial em um navegador compatível. Os avisos dentro do aplicativo continuam disponíveis.</Notice>}

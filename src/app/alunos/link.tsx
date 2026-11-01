@@ -33,15 +33,15 @@ import {
   type EnrollmentSummary,
   type EnrollmentDetail,
 } from "../../../shared/enrollment";
-export default function EnrollmentLinkPage() {
+export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?: boolean } = {}) {
   const { user } = useSession();
-  const link = useResource<LinkInfo | null>("/enrollment/link");
+  const link = useResource<LinkInfo | null>(reviewOnly ? null : "/enrollment/link");
   const contacts = useResource<EnrollmentSummary[]>("/enrollment/requests");
-  const [tab, setTab] = useState("Link"),
+  const [tab, setTab] = useState(reviewOnly ? "Contatos" : "Link"),
     [name, setName] = useState(user?.name ?? ""),
     [contact, setContact] = useState(""),
     [search, setSearch] = useState(""),
-    [status, setStatus] = useState(""),
+    [status, setStatus] = useState(reviewOnly ? "pending" : ""),
     [feedback, setFeedback] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -96,23 +96,23 @@ export default function EnrollmentLinkPage() {
     <Page>
       <Button
         variant="secondary"
-        onPress={() => router.push("/alunos" as Href)}
+        onPress={() => router.push((reviewOnly ? "/" : "/alunos") as Href)}
       >
-        ← Meus alunos
+        {reviewOnly ? "← Início" : "← Meus alunos"}
       </Button>
       <Heading
-        title="Link de Cadastro"
-        subtitle="Receba fichas e aprove cada novo acompanhamento."
+        title={reviewOnly ? "Cadastros recebidos" : "Link de Cadastro"}
+        subtitle={reviewOnly ? "Confira a ficha e aprove ou recuse cada solicitação." : "Receba fichas e aprove cada novo acompanhamento."}
       />
-      <Choices
+      {!reviewOnly && <Choices
         label="Seção"
         value={tab}
         onChange={setTab}
         options={["Link", "Contatos"].map((value) => ({ value, label: value }))}
-      />
+      />}
       <Notice error>{error || link.error || contacts.error}</Notice>
       <Notice>{feedback}</Notice>
-      {tab === "Link" ? (
+      {!reviewOnly && tab === "Link" ? (
         <Card>
           <ChainIcon />
           <Label size={22} bold>
@@ -255,12 +255,12 @@ export default function EnrollmentLinkPage() {
         </Card>
       ) : (
         <>
-          <Field
+          {!reviewOnly && <Field
             label="Buscar cadastro por nome"
             value={search}
             onChangeText={setSearch}
-          />
-          <Choices
+          />}
+          {!reviewOnly && <Choices
             label="Status do relacionamento"
             value={status}
             onChange={setStatus}
@@ -271,11 +271,11 @@ export default function EnrollmentLinkPage() {
                 label,
               })),
             ]}
-          />
+          />}
           {contacts.loading ? (
             <Notice>Carregando cadastros…</Notice>
           ) : !rows.length ? (
-            <Notice>Nenhum cadastro encontrado.</Notice>
+            <Notice>{reviewOnly ? "Nenhum cadastro aguardando aprovação." : "Nenhum cadastro encontrado."}</Notice>
           ) : (
             rows.map((row) => (
               <Card key={row.id}>
