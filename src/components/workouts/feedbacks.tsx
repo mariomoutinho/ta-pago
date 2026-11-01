@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { View, Pressable } from "react-native";
 import { api, message } from "@/features/personal/api";
 import { Button, Card, Field, Label, Notice } from "@/components/personal/ui";
 import { WorkoutScreen } from "./workout-screen";
 import { workoutFeedbackSchema, type WorkoutData } from "../../../shared/workouts";
+import { brazilToday } from "../../../shared/notifications";
 
 export function WorkoutFeedbacks({ workout, canSend, reload }: {
   workout: WorkoutData; canSend: boolean; reload: () => Promise<void>;
@@ -16,6 +17,12 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
   // Identifica uma tentativa de envio, inclusive quando a resposta se perde na rede.
   const [requestId, setRequestId] = useState(() => `${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const feedbacks = workout.feedbacks ?? [];
+  const completed=(workout.completions??[]).some(item=>item.completedOn===brazilToday());
+  async function complete(){
+    setBusy(true);setError("");
+    try{await api(`/me/workouts/${workout.id}/completion`,"POST",{});setSuccess("Treino concluído! Seu personal foi avisado.");await reload();}
+    catch(error){setError(message(error));}finally{setBusy(false);}
+  }
   async function send() {
     const parsed = workoutFeedbackSchema.safeParse({ comment, requestId });
     if (!parsed.success) { setError(parsed.error.issues[0].message); return; }
@@ -50,6 +57,13 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
     <Button variant="secondary" onPress={() => { setOpen(true); setSuccess(""); }}>
       Feedbacks ({feedbacks.length})
     </Button>
-    {canSend && <Button onPress={() => { setOpen(true); setSuccess(""); }}>Terminei: enviar feedback</Button>}
+    {canSend && <>
+      <Pressable accessibilityRole="checkbox" accessibilityLabel="Concluir treino de hoje" accessibilityState={{checked:completed,disabled:busy||completed}}
+        disabled={busy||completed} onPress={()=>void complete()} style={{padding:14,minHeight:48,borderRadius:10,borderWidth:1,borderColor:completed?"#22c55e":"#888"}}>
+        <Label bold>{completed?"✓ Treino de hoje concluído":busy?"Registrando…":"☐ Concluir treino de hoje"}</Label>
+      </Pressable>
+      <Notice error>{error}</Notice><Notice>{success}</Notice>
+      <Button variant="secondary" onPress={() => { setOpen(true); setSuccess(""); }}>Terminei: enviar feedback</Button>
+    </>}
   </>;
 }

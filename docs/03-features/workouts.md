@@ -11,6 +11,11 @@
   ],
   "indexable": true,
   "sources": [
+    "shared/notifications.ts",
+    "src/components/workouts/feedbacks.tsx",
+    "backend-php/migrations/20261101_workout_completion.sql",
+    "prisma/migrations/20261101160000_workout_completion/migration.sql",
+    "backend-php/tests/completion-migration.php",
     "backend-php/src/Media.php",
     "backend-php/public/api/index.php",
     "server/exercise-media.ts",
@@ -73,7 +78,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.4.0",
+  "version": "12.5.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -274,3 +279,9 @@ Na janela Ver exercícios, essas operações persistem no plano existente com re
 ## Fluxo de treinos em telas
 
 WorkoutScreen organiza as etapas com título e retorno, sem Modal ou backdrop. O Personal navega do perfil à página de treinos, à rotina e ao treino. As etapas do formulário de plano, biblioteca, prescrição, presets e destino de grupo ocupam o conteúdo da página. Durante a biblioteca/prescrição, a lista e os demais campos do plano ficam ocultos e montados para preservar o rascunho; as ações gerais de salvar reaparecem ao confirmar ou cancelar a etapa. As confirmações destrutivas e os menus rápidos de ações permanecem sobreposições pontuais. A nova rota está no grupo protegido de Personal; a autorização dos dados continua nos endpoints existentes.
+
+## Conclus?o di?ria e aviso ao personal
+
+O aluno vinculado pode marcar Concluir treino de hoje em um treino de plano ativo e publicado. WorkoutCompletion guarda uma conclus?o por treino e dia no fuso America/Sao_Paulo, com chave ?nica e v?nculo em cascata ao treino. Repetir a requisi??o devolve o mesmo registro; o controle fica marcado ap?s recarregar. N?o permite registrar por outro aluno, por personal ou em plano sem acesso. O servidor determina a data, sem aceitar data arbitr?ria do cliente.
+
+Ap?s confirmar a transa??o, a conclus?o aparece na central de novidades do personal e pode gerar Web Push gen?rico. O feedback continua separado e tamb?m gera novidade ao ser criado. A API de planos inclui as 30 conclus?es mais recentes por treino. As migra??es SQLite e MySQL adicionam somente a tabela e seus ?ndices; o ensaio PHP preserva os treinos existentes antes de verificar a conclus?o e a repeti??o no mesmo dia.

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/src/Core.php';
 require_once __DIR__.'/src/Push.php';
+require_once __DIR__.'/src/News.php';
 require_once __DIR__.'/src/Media.php';
 require_once __DIR__.'/src/Auth.php';
 require_once __DIR__.'/src/Students.php';

@@ -211,7 +211,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
   app.use("/api/notifications", notificationRoutes(db));
   app.use("/api", exerciseMediaRoutes(db));
-  app.use("/api", workoutRoutes(db));
+  app.use("/api", workoutRoutes(db,owner=>dispatchPush(db,owner,undefined,[...authorizedPersonalIds])));
   app.use("/api/workout-templates", workoutTemplateRoutes(db));
 
   app.post("/api/auth/logout", async (req, res) => {

@@ -13,6 +13,9 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/News.php",
+    "backend-php/migrations/20261101_workout_completion.sql",
+    "backend-php/tests/completion-migration.php",
     "backend-php/src/Push.php",
     "backend-php/src/PushCron.php",
     "backend-php/public/notifications-sw.js",
@@ -37,7 +40,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -202,3 +205,9 @@ O conector Hostinger oferece geração de URL de upload TUS para o diretório p�
 A consulta da implantação retornou gitAutoDeployment null. Nenhuma transferência, criação de token ou alteração de configuração foi executada. Antes de automatizar: verificar acesso restrito às DUAS pastas, mesclagem sem excluir config.php, transporte seguro, backup, rollback e proteção do domínio principal. Se FTPS for utilizado futuramente, verificar disponibilidade e escopo no painel e guardar credenciais somente em Secrets com ambiente de aprovação, nunca em código. Não pressupor SSH/SFTP no plano atual.
 
 Até essas verificações, usar o pacote validado e o procedimento manual. Pendentes no painel/aparelhos: ensaio do backup real, transferência privada segura, validação LiteSpeed/HTTPS da nova versão e instalação PWA real. A CI remota precisa ser executada explicitamente; nenhum deploy está autorizado por este guia.
+
+## Atualiza??o da central de novidades
+
+Aplicar apenas migrations/20261101_workout_completion.sql antes de publicar o c?digo que consulta conclus?es. A migra??o adiciona WorkoutCompletion, com FK ao treino e unicidade por treino/dia; n?o executar schema.sql na base existente. Ensaiar em banco sint?tico com treinos previamente preenchidos, preservar backup privado e conferir integridade dos registros anteriores.
+
+Publicar News.php e bootstrap antes das classes dependentes, atualizar generated/models.json, Workouts.php, Push.php e App.php. Preservar config.php, chaves, inscri??es e o cron existente, sem duplic?-lo. A central grava IDs de leitura no subdiret?rio storage/push/read, ou pushDirectory/read quando configurado; os arquivos de inscri??es permanecem na raiz. Atualizar o bundle e notifications-sw.js para abrir /?novidades=1 com mensagem gen?rica. Conferir sa?de da API, integridade dos arquivos e sa?da do cron ap?s a publica??o.

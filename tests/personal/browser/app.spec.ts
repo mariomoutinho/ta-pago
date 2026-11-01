@@ -14,26 +14,42 @@ process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
 process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 let server: Server;
 let base: string;
+test.beforeEach(async({page},info)=>{
+  if(!info.title.includes('convite inicial'))await page.addLocatorHandler(page.getByRole('button',{name:'Agora não',exact:true}),async locator=>{await locator.click();});
+});
 
-test("avisos mostram cadastro recebido, atualizam após aprovação e registram worker sem cache", async ({ page, context }) => {
+test("convite inicial pede permissão por um toque e respeita a escolha ao recarregar",async({page})=>{
+  await provisionBrowserPersonal(db,page.request,base,{headers:{"X-Requested-With":"TaPago"},data:{name:"Personal Convite",email:"offer-browser@example.test",password:"senha-ficticia-12345"}});
+  await page.goto(base+'/');
+  await expect(page.getByText('Receber notificações?',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Permitir notificações',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>Notification.permission)).toBe('default');
+  await page.getByRole('button',{name:'Agora não',exact:true}).click();
+  await page.reload();
+  await expect(page.getByRole('button',{name:'Novidades',exact:true})).toBeVisible();
+  await expect(page.getByText('Receber notificações?',{exact:true})).toHaveCount(0);
+});
+
+test("avisos mostram treino concluído, marcam leitura e registram worker sem cache", async ({ page, context }) => {
   const headers = { "X-Requested-With": "TaPago" };
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Avisos",email:"notice-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
-  let pending=0;
-  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending}}));
+  let unread=0;
+  const item={id:'news-fixture',kind:'workout_completed',title:'Aluno Sintético concluiu Treino A.',createdAt:'2026-11-01T12:00:00.000Z',url:'/alunos/cadastros',read:false};
+  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending:0,unread}}));
+  await page.route("**/api/notifications/feed",route=>route.fulfill({json:unread?[item]:[{...item,read:true}]}));
+  await page.route("**/api/notifications/read",route=>{unread=0;return route.fulfill({json:{ok:true}});});
   await page.setViewportSize({width:390,height:844});
   await page.goto(base+"/");
-  await page.getByRole("button",{name:"Notificações de cadastro",exact:true}).click();
-  await expect(page.getByText("Nenhum cadastro pendente no momento.",{exact:true})).toBeVisible();
-  pending=1;
-  await page.getByRole("button",{name:"Atualizar avisos",exact:true}).click();
-  await expect(page.getByText("1 cadastro(s) aguardando sua aprovação.",{exact:true})).toBeVisible();
-  await page.getByRole("button",{name:"Ver cadastros recebidos",exact:true}).click();
+  await page.getByRole("button",{name:"Novidades",exact:true}).click();
+  await expect(page.getByText("Tudo em dia",{exact:true})).toBeVisible();
+  unread=1;
+  await page.getByRole("button",{name:"Atualizar novidades",exact:true}).click();
+  await expect(page.getByTestId('news-unread-dot')).toBeVisible();
+  await page.getByRole("button",{name:"Não lida: Aluno Sintético concluiu Treino A.",exact:true}).click();
   await expect(page).toHaveURL(base+"/alunos/cadastros");
-  await expect(page.getByText("Você recebeu um novo cadastro de aluno.",{exact:true})).toBeVisible();
-  pending=0;
-  await page.getByRole("button",{name:"Notificações de cadastro: 1 pendentes",exact:true}).click();
-  await page.getByRole("button",{name:"Atualizar avisos",exact:true}).click();
-  await expect(page.getByText("Nenhum cadastro pendente no momento.",{exact:true})).toBeVisible();
+  await page.getByRole("button",{name:"Novidades",exact:true}).click();
+  await expect(page.getByText("Tudo em dia",{exact:true})).toBeVisible();
+  await expect(page.getByTestId('news-unread-dot')).toHaveCount(0);
   await context.grantPermissions(["notifications"]);
   await page.evaluate(async()=>{await navigator.serviceWorker.register('/notifications-sw.js');await navigator.serviceWorker.ready;});
   const cdp=await context.newCDPSession(page);
@@ -49,19 +65,22 @@ test("avisos mostram cadastro recebido, atualizam após aprovação e registram 
     const registration=await navigator.serviceWorker.ready;
     const notifications=await registration.getNotifications();const title=notifications[0]?.title;notifications.forEach(notification=>notification.close());return title;
   });
-  expect(notice).toBe('Novo cadastro recebido');await cdp.detach();
+  expect(notice).toBe('Novidade no Tá Pago');await cdp.detach();
 });
 
 test("analisar cadastros abre diretamente aprovação e recusa sem mostrar o link", async ({ page }) => {
   const headers={"X-Requested-With":"TaPago"};
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Revisão",email:"review-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
   let status="pending";
-  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending:status==="pending"?1:0}}));
+  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending:status==="pending"?1:0,unread:1}}));
+  await page.route("**/api/notifications/feed",route=>route.fulfill({json:[{id:'review-fixture',kind:'enrollment',title:'Aluno Revisão enviou um cadastro.',createdAt:'2026-11-01T12:00:00.000Z',url:'/alunos/cadastros',read:false}]}));
+  await page.route("**/api/notifications/read",route=>route.fulfill({json:{ok:true}}));
   await page.route("**/api/enrollment/requests",route=>route.fulfill({json:[{id:"review-fixture",name:"Aluno Revisão",email:"review@example.test",phone:"00000000000",goals:["Outro"],status,createdAt:"2026-11-01T12:00:00.000Z",studentId:null}]}));
   await page.route("**/api/enrollment/requests/review-fixture/status",route=>{status=route.request().postDataJSON().status;return route.fulfill({json:{ok:true}});});
   await page.setViewportSize({width:390,height:740});
   await page.goto(base+"/");
-  await page.getByRole("button",{name:"Analisar cadastros recebidos",exact:true}).click();
+  await page.getByRole("button",{name:"Novidades, 1 não lidas",exact:true}).click();
+  await page.getByRole("button",{name:"Não lida: Aluno Revisão enviou um cadastro.",exact:true}).click();
   await expect(page).toHaveURL(base+"/alunos/cadastros");
   await expect(page.getByText("Cadastros recebidos",{exact:true})).toBeVisible();
   await expect(page.getByLabel("URL de cadastro",{exact:true})).toHaveCount(0);

@@ -8,6 +8,7 @@ import { createDb } from "../../server/db";
 import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-workouts-"));
 process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
+process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 const url = `file:${folder}/test.db`,
   db = createDb(url),
   app = createApp(db);
@@ -267,6 +268,19 @@ it("adiciona treinos e prescrições flexíveis, publica e persiste ordem", asyn
     (await student.get(`/api/me/students/${studentId}/export`)).body.student
       .workoutPlans[0].id,
   ).toBe(plan.id);
+});
+it("conclusão diária é exclusiva do aluno, persiste e gera novidade só para seu personal", async () => {
+  const id=plan.workouts[0].id,endpoint=`/api/me/workouts/${id}/completion`;
+  expect((await personal.post(endpoint).set(header).send({})).status).toBe(403);
+  expect((await stranger.post(endpoint).set(header).send({})).status).toBe(404);
+  const first=await student.post(endpoint).set(header).send({});expect(first.status).toBe(201);
+  expect((await student.post(endpoint).set(header).send({})).body.id).toBe(first.body.id);
+  expect(await db.workoutCompletion.count({where:{workoutId:id}})).toBe(1);
+  const read=(await student.get('/api/me/workout-plans')).body.find((p:any)=>p.id===plan.id);
+  expect(read.workouts[0].completions[0].id).toBe(first.body.id);
+  const news=(await personal.get('/api/notifications/feed')).body;
+  expect(news.some((item:any)=>item.kind==='workout_completed'&&item.id===`completion:${first.body.id}`)).toBe(true);
+  expect((await other.get('/api/notifications/feed')).body).toEqual([]);
 });
 it("nega edição e acesso cruzado, inclusive IDs de filhos e biblioteca alheia", async () => {
   expect((await stranger.get("/api/me/workout-plans")).body).toEqual([]);

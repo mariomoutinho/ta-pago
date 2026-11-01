@@ -1634,6 +1634,55 @@
       ]
     ]
   },
+  "WorkoutCompletion": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "workoutId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "completedOn": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "workoutId",
+        "target": "Workout",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "workoutId",
+        "completedOn"
+      ]
+    ],
+    "indexes": [
+      [
+        "createdAt"
+      ]
+    ]
+  },
   "PrescriptionPreset": {
     "fields": {
       "id": {

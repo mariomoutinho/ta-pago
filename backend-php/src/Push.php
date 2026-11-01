@@ -80,7 +80,7 @@ final class Push {
                 if(!is_file($file))continue;$state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);
                 if(($owner!==null&&$state['owner']!==$owner)||$state['retryAt']>time())continue;
                 if(!in_array($state['owner'],$this->config['authorizedPersonalIds']??[],true)){unlink($file);continue;}
-                $rows=$this->db->rows('EnrollmentRequest',"personalId=? AND status='pending' AND createdAt>=? AND createdAt>=?",[$state['owner'],$state['since'],at(time()-86400)],'createdAt ASC');
+                $rows=array_values(array_filter((new News($this->db,$this->config))->events($state['owner']),fn($event)=>$event['createdAt']>=$state['since']&&$event['createdAt']>=at(time()-86400)));
                 $ids=array_column($rows,'id');$state['sent']=array_values(array_intersect($state['sent'],$ids));
                 if(!array_diff($ids,$state['sent']))continue;
                 $endpoint=$this->plain($state['endpoint']);ensure(self::endpoint($endpoint),'Push endpoint');

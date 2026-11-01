@@ -49,12 +49,18 @@ final class App {
         }
         if ($path==='/me/workout-plans' && $method==='GET') return $this->myPlans();
         if (preg_match('~^/me/workouts/([^/]+)/feedbacks$~D',$path,$m) && $method==='POST') return $this->feedback($m[1],$body);
+        if (preg_match('~^/me/workouts/([^/]+)/completion$~D',$path,$m) && $method==='POST') return $this->completeWorkout($m[1]);
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
         if ($path==='/notifications/settings' && $method==='GET') return ['publicKey'=>(new Push($this->db,$this->config))->publicKey()];
         if ($path==='/notifications/summary' && $method==='GET') {
             $rows=$this->db->rows('EnrollmentRequest',"personalId=? AND status='pending' AND updatedAt>=?",[$this->user['id'],at(time()-$this->config['retentionDays']*86400)],'createdAt DESC');
-            return ['pending'=>count($rows)];
+            $feed=(new News($this->db,$this->config))->feed($this->user['id']);
+            return ['pending'=>count($rows),'unread'=>count(array_filter($feed,fn($item)=>!$item['read']))];
+        }
+        if ($path==='/notifications/feed' && $method==='GET') return (new News($this->db,$this->config))->feed($this->user['id']);
+        if ($path==='/notifications/read' && $method==='POST') {
+            ensure(is_array($body['ids']??null),'Avisos inválidos');(new News($this->db,$this->config))->markRead($this->user['id'],$body['ids']);return ['ok'=>true];
         }
         if (in_array($path,['/notifications/subscribe','/notifications/unsubscribe'],true) && $method==='POST') {
             ensure(is_string($body['endpoint']??null) && strlen($body['endpoint'])<=4096,'Inscrição inválida');

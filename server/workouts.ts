@@ -5,6 +5,7 @@ import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
+import { brazilToday } from "../shared/notifications";
 
 export const planInclude = {
   workouts: {
@@ -12,6 +13,7 @@ export const planInclude = {
     orderBy: { orderIndex: "asc" as const },
     include: {
       feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, createdAt: true } },
+      completions: { orderBy: { createdAt: "desc" as const }, take: 30 },
       exercises: {
         where: { deletedAt: null },
         orderBy: { orderIndex: "asc" as const },
@@ -20,7 +22,7 @@ export const planInclude = {
     },
   },
 };
-export function workoutRoutes(db: Db) {
+export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>) {
   const router = Router();
   router.get("/me/workout-plans", async (_req, res) => {
     if (res.locals.user.role !== "student")
@@ -46,7 +48,7 @@ export function workoutRoutes(db: Db) {
     if (res.locals.user.role !== "student")
       throw new HttpError(403, "Somente o aluno pode enviar feedback");
     const data = workoutFeedbackSchema.parse(req.body);
-    const feedback = await db.$transaction(async (tx) => {
+    const result = await db.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
         where: {
           id: String(req.params.id), deletedAt: null,
@@ -55,15 +57,32 @@ export function workoutRoutes(db: Db) {
             student: { accountId: res.locals.user.id, linkStatus: "active" },
           },
         },
+        select:{id:true,plan:{select:{student:{select:{personalId:true}}}}},
       });
       if (!workout) throw new HttpError(404, "Treino indisponível para feedback");
-      return tx.workoutFeedback.upsert({
+      const existing=await tx.workoutFeedback.findUnique({where:{workoutId_requestId:{workoutId:workout.id,requestId:data.requestId}}});
+      const feedback=await tx.workoutFeedback.upsert({
         where: { workoutId_requestId: { workoutId: workout.id, requestId: data.requestId } },
         create: { workoutId: workout.id, ...data }, update: {},
         select: { id: true, comment: true, createdAt: true },
       });
+      return {feedback,owner:workout.plan.student.personalId,created:!existing};
     });
-    res.status(201).json(feedback);
+    res.status(201).json(result.feedback);
+    if(result.created&&notify)void notify(result.owner).catch(()=>console.error("Falha ao enviar novidade"));
+  });
+  router.post("/me/workouts/:id/completion",async(req,res)=>{
+    if(res.locals.user.role!=="student")throw new HttpError(403,"Acesso exclusivo do aluno");
+    const result=await db.$transaction(async tx=>{
+      const workout=await tx.workout.findFirst({where:{id:String(req.params.id),deletedAt:null,plan:{publishedAt:{not:null},status:"ativo",student:{accountId:res.locals.user.id,linkStatus:"active"}}},select:{id:true,plan:{select:{student:{select:{personalId:true}}}}}});
+      if(!workout)throw new HttpError(404,"Treino indisponível");
+      const completedOn=brazilToday();
+      const existing=await tx.workoutCompletion.findUnique({where:{workoutId_completedOn:{workoutId:workout.id,completedOn}}});
+      const completion=await tx.workoutCompletion.upsert({where:{workoutId_completedOn:{workoutId:workout.id,completedOn}},create:{workoutId:workout.id,completedOn},update:{}});
+      return {completion,owner:workout.plan.student.personalId,created:!existing};
+    });
+    res.status(201).json(result.completion);
+    if(result.created&&notify)void notify(result.owner).catch(()=>console.error("Falha ao enviar novidade"));
   });
   // Aplicar o guard apenas às rotas deste módulo, sem interceptar as demais APIs.
   router.use(

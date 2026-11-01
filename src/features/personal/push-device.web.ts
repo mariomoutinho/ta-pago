@@ -1,5 +1,10 @@
 import { api } from "./api";
 export type PushState = { supported: boolean; enabled: boolean; blocked: boolean };
+const offered = new Set<string>();
+function offerKey(userId:string){const installed=window.matchMedia('(display-mode: standalone)').matches||(navigator as Navigator&{standalone?:boolean}).standalone;return 'tapago.push-offer.'+userId+(installed?'.installed':'.browser');}
+export function shouldOfferPush(userId:string){const key=offerKey(userId);try{return !localStorage.getItem(key);}catch{return !offered.has(key);}}
+export function rememberPushOffer(userId:string){const key=offerKey(userId);offered.add(key);try{localStorage.setItem(key,'1');}catch{}}
+export function watchPushInstall(callback:()=>void){window.addEventListener('appinstalled',callback);return()=>window.removeEventListener('appinstalled',callback);}
 export function pushSupported() { return typeof window !== "undefined" && window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; }
 export async function pushState(): Promise<PushState> {
   if (!pushSupported()) return { supported: false, enabled: false, blocked: false };

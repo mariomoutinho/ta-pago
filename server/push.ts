@@ -6,6 +6,7 @@ import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { seal, unseal } from "./enrollment-crypto";
 import { retentionDays } from "./enrollment";
+import { newsEvents, newsFeed, markNewsRead } from "./news";
 
 const root = () => path.resolve(process.env.PERSONAL_PUSH_DIRECTORY ?? "data/push");
 type Subscription = { owner: string; endpoint: string; since: string; sent: string[]; attempts: number; retryAt: number };
@@ -56,7 +57,8 @@ export async function dispatchPush(db: Db, owner?: string, transport?: (endpoint
       if ((owner && state.owner !== owner) || state.retryAt > Date.now()) return;
       const authorized = authorizedIds.includes(state.owner);
       if (!authorized && !transport) { fs.unlinkSync(file); return; }
-      const rows = await db.enrollmentRequest.findMany({ where: { personalId: state.owner, status: "pending", createdAt: { gte: new Date(Math.max(Date.parse(state.since), Date.now() - 86400000)) } }, select: { id: true } });
+      const since=Math.max(Date.parse(state.since),Date.now()-86400000);
+      const rows = (await newsEvents(db,state.owner)).filter(item=>Date.parse(item.createdAt)>=since);
       const ids = rows.map(row => row.id);
       if (!ids.some(id => !state.sent.includes(id))) return;
       try {
@@ -75,7 +77,9 @@ export async function dispatchPush(db: Db, owner?: string, transport?: (endpoint
 export function notificationRoutes(db: Db) {
   const router = Router();
   router.use((_req, res, next) => { if (res.locals.user.role !== "personal") throw new HttpError(403, "Acesso exclusivo do personal"); next(); });
-  router.get("/summary", async (_req, res) => res.json({ pending: await db.enrollmentRequest.count({ where: { personalId: res.locals.user.id, status: "pending", updatedAt: { gte: new Date(Date.now() - retentionDays() * 86400000) } } }) }));
+  router.get("/summary", async (_req, res) => res.json({ pending: await db.enrollmentRequest.count({ where: { personalId: res.locals.user.id, status: "pending", updatedAt: { gte: new Date(Date.now() - retentionDays() * 86400000) } } }),unread:(await newsFeed(db,res.locals.user.id)).filter(item=>!item.read).length }));
+  router.get("/feed",async(_req,res)=>res.json(await newsFeed(db,res.locals.user.id)));
+  router.post("/read",async(req,res)=>{await markNewsRead(db,res.locals.user.id,req.body.ids);res.json({ok:true});});
   router.get("/settings", (_req, res) => res.json({ publicKey: pushPublicKey() }));
   for (const action of ["subscribe", "unsubscribe"] as const) router.post("/" + action, async (req, res) => {
     const endpoint = req.body.endpoint;

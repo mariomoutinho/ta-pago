@@ -53,6 +53,7 @@ trait Workouts {
         $p['workouts']=array_map(function($w) {
             $w['exercises']=$this->hydrateItems($this->db->rows('WorkoutExercise','workoutId=? AND deletedAt IS NULL',[$w['id']],'orderIndex ASC'));
             $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
+            $w['completions']=$this->db->rows('WorkoutCompletion','workoutId=?',[$w['id']],'createdAt DESC LIMIT 30');
             return $w;
         },$this->db->rows('Workout','planId=? AND deletedAt IS NULL',[$p['id']],'orderIndex ASC')); return $p;
     }
@@ -70,8 +71,18 @@ trait Workouts {
         $w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$id],true);
         $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
         $s=$this->student($p['studentId'],true); ensure($s['linkStatus']==='active','Vínculo encerrado',403);
-        $f=$this->db->one('WorkoutFeedback','workoutId=? AND requestId=?',[$id,$data['requestId']])??$this->db->create('WorkoutFeedback',[...$data,'workoutId'=>$id]);
+        $f=$this->db->one('WorkoutFeedback','workoutId=? AND requestId=?',[$id,$data['requestId']]);
+        if(!$f){$f=$this->db->create('WorkoutFeedback',[...$data,'workoutId'=>$id]);$this->deferredNotifications[]=$s['personalId'];}
         $this->status=201; return array_intersect_key($f,array_flip(['id','comment','createdAt']));
+    }
+    private function completeWorkout(string $id): array {
+        $this->pupil();$w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$id],true);
+        $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
+        $s=$this->student($p['studentId'],true);ensure($s['linkStatus']==='active','Vínculo encerrado',403);
+        $date=(new \DateTimeImmutable('now',new \DateTimeZone('America/Sao_Paulo')))->format('Y-m-d');
+        $completion=$this->db->one('WorkoutCompletion','workoutId=? AND completedOn=?',[$id,$date]);
+        if(!$completion){$completion=$this->db->create('WorkoutCompletion',['workoutId'=>$id,'completedOn'=>$date]);$this->deferredNotifications[]=$s['personalId'];}
+        $this->status=201;return $completion;
     }
     private function savePlan(string $studentId,array $body,?array $existing=null): array {
         $d=$this->validation->parse('planSchema',$body);

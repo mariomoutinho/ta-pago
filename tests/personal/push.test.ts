@@ -37,8 +37,14 @@ it("conta apenas pendências do dono, cifra inscrição e entrega sem duplicar",
   expect((await owner.post("/api/notifications/subscribe").set(headers).send({endpoint:"https://127.0.0.1/push"})).status).toBe(400);
   expect((await owner.post("/api/notifications/subscribe").set(headers).send({endpoint})).status).toBe(200);
   const pending=await db.enrollmentRequest.create({data:{personalId:ownerId,emailHash:"synthetic",payload:seal({name:"Aluno Sintético"}),policyVersion:"test",consentAt:new Date()}});
-  expect((await owner.get("/api/notifications/summary")).body).toEqual({pending:1});
-  expect((await other.get("/api/notifications/summary")).body).toEqual({pending:0});
+  expect((await owner.get("/api/notifications/summary")).body).toMatchObject({pending:1,unread:1});
+  expect((await other.get("/api/notifications/summary")).body).toMatchObject({pending:0,unread:0});
+  const news=(await owner.get('/api/notifications/feed')).body;
+  expect(news[0].title).toContain('Aluno Sintético');expect(news[0].read).toBe(false);
+  expect((await other.post('/api/notifications/read').set(headers).send({ids:[pending.id]})).status).toBe(404);
+  expect((await owner.post('/api/notifications/read').set(headers).send({ids:[pending.id]})).status).toBe(200);
+  expect((await owner.get('/api/notifications/summary')).body.unread).toBe(0);
+  expect((await owner.get('/api/notifications/feed')).body[0].read).toBe(true);
   const file=path.join(folder,"push",fs.readdirSync(path.join(folder,"push")).find(file=>file.endsWith(".json"))!);
   expect(fs.readFileSync(file,"utf8")).not.toContain(endpoint);
   expect((await dispatchPush(db,ownerId,async()=>201)).sent).toBe(1);

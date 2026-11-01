@@ -35,6 +35,7 @@ try {
   for(const width of [390,1280]){
     const context=await browser.newContext({viewport:{width,height:900}});
     const page=await context.newPage(); const errors=[]; const requests=[]; const failures=[];
+    await page.addLocatorHandler(page.getByRole('button',{name:'Agora não',exact:true}),async locator=>{await locator.click();});
     page.on('pageerror',e=>errors.push(e.message));
     page.on('request',r=>{if(r.url().includes('/api/'))requests.push(r.url());});
     page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1:33317/') && r.status()>=400)failures.push([r.status(),r.url()]);});

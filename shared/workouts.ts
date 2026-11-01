@@ -150,6 +150,7 @@ export type Prescription = z.infer<typeof prescriptionSchema> & {
 export type WorkoutData = Omit<z.infer<typeof workoutSchema>, "exercises"> & {
   exercises: Prescription[];
   feedbacks?: WorkoutFeedback[];
+  completions?: { id: string; completedOn: string; createdAt: string }[];
 };
 export type PlanData = Omit<z.infer<typeof planSchema>, "workouts"> & {
   workouts: WorkoutData[];

@@ -270,6 +270,15 @@ CREATE TABLE `WorkoutFeedback` (
   KEY `ix_WorkoutFeedback_0` (`workoutId`,`createdAt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+CREATE TABLE `WorkoutCompletion` (
+  `id` VARCHAR(191) NOT NULL PRIMARY KEY,
+  `workoutId` VARCHAR(191) NOT NULL,
+  `completedOn` VARCHAR(191) NOT NULL,
+  `createdAt` VARCHAR(24) NOT NULL,
+  UNIQUE KEY `uq_WorkoutCompletion_0` (`workoutId`,`completedOn`),
+  KEY `ix_WorkoutCompletion_0` (`createdAt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE `PrescriptionPreset` (
   `id` VARCHAR(191) NOT NULL PRIMARY KEY,
   `ownerId` VARCHAR(191) NOT NULL,
@@ -350,6 +359,8 @@ ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_exerciseId` FOR
 ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_alternativeExerciseId` FOREIGN KEY (`alternativeExerciseId`) REFERENCES `Exercise` (`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `WorkoutFeedback` ADD CONSTRAINT `fk_WorkoutFeedback_workoutId` FOREIGN KEY (`workoutId`) REFERENCES `Workout` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `WorkoutCompletion` ADD CONSTRAINT `fk_WorkoutCompletion_workoutId` FOREIGN KEY (`workoutId`) REFERENCES `Workout` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `PrescriptionPreset` ADD CONSTRAINT `fk_PrescriptionPreset_ownerId` FOREIGN KEY (`ownerId`) REFERENCES `User` (`id`) ON DELETE CASCADE;
 

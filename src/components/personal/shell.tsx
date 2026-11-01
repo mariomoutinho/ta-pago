@@ -84,6 +84,7 @@ export function PersonalShell({ children }: { children: ReactNode }) {
                   : "Conta do aluno"}
               </Label>
             </View>
+            {user.role === "personal" && <EnrollmentNotifications key={user.id} />}
             <Button variant="secondary" label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>
               {scheme === "dark" ? "☀" : "☾"}
             </Button>
@@ -103,7 +104,6 @@ export function PersonalShell({ children }: { children: ReactNode }) {
         </View>
       </View>
       <Notice error>{error}</Notice>
-      {user.role === "personal" && <EnrollmentNotifications key={user.id} />}
       <View style={{ flex: 1 }}>{children}</View>
     </SafeAreaView>
   );

@@ -11,6 +11,9 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/News.php",
+    "server/news.ts",
+    "shared/notifications.ts",
     "src/app/alunos/cadastros.tsx",
     "src/app/alunos/link.tsx",
     "src/app/_layout.tsx",
@@ -43,7 +46,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.8.1",
+  "version": "4.9.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -110,19 +113,19 @@ A reprodução automática sem controles foi verificada em 320 × 568, 390 × 74
 
 Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verificou avanço automático, seleção, pausa, retomada, ausência dos três destaques, abertura do cadastro e ausência de erros JavaScript. Em 320 px, verificou movimento reduzido, seleção manual e ausência de rolagem horizontal na página. Typecheck, build PHP/web e os seis testes de empacotamento passaram. As suítes documentais e de extração repetiram as cinco falhas já registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md), relacionadas a links simbólicos no Windows e proveniência.
 
-## Avisos de cadastro para o personal
+## Central de novidades do personal
 
-O cabeçalho profissional mostra avisos de cadastro e a contagem de fichas pendentes. Com o app ativo, GET /notifications/summary atualiza a contagem a cada 15 segundos e ao voltar para o aplicativo. O botão Analisar cadastros recebidos abre a página do link e das aprovações; a contagem cai quando a ficha deixa de estar pendente. A API retorna somente a quantidade, filtra pelo profissional autenticado e respeita a retenção configurada. Alunos não acessam esses endpoints.
+O sino no cabe?alho abre uma janela com as 100 novidades mais recentes, limitadas a 90 dias ou ? reten??o configurada, se menor. Inclui cadastros enviados, conclus?es de treino e feedbacks. Um c?rculo vermelho sinaliza itens n?o lidos. GET /notifications/summary atualiza a quantidade a cada 15 segundos enquanto o app est? ativo e ao retornar ao primeiro plano. GET /notifications/feed devolve somente eventos do personal autenticado; alunos e outros profissionais n?o acessam seus avisos.
 
-O diálogo Notificações de cadastro permite ativar ou desativar os avisos neste aparelho. A permissão do sistema só é solicitada após o toque. O PWA usa Push API, VAPID ES256 e um worker dedicado sem interceptação de requisições nem cache offline. O aviso do sistema contém apenas “Novo cadastro recebido” e texto genérico, sem nome, contato ou dados de saúde. Tocar no aviso abre /alunos/cadastros; se a sessão expirou, o login continua obrigatório. Sair da conta remove a inscrição desse aparelho.
+Abrir a janela n?o apaga os avisos. Tocar em um item registra sua leitura e abre o destino; Marcar todas como lidas registra os itens apresentados. POST /notifications/read valida os IDs contra os eventos do pr?prio personal. A leitura persiste por conta no servidor, compartilhada entre aparelhos, com grava??o at?mica e trava. Cadastros pendentes abrem diretamente /alunos/cadastros, com Ver ficha, Aprovar e Recusar, sem exigir rolagem pela p?gina do link. Link de cadastro permanece dispon?vel separadamente.
 
-Analisar cadastros recebidos e Ver cadastros recebidos abrem diretamente /alunos/cadastros, protegida para o personal. A tela mostra somente pendências e mantém Ver ficha, Aprovar e Recusar; não apresenta a geração do link ou os filtros da tela administrativa. Reutiliza o mesmo fluxo de análise, confirma a recusa e retira a ficha da lista após a decisão. O teste em 390 × 740 verifica os botões de decisão na primeira tela, sem rolagem. Link de Cadastro permanece disponível para compartilhar o formulário e consultar os demais status. O app verifica atualizações do worker ao abrir para aplicar também o novo destino das notificações.
+No primeiro acesso compat?vel, o aplicativo apresenta Receber notifica??es?, com Permitir notifica??es e Agora n?o. O pedido do sistema acontece somente ao tocar em Permitir, exig?ncia dos navegadores. A escolha ? lembrada neste aparelho; instalar o PWA permite um novo convite espec?fico da instala??o. O sino mant?m as op??es de ativar/desativar. No iPhone/iPad, Web Push exige iOS/iPadOS 16.4 ou superior e abertura pelo ?cone da tela inicial. A vers?o nativa n?o possui provedor push configurado nesta entrega.
 
-O servidor mantém a chave de assinatura e inscrições cifradas fora da pasta pública e do repositório. O cadastro só dispara o aviso após a confirmação da transação; duplicatas não criam outro aviso. Um despachante periódico consulta fichas pendentes recentes, conserva os IDs já enviados por aparelho, repete falhas com espera progressiva e descarta inscrições com resposta 404/410. Fichas anteriores à ativação ou com mais de 24 horas não geram push. Múltiplos cadastros podem ser agrupados em um aviso genérico, enquanto a contagem no aplicativo continua refletindo todas as pendências. Entrega depende da permissão, conexão, navegador, provedor push e configurações do aparelho.
+O PWA usa Push API, VAPID ES256 e worker dedicado sem cache offline. A notifica??o do sistema diz Novidade no T? Pago, com texto gen?rico, sem nomes ou informa??es de sa?de; tocar abre /?novidades=1 e a central ap?s autentica??o. Sair remove a inscri??o deste aparelho. Chaves e inscri??es cifradas permanecem no armazenamento privado existente; leituras ficam no subdiret?rio read. Preservar ambos nos deploys e backups.
 
-O envio Web Push não contém payload de dados pessoais: o worker apresenta a mensagem local. Serviços aceitos são os endpoints HTTPS de Google, Apple, Mozilla e Windows explicitamente permitidos; redirecionamentos são rejeitados. No PHP, a chave privada e as inscrições ficam em storage/push ou pushDirectory; no Express, em PERSONAL_PUSH_DIRECTORY ou data/push. Preservar esse armazenamento e a chave de criptografia em deploys e backups.
+Cadastro, conclus?o e feedback disparam somente ap?s a confirma??o da transa??o. Duplicatas preservam o ID e n?o geram novo evento. O despachante mant?m IDs enviados por aparelho, repete falhas com espera progressiva e descarta inscri??es 404/410. Eventos anteriores ? ativa??o ou com mais de 24 horas n?o geram push. V?rios eventos podem ser agrupados em um aviso gen?rico. A entrega depende de permiss?o, conex?o e configura??es do aparelho. Somente endpoints HTTPS de Google, Apple, Mozilla e Windows explicitamente permitidos s?o aceitos; redirecionamentos s?o rejeitados.
 
-No iPhone/iPad, o Web Push exige iOS/iPadOS 16.4 ou superior e o aplicativo adicionado à tela inicial. Navegadores incompatíveis mantêm os avisos dentro do app e exibem orientação. A entrega em aparelhos físicos precisa de validação após o professor ativar a permissão. Referências: [Web Push no WebKit](https://webkit.org/blog/13966/webkit-features-in-safari-16-4/), [VAPID RFC 8292](https://www.rfc-editor.org/rfc/rfc8292) e [Web Push RFC 8030](https://www.rfc-editor.org/rfc/rfc8030).
+Valida??o local: 17 testes de API Node e tr?s cen?rios de navegador passaram, verificando isolamento entre profissionais, leitura persistente, convite inicial, ponto vermelho, abertura direta da an?lise e apresenta??o gen?rica pelo worker. A su?te PHP passou 138 verifica??es HTTP e os ensaios de migra??o. Aparelhos f?sicos n?o foram testados nesta altera??o. Refer?ncias: [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API), [Web Push no WebKit](https://webkit.org/blog/13966/webkit-features-in-safari-16-4/), [VAPID RFC 8292](https://www.rfc-editor.org/rfc/rfc8292).
 
 ## Confirmação do cadastro por link
 
