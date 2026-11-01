@@ -23,7 +23,9 @@ export default function SignIn() {
   const [role, setRole] = useState("personal");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const compact = width < 700;
+  const smallPhone = compact && height < 620;
   async function submit() {
     setBusy(true);
     setError("");
@@ -43,20 +45,21 @@ export default function SignIn() {
   }
   return (
     <Page>
-      <View style={{ paddingVertical: 24 }}>
-        <Brand />
+      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>
+        <Brand compact={compact} />
       </View>
       <View
         style={[
           s.grid,
-          { alignItems: "center", marginTop: width > 700 ? 50 : 10 },
+          { alignItems: "center", marginTop: smallPhone ? 0 : compact ? 4 : 50 },
+          smallPhone && { gap: 8 },
         ]}
       >
         <View style={s.column}>
           <WelcomeCarousel />
         </View>
-        <Card style={[s.column, { padding: 32 }]}>
-          <Label size={26} bold>
+        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>
+          <Label size={compact ? 20 : 26} bold>
             {register ? "Crie sua conta" : "Seu treino começa aqui."}
           </Label>
           <Label muted>
@@ -64,7 +67,7 @@ export default function SignIn() {
               ? "Uma identidade para acompanhar sua evolução."
               : "Entre no seu espaço Tá Pago Personal."}
           </Label>
-          <View style={{ marginTop: 24 }}>
+          <View style={{ marginTop: compact ? 12 : 24 }}>
             {register && (
               <>
                 <Field label="Seu nome" value={name} onChangeText={setName} />

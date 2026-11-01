@@ -22,7 +22,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -51,7 +51,11 @@ Aluno: aceita convite de uso único, consulta seu acompanhamento, preenche respo
 
 A tela de entrada substitui o bloco promocional estático por um carrossel com três mensagens: presença e conquistas; alunos, treinos e avaliações; evolução além dos números. Os destaques “33 perguntas”, “13 critérios técnicos” e “Histórico preservado” foram removidos somente dessa apresentação.
 
-O carrossel avança a cada 5,5 segundos, permite deslizar lateralmente e selecionar uma mensagem pelos indicadores. Interação manual pausa a reprodução; o botão permite retomá-la. A preferência de movimento reduzido desativa o avanço automático e as animações, mantendo a seleção manual. O temporizador fica suspenso quando o aplicativo sai do primeiro plano. A implementação é compartilhada entre web e plataformas nativas; aparelhos físicos ainda precisam de validação.
+O carrossel avança lateralmente a cada 2 segundos, permite deslizar e selecionar uma mensagem pelos indicadores. Interação manual pausa a reprodução; o botão permite retomá-la. A preferência de movimento reduzido desativa o avanço automático e as animações, mantendo a seleção manual. O temporizador fica suspenso quando o aplicativo sai do primeiro plano. A implementação é compartilhada entre web e plataformas nativas; aparelhos físicos ainda precisam de validação.
+
+A apresentação tem altura menor. Em celulares, marca, margens e cartão de login são compactados para deixar o acesso completo visível na tela inicial, sem teclado aberto. Em áreas visíveis menores que 740 px de altura, o carrossel prioriza os títulos; abaixo de 620 px, omite também o destaque superior e reduz espaçamentos. A página permanece rolável para cadastro, teclado aberto e tamanhos de fonte ampliados.
+
+O ajuste compacto foi verificado localmente em 320 × 568, 360 × 640, 390 × 740 e 1280 × 900, com todos os campos e os botões Entrar e Criar minha conta dentro da área visível inicial. Os mesmos cenários verificaram troca automática lateral, seleção, pausa, retomada e abertura do cadastro; o cenário com movimento reduzido preservou a seleção manual.
 
 Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verificou avanço automático, seleção, pausa, retomada, ausência dos três destaques, abertura do cadastro e ausência de erros JavaScript. Em 320 px, verificou movimento reduzido, seleção manual e ausência de rolagem horizontal na página. Typecheck, build PHP/web e os seis testes de empacotamento passaram. As suítes documentais e de extração repetiram as cinco falhas já registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md), relacionadas a links simbólicos no Windows e proveniência.
 
