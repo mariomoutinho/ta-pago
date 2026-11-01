@@ -155,8 +155,8 @@ export default function EnrollmentForm() {
               do profissional para os próximos passos.
             </Label>
             <Notice>
-              O envio não cria uma conta nem libera acesso ao acompanhamento. A
-              aprovação será feita pelo personal.
+              Seu perfil foi criado com sucesso! Agora, aguarde a análise e
+              aprovação do seu personal.
             </Notice>
           </Card>
         ) : (

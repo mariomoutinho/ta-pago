@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/app/cadastro/[token].tsx",
     "server/app.ts",
     "server/import-compasso.ts",
     "prisma/schema.prisma",
@@ -31,7 +32,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -97,6 +98,10 @@ A correção anterior de movimento foi verificada em 320 × 568, 360 × 640 e 12
 A reprodução automática sem controles foi verificada em 320 × 568, 390 × 740 e 1280 × 900, inclusive com movimento reduzido informado pelo sistema: avanço em 3 segundos sem ativação, deslocamento lateral intermediário, ciclo completo, continuidade após seleção manual, ausência dos botões e login inteiro visível.
 
 Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verificou avanço automático, seleção, pausa, retomada, ausência dos três destaques, abertura do cadastro e ausência de erros JavaScript. Em 320 px, verificou movimento reduzido, seleção manual e ausência de rolagem horizontal na página. Typecheck, build PHP/web e os seis testes de empacotamento passaram. As suítes documentais e de extração repetiram as cinco falhas já registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md), relacionadas a links simbólicos no Windows e proveniência.
+
+## Confirmação do cadastro por link
+
+Após o envio bem-sucedido do formulário público, a confirmação informa: “Seu perfil foi criado com sucesso! Agora, aguarde a análise e aprovação do seu personal.” A mensagem substitui o aviso anterior sobre criação de conta. O fluxo permanece pendente de aprovação pelo profissional; a mudança é somente de texto e não altera criação de contas, vínculo ou liberação de acesso.
 
 ## Persistência e operação
 
