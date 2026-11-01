@@ -47,6 +47,10 @@ it("conta apenas pendências do dono, cifra inscrição e entrega sem duplicar",
   expect((await owner.get('/api/notifications/feed')).body[0].read).toBe(true);
   const file=path.join(folder,"push",fs.readdirSync(path.join(folder,"push")).find(file=>file.endsWith(".json"))!);
   expect(fs.readFileSync(file,"utf8")).not.toContain(endpoint);
+  expect((await other.post('/api/notifications/receipt').set(headers).send({endpoint,shown:true})).status).toBe(404);
+  expect((await owner.post('/api/notifications/receipt').set(headers).send({endpoint,shown:'true'})).status).toBe(400);
+  expect((await owner.post('/api/notifications/receipt').set(headers).send({endpoint,shown:true})).status).toBe(200);
+  const received=JSON.parse(fs.readFileSync(file,'utf8'));expect(received.lastReceivedAt).toBeTruthy();expect(received.lastDisplaySucceeded).toBe(true);
   expect((await dispatchPush(db,ownerId,async()=>201)).sent).toBe(1);
   expect((await dispatchPush(db,ownerId,async()=>{throw Error("não deveria reenviar");})).sent).toBe(0);
   await db.enrollmentRequest.update({where:{id:pending.id},data:{status:"rejected"}});

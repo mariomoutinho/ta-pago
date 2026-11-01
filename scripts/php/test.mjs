@@ -162,6 +162,9 @@ try {
   const syntheticEndpoint='https://fcm.googleapis.com/fcm/send/synthetic-subscription';
   for(const endpoint of ['https://127.0.0.1/push','https://fcm.googleapis.com.evil.test/push','http://fcm.googleapis.com/x','https://u:p@fcm.googleapis.com/x'])await req(teacher,'POST','/notifications/subscribe',{endpoint},400);
   await req(teacher,'POST','/notifications/subscribe',{endpoint:syntheticEndpoint});
+  await req(other,'POST','/notifications/receipt',{endpoint:syntheticEndpoint,shown:true},404);
+  await req(teacher,'POST','/notifications/receipt',{endpoint:syntheticEndpoint,shown:'true'},400);
+  await req(teacher,'POST','/notifications/receipt',{endpoint:syntheticEndpoint,shown:true});
   await req(other,'POST','/notifications/test',{endpoint:syntheticEndpoint},404);
   await req(teacher,'POST','/notifications/test',{endpoint:syntheticEndpoint});
   await req(teacher,'POST','/notifications/test',{endpoint:syntheticEndpoint},429);

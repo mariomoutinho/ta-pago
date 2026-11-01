@@ -72,6 +72,17 @@ final class Push {
         $state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);if($state['owner']===$owner)unlink($file);
         } finally {flock($lock,LOCK_UN);fclose($lock);}
     }
+    public function receipt(string $owner,string $endpoint,bool $shown): void {
+        ensure(self::endpoint($endpoint),'Inscrição inválida');
+        $file=$this->root().'/'.hash('sha256',$endpoint).'.json';
+        $lock=fopen($file.'.lock','c');if(!$lock||!flock($lock,LOCK_EX))throw new \RuntimeException('Push storage');
+        try{
+            ensure(is_file($file),'Inscrição não encontrada',404);
+            $state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);
+            ensure($state['owner']===$owner,'Inscrição não encontrada',404);
+            $state['lastReceivedAt']=now();$state['lastDisplaySucceeded']=$shown;$this->save($file,$state);
+        }finally{flock($lock,LOCK_UN);fclose($lock);}
+    }
     public function scheduleTest(string $owner,string $endpoint): void {
         ensure(self::endpoint($endpoint),'Inscrição inválida');
         $file=$this->root().'/'.hash('sha256',$endpoint).'.json';
@@ -103,7 +114,7 @@ final class Push {
                     $curl=curl_init($endpoint);curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>'',CURLOPT_HTTPHEADER=>['Authorization: '.$authorization,'TTL: 86400','Urgency: normal','Content-Length: 0'],CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>false,CURLOPT_CONNECTTIMEOUT=>3,CURLOPT_TIMEOUT=>5,CURLOPT_PROTOCOLS=>CURLPROTO_HTTPS]);
                     curl_exec($curl);$status=(int)curl_getinfo($curl,CURLINFO_HTTP_CODE);curl_close($curl);
                 }
-                if($status>=200&&$status<300){$state['sent']=$ids;$state['attempts']=0;$state['retryAt']=0;if($testDue)unset($state['testAt']);$counts['sent']++;}
+                if($status>=200&&$status<300){$state['sent']=$ids;$state['attempts']=0;$state['retryAt']=0;$state['lastAcceptedAt']=now();if($testDue)unset($state['testAt']);$counts['sent']++;}
                 elseif(in_array($status,[404,410],true)){unlink($file);$counts['expired']++;continue;}
                 else{$state['attempts']++;$state['retryAt']=time()+min(3600,60*(2**min(6,$state['attempts']-1)));$counts['failed']++;}
                 $this->save($file,$state);

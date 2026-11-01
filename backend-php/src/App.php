@@ -55,6 +55,10 @@ final class App {
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
         if ($path==='/notifications/settings' && $method==='GET') return ['publicKey'=>(new Push($this->db,$this->config))->publicKey()];
+        if ($path==='/notifications/receipt'&&$method==='POST') {
+            ensure(is_string($body['endpoint']??null)&&is_bool($body['shown']??null),'Confirmação inválida');
+            (new Push($this->db,$this->config))->receipt($this->user['id'],$body['endpoint'],$body['shown']);return ['ok'=>true];
+        }
         if ($path==='/notifications/test'&&$method==='POST') {
             ensure(is_string($body['endpoint']??null),'Inscrição inválida');
             (new Push($this->db,$this->config))->scheduleTest($this->user['id'],$body['endpoint']);return ['scheduled'=>true];

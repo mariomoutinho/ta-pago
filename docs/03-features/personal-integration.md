@@ -56,7 +56,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.11.0",
+  "version": "4.11.1",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -171,10 +171,14 @@ O teste fica persistido na inscri??o privada com vencimento em 15 segundos. O cr
 
 ## Destino ao tocar na notifica??o do celular
 
-O worker consulta o feed autenticado na mesma origem ao receber o push, com limite de tr?s segundos, e guarda somente o ID do evento mais recente em notification.data. O aviso continua gen?rico e o push do provedor continua sem payload. Em sess?o expirada ou falha de rede, o aviso ainda aparece e o destino ser? resolvido ao abrir. N?o adiciona cache offline nem intercepta??o de requisi??es.
+O worker solicita imediatamente a apresenta??o do alerta, sem consultar a rede antes. O aviso continua gen?rico e o push do provedor continua sem payload. O destino ? resolvido ao tocar, pelo feed autenticado de /notificacao. N?o adiciona cache offline nem intercepta??o de requisi??es.
 
 Ao tocar, abre URL absoluta na mesma origem por clients.openWindow, que pode retomar o PWA instalado no Android, e tenta focar a janela retornada. Se a abertura falhar, tenta focar e navegar uma janela existente; erros de uma janela n?o interrompem a tentativa nas demais. Destinos externos ou fora de /notificacao s?o ignorados.
 
 A tela p?blica /notificacao mant?m o ID durante a autentica??o e consulta novamente o feed do personal autenticado antes de navegar. Um cadastro pendente abre /alunos/cadastros?cadastro=ID, filtrando a ficha correspondente com Aprovar, Recusar e Ver ficha. Ver todos os cadastros recebidos remove o filtro. Treino conclu?do ou feedback abre os treinos do aluno; cadastro j? aprovado segue o destino atual do feed. A leitura do evento ? registrada ao abrir. N?o permite que par?metros de URL escolham destinos externos ou acessem avisos de outro profissional. Sem evento dispon?vel, abre a central de novidades. Conta de aluno segue para a pr?pria p?gina inicial.
 
 Valida??o: tr?s testes do worker cobrem abertura com app fechado, retorno a janela existente, consulta indispon?vel e bloqueio de URL externa. Cen?rios de navegador verificam entrada pelo aviso, tela espec?fica do cadastro, destino de treino e retomada ap?s login. O toque real no alerta do Android ainda precisa ser conferido ap?s a atualiza??o do worker no aparelho.
+
+## Confirma??o de recebimento no aparelho
+
+Ap?s solicitar showNotification, o worker tenta POST /notifications/receipt na mesma origem, com sess?o, inscri??o atual e booleano de sucesso da apresenta??o. A chamada tem timeout de tr?s segundos e falhas n?o impedem a notifica??o. O endpoint exige personal propriet?rio da inscri??o e grava lastReceivedAt e lastDisplaySucceeded no arquivo privado existente, sob a mesma trava. O despachante grava lastAcceptedAt ao obter aceite do provedor. Sem sess?o v?lida, a confirma??o pode faltar mesmo quando o aviso foi apresentado. Sucesso da API de apresenta??o n?o comprova que o usu?rio viu popup, ouviu som ou leu o aviso; as configura??es do Android continuam determinantes. Nenhum nome ou dado de sa?de ? inclu?do na confirma??o.

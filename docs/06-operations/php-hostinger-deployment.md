@@ -44,7 +44,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "authority": "code",
   "audience": [
     "developer",
@@ -224,4 +224,8 @@ O teste em segundo plano adiciona testAt e lastTestAt ? inscri??o selecionada, s
 
 ## Corre??o da abertura ao tocar no aviso
 
-Atualizar o bundle e notifications-sw.js na raiz, sem altera??o de banco ou runtime PHP. Publicar JavaScript antes do HTML e depois o worker; conferir hashes, resposta 200 de /notificacao e sa?de da API. O worker agora consulta a API autenticada para identificar o destino, sem interceptar requisi??es nem criar cache offline. Abrir novamente o aplicativo solicita a atualiza??o do worker. Alertas j? apresentados podem ter dados do worker anterior; para conferir a corre??o, testar com um aviso novo ap?s reabrir o app.
+Atualizar o bundle e notifications-sw.js na raiz, sem altera??o de banco ou runtime PHP. Publicar JavaScript antes do HTML e depois o worker; conferir hashes, resposta 200 de /notificacao e sa?de da API. O destino ? consultado pela tela /notificacao ap?s o toque; o worker n?o espera a rede para apresentar o aviso, n?o intercepta requisi??es nem cria cache offline. Abrir novamente o aplicativo solicita a atualiza??o do worker. Alertas j? apresentados podem ter dados do worker anterior; para conferir a corre??o, testar com um aviso novo ap?s reabrir o app.
+
+## Confirma??o de recebimento no aparelho
+
+Ap?s solicitar showNotification, o worker tenta POST /notifications/receipt na mesma origem, com sess?o, inscri??o atual e booleano de sucesso da apresenta??o. A chamada tem timeout de tr?s segundos e falhas n?o impedem a notifica??o. O endpoint exige personal propriet?rio da inscri??o e grava lastReceivedAt e lastDisplaySucceeded no arquivo privado existente, sob a mesma trava. O despachante grava lastAcceptedAt ao obter aceite do provedor. Sem sess?o v?lida, a confirma??o pode faltar mesmo quando o aviso foi apresentado. Sucesso da API de apresenta??o n?o comprova que o usu?rio viu popup, ouviu som ou leu o aviso; as configura??es do Android continuam determinantes. Nenhum nome ou dado de sa?de ? inclu?do na confirma??o.

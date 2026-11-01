@@ -3,22 +3,24 @@ self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('push', event => {
   event.waitUntil((async () => {
-    let url = '/notificacao';
-    // O push continua sem payload. O destino é consultado apenas na API autenticada.
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
-    try {
-      const response = await fetch('/api/notifications/feed', { credentials: 'include', cache: 'no-store', signal: controller.signal });
-      if (response.ok) {
-        const items = await response.json();
-        if (Array.isArray(items) && typeof items[0]?.id === 'string') url += '?aviso=' + encodeURIComponent(items[0].id);
-      }
-    } catch {} finally { clearTimeout(timeout); }
-    await self.registration.showNotification('Novidade no Tá Pago', {
+    let shown = false;
+    try { await self.registration.showNotification('Novidade no Tá Pago', {
     body: 'Você tem uma nova atualização dos seus alunos. Toque para ver.',
     icon: '/assets/pwa/icon-192.png', badge: '/assets/pwa/icon-192.png',
-    tag: 'student-news', renotify: true, data: { url },
-    });
+    tag: 'student-news', renotify: true, data: { url: '/notificacao' },
+    }); shown = true; } finally {
+      // Diagnóstico posterior: nunca esperar a rede para apresentar o alerta.
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      try {
+        const subscription = await self.registration.pushManager.getSubscription();
+        if (subscription) await fetch('/api/notifications/receipt', {
+          method: 'POST', credentials: 'include', cache: 'no-store', signal: controller.signal,
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'TaPago' },
+          body: JSON.stringify({ endpoint: subscription.endpoint, shown }),
+        });
+      } catch {} finally { clearTimeout(timeout); }
+    }
   })());
 });
 self.addEventListener('notificationclick', event => {
