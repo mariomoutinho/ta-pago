@@ -1,4 +1,4 @@
-export type PushState = { supported: boolean; enabled: boolean; blocked: boolean };
+export type PushState = { supported: boolean; enabled: boolean; blocked: boolean; nativeApp?:boolean };
 export const shouldOfferPush = (_userId:string) => false;
 export function rememberPushOffer(_userId:string) {}
 export const watchPushInstall = (_callback:()=>void) => () => {};

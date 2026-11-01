@@ -1,5 +1,5 @@
 import { api } from "./api";
-export type PushState = { supported: boolean; enabled: boolean; blocked: boolean };
+export type PushState = { supported: boolean; enabled: boolean; blocked: boolean; nativeApp?:boolean };
 const offered = new Set<string>();
 function offerKey(userId:string){const installed=window.matchMedia('(display-mode: standalone)').matches||(navigator as Navigator&{standalone?:boolean}).standalone;return 'tapago.push-offer.'+userId+(installed?'.installed':'.browser');}
 export function shouldOfferPush(userId:string){const key=offerKey(userId);try{return !localStorage.getItem(key);}catch{return !offered.has(key);}}
@@ -7,6 +7,7 @@ export function rememberPushOffer(userId:string){const key=offerKey(userId);offe
 export function watchPushInstall(callback:()=>void){window.addEventListener('appinstalled',callback);return()=>window.removeEventListener('appinstalled',callback);}
 export function pushSupported() { return typeof window !== "undefined" && window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; }
 export async function pushState(): Promise<PushState> {
+  if(typeof navigator!=='undefined'&&/TaPagoAndroid\//.test(navigator.userAgent))return {supported:false,enabled:false,blocked:false,nativeApp:true};
   if (!pushSupported()) return { supported: false, enabled: false, blocked: false };
   const registration = await navigator.serviceWorker.getRegistration("/");
   if (registration) void registration.update().catch(() => {});

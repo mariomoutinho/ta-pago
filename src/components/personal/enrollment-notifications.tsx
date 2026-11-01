@@ -71,7 +71,7 @@ export function EnrollmentNotifications(){
       {settings&&<View style={{gap:8,marginTop:12}}>
         <Notice>{device?.enabled?'Notificações ativadas neste aparelho.':'Ative os avisos para receber novidades com o aplicativo fechado. No iPhone, abra pelo ícone da tela inicial.'}</Notice>
         {device?.blocked&&<Notice>Libere a permissão nas configurações do navegador ou do celular.</Notice>}
-        {device&&!device.supported&&<Notice>Use o Tá Pago instalado pelo navegador em um aparelho compatível.</Notice>}
+        {device&&!device.supported&&<Notice>{device.nativeApp?'Você está usando o APK Android. O envio de notificações nativas ainda não está ativado. As novidades continuam disponíveis no sino.':'Use o Tá Pago instalado pelo navegador em um aparelho compatível.'}</Notice>}
         <Button disabled={busy||!device?.supported} onPress={()=>void togglePush()}>{busy?'Aguarde…':device?.enabled?'Desativar neste aparelho':'Ativar notificações neste aparelho'}</Button>
         {device?.enabled&&<>
           <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testPushNotification();setTestResult('Teste solicitado ao celular. Se o alerta não apareceu, confira as notificações do Tá Pago e do navegador nas configurações do Android.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta no celular</Button>
