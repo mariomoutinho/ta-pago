@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 import { seed } from "../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-access-")),
   url = `file:${folder}/test.db`;
@@ -27,8 +27,8 @@ let evaluation: any;
 beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
-    path.resolve("node_modules/.bin/prisma"),
-    ["migrate", "deploy"],
+    process.execPath,
+    [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],
     { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" },
   );
   await seed(db);
@@ -36,11 +36,12 @@ beforeAll(async () => {
     [personal, "p@example.com", "personal"],
     [other, "o@example.com", "personal"],
     [student, "s@example.com", "student"],
-  ] as const)
+  ] as const) {
+    if (role === "personal") await provisionPersonal(db, { name: "Conta teste", email, password: "senha-ficticia-12345" });
     expect(
       (
         await agent
-          .post("/api/auth/register")
+          .post(role === "personal" ? "/api/auth/login" : "/api/auth/register")
           .set(header)
           .send({
             name: "Conta teste",
@@ -49,7 +50,8 @@ beforeAll(async () => {
             role,
           })
       ).status,
-    ).toBe(201);
+    ).toBe(role === "personal" ? 200 : 201);
+  }
   id = (await personal.post("/api/students").set(header).send(data)).body.id;
   template = (await personal.get("/api/templates")).body[0];
   evaluation = (

@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-30",
+  "updated_at": "2026-11-01",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -26,12 +26,14 @@
     "hostinger.mjs",
     "server/runtime.ts",
     "backend-php/bootstrap.php",
+    "backend-php/src/Auth.php",
+    "src/app/entrar.tsx",
     "scripts/php/build.mjs"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -86,6 +88,8 @@
 O Tá Pago será uma rede social fitness para amigos compartilharem treinos, participarem de desafios e acompanharem sua evolução, com ferramentas para professores acompanharem alunos online.
 
 ## Estado atual
+
+O cadastro público cria somente contas de aluno. Contas de personal existentes exigem autorização por ID na configuração do servidor; a instalação atual mantém apenas a conta do responsável autorizada. Consulte a [política de contas do módulo Personal](docs/03-features/personal-integration.md).
 
 **Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. O backend PHP/MySQL atende à hospedagem Single; Express/Prisma/SQLite permanece como implementação anterior e para desenvolvimento local. Ambos implementam autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
 

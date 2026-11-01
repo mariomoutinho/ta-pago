@@ -41,9 +41,13 @@ try {
   assert.ok(upgraded.passwordHash.startsWith('bcrypt-sha384:'),'Hash legado não atualizado');
   await req(anon,'POST','/auth/login',{email:[],password},400);
   for(const [c,email,role] of [[teacher,'a@example.test','personal'],[other,'b@example.test','personal'],[pupil,'p@example.test','student']]) {
-    await req(c,'POST','/auth/register',{name:'Pessoa Teste',email,password,role},201);
+    await req(c,'POST',role==='personal'?'/auth/login':'/auth/register',{name:'Pessoa Teste',email,password,role},role==='personal'?200:201);
     assert.match(c.cookie,/tapago_session_php=/);
   }
+  await req(anon,'POST','/auth/register',{name:'Pessoa Teste',email:'forged@example.test',password,role:'personal',id:'test-teacher-a'},403);
+  assert.equal(JSON.parse(run(['backend-php/tests/dump.php'],env)).User.some(u=>u.email==='forged@example.test'),false);
+  await req(anon,'POST','/auth/login',{email:'blocked@example.test',password},403);
+  await req(anon,'POST','/auth/login',{email:'blocked@example.test',password:'Senha incorreta 123'},401);
   await req(anon,'POST','/auth/login',{email:'a@example.test',password:'Senha incorreta 123'},401);
   await req(teacher,'POST','/students',{},403,{'X-Requested-With':''});
   await req(teacher,'GET','/students',undefined,403,{Origin:'https://evil.example'});

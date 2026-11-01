@@ -5,13 +5,33 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import type { Server } from "node:http";
 import { createDb } from "../../../server/db";
-import { createApp } from "../../../server/app";
+import { createTestApp as createApp, provisionBrowserPersonal } from "../fixtures";
 import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
 let server: Server;
 let base: string;
+
+test("cadastro público cria somente aluno e não oferece perfil de personal", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + "/entrar");
+  await page.getByRole("button", { name: "Criar minha conta", exact: true }).click();
+  await expect(page.getByText("Cadastro para alunos. O acesso de personal depende de autorização.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: /personal/i })).toHaveCount(0);
+  await page.getByLabel("Seu nome", { exact: true }).fill("Aluno de teste");
+  await page.getByLabel("E-mail", { exact: true }).fill("signup-student-browser@example.test");
+  await page.getByLabel("Senha", { exact: true }).fill("senha-ficticia-12345");
+  const registration = page.waitForResponse(response => response.url().endsWith("/api/auth/register") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Criar conta", exact: true }).click();
+  const response = await registration;
+  expect(response.status()).toBe(201);
+  expect((await response.json()).user.role).toBe("student");
+  const forged = await page.request.post(base + "/api/auth/register", { headers: { "X-Requested-With": "TaPago" }, data: {
+    name: "Personal sem autorização", email: "forged-browser@example.test", role: "personal", password: "senha-ficticia-12345",
+  } });
+  expect(forged.status()).toBe(403);
+});
 test.beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
@@ -33,7 +53,7 @@ test.afterAll(async () => {
 for (const width of [390, 1280]) {
   test(`edição na biblioteca de treino preparado mantém a posição em ${width}px`, async ({ page }) => {
     const headers = { "X-Requested-With": "TaPago" };
-    await page.request.post(base + "/api/auth/register", { headers, data: {
+    await provisionBrowserPersonal(db, page.request, base, { headers, data: {
       name: "Personal Modal", email: `edit-modal-${width}@example.com`, role: "personal", password: "senha-ficticia-12345",
     } });
     for (let i = 0; i < 12; i++) {
@@ -80,10 +100,10 @@ test("início do aluno conecta professor e mostra somente treinos liberados no c
   const headers = { "X-Requested-With": "TaPago" };
   const teacher = await browser.newContext();
   try {
-    const registered = await teacher.request.post(base + "/api/auth/register", { headers, data: {
+    const registered = await provisionBrowserPersonal(db, teacher.request, base, { headers, data: {
       name: "Professor do Portal", email: "teacher-portal@example.com", role: "personal", password: "senha-ficticia-12345",
     } });
-    expect(registered.status()).toBe(201);
+    expect(registered.status()).toBe(200);
     const student = await (await teacher.request.post(base + "/api/students", { headers, data: {
       name: "Aluno Portal", mainGoal: "Condicionamento", startDate: "2026-10-29",
     } })).json();
@@ -201,7 +221,7 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.request.post(base + "/api/auth/register", {
+  await provisionBrowserPersonal(db, page.request, base, {
     headers: { "X-Requested-With": "TaPago" },
     data: {
       name: "Personal Cadastro",
@@ -317,7 +337,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", {
+  await provisionBrowserPersonal(db, page.request, base, {
     headers,
     data: {
       name: "Personal Treinos",
@@ -534,7 +554,7 @@ test("vídeo YouTube aparece dentro da biblioteca sem navegar para outra página
   page,
 }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", {
+  await provisionBrowserPersonal(db, page.request, base, {
     headers,
     data: {
       name: "Personal Vídeo",
@@ -591,7 +611,7 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
   page,
 }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", {
+  await provisionBrowserPersonal(db, page.request, base, {
     headers,
     data: {
       name: "Personal Painel",
@@ -673,7 +693,7 @@ test("lista compacta busca nome, e-mail e telefone e filtra status", async ({
   page,
 }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", {
+  await provisionBrowserPersonal(db, page.request, base, {
     headers,
     data: {
       name: "Personal Lista",
@@ -778,7 +798,7 @@ test("lista compacta busca nome, e-mail e telefone e filtra status", async ({
 
 test("perfil compacto preserva atalhos, opções e anotações", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: {
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: {
     name: "Personal Perfil", email: "profile-browser@example.com", password: "senha-ficticia-12345", role: "personal",
   } });
   const response = await page.request.post(base + "/api/students", { headers, data: {
@@ -812,7 +832,7 @@ test("perfil compacto preserva atalhos, opções e anotações", async ({ page }
 
 test("personal prepara treino sem aluno e copia para o perfil sem alterar o modelo", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: {
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: {
     name: "Personal Modelos", email: "templates-browser@example.com", password: "senha-ficticia-12345", role: "personal",
   } });
   await page.request.post(base + "/api/exercises", { headers, data: {
@@ -858,7 +878,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
 
 test("editor compacto reordena, preserva formulários, integra ações e restaura ordem em falha", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Editor", email: "editor-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Editor", email: "editor-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const exercises = [];
   for (const name of ["Primeiro", "Segundo", "Terceiro", "Alternativo"]) exercises.push(await (await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Pernas", category: "Força" } })).json());
   const template = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Modelo editor", exercises: exercises.slice(0, 3).map((ex, index) => ({ exerciseId: ex.id, sets: 3, repetitions: "12", load: index + 10, notes: "Preservar" })) } })).json();
@@ -935,7 +955,7 @@ test("handle reordena com mouse e toque prolongado sem expandir os cards", async
   for (const touch of [false, true]) {
     const context = await browser.newContext({ hasTouch: touch, viewport: { width: touch ? 390 : 1280, height: 1000 } });
     const page = await context.newPage(), headers = { "X-Requested-With": "TaPago" };
-    await page.request.post(base + "/api/auth/register", { headers, data: { name: "Arraste", email: "drag-" + touch + "@example.com", role: "personal", password: "senha-ficticia-12345" } });
+    await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Arraste", email: "drag-" + touch + "@example.com", role: "personal", password: "senha-ficticia-12345" } });
     const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Agachamento", muscleGroup: "Pernas", category: "Força" } })).json();
     const template = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Arrastar", exercises: [1, 2, 3].map(load => ({ exerciseId: exercise.id, load })) } })).json();
     await page.goto(base + "/treinos-preparados");
@@ -965,7 +985,7 @@ test("handle reordena com mouse e toque prolongado sem expandir os cards", async
 
 test("seleção em lote combina, arrasta e exclui na janela do aluno sem perder prescrições", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Blocos", email: "bulk-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Blocos", email: "bulk-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const exercises = [];
   for (const name of ["Supino bloco", "Remada bloco", "Agachamento bloco", "Prancha bloco"]) exercises.push(await (await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Corpo inteiro", category: "Força" } })).json());
   const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Blocos", mainGoal: "Força", startDate: "2026-10-24" } })).json();
@@ -1027,7 +1047,7 @@ test("seleção em lote combina, arrasta e exclui na janela do aluno sem perder 
 
 test("modelo permite combinar, separar e salvar seleções sem gravar grupos incompletos", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Seleção", email: "bulk-template@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Seleção", email: "bulk-template@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Exercício marcado", muscleGroup: "Pernas", category: "Força" } })).json();
   const created = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Modelo marcado", exercises: [1, 2, 3].map(load => ({ exerciseId: exercise.id, load })) } })).json();
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto(base + "/treinos-preparados");
@@ -1058,7 +1078,7 @@ test("modelo permite combinar, separar e salvar seleções sem gravar grupos inc
 
 test("telas do treino preservam navegação, gerenciam grupos e adicionam pela biblioteca", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Gestão", email: "group-management@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Gestão", email: "group-management@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const library = [];
   for (const name of ["Leg press", "Extensora", "Supino", "Remada"]) library.push(await (await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Corpo inteiro", category: "Força" } })).json());
   const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Gestão", mainGoal: "Força", startDate: "2026-10-24" } })).json();
@@ -1117,7 +1137,7 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
 
 test("adicionar treino mostra somente a nova sessão e preserva a rotina", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Sessão", email: "single-workout@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Sessão", email: "single-workout@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Sessão", mainGoal: "Força", startDate: "2026-10-26" } })).json();
   const endpoint = base + "/api/students/" + student.id + "/workout-plans";
   const original = await (await page.request.post(endpoint, { headers, data: { title: "Rotina preservada", objective: "Força", difficulty: "Iniciante", startsAt: "2026-10-26", instructions: "Manter orientações", workouts: [{ name: "Treino existente", exercises: [] }] } })).json();
@@ -1143,7 +1163,7 @@ test("adicionar treino mostra somente a nova sessão e preserva a rotina", async
 
 test("presets e séries por tipo preservam alongamento e campos configuráveis", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Tipos", email: "typed-series@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Tipos", email: "typed-series@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Alongamento teste", muscleGroup: "Peitoral", category: "Alongamento" } })).json();
   const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Tipos", mainGoal: "Mobilidade", startDate: "2026-10-26" } })).json();
   const endpoint = base + "/api/students/" + student.id + "/workout-plans";
@@ -1191,7 +1211,7 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
 for (const destination of ["aluno", "preparado"] as const) {
   test(`botão direto abre presets padrão e privados no treino ${destination}`, async ({ page }) => {
     const headers = { "X-Requested-With": "TaPago" };
-    await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Direto", email: `direct-${destination}@example.com`, role: "personal", password: "senha-ficticia-12345" } });
+    await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Direto", email: `direct-${destination}@example.com`, role: "personal", password: "senha-ficticia-12345" } });
     await page.request.post(base + "/api/exercises", { headers, data: { name: "Exercício direto", muscleGroup: "Peitoral", category: "Musculação" } });
     await page.request.post(base + "/api/prescription-presets", { headers, data: { name: "Meu preset particular", series: [{ sets: 2, repetitions: "10", load: null, restSeconds: 30 }] } });
     let endpoint = base + "/api/workout-templates";
@@ -1234,7 +1254,7 @@ for (const destination of ["aluno", "preparado"] as const) {
 
 test("Programas organiza rotinas com treinos e copia para o aluno sem alterar a origem", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Rotinas", email: "program-routines-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Rotinas", email: "program-routines-browser@example.com", role: "personal", password: "senha-ficticia-12345" } });
   await page.request.post(base + "/api/exercises", { headers, data: { name: "Supino da rotina", muscleGroup: "Peitoral", category: "Musculação" } });
   const legacy = await (await page.request.post(base + "/api/programs", { headers, data: { name: "Programa antigo", description: "Preservar descrição", cycleDays: 30, weeklyFrequency: 3, sessions: "Segunda e quarta" } })).json();
   await page.goto(base + "/programas");
@@ -1275,7 +1295,7 @@ test("Programas organiza rotinas com treinos e copia para o aluno sem alterar a 
 
 test("Ver modelo recolhe vídeos e permite expandir exercícios e blocos sem alterar o treino", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
-  await page.request.post(base + "/api/auth/register", { headers, data: { name: "Personal Prévia", email: "preview-collapse@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Prévia", email: "preview-collapse@example.com", role: "personal", password: "senha-ficticia-12345" } });
   const exercises = [];
   for (const name of ["Supino vídeo", "Crucifixo vídeo", "Remada vídeo"]) exercises.push(await (await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Peitoral", category: "Musculação", videoUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE" } })).json());
   const template = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Modelo compacto", exercises: exercises.map((exercise, i) => ({ exerciseId: exercise.id, groupId: i < 2 ? "dupla" : null, series: [{ sets: 3, repetitions: "8-12", load: null, restSeconds: 60 }] })) } })).json();
@@ -1310,7 +1330,7 @@ test("Ver modelo recolhe vídeos e permite expandir exercícios e blocos sem alt
 
 test("botão ao lado de Sair alterna o tema e mantém a escolha ao navegar e recarregar", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
-  await page.request.post(base + "/api/auth/register", { headers: { "X-Requested-With": "TaPago" }, data: { name: "Personal Tema", email: "theme-toggle@example.com", role: "personal", password: "senha-ficticia-12345" } });
+  await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: { name: "Personal Tema", email: "theme-toggle@example.com", role: "personal", password: "senha-ficticia-12345" } });
   await page.goto(base);
   const card = page.getByRole("button", { name: "Programas", exact: true });
   await expect(card).toHaveCSS("background-color", "rgb(0, 0, 0)");

@@ -8,7 +8,6 @@ import { WelcomeCarousel } from "@/components/personal/welcome-carousel";
 import {
   Button,
   Card,
-  Choices,
   Field,
   Label,
   Notice,
@@ -20,7 +19,6 @@ export default function SignIn() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("personal");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const { width, height } = useWindowDimensions();
@@ -34,7 +32,7 @@ export default function SignIn() {
         name,
         email,
         password,
-        role,
+        role: "student",
       });
       router.replace("/");
     } catch (e) {
@@ -71,15 +69,9 @@ export default function SignIn() {
             {register && (
               <>
                 <Field label="Seu nome" value={name} onChangeText={setName} />
-                <Choices
-                  label="Tipo de conta"
-                  options={[
-                    { value: "personal", label: "Sou personal" },
-                    { value: "student", label: "Sou aluno" },
-                  ]}
-                  value={role}
-                  onChange={setRole}
-                />
+                <Label size={12} muted>
+                  Cadastro para alunos. O acesso de personal depende de autorização.
+                </Label>
               </>
             )}
             <Field

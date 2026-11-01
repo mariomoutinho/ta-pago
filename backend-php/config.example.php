@@ -10,4 +10,5 @@ return [
     'enrollmentKey' => '', // Mesma chave AES-256 atual (64 caracteres hexadecimais).
     'retentionDays' => 90,
     'registrationEnabled' => true,
+    'authorizedPersonalIds' => [], // IDs existentes autorizados pelo responsável; vazio bloqueia todo personal.
 ];

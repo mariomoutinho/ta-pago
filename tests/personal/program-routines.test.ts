@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-program-routines-"));
 const url = `file:${folder}/test.db`, db = createDb(url), app = createApp(db);
 const personal = request.agent(app), other = request.agent(app), pupil = request.agent(app);
@@ -13,8 +13,10 @@ const headers = { "X-Requested-With": "TaPago" };
 beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(process.execPath, [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"], { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" });
-  for (const [agent, email, role] of [[personal, "routine-owner@example.com", "personal"], [other, "routine-other@example.com", "personal"], [pupil, "routine-pupil@example.com", "student"]] as const)
-    expect((await agent.post("/api/auth/register").set(headers).send({ name: "Teste Rotina", email, role, password: "senha-ficticia-12345" })).status).toBe(201);
+  for (const [agent, email, role] of [[personal, "routine-owner@example.com", "personal"], [other, "routine-other@example.com", "personal"], [pupil, "routine-pupil@example.com", "student"]] as const) {
+    if (role === "personal") await provisionPersonal(db, { name: "Teste Rotina", email, password: "senha-ficticia-12345" });
+    expect((await agent.post(role === "personal" ? "/api/auth/login" : "/api/auth/register").set(headers).send({ name: "Teste Rotina", email, role, password: "senha-ficticia-12345" })).status).toBe(role === "personal" ? 200 : 201);
+  }
 });
 afterAll(async () => { await db.$disconnect(); rmSync(folder, { recursive: true, force: true }); });
 it("rotinas guardam treinos, validam propriedade e revisão e preservam vínculos", async () => {

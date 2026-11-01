@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 import { purgeEnrollments } from "../../server/enrollment";
 import { policyVersion } from "../../shared/enrollment";
 import { sessionKey } from "../../server/security";
@@ -48,8 +48,8 @@ beforeAll(async () => {
   process.env.PERSONAL_ENROLLMENT_KEY = "ab".repeat(32);
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
-    path.resolve("node_modules/.bin/prisma"),
-    ["migrate", "deploy"],
+    process.execPath,
+    [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],
     { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" },
   );
   app = createApp(db);
@@ -60,11 +60,12 @@ beforeAll(async () => {
     [owner, "owner@example.com", "personal"],
     [other, "other@example.com", "personal"],
     [student, form.email, "student"],
-  ] as const)
+  ] as const) {
+    if (role === "personal") await provisionPersonal(db, { name: "Pessoa Teste", email, password: "senha-de-teste-12345" });
     expect(
       (
         await agent
-          .post("/api/auth/register")
+          .post(role === "personal" ? "/api/auth/login" : "/api/auth/register")
           .set(headers)
           .send({
             name: "Pessoa Teste",
@@ -73,7 +74,8 @@ beforeAll(async () => {
             password: "senha-de-teste-12345",
           })
       ).status,
-    ).toBe(201);
+    ).toBe(role === "personal" ? 200 : 201);
+  }
 }, 60000);
 beforeEach(() => {
   app = createApp(db);

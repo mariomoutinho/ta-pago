@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 import { copyPreparedWorkout, type WorkoutTemplate } from "../../shared/workouts";
 
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-templates-"));
@@ -23,7 +23,8 @@ beforeAll(async () => {
     env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe",
   });
   for (const [agent, email, role] of [[personal, "templates-owner@example.com", "personal"], [other, "templates-other@example.com", "personal"], [student, "templates-student@example.com", "student"]] as const) {
-    expect((await agent.post("/api/auth/register").set(header).send({ name: "Teste", email, role, password: "senha-ficticia-12345" })).status).toBe(201);
+    if (role === "personal") await provisionPersonal(db, { name: "Teste", email, password: "senha-ficticia-12345" });
+    expect((await agent.post(role === "personal" ? "/api/auth/login" : "/api/auth/register").set(header).send({ name: "Teste", email, role, password: "senha-ficticia-12345" })).status).toBe(role === "personal" ? 200 : 201);
   }
   const exercise = { name: "Supino", muscleGroup: "Peitoral", category: "Musculação" };
   exerciseId = (await personal.post("/api/exercises").set(header).send(exercise)).body.id;

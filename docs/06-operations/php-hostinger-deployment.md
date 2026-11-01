@@ -4,7 +4,7 @@
   "title": "Hostinger Single — implantação PHP em tapago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-30",
+  "updated_at": "2026-11-01",
   "language": "pt-BR",
   "tags": [
     "06-operations",
@@ -14,6 +14,7 @@
   "indexable": true,
   "sources": [
     "backend-php/bootstrap.php",
+    "backend-php/src/Auth.php",
     "backend-php/config.example.php",
     "backend-php/public/.htaccess",
     "backend-php/public/api/index.php",
@@ -29,7 +30,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -144,6 +145,14 @@ O .htaccess define RewriteBase /, DirectoryIndex index.html index.php, API antes
 Se a nova versão falhar, manter a manutenção, restaurar arquivos públicos/privados do backup nos mesmos destinos e preservar config.php. Conferir /api/health, login e navegação antes de reabrir. Esta atualização não muda o esquema: rollback dos arquivos utiliza o banco atual. Não restaurar SQL antigo automaticamente: isso descartaria gravações posteriores ao backup. Restauração de dados exige decisão e procedimento próprios.
 
 Futuras alterações de esquema precisam de migrações incrementais identificadas, ensaio em cópia isolada, backup e plano de compatibilidade. O pipeline atual não aplica migrações em produção.
+
+## Atualização autorizada de acesso em 01/11/2026
+
+Após autorização do responsável, o servidor recebeu a restrição de cadastro público a alunos e uma lista privada contendo somente o ID da conta de personal confirmada. A consulta anterior encontrou uma única conta de personal; não foi necessário excluir nem converter contas. Login e sessões, inclusive antigas, verificam a autorização a cada requisição. O cadastro público de personal foi testado em produção e retornou 403, sem criar sessão. A API de saúde permaneceu operacional.
+
+A atualização de Auth.php e config.php usou backup restrito fora de public_html, preservou todas as chaves existentes e não alterou esquema ou dados do banco. O atualizador temporário tinha autenticação própria, destinos fixos, verificação de hashes, restauração em falha e remoção automática; sua ausência foi conferida no diretório público. O frontend foi atualizado separadamente, mantendo o manifesto PWA e os demais arquivos publicados. Identidades, credenciais, IDs autorizados e o conteúdo privado dos backups não pertencem ao repositório nem ao catálogo.
+
+Para novas autorizações, seguir a [política de contas](../03-features/personal-integration.md): decisão do responsável, conta existente e configuração privada por ID. Não reabrir cadastro público de personal nem usar nome de exibição como autorização.
 
 ## PWA e verificação em aparelhos
 

@@ -40,7 +40,11 @@ const studentInclude = {
   },
   history: { orderBy: { createdAt: "desc" as const } },
 };
-export function createApp(db: Db) {
+export function createApp(db: Db, options: { authorizedPersonalIds?: readonly string[] } = {}) {
+  const authorizedPersonalIds = options.authorizedPersonalIds ??
+    (process.env.PERSONAL_AUTHORIZED_IDS ?? "").split(",").map((id) => id.trim()).filter(Boolean);
+  const authorizedAccount = (user: Identity) =>
+    user.role !== "personal" || authorizedPersonalIds.includes(user.id);
   const app = express();
   app.disable("x-powered-by");
   app.use((_req, res, next) => {
@@ -133,7 +137,7 @@ export function createApp(db: Db) {
       where: { id: sessionKey(token) },
       include: { user: true },
     });
-    return session && session.expiresAt > new Date() ? session.user : null;
+    return session && session.expiresAt > new Date() && authorizedAccount(session.user) ? session.user : null;
   }
   async function establish(
     req: express.Request,
@@ -169,6 +173,8 @@ export function createApp(db: Db) {
         role: z.enum(["personal", "student"]),
       })
       .parse(req.body);
+    if (data.role !== "student")
+      throw new HttpError(403, "O acesso de personal depende de autorização. Cadastre-se como aluno.");
     const { password, ...fields } = data;
     const user = await db.user.create({
       data: { ...fields, passwordHash: await hashPassword(password) },
@@ -180,6 +186,8 @@ export function createApp(db: Db) {
     const user = await db.user.findUnique({ where: { email: data.email } });
     if (!user || !(await verifyPassword(data.password, user.passwordHash)))
       throw new HttpError(401, "E-mail ou senha inválidos");
+    if (!authorizedAccount(user))
+      throw new HttpError(403, "O acesso de personal depende de autorização.");
     await establish(req, res, user);
   });
   app.get("/api/health", async (_req, res) => {

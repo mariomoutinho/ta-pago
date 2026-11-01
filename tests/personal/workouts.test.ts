@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-workouts-"));
 const url = `file:${folder}/test.db`,
   db = createDb(url),
@@ -41,16 +41,17 @@ beforeAll(async () => {
     [student, "ws@example.com", "student"],
     [stranger, "wx@example.com", "student"],
   ] as const) {
+    if (role === "personal") await provisionPersonal(db, { name: "Teste", email, password: "senha-ficticia-12345" });
     expect(
       (
-        await agent.post("/api/auth/register").set(header).send({
+        await agent.post(role === "personal" ? "/api/auth/login" : "/api/auth/register").set(header).send({
           name: "Teste",
           email,
           role,
           password: "senha-ficticia-12345",
         })
       ).status,
-    ).toBe(201);
+    ).toBe(role === "personal" ? 200 : 201);
   }
   const data = {
     name: "Aluno Teste",
@@ -458,7 +459,8 @@ it("revogação remove acesso profissional, preserva leitura do aluno e exclusã
 
 it("reordena somente associações autorizadas, preserva IDs e publica a ordem para o aluno", async () => {
   const owner = request.agent(app), viewer = request.agent(app);
-  await owner.post("/api/auth/register").set(header).send({ name: "Ordem", email: "order-owner@example.com", role: "personal", password: "senha-ficticia-12345" });
+  await provisionPersonal(db, { name: "Ordem", email: "order-owner@example.com", password: "senha-ficticia-12345" });
+  await owner.post("/api/auth/login").set(header).send({ email: "order-owner@example.com", password: "senha-ficticia-12345" });
   await viewer.post("/api/auth/register").set(header).send({ name: "Aluno", email: "order-viewer@example.com", role: "student", password: "senha-ficticia-12345" });
   const target = (await owner.post("/api/students").set(header).send({ name: "Aluno", mainGoal: "Força", startDate: "2026-10-23" })).body;
   const invite = (await owner.post("/api/students/" + target.id + "/invite").set(header)).body;
@@ -483,7 +485,8 @@ it("reordena somente associações autorizadas, preserva IDs e publica a ordem p
 
 it("combina e exclui em lote apenas associações do próprio plano, mantendo biblioteca e outro aluno", async () => {
   const owner = request.agent(app), viewer = request.agent(app);
-  await owner.post("/api/auth/register").set(header).send({ name: "Blocos", email: "groups-owner@example.com", role: "personal", password: "senha-ficticia-12345" });
+  await provisionPersonal(db, { name: "Blocos", email: "groups-owner@example.com", password: "senha-ficticia-12345" });
+  await owner.post("/api/auth/login").set(header).send({ email: "groups-owner@example.com", password: "senha-ficticia-12345" });
   await viewer.post("/api/auth/register").set(header).send({ name: "Aluno", email: "groups-viewer@example.com", role: "student", password: "senha-ficticia-12345" });
   const ex = (await owner.post("/api/exercises").set(header).send(exerciseData)).body;
   const targets = [];

@@ -37,7 +37,7 @@
     },
     {
       "source_path": "src/app/entrar.tsx",
-      "sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d"
+      "sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf"
     },
     {
       "source_path": "src/app/exercicios.tsx",
@@ -48857,7 +48857,6 @@
         "ta-pago.code:src/components/personal/shell.tsx:component:Page",
         "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "ta-pago.code:src/components/personal/ui.tsx:component:Card",
-        "ta-pago.code:src/components/personal/ui.tsx:component:Choices",
         "ta-pago.code:src/components/personal/ui.tsx:component:Field",
         "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
@@ -48934,12 +48933,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -48973,13 +48966,13 @@
       "route": null,
       "behavior": [
         {
-          "description": "Contém JSX que referencia Brand, Button, Card, Choices, Field, Label, Notice, Page, View, WelcomeCarousel; a execução visual não foi testada.",
+          "description": "Contém JSX que referencia Brand, Button, Card, Field, Label, Notice, Page, View, WelcomeCarousel; a execução visual não foi testada.",
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -48989,9 +48982,9 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -49001,21 +48994,9 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 73,
-              "end_line": 73,
+              "start_line": 71,
+              "end_line": 71,
               "snippet": "onChangeText={setName}"
-            }
-          ],
-          "confidence": "observed"
-        },
-        {
-          "description": "Associa onChange à expressão {setRole}.",
-          "evidence": [
-            {
-              "source_path": "src/app/entrar.tsx",
-              "start_line": 81,
-              "end_line": 81,
-              "snippet": "onChange={setRole}"
             }
           ],
           "confidence": "observed"
@@ -49025,8 +49006,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 88,
-              "end_line": 88,
+              "start_line": 80,
+              "end_line": 80,
               "snippet": "onChangeText={setEmail}"
             }
           ],
@@ -49037,8 +49018,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 96,
-              "end_line": 96,
+              "start_line": 88,
+              "end_line": 88,
               "snippet": "onChangeText={setPassword}"
             }
           ],
@@ -49049,8 +49030,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "onPress={() => void submit()}"
             }
           ],
@@ -49061,8 +49042,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 110,
-              "end_line": 113,
+              "start_line": 102,
+              "end_line": 105,
               "snippet": "onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}"
             }
           ],
@@ -49073,28 +49054,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 17,
-      "end_line": 123,
+      "start_line": 16,
+      "end_line": 115,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 17,
-          "end_line": 123,
-          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+          "start_line": 16,
+          "end_line": 115,
+          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49107,10 +49088,6 @@
         {
           "event": "onChangeText",
           "expression": "{setName}"
-        },
-        {
-          "event": "onChange",
-          "expression": "{setRole}"
         },
         {
           "event": "onChangeText",
@@ -49133,7 +49110,6 @@
         "Brand",
         "Button",
         "Card",
-        "Choices",
         "Field",
         "Label",
         "Notice",
@@ -49160,7 +49136,7 @@
       "native_components": [
         "View"
       ],
-      "sha256": "46b6628f0cabbe44e4dd7fbc1aaad22ce4115dc0571ee9c221d7ac2a37dbe595"
+      "sha256": "d40247855361f785537a4502891081da939e911f9bf3c4948d588dfb103d14c2"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:function:SignIn%2Fcallback%3AonPress",
@@ -49249,12 +49225,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -49288,28 +49258,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "() => void submit()"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "() => void submit()"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49324,7 +49294,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "3c81c382857584f179421ff3371c9e58434187bb29593bdef7476bc76f5910b0"
+      "sha256": "0339ccac0d7ef3a0d229066617442c2a8011b637796bcce7f8afbfbf82bfe886"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:function:SignIn%2Fcallback%3AonPress%3A2",
@@ -49412,12 +49382,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -49451,28 +49415,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 110,
-              "end_line": 113,
+              "start_line": 102,
+              "end_line": 105,
               "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 110,
-      "end_line": 113,
+      "start_line": 102,
+      "end_line": 105,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 110,
-          "end_line": 113,
+          "start_line": 102,
+          "end_line": 105,
           "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49488,7 +49452,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "ca26a5439cf2b07b0a42deaba2b5131761024ab4b72fea285393e76a8860b223"
+      "sha256": "12ccb320cdb684f66a2d09bf295136b8d3aa4a0e569812985abfa608b97490fd"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:function:SignIn%2Fsubmit",
@@ -49574,12 +49538,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -49613,28 +49571,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 29,
-              "end_line": 45,
-              "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
+              "start_line": 27,
+              "end_line": 43,
+              "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 29,
-      "end_line": 45,
+      "start_line": 27,
+      "end_line": 43,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 29,
-          "end_line": 45,
-          "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
+          "start_line": 27,
+          "end_line": 43,
+          "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49656,7 +49614,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "7037434f30d23c9ef7689c2ae4dd489d3e2a64ea5da5d04a4dea4f3069d5e3c6"
+      "sha256": "0783ae4ea36d29f669e5289e883f6c57c034f21ef251367ec697eb3adac91859"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:interface-behavior:%2Fentrar",
@@ -49687,28 +49645,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 17,
-      "end_line": 123,
+      "start_line": 16,
+      "end_line": 115,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 17,
-          "end_line": 123,
-          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+          "start_line": 16,
+          "end_line": 115,
+          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49723,7 +49681,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "3b9081231a00f084881736b943928bfb8b12b133f997af489fb5030b0ca41ece"
+      "sha256": "14e1a73866a80d219fd59573fae569a9fbc3a2f0aaebaac9d6cd37876688a225"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:interface-behavior:SignIn",
@@ -49746,7 +49704,6 @@
         "ta-pago.code:src/components/personal/shell.tsx:component:Page",
         "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "ta-pago.code:src/components/personal/ui.tsx:component:Card",
-        "ta-pago.code:src/components/personal/ui.tsx:component:Choices",
         "ta-pago.code:src/components/personal/ui.tsx:component:Field",
         "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
@@ -49823,12 +49780,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -49858,13 +49809,13 @@
       "route": null,
       "behavior": [
         {
-          "description": "Contém JSX que referencia Brand, Button, Card, Choices, Field, Label, Notice, Page, View, WelcomeCarousel; a execução visual não foi testada.",
+          "description": "Contém JSX que referencia Brand, Button, Card, Field, Label, Notice, Page, View, WelcomeCarousel; a execução visual não foi testada.",
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -49874,9 +49825,9 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -49886,21 +49837,9 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 73,
-              "end_line": 73,
+              "start_line": 71,
+              "end_line": 71,
               "snippet": "onChangeText={setName}"
-            }
-          ],
-          "confidence": "observed"
-        },
-        {
-          "description": "Associa onChange à expressão {setRole}.",
-          "evidence": [
-            {
-              "source_path": "src/app/entrar.tsx",
-              "start_line": 81,
-              "end_line": 81,
-              "snippet": "onChange={setRole}"
             }
           ],
           "confidence": "observed"
@@ -49910,8 +49849,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 88,
-              "end_line": 88,
+              "start_line": 80,
+              "end_line": 80,
               "snippet": "onChangeText={setEmail}"
             }
           ],
@@ -49922,8 +49861,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 96,
-              "end_line": 96,
+              "start_line": 88,
+              "end_line": 88,
               "snippet": "onChangeText={setPassword}"
             }
           ],
@@ -49934,8 +49873,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "onPress={() => void submit()}"
             }
           ],
@@ -49946,8 +49885,8 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 110,
-              "end_line": 113,
+              "start_line": 102,
+              "end_line": 105,
               "snippet": "onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}"
             }
           ],
@@ -49958,28 +49897,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 17,
-      "end_line": 123,
+      "start_line": 16,
+      "end_line": 115,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 17,
-          "end_line": 123,
-          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+          "start_line": 16,
+          "end_line": 115,
+          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -49992,10 +49931,6 @@
         {
           "event": "onChangeText",
           "expression": "{setName}"
-        },
-        {
-          "event": "onChange",
-          "expression": "{setRole}"
         },
         {
           "event": "onChangeText",
@@ -50018,7 +49953,6 @@
         "Brand",
         "Button",
         "Card",
-        "Choices",
         "Field",
         "Label",
         "Notice",
@@ -50045,7 +49979,7 @@
       "native_components": [
         "View"
       ],
-      "sha256": "3cb360ddc6c4dfac669edab5dc49b0b9d2bcca9004b3c0071bab2f9ed3f06d15"
+      "sha256": "6d7d2646833145b1fe1bf637e94379435287c27218d7ec146253eee9a00e21c5"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:interface-behavior:SignIn%2Fcallback%3AonPress",
@@ -50135,12 +50069,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -50174,28 +50102,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "() => void submit()"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "() => void submit()"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -50210,7 +50138,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "bc0da272014c5665e41479ae6db1b290d351213c3ef62646fca9f7eb3c8723d0"
+      "sha256": "a953623c77cbbc93bd8362ba2aa5d44449ca9ec6d321c993e949b74057728208"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:interface-behavior:SignIn%2Fcallback%3AonPress%3A2",
@@ -50299,12 +50227,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -50338,28 +50260,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 110,
-              "end_line": 113,
+              "start_line": 102,
+              "end_line": 105,
               "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 110,
-      "end_line": 113,
+      "start_line": 102,
+      "end_line": 105,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 110,
-          "end_line": 113,
+          "start_line": 102,
+          "end_line": 105,
           "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -50375,7 +50297,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "8e4fe636c19f6d4bf66afd07c946ff6c9210af739cce167c18a0831092dc713e"
+      "sha256": "d1331e62ae84c531ce86edb79743bbb29666aef5b0ce83d4e886e19ce78909fa"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:interface-behavior:SignIn%2Fsubmit",
@@ -50463,12 +50385,6 @@
         },
         {
           "source": "@/components/personal/ui",
-          "imported": "Choices",
-          "local": "Choices",
-          "type_only": false
-        },
-        {
-          "source": "@/components/personal/ui",
           "imported": "Field",
           "local": "Field",
           "type_only": false
@@ -50502,28 +50418,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 29,
-              "end_line": 45,
-              "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
+              "start_line": 27,
+              "end_line": 43,
+              "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 29,
-      "end_line": 45,
+      "start_line": 27,
+      "end_line": 43,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 29,
-          "end_line": 45,
-          "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
+          "start_line": 27,
+          "end_line": 43,
+          "snippet": "async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -50545,7 +50461,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "4e8807cb2cfbb7987efcc6f54719c8a783d2c3c1ce722f98af6c21606ed5fa98"
+      "sha256": "4b804e3a06f3ceb03a0f8af9cc7ab5b7c3a40f0620ab06fc94f9a895f29fbe5d"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:route:%2Fentrar",
@@ -50577,7 +50493,6 @@
           "Brand",
           "Button",
           "Card",
-          "Choices",
           "Field",
           "Label",
           "Notice",
@@ -50593,28 +50508,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 17,
-      "end_line": 123,
+      "start_line": 16,
+      "end_line": 115,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 17,
-          "end_line": 123,
-          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+          "start_line": 16,
+          "end_line": 115,
+          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -50629,7 +50544,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "4d41b0d99be207fc84091bb945b9412dcd3d97d380c332f1cf9504d29f0e4e84"
+      "sha256": "48a7be86b968621911b5e23b8dd968250373ea3530fb96fc4612126b231a9678"
     },
     {
       "id": "ta-pago.code:src/app/exercicios.tsx:component:ExercisesPage",
@@ -190140,7 +190055,6 @@
         "ta-pago.code:src/app/alunos/link.tsx:component:EnrollmentLinkPage",
         "ta-pago.code:src/app/cadastro/[token].tsx:component:EnrollmentForm",
         "ta-pago.code:src/app/cadastro/[token].tsx:function:EnrollmentForm%2Fcallback%3A(%5B%22practicing%22%2C%20%22previousTrainer%22%5D%20as%20const).map",
-        "ta-pago.code:src/app/entrar.tsx:component:SignIn",
         "ta-pago.code:src/components/personal/evaluation-form.tsx:component:EvaluationForm",
         "ta-pago.code:src/components/personal/evaluation-form.tsx:function:EvaluationForm%2Fcallback%3Atemplate.questions%0A%20%20%20%20%20%20%20%20.filter((q)%20%3D%3E%20q.dimension%20%3D%3D%3D%20current)%0A%20%20%20%20%20%20%20%20.map",
         "ta-pago.code:src/components/personal/forms.tsx:component:Fields",
@@ -190180,7 +190094,7 @@
         "Text",
         "View"
       ],
-      "sha256": "2a54f5206a6e2d141790be410e0b2d0507e2cf12fd03eae877d1793548dd736a"
+      "sha256": "d7814511bea5fc78e28746a3ce9a313ec8d9162c61f05819e0923a985aabb9e6"
     },
     {
       "id": "ta-pago.code:src/components/personal/ui.tsx:component:Confirm",
@@ -194186,7 +194100,6 @@
         "ta-pago.code:src/app/alunos/link.tsx:component:EnrollmentLinkPage",
         "ta-pago.code:src/app/cadastro/[token].tsx:component:EnrollmentForm",
         "ta-pago.code:src/app/cadastro/[token].tsx:function:EnrollmentForm%2Fcallback%3A(%5B%22practicing%22%2C%20%22previousTrainer%22%5D%20as%20const).map",
-        "ta-pago.code:src/app/entrar.tsx:component:SignIn",
         "ta-pago.code:src/components/personal/evaluation-form.tsx:component:EvaluationForm",
         "ta-pago.code:src/components/personal/evaluation-form.tsx:function:EvaluationForm%2Fcallback%3Atemplate.questions%0A%20%20%20%20%20%20%20%20.filter((q)%20%3D%3E%20q.dimension%20%3D%3D%3D%20current)%0A%20%20%20%20%20%20%20%20.map",
         "ta-pago.code:src/components/personal/forms.tsx:component:Fields",
@@ -194226,7 +194139,7 @@
         "Text",
         "View"
       ],
-      "sha256": "5687d760092469d43e829b9af9e41956a93efa967522c2872ea01facc0e48cde"
+      "sha256": "c7d9b3e4a94c0af3c1f9de72678cc722f3c293094fcab2018615530a69474055"
     },
     {
       "id": "ta-pago.code:src/components/personal/ui.tsx:interface-behavior:Choices%2Fcallback%3Aoptions.map",
@@ -413869,28 +413782,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "submit"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "submit"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -413910,7 +413823,7 @@
         "to": "ta-pago.code:src/app/entrar.tsx:function:SignIn%2Fsubmit",
         "kind": "calls"
       },
-      "sha256": "58596b75a434db552ebca720ca746a35071a056bf9c90db64838cf1268c90008"
+      "sha256": "a7db0ccc56a004c79685e0e5cb5e2ebc4be3de01b84fc0aac02f818a00a4aa6e"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APage",
@@ -413941,28 +413854,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 121,
-              "end_line": 121,
+              "start_line": 113,
+              "end_line": 113,
               "snippet": "Page"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 121,
-      "end_line": 121,
+      "start_line": 113,
+      "end_line": 113,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 121,
-          "end_line": 121,
+          "start_line": 113,
+          "end_line": 113,
           "snippet": "Page"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -413982,7 +413895,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:Page",
         "kind": "references"
       },
-      "sha256": "915c377d5a870031b68747a9eba92778143e4b33a5634419bc3d62a8f35bc276"
+      "sha256": "326c94d962602731845a9bdcc023f8d020e74b252e80320fa492f4acc55adb55"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AButton",
@@ -414013,28 +413926,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 106,
-              "end_line": 106,
+              "start_line": 98,
+              "end_line": 98,
               "snippet": "Button"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 106,
-      "end_line": 106,
+      "start_line": 98,
+      "end_line": 98,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 106,
-          "end_line": 106,
+          "start_line": 98,
+          "end_line": 98,
           "snippet": "Button"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414054,7 +413967,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "kind": "references"
       },
-      "sha256": "f590092a4cb521fce126cea8f1b6fa865d227afea6060a792d44caa078993561"
+      "sha256": "a9065ec434b7fe42b9f9666d19cbe2569eeadd56b421d4379a80f0c319d05a63"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ACard",
@@ -414085,28 +413998,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 119,
-              "end_line": 119,
+              "start_line": 111,
+              "end_line": 111,
               "snippet": "Card"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 119,
-      "end_line": 119,
+      "start_line": 111,
+      "end_line": 111,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 119,
-          "end_line": 119,
+          "start_line": 111,
+          "end_line": 111,
           "snippet": "Card"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414126,7 +414039,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Card",
         "kind": "references"
       },
-      "sha256": "b67af983878a80db9f171a0bf70738b7648e866e8829fce02805f47d5d423842"
+      "sha256": "fd9efc4b0b7208125f277f3a055c738616338d8c287cb0527db526ec25c5720a"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
@@ -414157,28 +414070,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 64,
-              "end_line": 64,
+              "start_line": 62,
+              "end_line": 62,
               "snippet": "Label"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 64,
-      "end_line": 64,
+      "start_line": 62,
+      "end_line": 62,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 64,
-          "end_line": 64,
+          "start_line": 62,
+          "end_line": 62,
           "snippet": "Label"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414198,7 +414111,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "references"
       },
-      "sha256": "632ecc19fa20233a0c019776abe89c3e3c9241c1afb2f70012ac61e55f2ca38a"
+      "sha256": "589b8eb2f682ea8987f886dc08be25f788eaaaf386543523deabde5f61124b6e"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ANotice",
@@ -414229,28 +414142,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 103,
-              "end_line": 103,
+              "start_line": 95,
+              "end_line": 95,
               "snippet": "Notice"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 103,
-      "end_line": 103,
+      "start_line": 95,
+      "end_line": 95,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 103,
-          "end_line": 103,
+          "start_line": 95,
+          "end_line": 95,
           "snippet": "Notice"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414270,7 +414183,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
         "kind": "references"
       },
-      "sha256": "d201c082ed3a81bfb18f68b1b4ce568f3b27eaeda5a6eca540e89b2ee4871b2e"
+      "sha256": "83daabe16d45cd08eb5db268a06c0824ddac0efc587a6bfcd9d20135a4c60f9e"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3ABrand",
@@ -414301,28 +414214,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 49,
-              "end_line": 49,
+              "start_line": 47,
+              "end_line": 47,
               "snippet": "Brand"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 49,
-      "end_line": 49,
+      "start_line": 47,
+      "end_line": 47,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 49,
-          "end_line": 49,
+          "start_line": 47,
+          "end_line": 47,
           "snippet": "Brand"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414342,7 +414255,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:Brand",
         "kind": "renders"
       },
-      "sha256": "b2964904f4ed48c5a9b03f93ecb71b4d6a0b5c2d77b9a0815381fbdded9c5597"
+      "sha256": "fdf2be1c0938fff8f8444a44c9f3822687c51347d719c5dcdce2f103353aa0cf"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APage",
@@ -414373,28 +414286,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 47,
-              "end_line": 47,
+              "start_line": 45,
+              "end_line": 45,
               "snippet": "Page"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 47,
-      "end_line": 47,
+      "start_line": 45,
+      "end_line": 45,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 47,
-          "end_line": 47,
+          "start_line": 45,
+          "end_line": 45,
           "snippet": "Page"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414414,7 +414327,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:Page",
         "kind": "renders"
       },
-      "sha256": "e705b7db7dac0c451c0c02f7bd37e00c48635be91132dabb463bca855387e248"
+      "sha256": "c1afba427f236120ccdd56d1a043694c774f457b5d3f53eff8b91d1cdf252980"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AButton",
@@ -414445,28 +414358,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "Button"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "Button"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414486,7 +414399,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "kind": "renders"
       },
-      "sha256": "7e345c46afec0bee69f932bb9e85379fbf9f4cb2cc38caa9354a8c27e563f73e"
+      "sha256": "fce31a60e75eb8ca818c1f39b92fe5a765a2994db554310e82b8053e34797beb"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ACard",
@@ -414517,28 +414430,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 61,
-              "end_line": 61,
+              "start_line": 59,
+              "end_line": 59,
               "snippet": "Card"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 61,
-      "end_line": 61,
+      "start_line": 59,
+      "end_line": 59,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 61,
-          "end_line": 61,
+          "start_line": 59,
+          "end_line": 59,
           "snippet": "Card"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414558,79 +414471,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Card",
         "kind": "renders"
       },
-      "sha256": "35beb3f607c61edc6e112696504ecbf9bc5655be647fce247466aa09529a091d"
-    },
-    {
-      "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AChoices",
-      "entity_type": "symbol-relation",
-      "name": "SignIn renders Choices",
-      "source_path": "src/app/entrar.tsx",
-      "repository": "mariomoutinho/ta-pago",
-      "branch": "main",
-      "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-      "version": "1.0.0",
-      "framework_version": "Expo 57; React Native 0.86.2; TypeScript 6",
-      "domain": "components",
-      "exported": false,
-      "export_kind": "none",
-      "parent": "ta-pago.code:src/app/entrar.tsx:component:SignIn",
-      "references": [
-        "ta-pago.code:src/app/entrar.tsx:component:SignIn",
-        "ta-pago.code:src/components/personal/ui.tsx:component:Choices"
-      ],
-      "imports": [],
-      "props": null,
-      "parameters": [],
-      "return_type": null,
-      "route": null,
-      "behavior": [
-        {
-          "description": "SignIn renders Choices.",
-          "evidence": [
-            {
-              "source_path": "src/app/entrar.tsx",
-              "start_line": 74,
-              "end_line": 74,
-              "snippet": "Choices"
-            }
-          ],
-          "confidence": "observed"
-        }
-      ],
-      "start_line": 74,
-      "end_line": 74,
-      "value_type": null,
-      "evidence": [
-        {
-          "source_path": "src/app/entrar.tsx",
-          "start_line": 74,
-          "end_line": 74,
-          "snippet": "Choices"
-        }
-      ],
-      "confidence": "observed",
-      "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
-      "extractor_version": "typescript-ast-v2",
-      "chunking_version": "atomic-source-v1",
-      "variant": "shared",
-      "consumers": [],
-      "callbacks": [],
-      "children": [],
-      "calls": [],
-      "links": [],
-      "uses_state": true,
-      "uses_effect": false,
-      "uses_theme": false,
-      "native_components": [
-        "View"
-      ],
-      "relation": {
-        "from": "ta-pago.code:src/app/entrar.tsx:component:SignIn",
-        "to": "ta-pago.code:src/components/personal/ui.tsx:component:Choices",
-        "kind": "renders"
-      },
-      "sha256": "3b42c22f50b16473a3698f57aeb628ab1c52ce436d89a062dbf37329fa8c7327"
+      "sha256": "8a1f7adb78469c7b3587cdce3010f6513dcc59ad31a54f29fc7b19cbf3d97284"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AField",
@@ -414661,28 +414502,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 73,
-              "end_line": 73,
+              "start_line": 71,
+              "end_line": 71,
               "snippet": "Field"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 73,
-      "end_line": 73,
+      "start_line": 71,
+      "end_line": 71,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 73,
-          "end_line": 73,
+          "start_line": 71,
+          "end_line": 71,
           "snippet": "Field"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414702,7 +414543,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Field",
         "kind": "renders"
       },
-      "sha256": "6322595324646412e05503037ef926607f382c259a8ac2892633c70996bc4297"
+      "sha256": "67b773f93b22f40cf966a7d01bec16965b81d69485e57409fa8cbcbb8e5748c2"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
@@ -414733,28 +414574,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 62,
-              "end_line": 62,
+              "start_line": 60,
+              "end_line": 60,
               "snippet": "Label"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 62,
-      "end_line": 62,
+      "start_line": 60,
+      "end_line": 60,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 62,
-          "end_line": 62,
+          "start_line": 60,
+          "end_line": 60,
           "snippet": "Label"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414774,7 +414615,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "renders"
       },
-      "sha256": "aa2fc0dd9a6f45c07051387f6464bfb88ccee478640e7cb158ca80f8615c9c65"
+      "sha256": "bdfda9168b04aab79a6b5f445a1c7729fa94409cbebb0c6429bc7ac66554ddaa"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ANotice",
@@ -414805,28 +414646,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 103,
-              "end_line": 103,
+              "start_line": 95,
+              "end_line": 95,
               "snippet": "Notice"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 103,
-      "end_line": 103,
+      "start_line": 95,
+      "end_line": 95,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 103,
-          "end_line": 103,
+          "start_line": 95,
+          "end_line": 95,
           "snippet": "Notice"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414846,7 +414687,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
         "kind": "renders"
       },
-      "sha256": "7f7d71e391598677afbfd9b95548241b7f22b316bf39a54f6c6859ade8876aca"
+      "sha256": "554737fa6b98e0686bff92c2485dd9f4d4c6930b5cbd7dbad88a4692066c8f00"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fwelcome-carousel.tsx%3Acomponent%3AWelcomeCarousel",
@@ -414877,28 +414718,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 59,
-              "end_line": 59,
+              "start_line": 57,
+              "end_line": 57,
               "snippet": "WelcomeCarousel"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 59,
-      "end_line": 59,
+      "start_line": 57,
+      "end_line": 57,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 59,
-          "end_line": 59,
+          "start_line": 57,
+          "end_line": 57,
           "snippet": "WelcomeCarousel"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414918,7 +414759,7 @@
         "to": "ta-pago.code:src/components/personal/welcome-carousel.tsx:component:WelcomeCarousel",
         "kind": "renders"
       },
-      "sha256": "ae5e2716df57b9aea1035af25c5c25026a520e075c142ab28f48e8cae8a4575c"
+      "sha256": "fe1a292ae3f4bd2a9dba3f9961f1f63fc661a9b794107999415e878dc16c4394"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Cuses-constant%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Aconstant%3As",
@@ -414949,28 +414790,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 53,
-              "end_line": 53,
+              "start_line": 51,
+              "end_line": 51,
               "snippet": "s"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 53,
-      "end_line": 53,
+      "start_line": 51,
+      "end_line": 51,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 53,
-          "end_line": 53,
+          "start_line": 51,
+          "end_line": 51,
           "snippet": "s"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -414990,7 +414831,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:constant:s",
         "kind": "uses-constant"
       },
-      "sha256": "ab322183d730a6b26928540396970554ad92d66ebbf5342e979cdcc34d3fc58a"
+      "sha256": "672aaa7bc51444dfab99ee50f7e8f12a42dec01ef4a75fc9616b8bd4b54b4a90"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Cuses-hook%7Cta-pago.code%3Asrc%2Ffeatures%2Fpersonal%2Fauth.tsx%3Ahook%3AuseSession",
@@ -415021,28 +414862,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 18,
-              "end_line": 18,
+              "start_line": 17,
+              "end_line": 17,
               "snippet": "useSession"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 18,
-      "end_line": 18,
+      "start_line": 17,
+      "end_line": 17,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 18,
-          "end_line": 18,
+          "start_line": 17,
+          "end_line": 17,
           "snippet": "useSession"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -415062,7 +414903,7 @@
         "to": "ta-pago.code:src/features/personal/auth.tsx:hook:useSession",
         "kind": "uses-hook"
       },
-      "sha256": "9da53f277b7432651562a90e0a87236908e855fffbb39268896bb16ddb896d3d"
+      "sha256": "7f7c7904384e275849a6a08c518881f5c1a7dc6d723a5b736af9c070934d327f"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Afunction%3ASignIn%252Fcallback%253AonPress%253A2%7Chandles-event%7Cta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn",
@@ -415093,28 +414934,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 110,
-              "end_line": 113,
+              "start_line": 102,
+              "end_line": 105,
               "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 110,
-      "end_line": 113,
+      "start_line": 102,
+      "end_line": 105,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 110,
-          "end_line": 113,
+          "start_line": 102,
+          "end_line": 105,
           "snippet": "() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -415132,7 +414973,7 @@
         "to": "ta-pago.code:src/app/entrar.tsx:component:SignIn",
         "kind": "handles-event"
       },
-      "sha256": "767f780ddd4d4066f0c0907ee8cd798d3ed00f0b230004cc450fa9e278b0b402"
+      "sha256": "86c9ad96bcb69b0dd118e4cf1b9669707ed8ce650f0b341a1fc8624f2dfbc060"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Afunction%3ASignIn%252Fcallback%253AonPress%7Ccalls%7Cta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Afunction%3ASignIn%252Fsubmit",
@@ -415163,28 +415004,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "submit"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "submit"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -415202,7 +415043,7 @@
         "to": "ta-pago.code:src/app/entrar.tsx:function:SignIn%2Fsubmit",
         "kind": "calls"
       },
-      "sha256": "9268fcfdd3a7f698993c05fd109676950c46a37ce001bb20370c855202e08163"
+      "sha256": "dc8c39608550b6813f3ce226f647b9d167313438ee4b224484f0a093c61ce9f9"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Afunction%3ASignIn%252Fcallback%253AonPress%7Chandles-event%7Cta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn",
@@ -415233,28 +415074,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 104,
-              "end_line": 104,
+              "start_line": 96,
+              "end_line": 96,
               "snippet": "() => void submit()"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 104,
-      "end_line": 104,
+      "start_line": 96,
+      "end_line": 96,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 104,
-          "end_line": 104,
+          "start_line": 96,
+          "end_line": 96,
           "snippet": "() => void submit()"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -415272,7 +415113,7 @@
         "to": "ta-pago.code:src/app/entrar.tsx:component:SignIn",
         "kind": "handles-event"
       },
-      "sha256": "ee603bf9b1925096ebf7877e953a1aa4ab79ebb69fa0d361941ce8566753debc"
+      "sha256": "6fd3c8ff0ec3a11a8d01bd50fe2aaab5e9132de36cad51d017b5de9aa765150d"
     },
     {
       "id": "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Aroute%3A%252Fentrar%7Crenders%7Cta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn",
@@ -415303,28 +415144,28 @@
           "evidence": [
             {
               "source_path": "src/app/entrar.tsx",
-              "start_line": 17,
-              "end_line": 123,
-              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+              "start_line": 16,
+              "end_line": 115,
+              "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 17,
-      "end_line": 123,
+      "start_line": 16,
+      "end_line": 115,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/app/entrar.tsx",
-          "start_line": 17,
-          "end_line": 123,
-          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [role, setRole] = useState(\"personal\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role,\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Choices\n                  label=\"Tipo de conta\"\n                  options={[\n                    { value: \"personal\", label: \"Sou personal\" },\n                    { value: \"student\", label: \"Sou aluno\" },\n                  ]}\n                  value={role}\n                  onChange={setRole}\n                />\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
+          "start_line": 16,
+          "end_line": 115,
+          "snippet": "export default function SignIn() {\n  const { authenticate } = useSession();\n  const [register, setRegister] = useState(false);\n  const [name, setName] = useState(\"\");\n  const [email, setEmail] = useState(\"\");\n  const [password, setPassword] = useState(\"\");\n  const [error, setError] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const { width, height } = useWindowDimensions();\n  const compact = width < 700;\n  const smallPhone = compact && height < 620;\n  async function submit() {\n    setBusy(true);\n    setError(\"\");\n    try {\n      await authenticate(register ? \"register\" : \"login\", {\n        name,\n        email,\n        password,\n        role: \"student\",\n      });\n      router.replace(\"/\");\n    } catch (e) {\n      setError(message(e));\n    } finally {\n      setBusy(false);\n    }\n  }\n  return (\n    <Page>\n      <View style={{ paddingVertical: smallPhone ? 0 : compact ? 6 : 24 }}>\n        <Brand compact={compact} />\n      </View>\n      <View\n        style={[\n          s.grid,\n          { alignItems: \"center\", marginTop: smallPhone ? 0 : compact ? 4 : 50 },\n          smallPhone && { gap: 8 },\n        ]}\n      >\n        <View style={s.column}>\n          <WelcomeCarousel />\n        </View>\n        <Card style={[s.column, { padding: smallPhone ? 12 : compact ? 16 : 32 }]}>\n          <Label size={compact ? 20 : 26} bold>\n            {register ? \"Crie sua conta\" : \"Seu treino começa aqui.\"}\n          </Label>\n          <Label muted>\n            {register\n              ? \"Uma identidade para acompanhar sua evolução.\"\n              : \"Entre no seu espaço Tá Pago Personal.\"}\n          </Label>\n          <View style={{ marginTop: compact ? 12 : 24 }}>\n            {register && (\n              <>\n                <Field label=\"Seu nome\" value={name} onChangeText={setName} />\n                <Label size={12} muted>\n                  Cadastro para alunos. O acesso de personal depende de autorização.\n                </Label>\n              </>\n            )}\n            <Field\n              label=\"E-mail\"\n              value={email}\n              onChangeText={setEmail}\n              autoCapitalize=\"none\"\n              keyboardType=\"email-address\"\n              autoComplete=\"email\"\n            />\n            <Field\n              label=\"Senha\"\n              value={password}\n              onChangeText={setPassword}\n              secureTextEntry\n              autoComplete={register ? \"new-password\" : \"current-password\"}\n            />\n            <Label size={11} muted>\n              Mínimo de 12 caracteres.\n            </Label>\n            <Notice error>{error}</Notice>\n            <Button disabled={busy} onPress={() => void submit()}>\n              {busy ? \"Aguarde…\" : register ? \"Criar conta\" : \"Entrar\"}\n            </Button>\n            <View style={{ marginTop: 12 }}>\n              <Button\n                variant=\"secondary\"\n                onPress={() => {\n                  setRegister(!register);\n                  setError(\"\");\n                }}\n              >\n                {register ? \"Já tenho uma conta\" : \"Criar minha conta\"}\n              </Button>\n            </View>\n          </View>\n        </Card>\n      </View>\n    </Page>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "5111f4c90918b9db0f201a0b60135ab358f93ee860556f7ab6b409f4e08a507d",
+      "source_sha256": "a1e61a8fe3352f68e88ef03601a8aae7b973139c13b1ef7be5bb6507988606bf",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -415342,7 +415183,7 @@
         "to": "ta-pago.code:src/app/entrar.tsx:component:SignIn",
         "kind": "renders"
       },
-      "sha256": "91922b18638321d866c3fb5060c3ffe9a7ca624f6636d5d1a4ded5a3fb1060c5"
+      "sha256": "8f724baf5d5088074fbe0027c5b0169639aac188149cee673c20519d566e0e48"
     },
     {
       "id": "ta-pago.code:src/app/exercicios.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fexercicios.tsx%3Acomponent%3AExercisesPage%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APage",
@@ -515179,7 +515020,7 @@
     "function": 794,
     "constant": 41,
     "interface-behavior": 917,
-    "symbol-relation": 1629
+    "symbol-relation": 1628
   },
   "groups": {
     "component": [
@@ -517291,7 +517132,6 @@
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APage",
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AButton",
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ACard",
-      "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AChoices",
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AField",
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
       "ta-pago.code:src/app/entrar.tsx:symbol-relation:ta-pago.code%3Asrc%2Fapp%2Fentrar.tsx%3Acomponent%3ASignIn%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ANotice",

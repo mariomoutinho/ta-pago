@@ -47,8 +47,8 @@ it("inicia a entrada da hospedagem e verifica API, SPA e cookie Secure", async (
   const url = `file:${folder}/test.db`;
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
-    path.resolve("node_modules/.bin/prisma"),
-    ["migrate", "deploy"],
+    process.execPath,
+    [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],
     { env: { ...process.env, PERSONAL_DATABASE_URL: url }, stdio: "pipe" },
   );
   const probe = createServer();
@@ -95,7 +95,7 @@ it("inicia a entrada da hospedagem e verifica API, SPA e cookie Secure", async (
         name: "Teste Produção",
         email: "production@example.com",
         password: "somente-teste-123456",
-        role: "personal",
+        role: "student",
       }),
     });
     expect(registration.status).toBe(201);

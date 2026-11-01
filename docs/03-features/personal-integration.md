@@ -17,12 +17,16 @@
     "shared/questionnaire.ts",
     "src/components/personal/profile.tsx",
     "src/app/entrar.tsx",
-    "src/components/personal/welcome-carousel.tsx"
+    "src/components/personal/welcome-carousel.tsx",
+    "backend-php/src/Auth.php",
+    "backend-php/config.example.php",
+    "tests/personal/auth-policy.test.ts",
+    "tests/personal/browser/app.spec.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -46,6 +50,18 @@ O acompanhamento Compasso foi incorporado ao aplicativo Expo Tá Pago com compon
 Personal: alunos com saúde opcional, programas, modelos versionados, avaliação inicial com 33 perguntas, 13 critérios técnicos, registros mensais/físicos/de treino/sociais e notas. Sete abas organizam perfil, avaliações, evolução, treinamento, critérios técnicos, adaptação social e histórico. Gráficos usam valores numéricos registrados; critérios qualitativos não recebem notas inventadas. Avaliações concluídas são imutáveis, e correções de registros preservam valores anteriores no histórico.
 
 Aluno: aceita convite de uso único, consulta seu acompanhamento, preenche respostas de avaliações em rascunho, exporta seus dados e encerra o vínculo. O encerramento remove o acesso do personal, mas mantém o histórico disponível ao aluno. O personal não pode excluir um cadastro já vinculado; a exclusão definitiva pertence à conta do aluno. Antes de vincular, o cadastro é gerido pelo personal.
+
+## Autorização de contas de personal
+
+O cadastro público cria somente contas de aluno. A interface não oferece o perfil personal; PHP e Express recusam requisições com esse papel com HTTP 403 antes de criar conta ou sessão. Dados enviados pelo cliente, como nome, ID ou supostas aprovações, não concedem autorização.
+
+Contas existentes de personal precisam constar em uma lista de IDs autorizados no servidor: `authorizedPersonalIds` no config.php privado do PHP, ou `PERSONAL_AUTHORIZED_IDS` no Express, com IDs separados por vírgula. Lista ausente ou vazia bloqueia todos os personals. Login e cada leitura de sessão verificam essa política, inclusive para tokens nativos e sessões anteriores à restrição. Contas, alunos e treinos não são excluídos nem convertidos ao restringir o acesso.
+
+A instalação atual mantém um único ID autorizado, definido pelo responsável e conferido na conta existente. A identidade real permanece somente na configuração privada, fora do repositório e do catálogo. Não existe painel de aprovação nesta entrega: novas autorizações exigem decisão do responsável e atualização restrita da lista no servidor. Se uma conta de aluno precisar atuar como personal, a mudança de papel também deve ocorrer por operação administrativa autorizada, nunca pelo cadastro público. No Express, reiniciar o servidor após alterar a variável.
+
+Validação: cinco testes de política com SQLite real cobrem cadastro forjado, cadastro de aluno, personal autorizado, outra conta com o mesmo nome e revogação de sessões/cookies/tokens existentes. A suíte PHP verifica os mesmos bloqueios e preserva as operações de alunos e treinos. As fixtures de personal passaram a ser provisionadas diretamente no banco sintético; não usam mais cadastro público de personal. Dois testes de navegador verificam cadastro de aluno sem opção personal e edição da biblioteca por um personal autorizado.
+
+Execução em 01/11/2026: 85 verificações HTTP PHP e migração sintética passaram; a suíte Personal teve 96 testes aprovados e uma falha anterior em import.test.ts ao executar o launcher Prisma no Windows. Os dois cenários de navegador e as verificações de tipos passaram. As suítes documentais e de extração mantiveram as cinco falhas anteriores de links simbólicos/proveniência já descritas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md). A publicação foi conferida por bloqueio HTTP 403 do cadastro de personal, integridade do bundle, saúde da API e preservação do manifesto PWA. Não foi executado login com a senha real do responsável nem teste em aparelho físico.
 
 ## Apresentação na entrada
 

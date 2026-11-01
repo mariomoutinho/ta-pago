@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb, type Db } from "../../server/db";
-import { createApp } from "../../server/app";
+import { createTestApp as createApp, authorizeFixturePersonal } from "./fixtures";
 import { seed } from "../../server/seed";
 import type { Template } from "../../src/features/personal/types";
 const folder = mkdtempSync(path.join(tmpdir(), "compasso-test-"));
@@ -27,8 +27,8 @@ const header = { "X-Requested-With": "TaPago" };
 beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
-    path.resolve("node_modules/.bin/prisma"),
-    ["migrate", "deploy"],
+    process.execPath,
+    [path.resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],
     {
       env: { ...process.env, PERSONAL_DATABASE_URL: url },
       stdio: "pipe",
@@ -52,7 +52,7 @@ describe("API com SQLite real", () => {
   });
   it("recusa email duplicado com cookie restrito e senha protegida", async () => {
     const res = await agent.post("/api/auth/register").set(header).send({
-      role: "personal",
+      role: "student",
       name: "Personal Teste",
       email: "test@example.com",
       password: "senha-apenas-de-teste-123",
@@ -65,13 +65,14 @@ describe("API com SQLite real", () => {
     expect(
       (
         await agent.post("/api/auth/register").set(header).send({
-          role: "personal",
+          role: "student",
           name: "Outro",
           email: "test@example.com",
           password: "senha-apenas-de-teste-123",
         })
       ).status,
     ).toBe(409);
+    await authorizeFixturePersonal(db, user.id);
   });
   it("recusa origem externa", async () => {
     expect(

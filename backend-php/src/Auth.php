@@ -3,6 +3,9 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Auth {
+    private function authorizedAccount(array $user): bool {
+        return $user['role']!=='personal' || in_array($user['id'],$this->config['authorizedPersonalIds']??[],true);
+    }
     private function rate(string $bucket, int $limit = 20): void {
         // Não confiar em X-Forwarded-For enviado pelo cliente.
         $key=hash('sha256',$bucket.'|'.($_SERVER['REMOTE_ADDR']??'cli'));
@@ -21,7 +24,7 @@ trait Auth {
         if (!$session) return null;
         $this->sessionId=$session['id'];
         $u=$this->db->one('User','id=?',[$session['userId']]);
-        return $u ? array_intersect_key($u,array_flip(['id','name','email','role'])) : null;
+        return $u && $this->authorizedAccount($u) ? array_intersect_key($u,array_flip(['id','name','email','role'])) : null;
     }
     private function cookie(string $token, int $expires): void {
         setcookie('tapago_session_php',$token,['expires'=>$expires,'path'=>($this->config['basePath']?:'').'/',
@@ -36,6 +39,7 @@ trait Auth {
             ensure($this->config['registrationEnabled']??false,'Criação de contas indisponível',403);
             $name=trim($input['name']??''); $role=$input['role']??'';
             ensure(mb_strlen($name)>=2 && mb_strlen($name)<=120 && in_array($role,['personal','student'],true),'Cadastro inválido');
+            ensure($role==='student','O acesso de personal depende de autorização. Cadastre-se como aluno.',403);
             $user=$this->db->create('User',['name'=>$name,'email'=>$email,'role'=>$role,'passwordHash'=>passwordHash($password)]);
             $this->status=201;
         } else {
@@ -43,6 +47,7 @@ trait Auth {
             // Trabalho de hash também quando o usuário não existe.
             $valid=$user ? passwordValid($password,$user['passwordHash']) : password_verify($password,'$2y$12$3euPcmQFCiblsZeEu5s7pOdiXxFh0ECucOG0k71VlHHFGu9pDN6fi');
             ensure($user!==null && $valid,'E-mail ou senha inválidos',401);
+            ensure($this->authorizedAccount($user),'O acesso de personal depende de autorização.',403);
             if (!str_starts_with($user['passwordHash'],'bcrypt-sha384:')) $this->db->update('User',$user['id'],['passwordHash'=>passwordHash($password)]);
         }
         $token=bin2hex(random_bytes(32));
