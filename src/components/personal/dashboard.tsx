@@ -1,10 +1,12 @@
 import { useState } from "react";
 import {
   Pressable,
+  Platform,
   StyleSheet,
   Text,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 import { router, type Href } from "expo-router";
 import { useSession } from "@/features/personal/auth";
@@ -37,6 +39,7 @@ function Shortcut({
       onPress={onPress}
       style={({ pressed }) => [
         styles.shortcut,
+        primary && styles.primaryShortcut,
         {
           backgroundColor: primary ? t.accent : t.background,
           borderColor: primary ? t.accent : t.border,
@@ -49,7 +52,7 @@ function Shortcut({
         importantForAccessibility="no"
         style={{
           color: primary ? "#fff" : t.accent,
-          fontSize: 26,
+          fontSize: primary ? 22 : 26,
           fontWeight: "700",
         }}
       >
@@ -61,6 +64,7 @@ function Shortcut({
           color: primary ? "#fff" : t.text,
           fontWeight: "700",
           fontSize: 14,
+          flexShrink: 1,
         }}
       >
         {title}
@@ -96,6 +100,13 @@ export function PersonalDashboard() {
   const hour = new Date().getHours();
   const greeting =
     hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+  const summaryGradient = "linear-gradient(110deg, #212225 0%, #BA2345 52%, #C62864 100%)";
+  const summaryBackground: ViewStyle & { backgroundImage?: string } = {
+    backgroundColor: "#212225",
+    ...(Platform.OS === "web"
+      ? { backgroundImage: summaryGradient }
+      : { experimental_backgroundImage: summaryGradient }),
+  };
   return (
     <Page>
       <View style={[s.row, { marginBottom: 22 }]}>
@@ -155,28 +166,23 @@ export function PersonalDashboard() {
               onPress={() => go("/alunos")}
               style={[
                 styles.studentRow,
-                { backgroundColor: t.backgroundElement },
+                summaryBackground,
               ]}
             >
               <View style={{ flex: 1, gap: 8 }}>
-                <Label size={16} bold>
+                <Text style={styles.summaryTitle}>
                   Meus alunos
-                </Label>
+                </Text>
                 <View
                   style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}
                 >
-                  <Label size={12}>Ativos: {count(active.length)}</Label>
-                  <Label size={12}>Pausados: {count(paused.length)}</Label>
-                  <Label size={12}>Inativos: {count(inactive.length)}</Label>
+                  <Text style={styles.summaryCount}>Ativos: {count(active.length)}</Text>
+                  <Text style={styles.summaryCount}>Pausados: {count(paused.length)}</Text>
+                  <Text style={styles.summaryCount}>Inativos: {count(inactive.length)}</Text>
                 </View>
               </View>
-              <Label size={24}>›</Label>
+              <Text style={styles.summaryArrow}>›</Text>
             </Pressable>
-            {ready && !students.data?.length && (
-              <Notice>
-                Adicione seu primeiro aluno ou compartilhe seu link de cadastro.
-              </Notice>
-            )}
           </Card>
           <Card>
             <Label size={18} bold>
@@ -289,6 +295,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 8,
   },
+  primaryShortcut: {
+    minHeight: 64,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  summaryTitle: { fontFamily: Fonts.sans, fontSize: 16, lineHeight: 24, fontWeight: "700", color: "#FFFFFF" },
+  summaryCount: { fontFamily: Fonts.sans, fontSize: 12, lineHeight: 18, color: "#FFFFFF" },
+  summaryArrow: { fontFamily: Fonts.sans, fontSize: 24, color: "#FFFFFF" },
   studentRow: {
     flexDirection: "row",
     alignItems: "center",

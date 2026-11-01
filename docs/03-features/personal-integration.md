@@ -21,12 +21,13 @@
     "backend-php/src/Auth.php",
     "backend-php/config.example.php",
     "tests/personal/auth-policy.test.ts",
-    "tests/personal/browser/app.spec.ts"
+    "tests/personal/browser/app.spec.ts",
+    "src/components/personal/dashboard.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -50,6 +51,12 @@ O acompanhamento Compasso foi incorporado ao aplicativo Expo Tá Pago com compon
 Personal: alunos com saúde opcional, programas, modelos versionados, avaliação inicial com 33 perguntas, 13 critérios técnicos, registros mensais/físicos/de treino/sociais e notas. Sete abas organizam perfil, avaliações, evolução, treinamento, critérios técnicos, adaptação social e histórico. Gráficos usam valores numéricos registrados; critérios qualitativos não recebem notas inventadas. Avaliações concluídas são imutáveis, e correções de registros preservam valores anteriores no histórico.
 
 Aluno: aceita convite de uso único, consulta seu acompanhamento, preenche respostas de avaliações em rascunho, exporta seus dados e encerra o vínculo. O encerramento remove o acesso do personal, mas mantém o histórico disponível ao aluno. O personal não pode excluir um cadastro já vinculado; a exclusão definitiva pertence à conta do aluno. Antes de vincular, o cadastro é gerido pelo personal.
+
+## Painel do personal
+
+Em Seus alunos, os atalhos Adicionar aluno e Link de cadastro têm altura mínima de 64 px, com ícone ao lado do texto. Os atalhos de Treinos preservam seu tamanho. O cartão Meus alunos mantém as contagens de ativos, pausados e inativos e a navegação para a lista; seu fundo usa degradê do cinza escuro para vermelho e rosa, com texto branco. O quadro de orientação “Adicione seu primeiro aluno ou compartilhe seu link de cadastro” não aparece mais no painel. O estado vazio da página de alunos permanece independente.
+
+Conferência local com dados sintéticos em 320, 390 e 1280 px, incluindo temas claro e escuro: altura dos atalhos, degradê renderizado, contagens, ausência do aviso, diálogo de cadastro e destinos dos cartões foram verificados. A verificação visual não acessou contas ou dados reais de alunos; aparelhos físicos não foram testados.
 
 ## Autorização de contas de personal
 
