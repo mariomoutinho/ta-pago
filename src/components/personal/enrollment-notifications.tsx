@@ -33,8 +33,8 @@ export function EnrollmentNotifications(){
     let alive=true;const check=()=>void pushState().then(state=>{
       if(!alive)return;setDevice(state);
       if(user&&state.supported&&!state.enabled&&!state.blocked&&shouldOfferPush(user.id)){rememberPushOffer(user.id);setOffer(true);}
-    }).catch(()=>{if(alive)setError("Não foi possível verificar as notificações deste aparelho.");});check();const stop=watchPushInstall(check);const listener=AppState.addEventListener('change',state=>{if(state==='active')check();});return()=>{alive=false;stop();listener.remove();};
-  },[user]);
+    }).catch(()=>{if(alive)setError("Não foi possível verificar as notificações deste aparelho.");});check();const stop=watchPushInstall(()=>{check();refresh();});const listener=AppState.addEventListener('change',state=>{if(state==='active')check();});return()=>{alive=false;stop();listener.remove();};
+  },[user,refresh]);
   async function togglePush(){setBusy(true);setError("");try{if(device?.enabled){await clearNotificationsDevice();setDevice(await pushState());}else setDevice(await enablePush());setOffer(false);}catch(error){setError(message(error));}finally{setBusy(false);}}
   async function markRead(ids:string[]){await api('/notifications/read','POST',{ids});setItems(current=>current.map(item=>ids.includes(item.id)?{...item,read:true}:item));refresh();}
   return <>
@@ -71,13 +71,13 @@ export function EnrollmentNotifications(){
       {settings&&<View style={{gap:8,marginTop:12}}>
         <Notice>{device?.enabled?'Notificações ativadas neste aparelho.':'Ative os avisos para receber novidades com o aplicativo fechado. No iPhone, abra pelo ícone da tela inicial.'}</Notice>
         {device?.blocked&&<Notice>Libere a permissão nas configurações do navegador ou do celular.</Notice>}
-        {device&&!device.supported&&<Notice>{device.nativeApp?'Você está usando o APK Android. O envio de notificações nativas ainda não está ativado. As novidades continuam disponíveis no sino.':'Use o Tá Pago instalado pelo navegador em um aparelho compatível.'}</Notice>}
+        {device&&!device.supported&&<Notice>{device.nativeApp?'Instale a versão atualizada do APK para receber notificações nativas. As novidades continuam disponíveis no sino.':'Use o Tá Pago instalado pelo navegador em um aparelho compatível.'}</Notice>}
         <Button disabled={busy||!device?.supported} onPress={()=>void togglePush()}>{busy?'Aguarde…':device?.enabled?'Desativar neste aparelho':'Ativar notificações neste aparelho'}</Button>
         {device?.enabled&&<>
-          <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testPushNotification();setTestResult('Teste solicitado ao celular. Se o alerta não apareceu, confira as notificações do Tá Pago e do navegador nas configurações do Android.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta no celular</Button>
+          <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testPushNotification();setTestResult(device.nativeApp?'Teste solicitado ao Android. Confira as notificações do Tá Pago nas configurações do celular.':'Teste solicitado ao celular. Confira as notificações do Tá Pago e do navegador nas configurações do celular.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta no celular</Button>
           <Notice>{testResult}</Notice>
           <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testBackgroundNotification();setTestResult('Teste agendado. Feche o app agora e aguarde até 1 minuto e meio pelo alerta do Tá Pago.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta com app fechado</Button>
-          <Label size={12} muted>No Android, confira também se Tá Pago e o navegador podem mostrar notificações e se o modo Não perturbe está desligado.</Label>
+          <Label size={12} muted>{device.nativeApp?'No Android, permita os avisos de “Novidades do Tá Pago” e confira se o modo Não perturbe está desligado.':'No Android, confira também se Tá Pago e o navegador podem mostrar notificações e se o modo Não perturbe está desligado.'}</Label>
         </>}
       </View>}
     </Dialog>}

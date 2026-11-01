@@ -1,6 +1,8 @@
 <?php
 // Copiar para tapago-private/config.php FORA de public_html. Nunca publicar valores reais.
 return [
+    // Arquivo privado, fora de public_html e do APK; null usa firebase-service-account.json ao lado desta configuração.
+    'fcmServiceAccountFile' => null,
     'environment' => 'production',
     'origin' => 'https://SEU-DOMINIO',
     'basePath' => '', // Raiz do subdomínio; public_html/tapago é apenas o diretório físico.

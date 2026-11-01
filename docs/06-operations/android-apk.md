@@ -13,6 +13,12 @@
     "native-android/app/src/main/AndroidManifest.xml",
     "native-android/app/src/main/java/br/com/coletivopindorama/tapago/MainActivity.java",
     "native-android/app/src/main/java/br/com/coletivopindorama/tapago/NavigationPolicy.java",
+    "native-android/app/src/main/java/br/com/coletivopindorama/tapago/NativePush.java",
+    "native-android/app/src/main/java/br/com/coletivopindorama/tapago/PushService.java",
+    "native-android/app/src/main/java/br/com/coletivopindorama/tapago/PushPolicy.java",
+    "native-android/app/src/androidTest/java/br/com/coletivopindorama/tapago/PushDeliveryTest.java",
+    "backend-php/src/AndroidPush.php",
+    "server/android-push.ts",
     "native-android/app/src/test/java/br/com/coletivopindorama/tapago/NavigationPolicyTest.java",
     "scripts/android/build.mjs",
     "src/features/personal/push-device.web.ts",
@@ -21,7 +27,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "authority": "code",
   "audience": ["developer", "operations", "reviewer"],
   "sensitivity": "internal",
@@ -38,7 +44,7 @@
 
 O projeto `native-android` é um contêiner Android separado do aplicativo Expo e abre exclusivamente a origem HTTPS do Tá Pago. Preserva `src/app`, `src/components`, `src/constants` e `src/hooks`. O conteúdo continua servido pelo site: mudanças de telas e funcionalidades web aparecem ao carregar o aplicativo, sem gerar outro APK. Mudanças do contêiner, permissões e integração de notificações exigem recompilação e atualização do APK.
 
-O pacote é `br.com.coletivopindorama.tapago`, versão inicial 1.0.0, versionCode 10000, com Android 8 ou superior. Tem ícone da marca, tema sem ActionBar, respeita barras do sistema, recortes da tela e teclado. Não oferece navegação offline nem replica o banco no dispositivo. A sessão usa cookies da WebView, separados da instalação PWA/navegador; o usuário precisa entrar novamente após instalar.
+O pacote é `br.com.coletivopindorama.tapago`, versão 1.1.1, versionCode 10101, com Android 8 ou superior. Tem ícone da marca, tema sem ActionBar, respeita barras do sistema, recortes da tela e teclado. Não oferece navegação offline nem replica o banco no dispositivo. A sessão usa cookies da WebView, separados da instalação PWA/navegador; o usuário precisa entrar novamente após a primeira instalação. A atualização assinada com a mesma chave preserva os dados do aplicativo.
 
 ## Capacidades e fronteiras
 
@@ -52,18 +58,38 @@ Executar `npm run android:apk` na raiz com JDK 17+, Android SDK 36, build tools 
 
 O script gera uma assinatura privada local somente na primeira execução e a guarda em `data/android-signing`, ignorada pelo Git. Se existir keystore sem o arquivo de configuração, interrompe para evitar perda da identidade de assinatura. Preservar esse diretório em backup privado: atualizações instaladas sobre o APK anterior exigem a mesma chave e um versionCode maior. Nunca enviar a chave, senhas ou configuração de assinatura à hospedagem pública, ao repositório ou ao catálogo.
 
-A compilação executa os testes unitários de política de navegação, lint Android e assembleRelease. O resultado e o SHA-256 ficam em `data/android-release`. Publicar somente o APK e seu checksum. Não publicar fontes de configuração privada ou backups. Versão e nome de arquivo devem ser atualizados de forma consistente no Gradle e no script ao preparar novas versões.
+A compilação executa os testes unitários de navegação e destino/vínculo das notificações, lint Android e assembleRelease. O resultado e o SHA-256 ficam em `data/android-release`. Publicar somente o APK e seu checksum. Não publicar fontes de configuração privada ou backups. O nome e os metadados do artefato derivam da versão declarada no Gradle.
 
-## Notificações nativas: pendentes
+## Notificações nativas
 
-Este APK não configura Firebase Cloud Messaging e não recebe notificações push nativas. A interface identifica o contêiner Android e informa essa limitação nas opções de notificações; as novidades do sino continuam funcionando enquanto o aplicativo está em uso. Instalar um APK não transfere a inscrição Web Push do navegador. Não solicitar permissão de notificações enquanto não houver canal nativo configurado.
+A versão 1.1.0 integra Firebase Cloud Messaging para Android; a 1.0.0 continua sem esse recurso e precisa ser atualizada. O cliente usa a configuração Android em `data/firebase/google-services.json`, ignorada pelo Git. O Gradle extrai somente os identificadores e a chave pública de cliente necessários ao SDK. A chave de conta de serviço nunca participa do build do APK. `npm run android:apk` interrompe se a configuração Android estiver ausente ou incompatível; `--without-push` permite apenas validar uma compilação explicitamente identificada como sem push.
 
-O responsável informou ainda não possuir projeto Firebase. Para a etapa de notificações, criar um projeto na conta Google do responsável, registrar o pacote Android exato, obter `google-services.json`, configurar o cliente FCM e o envio HTTP v1 no servidor privado. A chave de serviço fica somente no servidor; não deve entrar no APK. Implementar registro/rotação/revogação de tokens por conta, solicitação da permissão Android, canal de notificações e abertura do destino ao tocar. Essa etapa exige nova compilação e teste em aparelho físico; não está concluída por este instalador.
+A ponte Android recebe solicitações somente do documento principal na origem do Tá Pago. Após login do personal, a interface oferece ativação. Android 13 ou superior pede a permissão do sistema; o canal “Novidades do Tá Pago” usa importância alta, som e vibração. O registro autenticado confirma o vínculo somente após o servidor aceitar a inscrição. O dispositivo recebe um vínculo opaco por conta e rejeita mensagens de vínculos anteriores. A saída ou desativação limpa esse vínculo, remove avisos locais, solicita exclusão do token no Firebase e cancela a inscrição do servidor. A reconciliação ocorre ao abrir/retomar; a rotação também tenta atualizar o servidor com a sessão existente e volta a reconciliar se ela expirou.
+
+PHP e Express mantêm até dez instalações Android por personal, com tokens cifrados e arquivos privados separados do Web Push. A credencial PHP fica por padrão em `tapago-private/firebase-service-account.json`; `fcmServiceAccountFile` permite outro caminho privado. Express usa `PERSONAL_FCM_SERVICE_ACCOUNT_FILE`. Usam OAuth RS256 com escopo Firebase Messaging e FCM HTTP v1, sem nomes, dados de saúde ou texto de treino nos avisos externos. A conta de serviço tem o papel de envio FCM no projeto do responsável. Não registrar tokens, chaves, códigos OAuth ou dados reais no catálogo.
+
+Cadastros, conclusões de treino e feedbacks disparam o envio após confirmar a transação; o mesmo cron existente processa tentativas pendentes e testes agendados. O envio tem IDs para evitar repetição, espera progressiva em falhas e remove tokens que o FCM identifica como `UNREGISTERED`. Erros genéricos de projeto ou permissão não removem dispositivos. O teste com app fechado é agendado para após 15 segundos, processado pelo cron em até cerca de 90 segundos.
+
+As mensagens de dados usam prioridade alta e o serviço nativo exibe o aviso imediatamente após validar o vínculo. O toque usa PendingIntent explícito e imutável para a Activity do Tá Pago, com ID validado. O resolver autenticado `/notificacao?aviso=...` consulta o feed da conta: cadastro pendente abre aprovação/recusa do cadastro específico; conclusão ou feedback abre treinos do aluno. Preserva o destino durante login e abre novidades se o ID não existe mais no feed. A mensagem não pode escolher uma URL externa.
+
+Recebimento real exige Google Play Services, internet, permissão do sistema e canal habilitado. O Android controla a apresentação como popup, Não perturbe e restrições de bateria; “Forçar parada” impede recebimento até reabrir o app. A aceitação HTTP do FCM não prova exibição no aparelho. O sino e o fluxo Web Push existente permanecem independentes.
 
 Referências: [WebView Android](https://developer.android.com/develop/ui/views/layout/webapps/webview), [permissão de notificações](https://developer.android.com/develop/ui/compose/notifications/notification-permission), [cliente FCM Android](https://firebase.google.com/docs/cloud-messaging/android/client) e [envio FCM HTTP v1](https://firebase.google.com/docs/cloud-messaging/send/v1-api).
 
-## Valida??o da primeira vers?o
+## Validação da primeira versão
 
-Em 01/11/2026, a compila??o release assinada concluiu tr?s testes unit?rios, lint sem erros e assembleRelease. A assinatura v2 foi verificada com apksigner; o pacote declara API m?nima 26 e alvo 36. O APK foi instalado no emulador Android, com abertura do site, formul?rio de entrada, digita??o e teclado, retomada por link tapago://app/notificacao e aus?ncia de falha do processo do aplicativo nos logs verificados. N?o foi efetuado login com conta real nem teste em aparelho f?sico. O emulador apresentou inicialmente uma falha do System UI durante sua inicializa??o; ap?s estabiliza??o e rein?cio do processo do aplicativo, a tela foi conferida sem esse di?logo.
+Em 01/11/2026, a compilação release assinada concluiu três testes unitários, lint sem erros e assembleRelease. A assinatura v2 foi verificada com apksigner; o pacote declara API mínima 26 e alvo 36. O APK foi instalado no emulador Android, com abertura do site, formulário de entrada, digitação e teclado, retomada por link `tapago://app/notificacao` e ausência de falha do processo do aplicativo nos logs verificados. Não foi efetuado login com conta real nem teste em aparelho físico. O emulador apresentou inicialmente uma falha do System UI durante sua inicialização; após estabilização e reinício do processo do aplicativo, a tela foi conferida sem esse diálogo.
 
-O arquivo de 945.005 bytes foi publicado em [Baixar APK Android 1.0.0](https://tapago.coletivopindorama.com.br/downloads/ta-pago-android-1.0.0.apk), com MIME de pacote Android e SHA-256 remoto conferido contra o arquivo local. A publica??o do bundle preservou a sa?de da API. O novo login na Hostinger foi autorizado pelo respons?vel para renovar a sess?o expirada; a chave de assinatura do APK permaneceu somente no diret?rio privado local.
+O arquivo de 945.005 bytes foi publicado como APK Android 1.0.0, com MIME de pacote Android e SHA-256 remoto conferido contra o arquivo local. A publicação do bundle preservou a saúde da API. O novo login na Hostinger foi autorizado pelo responsável para renovar a sessão expirada; a chave de assinatura do APK permaneceu somente no diretório privado local.
+
+## Validação e publicação da versão 1.1.0
+
+Em 01/11/2026, o responsável concluiu OAuth do Google e autorizou explicitamente criar o projeto Firebase, registrar o pacote Android e criar a conta de serviço com permissão FCM e chave privada para a Hostinger. Uma primeira tentativa foi bloqueada pela revisão automática por falta dessa autorização específica; a operação foi retomada após a autorização. O projeto e a configuração de envio foram criados na conta conectada. A chave foi transferida por HTTPS diretamente ao armazenamento privado, sem incorporá-la ao código do helper público, ao APK ou ao Git.
+
+O backend PHP e o bundle web foram publicados com conferência de hashes, backup privado e preservação da configuração, banco e inscrições Web Push existentes. A API respondeu saudável após a publicação. Um aviso de teste saiu da Hostinger por OAuth/FCM HTTP v1 e foi aceito com HTTP 200; o teste instrumentado no emulador confirmou a notificação na bandeja com o app em segundo plano e a abertura da Activity pelo PendingIntent. Nenhuma conta real foi usada nesse teste. O helper temporário de implantação foi removido ao final.
+
+O [APK Android 1.1.0](https://tapago.coletivopindorama.com.br/downloads/ta-pago-android-1.1.0.apk) tem 2.922.624 bytes, versionCode 10100, assinatura v2 e SHA-256 `6da07d87ad4a6fdf37bbb4eeb44a19b0f707ed7af9499e5955ea8e09270d99dd`. Download remoto, MIME e checksum foram conferidos; a instalação sobre a versão anterior no emulador foi aceita. O recebimento no celular do responsável depende de instalar a atualização e permitir notificações; não é demonstrado somente pelo resultado do emulador.
+
+Validações: seis testes unitários Java, onze testes focados de push Express e concorrência na ativação, dois fluxos de navegador (ponte nativa e direcionamento com login), 164 verificações HTTP PHP e migrações sintéticas passaram. Typecheck do app e servidor, lint PHP, validações documentais e checagens dos catálogos passaram. Na suíte completa Personal, 120 testes passaram e um teste anterior de importação falhou por tentar executar o shim Unix do Prisma no Windows (`ENOENT`). Permanecem as falhas preexistentes em docs:test (31 passaram, duas restrições de symlink do Windows) e code:test (17 passaram, duas restrições de symlink e uma expectativa de proveniência). Não há comprovação de execução da CI remota nesta etapa.
+
+A revisão final 1.1.1 dá prioridade ao destino do aviso/link sobre o estado da WebView salvo pelo Android. O APK final, também com 2.922.624 bytes, foi publicado em [Baixar Tá Pago 1.1.1](https://tapago.coletivopindorama.com.br/downloads/ta-pago-android-1.1.1.apk), com SHA-256 `cbec95d5bddb570c5ce75d05f835cf79d0c48a6ce99ebcc93f48f8e5be4253bd`, assinatura v2 verificada, seis testes unitários e lint sem erros. A entrega real e o clique foram repetidos com sucesso nessa versão no emulador; o primeiro teste teve origem na Hostinger e a repetição usou a mesma identidade FCM a partir do ambiente local. O APK final preserva o pacote e a chave de assinatura para atualização direta, com versionCode 10101.

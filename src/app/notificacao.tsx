@@ -15,7 +15,7 @@ export default function OpenNotification(){
     if(loading||!user)return;let alive=true;setError('');
     if(user.role!=='personal'){router.replace('/');return;}
     void api<NewsItem[]>('/notifications/feed').then(async items=>{
-      const item=items.find(item=>item.id===aviso)??items.find(item=>!item.read)??items[0];
+      const item=aviso?items.find(item=>item.id===aviso):items.find(item=>!item.read)??items[0];
       if(!alive)return;
       // Somente destinos retornados pelo feed do profissional autenticado.
       let destination=item?.url&&/^\/alunos\/(cadastros|[a-zA-Z0-9_-]+(?:\/treinos)?)$/.test(item.url)?item.url:'/?novidades=1';

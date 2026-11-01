@@ -96,6 +96,31 @@ test('destino da notificação abre aceite do cadastro e continua após login',a
  await expect(page.getByText('Cadastros recebidos',{exact:true})).toBeVisible();
 });
 
+test('convite inicial no APK usa ponte nativa para ativar, testar e desativar notificações',async({page})=>{
+ await provisionBrowserPersonal(db,page.request,base,{headers:{'X-Requested-With':'TaPago'},data:{name:'Personal Android',email:'native-browser@example.test',password:'senha-ficticia-12345',role:'personal'}});
+ await page.addInitScript(()=>{
+  Object.defineProperty(navigator,'userAgent',{value:navigator.userAgent+' TaPagoAndroid/1.1.0'});
+  let state={supported:true,nativeApp:true,enabled:false,wanted:false,blocked:false,permission:false,installation:'01234567-89ab-cdef-0123-456789abcdef',token:'synthetic-native-browser-token:1234567890'};
+  const bridge={onmessage:null as ((event:MessageEvent<string>)=>void)|null,postMessage(value:string){
+   const request=JSON.parse(value);let result={...state};
+   if(request.action==='pushEnable'){state.permission=true;result={...state};}
+   if(request.action==='pushConfirm'){state.enabled=true;state.wanted=true;result={...state};}
+   if(request.action==='pushDisable'){state={...state,enabled:false,wanted:false};}
+   setTimeout(()=>bridge.onmessage?.(new MessageEvent('message',{data:JSON.stringify({id:request.id,result})})),0);
+  }};Object.defineProperty(window,'TaPagoAndroid',{value:bridge});
+ });
+ let subscriptions=0,unsubscriptions=0,tests=0;
+ await page.route('**/api/notifications/android/subscribe',async route=>{expect(route.request().postDataJSON().installation).toBe('01234567-89ab-cdef-0123-456789abcdef');subscriptions++;await route.fulfill({json:{binding:'0123456789abcdef0123456789abcdef'}});});
+ await page.route('**/api/notifications/android/unsubscribe',async route=>{unsubscriptions++;await route.fulfill({json:{ok:true}});});
+ await page.route('**/api/notifications/android/test',async route=>{tests++;await route.fulfill({json:{ok:true}});});
+ await page.goto(base+'/');await page.getByRole('button',{name:'Permitir notificações',exact:true}).click();
+ await page.getByRole('button',{name:'Novidades',exact:true}).click();await page.getByRole('button',{name:'Notificações neste aparelho',exact:true}).click();
+ await expect(page.getByText('Notificações ativadas neste aparelho.',{exact:true})).toBeVisible();expect(subscriptions).toBeGreaterThan(0);
+ await page.getByRole('button',{name:'Testar alerta com app fechado',exact:true}).click();await expect.poll(()=>tests).toBe(1);
+ await page.getByRole('button',{name:'Desativar neste aparelho',exact:true}).click();await expect.poll(()=>unsubscriptions).toBe(1);
+ await expect(page.getByRole('button',{name:'Ativar notificações neste aparelho',exact:true})).toBeVisible();
+});
+
 test("analisar cadastros abre diretamente aprovação e recusa sem mostrar o link", async ({ page }) => {
   const headers={"X-Requested-With":"TaPago"};
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Revisão",email:"review-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});

@@ -12,6 +12,9 @@
   "indexable": true,
   "sources": [
     "src/app/notificacao.tsx",
+    "backend-php/src/AndroidPush.php",
+    "server/android-push.ts",
+    "src/features/personal/android-push.web.ts",
     "tests/personal/notification-worker.test.ts",
     "server/student-access.ts",
     "src/app/ativar.tsx",
@@ -56,7 +59,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.11.1",
+  "version": "4.12.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -131,7 +134,7 @@ O sino no cabe?alho abre uma janela com as 100 novidades mais recentes, limitada
 
 Abrir a janela n?o apaga os avisos. Tocar em um item registra sua leitura e abre o destino; Marcar todas como lidas registra os itens apresentados. POST /notifications/read valida os IDs contra os eventos do pr?prio personal. A leitura persiste por conta no servidor, compartilhada entre aparelhos, com grava??o at?mica e trava. Cadastros pendentes abrem diretamente /alunos/cadastros, com Ver ficha, Aprovar e Recusar, sem exigir rolagem pela p?gina do link. Link de cadastro permanece dispon?vel separadamente.
 
-No primeiro acesso compat?vel, o aplicativo apresenta Receber notifica??es?, com Permitir notifica??es e Agora n?o. O pedido do sistema acontece somente ao tocar em Permitir, exig?ncia dos navegadores. A escolha ? lembrada neste aparelho; instalar o PWA permite um novo convite espec?fico da instala??o. O sino mant?m as op??es de ativar/desativar. No iPhone/iPad, Web Push exige iOS/iPadOS 16.4 ou superior e abertura pelo ?cone da tela inicial. A vers?o nativa n?o possui provedor push configurado nesta entrega.
+No primeiro acesso compatível, o aplicativo apresenta “Receber notificações?”, com “Permitir notificações” e “Agora não”. O pedido do sistema acontece ao tocar em Permitir. A escolha é lembrada neste aparelho; PWA instalado e APK têm convites próprios. O sino mantém as opções de ativar/desativar. No iPhone/iPad, Web Push exige iOS/iPadOS 16.4 ou superior e abertura pelo ícone da tela inicial. O APK Android 1.1.0 usa Firebase Cloud Messaging e canal nativo, com vínculo por conta e abertura do destino autenticado ao tocar. A versão 1.0.0 requer atualização; a implementação Expo executada fora desse contêiner continua sem provedor push. Consulte o [guia Android](../06-operations/android-apk.md).
 
 O PWA usa Push API, VAPID ES256 e worker dedicado sem cache offline. A notifica??o do sistema diz Novidade no T? Pago, com texto gen?rico, sem nomes ou informa??es de sa?de; tocar abre /notificacao e o setor do aviso ap?s autentica??o. Sair remove a inscri??o deste aparelho. Chaves e inscri??es cifradas permanecem no armazenamento privado existente; leituras ficam no subdiret?rio read. Preservar ambos nos deploys e backups.
 

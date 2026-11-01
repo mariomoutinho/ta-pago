@@ -4,6 +4,15 @@ import {spawnSync} from 'node:child_process';
 import {createHash,randomBytes} from 'node:crypto';
 
 const root=process.cwd(),project=path.join(root,'native-android');
+const firebaseFile=path.join(root,'data/firebase/google-services.json');
+const firebase=fs.existsSync(firebaseFile)?JSON.parse(fs.readFileSync(firebaseFile,'utf8')):null;
+const applicationId='br.com.coletivopindorama.tapago';
+const client=firebase?.client?.find(value=>value.client_info?.android_client_info?.package_name===applicationId);
+if(firebase&&(!client||!/^\d+$/.test(firebase.project_info?.project_number)||!client.api_key?.[0]?.current_key||!client.client_info?.mobilesdk_app_id))throw Error('Configuração Firebase Android inválida ou para outro pacote.');
+if(!client&&!process.argv.includes('--without-push'))throw Error('Conecte o Firebase e salve google-services.json em data/firebase antes de gerar o APK com notificações. --without-push serve somente para validar o contêiner sem envio.');
+const gradle=fs.readFileSync(path.join(project,'app/build.gradle'),'utf8');
+const version=gradle.match(/versionName '([^']+)'/)?.[1],versionCode=Number(gradle.match(/versionCode (\d+)/)?.[1]);
+if(!version||!versionCode)throw Error('Versão Android inválida.');
 const javaHome=process.env.TAPAGO_JAVA_HOME||process.env.JAVA_HOME||(process.platform==='win32'?'C:/Program Files/Android/Android Studio/jbr':'');
 const java=path.join(javaHome,'bin',process.platform==='win32'?'java.exe':'java');
 const keytool=path.join(javaHome,'bin',process.platform==='win32'?'keytool.exe':'keytool');
@@ -22,7 +31,7 @@ const wrapper=path.join(project,'gradle/wrapper/gradle-wrapper.jar');if(!fs.exis
 run(java,['-classpath',wrapper,'org.gradle.wrapper.GradleWrapperMain',...(process.argv.includes('--offline')?['--offline']:[]),'--no-daemon','testReleaseUnitTest','lintRelease','assembleRelease'],{env:{...process.env,JAVA_HOME:javaHome,ANDROID_HOME:sdk}});
 const output=path.join(root,'data/android-release');fs.mkdirSync(output,{recursive:true});
 const apk=path.join(project,'app/build/outputs/apk/release/app-release.apk');if(!fs.existsSync(apk))throw Error('APK assinado não encontrado.');
-const name='ta-pago-android-1.0.0.apk',bytes=fs.readFileSync(apk),hash=createHash('sha256').update(bytes).digest('hex');
+const name='ta-pago-android-'+version+(client?'':'-sem-push')+'.apk',bytes=fs.readFileSync(apk),hash=createHash('sha256').update(bytes).digest('hex');
 fs.writeFileSync(path.join(output,name),bytes);fs.writeFileSync(path.join(output,name+'.sha256'),hash+'  '+name+'\n');
-fs.writeFileSync(path.join(output,'release.json'),JSON.stringify({version:'1.0.0',applicationId:'br.com.coletivopindorama.tapago',apk:name,sha256:hash,bytes:bytes.length,nativePushConfigured:false},null,2));
+fs.writeFileSync(path.join(output,'release.json'),JSON.stringify({version,versionCode,applicationId,apk:name,sha256:hash,bytes:bytes.length,nativePushConfigured:!!client},null,2));
 console.log('APK Android assinado: '+path.join(output,name));

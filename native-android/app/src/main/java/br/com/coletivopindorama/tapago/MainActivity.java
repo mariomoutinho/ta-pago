@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
+import java.lang.ref.WeakReference;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
@@ -46,9 +47,17 @@ public class MainActivity extends Activity {
     private byte[] download;
     private View video;
     private WebChromeClient.CustomViewCallback videoCallback;
+    private NativePush nativePush;
+    private static WeakReference<MainActivity> active = new WeakReference<>(null);
+    static void pushChanged() {
+        MainActivity activity = active.get();
+        if (activity != null) activity.runOnUiThread(() -> { if (activity.web != null) activity.web.evaluateJavascript("window.dispatchEvent(new Event('tapago-native-push'))", null); });
+    }
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        active = new WeakReference<>(this);
+        nativePush = new NativePush(this);
         root = new FrameLayout(this); root.setBackgroundColor(Color.BLACK);
         web = new WebView(this); root.addView(web, new FrameLayout.LayoutParams(-1,-1));
         progress = new ProgressBar(this); FrameLayout.LayoutParams centered = new FrameLayout.LayoutParams(80,80,Gravity.CENTER); root.addView(progress,centered);
@@ -91,13 +100,14 @@ public class MainActivity extends Activity {
         });
         if(WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER))WebViewCompat.addWebMessageListener(web,"TaPagoAndroid",Collections.singleton(NavigationPolicy.ORIGIN),(view,message,source,isMainFrame,reply)->{
             if(!isMainFrame||!NavigationPolicy.internal(source.toString()))return;
-            try{JSONObject data=new JSONObject(message.getData());if("download".equals(data.optString("action"))){String encoded=data.getString("data");if(encoded.length()>12*1024*1024)throw new IllegalArgumentException();byte[] bytes=android.util.Base64.decode(encoded,android.util.Base64.DEFAULT);save(bytes,data.optString("name","exportacao-tapago.json"),data.optString("mime","application/octet-stream"));}else if("open".equals(data.optString("action")))openExternal(data.getString("url"));}catch(Exception ignored){Toast.makeText(this,"Não foi possível concluir a ação.",Toast.LENGTH_LONG).show();}
+            try{JSONObject data=new JSONObject(message.getData());if(data.optString("action").startsWith("push")){nativePush.handle(data,reply);}else if("download".equals(data.optString("action"))){String encoded=data.getString("data");if(encoded.length()>12*1024*1024)throw new IllegalArgumentException();byte[] bytes=android.util.Base64.decode(encoded,android.util.Base64.DEFAULT);save(bytes,data.optString("name","exportacao-tapago.json"),data.optString("mime","application/octet-stream"));}else if("open".equals(data.optString("action")))openExternal(data.getString("url"));}catch(Exception ignored){Toast.makeText(this,"Não foi possível concluir a ação.",Toast.LENGTH_LONG).show();}
         });
         web.setDownloadListener((url,userAgent,disposition,mime,length)->{if(NavigationPolicy.internal(url))download(url,mime);else if(!url.startsWith("blob:"))openExternal(url);});
         if(Build.VERSION.SDK_INT>=33)getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0,()->back());
-        if(state==null||web.restoreState(state)==null)web.loadUrl(startUrl(getIntent()));
+        // O destino de um aviso/link tem prioridade sobre a tela salva pelo Android.
+        if(getIntent().hasExtra("notificationId")||getIntent().getData()!=null||state==null||web.restoreState(state)==null)web.loadUrl(startUrl(getIntent()));
     }
-    private String startUrl(Intent intent){String value=intent.getDataString();return value!=null&&value.startsWith("tapago:")?NavigationPolicy.appLink(value):NavigationPolicy.ORIGIN+"/";}
+    private String startUrl(Intent intent){if(intent.hasExtra("notificationId"))return PushPolicy.target(intent.getStringExtra("notificationId"));String value=intent.getDataString();return value!=null&&value.startsWith("tapago:")?NavigationPolicy.appLink(value):NavigationPolicy.ORIGIN+"/";}
     private boolean navigate(String url){if(NavigationPolicy.internal(url))return false;openExternal(url);return true;}
     private void openExternal(String url){if(!NavigationPolicy.external(url))return;try{Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(url));intent.addCategory(Intent.CATEGORY_BROWSABLE);startActivity(intent);}catch(Exception failure){Toast.makeText(this,"Nenhum aplicativo disponível para abrir este link.",Toast.LENGTH_LONG).show();}}
     private void showError(){if(error!=null)return;progress.setVisibility(View.GONE);error=new FrameLayout(this);error.setBackgroundColor(Color.BLACK);LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setGravity(Gravity.CENTER);content.setPadding(32,32,32,32);TextView text=new TextView(this);text.setText(R.string.connection_error);text.setTextColor(Color.WHITE);text.setGravity(Gravity.CENTER);content.addView(text);Button retry=new Button(this);retry.setText(R.string.retry);retry.setOnClickListener(view->{root.removeView(error);error=null;progress.setVisibility(View.VISIBLE);web.loadUrl(NavigationPolicy.ORIGIN+"/");});content.addView(retry);error.addView(content,new FrameLayout.LayoutParams(-1,-1));root.addView(error,new FrameLayout.LayoutParams(-1,-1));}
@@ -109,6 +119,9 @@ public class MainActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);web.loadUrl(startUrl(intent));}
     @Override protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);web.saveState(out);}
     @Override protected void onPause(){super.onPause();CookieManager.getInstance().flush();}
+    @Override protected void onResume(){super.onResume();pushChanged();}
+    @Override protected void onDestroy(){if(active.get()==this)active.clear();super.onDestroy();}
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==NativePush.PERMISSION)nativePush.permissionResult();}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==PICK_FILE&&chooser!=null){chooser.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result,intent));chooser=null;}if(request==SAVE_FILE&&result==RESULT_OK&&intent!=null&&download!=null){byte[] bytes=download;download=null;Uri uri=intent.getData();new Thread(()->{try(OutputStream output=getContentResolver().openOutputStream(uri)){output.write(bytes);runOnUiThread(()->Toast.makeText(this,"Arquivo salvo.",Toast.LENGTH_SHORT).show());}catch(Exception failure){runOnUiThread(()->Toast.makeText(this,"Não foi possível salvar o arquivo.",Toast.LENGTH_LONG).show());}}).start();}}
     private void save(byte[] bytes,String name,String mime){download=bytes;Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType(mime);intent.putExtra(Intent.EXTRA_TITLE,name.replaceAll("[^\\p{L}\\p{N}._ -]","_"));startActivityForResult(intent,SAVE_FILE);}
     private void download(String value,String mime){new Thread(()->{HttpURLConnection connection=null;try{connection=(HttpURLConnection)new URL(value).openConnection();connection.setInstanceFollowRedirects(false);connection.setConnectTimeout(10000);connection.setReadTimeout(15000);String cookie=CookieManager.getInstance().getCookie(value);if(cookie!=null)connection.setRequestProperty("Cookie",cookie);if(connection.getResponseCode()!=200)throw new IllegalStateException();ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(InputStream input=connection.getInputStream()){byte[] buffer=new byte[8192];int size;while((size=input.read(buffer))!=-1){if(bytes.size()+size>8*1024*1024)throw new IllegalStateException();bytes.write(buffer,0,size);}}byte[] result=bytes.toByteArray();runOnUiThread(()->save(result,"exportacao-tapago.json",mime==null?"application/octet-stream":mime));}catch(Exception failure){runOnUiThread(()->Toast.makeText(this,"Não foi possível baixar o arquivo.",Toast.LENGTH_LONG).show());}finally{if(connection!=null)connection.disconnect();}}).start();}

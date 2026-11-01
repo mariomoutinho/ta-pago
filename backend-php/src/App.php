@@ -8,7 +8,7 @@ final class App {
     public ?array $user=null;
     public array $deferredNotifications=[];
     public function sendDeferredNotifications(): void {
-        foreach(array_unique($this->deferredNotifications) as $owner)try{(new Push($this->db,$this->config))->dispatch($owner);}catch(\Throwable){error_log('TaPago push: deferred dispatch failed');}
+        foreach(array_unique($this->deferredNotifications) as $owner)foreach([Push::class,AndroidPush::class] as $provider)try{(new $provider($this->db,$this->config))->dispatch($owner);}catch(\Throwable){error_log('TaPago push: deferred dispatch failed');}
         $this->deferredNotifications=[];
     }
     private ?string $sessionId=null;
@@ -54,6 +54,12 @@ final class App {
         if (preg_match('~^/me/workouts/([^/]+)/completion$~D',$path,$m) && $method==='POST') return $this->completeWorkout($m[1]);
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
+        if($path==='/notifications/android/settings'&&$method==='GET')return ['configured'=>(new AndroidPush($this->db,$this->config))->configured()];
+        if(preg_match('~^/notifications/android/(subscribe|unsubscribe|test)$~D',$path,$m)&&$method==='POST'){
+            ensure(AndroidPush::installation($body['installation']??null),'Inscrição Android inválida');$push=new AndroidPush($this->db,$this->config);
+            if($m[1]==='subscribe'){ensure(AndroidPush::token($body['token']??null),'Token Android inválido');return $push->subscribe($this->user['id'],$body['installation'],$body['token']);}
+            if($m[1]==='test')$push->scheduleTest($this->user['id'],$body['installation']);else $push->unsubscribe($this->user['id'],$body['installation']);return ['ok'=>true];
+        }
         if ($path==='/notifications/settings' && $method==='GET') return ['publicKey'=>(new Push($this->db,$this->config))->publicKey()];
         if ($path==='/notifications/receipt'&&$method==='POST') {
             ensure(is_string($body['endpoint']??null)&&is_bool($body['shown']??null),'Confirmação inválida');

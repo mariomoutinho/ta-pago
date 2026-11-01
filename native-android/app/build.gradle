@@ -2,6 +2,10 @@ plugins { id 'com.android.application' }
 
 def signingFile = rootProject.file('../data/android-signing/release.json')
 def signing = signingFile.exists() ? new groovy.json.JsonSlurper().parse(signingFile) : null
+def firebaseFile = rootProject.file('../data/firebase/google-services.json')
+def firebase = firebaseFile.exists() ? new groovy.json.JsonSlurper().parse(firebaseFile) : null
+def firebaseClient = firebase?.client?.find { it.client_info.android_client_info.package_name == 'br.com.coletivopindorama.tapago' }
+if (firebase != null && firebaseClient == null) throw new GradleException('Configuração Firebase para outro pacote Android.')
 
 android {
     namespace 'br.com.coletivopindorama.tapago'
@@ -10,9 +14,16 @@ android {
         applicationId 'br.com.coletivopindorama.tapago'
         minSdk 26
         targetSdk 36
-        versionCode 10000
-        versionName '1.0.0'
-        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+        versionCode 10101
+        versionName '1.1.1'
+        buildConfigField 'boolean', 'PUSH_CONFIGURED', firebaseClient != null ? 'true' : 'false'
+        if (firebaseClient != null) {
+            resValue 'string', 'google_app_id', firebaseClient.client_info.mobilesdk_app_id
+            resValue 'string', 'gcm_defaultSenderId', firebase.project_info.project_number
+            resValue 'string', 'google_api_key', firebaseClient.api_key[0].current_key
+            resValue 'string', 'project_id', firebase.project_info.project_id
+        }
+        testInstrumentationRunner 'br.com.coletivopindorama.tapago.PushDeliveryTest'
     }
     if (signing != null) {
         signingConfigs { release {
@@ -30,5 +41,11 @@ android {
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     buildFeatures { buildConfig true }
+    testBuildType 'release'
 }
-dependencies { implementation 'androidx.webkit:webkit:1.14.0'; testImplementation 'junit:junit:4.13.2' }
+dependencies {
+    implementation 'androidx.webkit:webkit:1.14.0'
+    implementation platform('com.google.firebase:firebase-bom:35.1.0')
+    implementation 'com.google.firebase:firebase-messaging'
+    testImplementation 'junit:junit:4.13.2'
+}

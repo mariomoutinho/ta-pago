@@ -28,6 +28,7 @@ import { workoutTemplateRoutes } from "./workout-templates";
 import { planInclude, workoutRoutes } from "./workouts";
 import { exerciseMediaRoutes } from "./exercise-media";
 import { notificationRoutes, dispatchPush } from "./push";
+import {androidNotificationRoutes,dispatchAndroidPush} from './android-push';
 import { studentAccessRoutes } from "./student-access";
 
 type Identity = { id: string; name: string; email: string; role: string };
@@ -201,7 +202,8 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
       res.status(503).json({ status: "unavailable" });
     }
   });
-  app.use("/api/public/enrollment", publicEnrollmentRoutes(db, owner => dispatchPush(db, owner, undefined, [...authorizedPersonalIds])));
+  const notify=async(owner:string)=>Promise.allSettled([dispatchPush(db,owner,undefined,[...authorizedPersonalIds]),dispatchAndroidPush(db,owner,undefined,[...authorizedPersonalIds])]);
+  app.use("/api/public/enrollment", publicEnrollmentRoutes(db, notify));
   app.use("/api/public/student-access",studentAccessRoutes(db));
   app.use("/api", async (req, res, next) => {
     const user = await sessionUser(req);
@@ -212,8 +214,9 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
 
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
   app.use("/api/notifications", notificationRoutes(db));
+  app.use('/api/notifications/android',androidNotificationRoutes());
   app.use("/api", exerciseMediaRoutes(db));
-  app.use("/api", workoutRoutes(db,owner=>dispatchPush(db,owner,undefined,[...authorizedPersonalIds])));
+  app.use("/api", workoutRoutes(db,notify));
   app.use("/api/workout-templates", workoutTemplateRoutes(db));
 
   app.post("/api/auth/logout", async (req, res) => {

@@ -58,3 +58,5 @@ test-results/
 playwright-report/
 backend-php/config.php
 backend-php/storage/
+firebase-debug.log*
+native-android/app/google-services.json
