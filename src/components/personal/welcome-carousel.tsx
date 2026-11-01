@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   AppState,
+  Animated,
+  Easing,
+  PanResponder,
+  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -33,12 +36,14 @@ export function WelcomeCarousel() {
   const compact = screenWidth < 700;
   const short = compact && screenHeight < 740;
   const smallPhone = compact && screenHeight < 620;
-  const scroll = useRef<ScrollView>(null);
+  const offset = useRef(new Animated.Value(0)).current;
   const [width, setWidth] = useState(0);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(true);
   const [foreground, setForeground] = useState(AppState.currentState === "active");
+  const [motionRequested, setMotionRequested] = useState(false);
+  const motionAllowed = !reduceMotion || motionRequested;
 
   useEffect(() => {
     let mounted = true;
@@ -55,41 +60,49 @@ export function WelcomeCarousel() {
   }, []);
 
   useEffect(() => {
-    if (!width || paused || reduceMotion || !foreground) return;
-    const timer = setTimeout(() => {
-      const next = (active + 1) % slides.length;
-      scroll.current?.scrollTo({ x: next * width, animated: true });
+    if (!width || paused || !motionAllowed || !foreground) return;
+    const timer = setInterval(() => {
+      setActive((index) => (index + 1) % slides.length);
     }, 2000);
-    return () => clearTimeout(timer);
-  }, [active, width, paused, reduceMotion, foreground]);
+    return () => clearInterval(timer);
+  }, [width, paused, motionAllowed, foreground]);
 
   useEffect(() => {
-    scroll.current?.scrollTo({ x: active * width, animated: false });
-    // Manter o slide atual ao mudar a largura, sem interromper o deslize manual.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [width]);
+    const animation = Animated.timing(offset, {
+      toValue: -active * width,
+      duration: motionAllowed ? 650 : 0,
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: Platform.OS !== "web",
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [active, width, motionAllowed, offset]);
 
   function select(index: number) {
     setPaused(true);
-    scroll.current?.scrollTo({ x: index * width, animated: !reduceMotion });
+    setActive(index);
   }
+
+  const swipe = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, gesture) =>
+      Math.abs(gesture.dx) > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.5,
+    onPanResponderGrant: () => setPaused(true),
+    onPanResponderRelease: (_, gesture) => {
+      if (Math.abs(gesture.dx) > 35) {
+        setActive((index) => (index + (gesture.dx < 0 ? 1 : slides.length - 1)) % slides.length);
+      }
+    },
+  }), []);
 
   return (
     <View style={[styles.carousel, compact && styles.compactCarousel, smallPhone && { paddingTop: 8 }]} accessibilityLabel="Apresentação do Tá Pago">
       {!smallPhone && <View style={[styles.accent, compact && styles.compactAccent]} />}
-      <ScrollView
-        ref={scroll}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
+      <View
         onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
-        onScrollBeginDrag={() => setPaused(true)}
-        onScroll={(event) => {
-          if (width) setActive(Math.max(0, Math.min(slides.length - 1,
-            Math.round(event.nativeEvent.contentOffset.x / width))));
-        }}
-        scrollEventThrottle={32}
+        style={{ overflow: "hidden" }}
+        {...swipe.panHandlers}
       >
+        <Animated.View style={{ flexDirection: "row", width: (width || 280) * slides.length, transform: [{ translateX: offset }] }}>
         {slides.map((slide, index) => (
           <View
             key={slide.eyebrow}
@@ -103,7 +116,8 @@ export function WelcomeCarousel() {
             {!short && <Text style={[styles.description, compact && styles.compactDescription]}>{slide.description}</Text>}
           </View>
         ))}
-      </ScrollView>
+        </Animated.View>
+      </View>
       <View style={[styles.controls, compact && styles.compactControls]}>
         <View style={styles.dots} accessibilityRole="tablist" accessibilityLabel="Mensagens de apresentação">
           {slides.map((slide, index) => (
@@ -121,16 +135,19 @@ export function WelcomeCarousel() {
             </Pressable>
           ))}
         </View>
-        {!reduceMotion && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={paused ? "Retomar carrossel" : "Pausar carrossel"}
-            onPress={() => setPaused((value) => !value)}
+            accessibilityLabel={paused || !motionAllowed ? "Retomar carrossel" : "Pausar carrossel"}
+            onPress={() => {
+              if (!motionAllowed) {
+                setMotionRequested(true);
+                setPaused(false);
+              } else setPaused((value) => !value);
+            }}
             style={styles.pause}
           >
-            <Text style={styles.pauseText}>{paused ? "Reproduzir" : "Pausar"}</Text>
+            <Text style={styles.pauseText}>{paused || !motionAllowed ? "Reproduzir" : "Pausar"}</Text>
           </Pressable>
-        )}
       </View>
     </View>
   );
