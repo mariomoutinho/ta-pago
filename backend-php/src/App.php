@@ -6,6 +6,11 @@ final class App {
     use Auth, Students, Evaluations, Workouts, Enrollment, Media;
     public int $status=200;
     public ?array $user=null;
+    public array $deferredNotifications=[];
+    public function sendDeferredNotifications(): void {
+        foreach(array_unique($this->deferredNotifications) as $owner)try{(new Push($this->db,$this->config))->dispatch($owner);}catch(\Throwable){error_log('TaPago push: deferred dispatch failed');}
+        $this->deferredNotifications=[];
+    }
     private ?string $sessionId=null;
     private bool $writing=false;
     public Validation $validation;
@@ -23,6 +28,7 @@ final class App {
             if ($this->writing) $this->db->pdo->commit();
             return $result;
         } catch (\Throwable $e) {
+            $this->deferredNotifications=[];
             if ($this->db->pdo->inTransaction()) $this->db->pdo->rollBack();
             throw $e;
         }
@@ -45,6 +51,17 @@ final class App {
         if (preg_match('~^/me/workouts/([^/]+)/feedbacks$~D',$path,$m) && $method==='POST') return $this->feedback($m[1],$body);
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
+        if ($path==='/notifications/settings' && $method==='GET') return ['publicKey'=>(new Push($this->db,$this->config))->publicKey()];
+        if ($path==='/notifications/summary' && $method==='GET') {
+            $rows=$this->db->rows('EnrollmentRequest',"personalId=? AND status='pending' AND updatedAt>=?",[$this->user['id'],at(time()-$this->config['retentionDays']*86400)],'createdAt DESC');
+            return ['pending'=>count($rows)];
+        }
+        if (in_array($path,['/notifications/subscribe','/notifications/unsubscribe'],true) && $method==='POST') {
+            ensure(is_string($body['endpoint']??null) && strlen($body['endpoint'])<=4096,'Inscrição inválida');
+            $push=new Push($this->db,$this->config);
+            if($path==='/notifications/subscribe')$push->subscribe($this->user['id'],$body['endpoint']);else $push->unsubscribe($this->user['id'],$body['endpoint']);
+            return ['ok'=>true];
+        }
         if (str_starts_with($path,'/enrollment/')) return $this->enrollmentRoute($method,substr($path,11),$body);
         if ($path==='/templates' && $method==='GET') return array_map(fn($t)=>$this->template($t['id']),$this->db->rows('EvaluationTemplate','ownerId IN (?,?)',['system',$this->user['id']],'name ASC, version DESC'));
         if ($path==='/templates' && $method==='POST') return $this->newTemplate($body);

@@ -1,7 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { randomBytes, scryptSync, createDecipheriv } from 'node:crypto';
+import { randomBytes, scryptSync, createDecipheriv, createPublicKey, verify } from 'node:crypto';
 import assert from 'node:assert/strict';
 
 const php = process.env.PHP_BIN || 'php';
@@ -135,6 +135,18 @@ try {
     social:{notes:'Registro social'},
   })) await req(teacher,'POST',`/students/${student.id}/records`,{kind,date:'2026-10-01',data},201);
   await req(teacher,'POST','/enrollment/link',{publicName:'Professor Teste',contact:'contato@example.test'},201);
+  await req(anon,'GET','/notifications/summary',undefined,401);
+  await req(pupil,'GET','/notifications/summary',undefined,403);
+  assert.equal((await req(teacher,'GET','/notifications/summary')).pending,0);
+  const pushSettings=await req(teacher,'GET','/notifications/settings');
+  assert.equal(Buffer.from(pushSettings.publicKey,'base64url').length,65);
+  const signed=JSON.parse(run(['backend-php/tests/push.php','crypto'],env));
+  const rawKey=Buffer.from(signed.publicKey,'base64url'),jwt=signed.authorization.slice(8).split(', k=')[0].split('.');
+  const signingKey=createPublicKey({format:'jwk',key:{kty:'EC',crv:'P-256',x:rawKey.subarray(1,33).toString('base64url'),y:rawKey.subarray(33).toString('base64url')}});
+  assert.equal(verify('sha256',Buffer.from(jwt[0]+'.'+jwt[1]),{key:signingKey,dsaEncoding:'ieee-p1363'},Buffer.from(jwt[2],'base64url')),true);
+  const syntheticEndpoint='https://fcm.googleapis.com/fcm/send/synthetic-subscription';
+  for(const endpoint of ['https://127.0.0.1/push','https://fcm.googleapis.com.evil.test/push','http://fcm.googleapis.com/x','https://u:p@fcm.googleapis.com/x'])await req(teacher,'POST','/notifications/subscribe',{endpoint},400);
+  await req(teacher,'POST','/notifications/subscribe',{endpoint:syntheticEndpoint});
   const link=await req(teacher,'GET','/enrollment/link'); assert.equal(new URL(link.url).pathname,'/cadastro/'+link.token);
   const challenge=await req(anon,'GET','/public/enrollment/'+link.token);
   await new Promise(r=>setTimeout(r,2100));
@@ -142,6 +154,19 @@ try {
   await req(anon,'POST','/public/enrollment/'+link.token,enrollment,202);
   await req(anon,'POST','/public/enrollment/'+link.token,enrollment,400);
   const requests=await req(teacher,'GET','/enrollment/requests'); assert.equal(requests.length,1);
+  assert.equal((await req(teacher,'GET','/notifications/summary')).pending,1);
+  assert.equal((await req(other,'GET','/notifications/summary')).pending,0);
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','201'],env)).sent,0,'Aviso não deve repetir após envio imediato');
+  const pushFolder=config.replace(/\.php$/,'-push');
+  const pushFile=fs.readdirSync(pushFolder).find(file=>file.endsWith('.json'));
+  const pushState=JSON.parse(fs.readFileSync(path.join(pushFolder,pushFile),'utf8'));
+  assert.equal(pushState.sent.length,1);assert.equal(JSON.stringify(pushState).includes(syntheticEndpoint),false);
+  pushState.sent=[];fs.writeFileSync(path.join(pushFolder,pushFile),JSON.stringify(pushState));
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','503'],env)).failed,1);
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','201'],env)).sent,0,'Retry precisa aguardar backoff');
+  const retryState=JSON.parse(fs.readFileSync(path.join(pushFolder,pushFile),'utf8'));retryState.retryAt=0;
+  fs.writeFileSync(path.join(pushFolder,pushFile),JSON.stringify(retryState));
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','410'],env)).expired,1);
   await req(other,'GET','/enrollment/requests/'+requests[0].id,undefined,404);
   const detail=await req(teacher,'GET','/enrollment/requests/'+requests[0].id); assert.equal(detail.form.health.restrictions,'Sintética');
   // Node deve conseguir decifrar o payload PHP sem conversão da chave/formato.
@@ -150,6 +175,7 @@ try {
   const decipher=createDecipheriv('aes-256-gcm',Buffer.from('ab'.repeat(32),'hex'),iv); decipher.setAuthTag(tag);
   assert.equal(JSON.parse(Buffer.concat([decipher.update(cipher),decipher.final()]).toString()).email,enrollment.email);
   await req(teacher,'POST',`/enrollment/requests/${requests[0].id}/status`,{status:'active'});
+  assert.equal((await req(teacher,'GET','/notifications/summary')).pending,0);
   await req(teacher,'DELETE',`/enrollment/requests/${requests[0].id}`,undefined,409);
   for(const type of ['repetitions-load','repetitions-load-time','repetitions-time','time-incline','running','notes','cadence']){
     await req(teacher,'POST','/prescription-presets',{name:'Preset '+type,series:[{type,sets:2,repetitions:type.startsWith('repetitions')?'8-12':'',load:10,durationSeconds:20,restSeconds:60,incline:2,distance:100,speed:5,notes:'Teste',cadence:'2020'}]},201);

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateImageAsync } from '@expo/image-utils';
 
-// Somente exportação web para PHP. Nenhum service worker ou cache de dados privados.
+// Exportação web para PHP. O worker opcional de notificações não cria cache offline.
 export async function preparePwa(publicDir) {
   const iconsDir=path.join(publicDir,'assets/pwa');
   fs.mkdirSync(iconsDir,{recursive:true});

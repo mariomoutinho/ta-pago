@@ -13,6 +13,9 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/Push.php",
+    "backend-php/src/PushCron.php",
+    "backend-php/public/notifications-sw.js",
     "backend-php/src/Media.php",
     "backend-php/migrations/20261101_exercise_favorites.sql",
     "backend-php/tests/favorites-migration.php",
@@ -34,7 +37,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -174,9 +177,19 @@ O front controller diferencia exclusivamente PUT /exercise-videos de requisiçõ
 
 Na publicação de 2026-11-01, foram atualizados Media.php, bootstrap.php, Workouts.php, App.php e o front controller, com backup privado, verificação da base e dos hashes finais e remoção do atualizador temporário. O armazenamento privado foi criado e sua permissão de escrita foi conferida. Não houve alteração de banco, credenciais, chave de criptografia ou autorizações. Os testes locais passaram com 113 verificações HTTP, incluindo upload/leitura parcial e isolamento, e reprodução real no pacote PHP em 390 e 1280 px. Android/iOS em aparelhos e binários nativos continuam exigindo validação própria.
 
+## Notificações de cadastro
+
+O PHP usa OpenSSL com suporte a EC prime256v1 e cURL HTTPS para Web Push sem payload pessoal. A chave VAPID é gerada no servidor em storage/push/vapid-private.pem; nunca distribuir ou regenerar durante deploy. Inscrições são cifradas com a chave de criptografia existente. Preservar e incluir storage/push no backup privado, junto com config.php. Não publicar endpoints de inscrição, PEM, tokens ou conteúdo desses backups. Não é necessária alteração de esquema.
+
+O envio imediato ocorre depois do commit e da resposta pública. Para retomar falhas e recuperar interrupções, executar src/PushCron.php pelo PHP 8.3 uma vez por minuto, com o mesmo config.php privado. O comando só retorna contagens, sem destinos ou dados de alunos. Respostas 404/410 removem a inscrição; outras falhas usam espera progressiva de até uma hora, com janela de entrega de 24 horas. A inclusão de um worker público não habilita funcionamento offline: notifications-sw.js recebe push e abre a página de cadastros; não possui handler fetch nem CacheStorage.
+
+Em 01/11/2026, foram publicados os avisos internos e o worker, com verificação dos hashes, backup privado do runtime e preservação das configurações. O servidor confirmou suporte a cURL e chaves EC. A chave VAPID foi inicializada exclusivamente no armazenamento privado. O cron com agenda * * * * * foi criado com PHP 8.3 e sua execução retornou contagens zeradas, sem falhas. A API de resumo exige sessão; o worker público foi conferido com MIME JavaScript. Os testes locais passaram com 125 verificações HTTP no PHP, assinatura verificada independentemente no Node, repetição após falha e remoção de inscrições expiradas. O navegador simulou o evento push e conferiu a notificação; a entrega por provedores reais aguarda a inscrição voluntária e a conferência no aparelho do personal. Os verificadores documentais e de código repetiram as cinco falhas preexistentes de symlink/proveniência no Windows.
+
+Validar ativação explícita, permissão negada, inscrição, desativação/logout, clique do aviso e entrega com o aplicativo fechado em cada aparelho. iPhone/iPad exigem instalação na tela inicial e sistema 16.4 ou superior. O processo depende dos serviços push de navegador/sistema e da conexão. Testes automatizados simulam o provedor e entregam evento push via DevTools; isso não comprova entrega real na tela bloqueada de aparelhos físicos.
+
 ## PWA e verificação em aparelhos
 
-O manifesto usa nome Tá Pago, início/escopo / e display standalone. Ícones PNG reais da marca são gerados em 192/512; iOS usa apple-touch-icon 180 e metadados próprios. Não há cache offline ou service worker. A instalação precisa de conexão para consultar dados.
+O manifesto usa nome Tá Pago, início/escopo / e display standalone. Ícones PNG reais da marca são gerados em 192/512; iOS usa apple-touch-icon 180 e metadados próprios. Não há cache offline. O worker dedicado é registrado quando o personal ativa notificações. A instalação precisa de conexão para consultar dados.
 
 Depois de publicar, no Android abrir o site HTTPS em navegador compatível e usar Instalar aplicativo/Adicionar à tela inicial; no iPhone usar Compartilhar → Adicionar à Tela de Início. Abrir pelo novo ícone e conferir ausência de barra de endereço, login e atualização. A interface varia por navegador/versão. Testar em aparelhos reais: validação automatizada do manifesto em Chromium não comprova instalação nem modo standalone em iOS/Android.
 

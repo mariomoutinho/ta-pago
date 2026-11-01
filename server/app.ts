@@ -27,6 +27,7 @@ import { hashPassword, newToken, sessionKey, verifyPassword } from "./security";
 import { workoutTemplateRoutes } from "./workout-templates";
 import { planInclude, workoutRoutes } from "./workouts";
 import { exerciseMediaRoutes } from "./exercise-media";
+import { notificationRoutes, dispatchPush } from "./push";
 
 type Identity = { id: string; name: string; email: string; role: string };
 const identity = (res: express.Response) => res.locals.user as Identity;
@@ -199,7 +200,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
       res.status(503).json({ status: "unavailable" });
     }
   });
-  app.use("/api/public/enrollment", publicEnrollmentRoutes(db));
+  app.use("/api/public/enrollment", publicEnrollmentRoutes(db, owner => dispatchPush(db, owner, undefined, [...authorizedPersonalIds])));
   app.use("/api", async (req, res, next) => {
     const user = await sessionUser(req);
     if (!user) throw new HttpError(401, "Entre na sua conta para continuar");
@@ -208,6 +209,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   });
 
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
+  app.use("/api/notifications", notificationRoutes(db));
   app.use("/api", exerciseMediaRoutes(db));
   app.use("/api", workoutRoutes(db));
   app.use("/api/workout-templates", workoutTemplateRoutes(db));

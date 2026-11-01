@@ -15,6 +15,7 @@ import AppTabs from "@/components/app-tabs";
 import { Button, Label, Notice, s } from "./ui";
 import { message } from "@/features/personal/api";
 import { router } from "expo-router";
+import { EnrollmentNotifications } from "./enrollment-notifications";
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <View style={s.row}>
@@ -102,6 +103,7 @@ export function PersonalShell({ children }: { children: ReactNode }) {
         </View>
       </View>
       <Notice error>{error}</Notice>
+      {user.role === "personal" && <EnrollmentNotifications key={user.id} />}
       <View style={{ flex: 1 }}>{children}</View>
     </SafeAreaView>
   );

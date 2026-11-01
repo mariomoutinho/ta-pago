@@ -11,6 +11,14 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/Push.php",
+    "backend-php/src/PushCron.php",
+    "backend-php/public/notifications-sw.js",
+    "server/push.ts",
+    "src/components/personal/enrollment-notifications.tsx",
+    "src/features/personal/push-device.web.ts",
+    "tests/personal/push.test.ts",
+    "backend-php/tests/push.php",
     "src/app/cadastro/[token].tsx",
     "server/app.ts",
     "server/import-compasso.ts",
@@ -32,7 +40,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.7.1",
+  "version": "4.8.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -98,6 +106,18 @@ A correção anterior de movimento foi verificada em 320 × 568, 360 × 640 e 12
 A reprodução automática sem controles foi verificada em 320 × 568, 390 × 740 e 1280 × 900, inclusive com movimento reduzido informado pelo sistema: avanço em 3 segundos sem ativação, deslocamento lateral intermediário, ciclo completo, continuidade após seleção manual, ausência dos botões e login inteiro visível.
 
 Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verificou avanço automático, seleção, pausa, retomada, ausência dos três destaques, abertura do cadastro e ausência de erros JavaScript. Em 320 px, verificou movimento reduzido, seleção manual e ausência de rolagem horizontal na página. Typecheck, build PHP/web e os seis testes de empacotamento passaram. As suítes documentais e de extração repetiram as cinco falhas já registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md), relacionadas a links simbólicos no Windows e proveniência.
+
+## Avisos de cadastro para o personal
+
+O cabeçalho profissional mostra avisos de cadastro e a contagem de fichas pendentes. Com o app ativo, GET /notifications/summary atualiza a contagem a cada 15 segundos e ao voltar para o aplicativo. O botão Analisar cadastros recebidos abre a página do link e das aprovações; a contagem cai quando a ficha deixa de estar pendente. A API retorna somente a quantidade, filtra pelo profissional autenticado e respeita a retenção configurada. Alunos não acessam esses endpoints.
+
+O diálogo Notificações de cadastro permite ativar ou desativar os avisos neste aparelho. A permissão do sistema só é solicitada após o toque. O PWA usa Push API, VAPID ES256 e um worker dedicado sem interceptação de requisições nem cache offline. O aviso do sistema contém apenas “Novo cadastro recebido” e texto genérico, sem nome, contato ou dados de saúde. Tocar no aviso abre /alunos/link; se a sessão expirou, o login continua obrigatório. Sair da conta remove a inscrição desse aparelho.
+
+O servidor mantém a chave de assinatura e inscrições cifradas fora da pasta pública e do repositório. O cadastro só dispara o aviso após a confirmação da transação; duplicatas não criam outro aviso. Um despachante periódico consulta fichas pendentes recentes, conserva os IDs já enviados por aparelho, repete falhas com espera progressiva e descarta inscrições com resposta 404/410. Fichas anteriores à ativação ou com mais de 24 horas não geram push. Múltiplos cadastros podem ser agrupados em um aviso genérico, enquanto a contagem no aplicativo continua refletindo todas as pendências. Entrega depende da permissão, conexão, navegador, provedor push e configurações do aparelho.
+
+O envio Web Push não contém payload de dados pessoais: o worker apresenta a mensagem local. Serviços aceitos são os endpoints HTTPS de Google, Apple, Mozilla e Windows explicitamente permitidos; redirecionamentos são rejeitados. No PHP, a chave privada e as inscrições ficam em storage/push ou pushDirectory; no Express, em PERSONAL_PUSH_DIRECTORY ou data/push. Preservar esse armazenamento e a chave de criptografia em deploys e backups.
+
+No iPhone/iPad, o Web Push exige iOS/iPadOS 16.4 ou superior e o aplicativo adicionado à tela inicial. Navegadores incompatíveis mantêm os avisos dentro do app e exibem orientação. A entrega em aparelhos físicos precisa de validação após o professor ativar a permissão. Referências: [Web Push no WebKit](https://webkit.org/blog/13966/webkit-features-in-safari-16-4/), [VAPID RFC 8292](https://www.rfc-editor.org/rfc/rfc8292) e [Web Push RFC 8030](https://www.rfc-editor.org/rfc/rfc8030).
 
 ## Confirmação do cadastro por link
 

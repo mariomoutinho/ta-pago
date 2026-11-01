@@ -4,6 +4,7 @@ import { purgeEnrollments } from "./enrollment";
 import { mkdirSync } from "node:fs";
 import { createDb } from "./db";
 import { createApp } from "./app";
+import { dispatchPush } from "./push";
 mkdirSync("data", { recursive: true });
 const { port, host } = runtimeConfig();
 const db = createDb();
@@ -24,9 +25,12 @@ async function purge() {
 }
 void purge();
 const retentionTimer = setInterval(() => void purge(), 60 * 60 * 1000);
+const pushTimer = setInterval(() => void dispatchPush(db).catch(() => console.error("Falha ao processar notificações")), 60000);
+(pushTimer as unknown as NodeJS.Timeout).unref();
 (retentionTimer as unknown as NodeJS.Timeout).unref();
 async function close() {
   clearInterval(retentionTimer);
+  clearInterval(pushTimer);
   server.close(async () => {
     await db.$disconnect();
     process.exit(0);

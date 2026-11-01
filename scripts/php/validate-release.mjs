@@ -17,7 +17,7 @@ export function validateRelease(root) {
     if(relative==='manifest.json')continue;
     const isPublic=relative.startsWith(publicPrefix);
     const local=isPublic?relative.slice(publicPrefix.length):relative;
-    const allowed=isPublic ? local==='api/index.php' || local==='.htaccess' || /^(?:index\.html|metadata\.json|manifest\.webmanifest|favicon\.ico)$/.test(local) || /^(?:assets|_expo)\/.+\.(?:js|css|png|jpe?g|gif|webp|svg|ico|ttf|otf|woff2?)$/.test(local)
+    const allowed=isPublic ? local==='api/index.php' || local==='.htaccess' || local==='notifications-sw.js' || /^(?:index\.html|metadata\.json|manifest\.webmanifest|favicon\.ico)$/.test(local) || /^(?:assets|_expo)\/.+\.(?:js|css|png|jpe?g|gif|webp|svg|ico|ttf|otf|woff2?)$/.test(local)
       : /^tapago-private\/(?:bootstrap\.php|src\/[A-Za-z]+\.php|generated\/(?:contracts|models|seed)\.json)$/.test(relative);
     if(!allowed || /(?:^|\/)config\.php$|\.env(?:\.|$)|\.(?:sql|db|sqlite|key|pem|map|bak|zip)$/i.test(relative))throw new Error('Arquivo não autorizado: '+relative);
     const bytes=fs.readFileSync(full);
@@ -32,6 +32,8 @@ export function validateRelease(root) {
   walk(root);
   if(expected.size)throw new Error('Arquivo do manifesto ausente');
   const publicDir=path.join(root,manifest.publicDirectory);
+  const worker=fs.readFileSync(path.join(publicDir,'notifications-sw.js'),'utf8');
+  if(/\bcaches\b|addEventListener\(\s*['"]fetch['"]/.test(worker))throw new Error('Worker de notificações não pode interceptar ou armazenar requisições');
   const html=fs.readFileSync(path.join(publicDir,'index.html'),'utf8');
   if(!html.includes('/_expo/'))throw new Error('Assets Expo não referenciados na raiz');
   const pwa=JSON.parse(fs.readFileSync(path.join(publicDir,'manifest.webmanifest')));

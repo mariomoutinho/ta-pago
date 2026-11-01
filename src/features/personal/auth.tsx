@@ -8,6 +8,7 @@ import {
 } from "react";
 import { api, message } from "./api";
 import { saveSession } from "./session-storage";
+import { clearNotificationsDevice } from "./push-device";
 import type { User } from "./types";
 type Auth = {
   user: User | null;
@@ -47,6 +48,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setError("");
   }
   async function logout() {
+    await clearNotificationsDevice().catch(() => {});
     await api("/auth/logout", "POST");
     await saveSession(null);
     setUser(null);

@@ -20,6 +20,10 @@ function replace(dir,relative,change){
   fs.writeFileSync(manifestFile,JSON.stringify(manifest));
 }
 test('pacote real aceita todos os arquivos esperados',()=>assert.ok(validateRelease(release).files>0));
+test('worker de notificações não pode criar cache offline',()=>{
+  const dir=fixture();replace(dir,'public_html/tapago/notifications-sw.js',value=>value+"\nself.addEventListener('fetch',()=>{});\n");
+  assert.throws(()=>validateRelease(dir),/Worker de notificações/);
+});
 test('rejeita config.php privado mesmo fora da pasta pública',()=>{
   const dir=fixture();fs.writeFileSync(path.join(dir,'tapago-private/config.php'),'<?php return [];');
   assert.throws(()=>validateRelease(dir),/Arquivo não autorizado/);

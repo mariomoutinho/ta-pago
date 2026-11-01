@@ -12,6 +12,7 @@ import { sessionKey } from "../../server/security";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-enrollment-")),
   url = `file:${folder}/test.db`,
   db = createDb(url);
+process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 let app: ReturnType<typeof createApp>,
   owner: ReturnType<typeof request.agent>,
   other: ReturnType<typeof request.agent>,

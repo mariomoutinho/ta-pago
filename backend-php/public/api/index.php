@@ -26,6 +26,9 @@ try {
     http_response_code($app->status);
     if ($result instanceof \TaPago\VideoStream) { $result->send(); exit; }
     if ($app->status!==204) echo \TaPago\encode($result);
+    if(function_exists('fastcgi_finish_request'))fastcgi_finish_request();
+    elseif(function_exists('litespeed_finish_request'))litespeed_finish_request();
+    $app->sendDeferredNotifications();
 } catch (\TaPago\HttpError $e) {
     http_response_code($e->status); echo json_encode(['error'=>$e->getMessage()],JSON_UNESCAPED_UNICODE);
 } catch (JsonException) {

@@ -55,7 +55,7 @@ const genericSuccess = {
   ok: true,
   message: "Cadastro enviado ao profissional. Aguarde o contato dele.",
 };
-export function publicEnrollmentRoutes(db: Db) {
+export function publicEnrollmentRoutes(db: Db, notify?: (owner: string) => Promise<unknown>) {
   const router = Router();
   const limiter = rateLimit({
     windowMs: 15 * 60000,
@@ -110,7 +110,7 @@ export function publicEnrollmentRoutes(db: Db) {
         "Não foi possível enviar. Reabra o formulário e tente novamente.",
       );
     const data = parsed.data;
-    await db.$transaction(async (tx) => {
+    const notificationOwner = await db.$transaction(async (tx) => {
       const link = await tx.enrollmentLink.findUnique({
         where: { token: String(req.params.token) },
       });
@@ -157,8 +157,10 @@ export function publicEnrollmentRoutes(db: Db) {
           events: { create: { status: "pending" } },
         },
       });
+      return link.personalId;
     });
     res.status(202).json(genericSuccess);
+    if (notificationOwner && notify) void notify(notificationOwner).catch(() => console.error("Falha ao enviar aviso de cadastro"));
   });
   return router;
 }

@@ -11,8 +11,46 @@ const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
 process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
+process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 let server: Server;
 let base: string;
+
+test("avisos mostram cadastro recebido, atualizam após aprovação e registram worker sem cache", async ({ page, context }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Personal Avisos",email:"notice-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
+  let pending=0;
+  await page.route("**/api/notifications/summary",route=>route.fulfill({json:{pending}}));
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+"/");
+  await page.getByRole("button",{name:"Notificações de cadastro",exact:true}).click();
+  await expect(page.getByText("Nenhum cadastro pendente no momento.",{exact:true})).toBeVisible();
+  pending=1;
+  await page.getByRole("button",{name:"Atualizar avisos",exact:true}).click();
+  await expect(page.getByText("1 cadastro(s) aguardando sua aprovação.",{exact:true})).toBeVisible();
+  await page.getByRole("button",{name:"Ver cadastros recebidos",exact:true}).click();
+  await expect(page).toHaveURL(base+"/alunos/link");
+  await expect(page.getByText("Você recebeu um novo cadastro de aluno.",{exact:true})).toBeVisible();
+  pending=0;
+  await page.getByRole("button",{name:"Notificações de cadastro: 1 pendentes",exact:true}).click();
+  await page.getByRole("button",{name:"Atualizar avisos",exact:true}).click();
+  await expect(page.getByText("Nenhum cadastro pendente no momento.",{exact:true})).toBeVisible();
+  await context.grantPermissions(["notifications"]);
+  await page.evaluate(async()=>{await navigator.serviceWorker.register('/notifications-sw.js');await navigator.serviceWorker.ready;});
+  const cdp=await context.newCDPSession(page);
+  const registered=new Promise<string>(resolve=>cdp.on('ServiceWorker.workerRegistrationUpdated',event=>{
+    const found=event.registrations.find((registration:any)=>registration.scopeURL===base+'/');if(found)resolve(found.registrationId);
+  }));
+  await cdp.send('ServiceWorker.enable');
+  const registration=await page.evaluate(async()=>({scope:(await navigator.serviceWorker.ready).scope,cache:await caches.keys()}));
+  expect(registration.scope).toBe(base+'/');expect(registration.cache).toEqual([]);
+  await cdp.send('ServiceWorker.deliverPushMessage',{origin:base,registrationId:await registered,data:''});
+  await expect.poll(()=>page.evaluate(async()=> (await (await navigator.serviceWorker.ready).getNotifications()).length)).toBeGreaterThan(0);
+  const notice=await page.evaluate(async()=>{
+    const registration=await navigator.serviceWorker.ready;
+    const notifications=await registration.getNotifications();const title=notifications[0]?.title;notifications.forEach(notification=>notification.close());return title;
+  });
+  expect(notice).toBe('Novo cadastro recebido');await cdp.detach();
+});
 
 test("upload de MP4 salva e reproduz no player próprio sem iframe do YouTube", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };

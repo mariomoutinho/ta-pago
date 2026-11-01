@@ -98,7 +98,7 @@
     "personal:setup": "tsx scripts/prepare-personal-db.ts && prisma generate && prisma migrate deploy && tsx server/seed.ts",
     "personal:api": "tsx watch server/index.ts",
     "personal:dev": "concurrently -k \"npm run personal:api\" \"expo start --web --port 8081\"",
-    "personal:build": "expo export --platform web",
+    "personal:build": "expo export --platform web && node scripts/copy-push-worker.mjs",
     "personal:start": "tsx server/index.ts",
     "personal:test": "vitest run",
     "personal:e2e": "playwright test",

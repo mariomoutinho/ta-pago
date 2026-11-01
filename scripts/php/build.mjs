@@ -21,6 +21,7 @@ for(const file of ['bootstrap.php','src','generated']) {
   fs.cpSync(path.join('backend-php',file),path.join(privateDir,file),{recursive:true});
 }
 fs.copyFileSync('backend-php/public/.htaccess',path.join(publicDir,'.htaccess'));
+fs.copyFileSync('backend-php/public/notifications-sw.js',path.join(publicDir,'notifications-sw.js'));
 fs.cpSync('backend-php/public/api',path.join(publicDir,'api'),{recursive:true});
 const files=[];
 function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){

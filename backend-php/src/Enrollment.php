@@ -48,6 +48,7 @@ trait Enrollment {
             $r=$this->db->create('EnrollmentRequest',['personalId'=>$link['personalId'],'emailHash'=>$fingerprint,'payload'=>$this->seal($data),
                 'healthPayload'=>array_filter($health)?$this->seal($health):null,'policyVersion'=>$seed['policyVersion'],'consentAt'=>now(),'healthConsentAt'=>$data['healthConsent']?now():null]);
             $this->db->create('EnrollmentEvent',['requestId'=>$r['id'],'status'=>'pending']);
+            $this->deferredNotifications[]=$link['personalId'];
         }
         $this->status=202; return ['ok'=>true,'message'=>'Cadastro enviado ao profissional. Aguarde o contato dele.'];
     }
