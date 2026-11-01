@@ -69,9 +69,12 @@ export function PersonalShell({ children }: { children: ReactNode }) {
         ]}
       >
         <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>
-          <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => router.push("/")} style={{ flexShrink: 1 }}>
-            <Brand compact={width < 700} />
-          </Pressable>
+          <View style={[s.row, width < 700 ? { width: "100%", justifyContent: "space-between" } : { flexShrink: 1 }]}>
+            <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => router.push("/")} style={{ flexShrink: 1 }}>
+              <Brand compact={width < 700} />
+            </Pressable>
+            {width < 700 && user.role === "personal" && <EnrollmentNotifications key={user.id} />}
+          </View>
           {width >= 900 && <AppTabs />}
           <View style={[s.row, { marginLeft: "auto" }]}>
             <View style={width < 700 ? { display: "none" } : undefined}>
@@ -84,7 +87,6 @@ export function PersonalShell({ children }: { children: ReactNode }) {
                   : "Conta do aluno"}
               </Label>
             </View>
-            {user.role === "personal" && <EnrollmentNotifications key={user.id} />}
             <Button variant="secondary" label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>
               {scheme === "dark" ? "☀" : "☾"}
             </Button>
@@ -100,6 +102,7 @@ export function PersonalShell({ children }: { children: ReactNode }) {
             >
               Sair
             </Button>
+            {width >= 700 && user.role === "personal" && <EnrollmentNotifications key={user.id} />}
           </View>
         </View>
       </View>

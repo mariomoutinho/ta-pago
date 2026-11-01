@@ -137,7 +137,7 @@
     },
     {
       "source_path": "src/components/personal/shell.tsx",
-      "sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d"
+      "sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71"
     },
     {
       "source_path": "src/components/personal/student-list-row.tsx",
@@ -197020,7 +197020,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -197046,7 +197046,7 @@
         "Image",
         "View"
       ],
-      "sha256": "60effffaa9b49ab1c41b745bb28e9248f556a85edcde3f351acc346e3b8ae4ee"
+      "sha256": "14063d3b4cbfacb9bf788e1927f7d21a7f0644cafedf9e8c6f3fd839d601b02f"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:component:Page",
@@ -197226,8 +197226,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
@@ -197238,8 +197238,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
@@ -197250,28 +197250,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 111,
-      "end_line": 139,
+      "start_line": 114,
+      "end_line": 142,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 111,
-          "end_line": 139,
+          "start_line": 114,
+          "end_line": 142,
           "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -197307,7 +197307,7 @@
       "native_components": [
         "ScrollView"
       ],
-      "sha256": "dcf0d1afb93b98d290570b24e4c0cdf75b7d5ace05fab5f56193318087384404"
+      "sha256": "a32b481d05061dbc0903779173ebd6c24e894ac0e5a6fb13dbc5989a6b8fdae7"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:component:PersonalShell",
@@ -197493,8 +197493,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -197505,8 +197505,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -197517,8 +197517,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -197528,8 +197528,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 72,
-              "end_line": 72,
+              "start_line": 73,
+              "end_line": 73,
               "snippet": "onPress={() => router.push(\"/\")}"
             }
           ],
@@ -197540,8 +197540,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 88,
-              "end_line": 88,
+              "start_line": 90,
+              "end_line": 90,
               "snippet": "onPress={toggleTheme}"
             }
           ],
@@ -197552,40 +197552,40 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 93,
-              "end_line": 99,
+              "start_line": 95,
+              "end_line": 101,
               "snippet": "onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}"
             }
           ],
           "confidence": "observed"
         },
         {
-          "description": "Condiciona execução/renderização a: !user; scheme === \"dark\"; user.role === \"personal\"; width < 700; width >= 900.",
+          "description": "Condiciona execução/renderização a: !user; scheme === \"dark\"; user.role === \"personal\"; width < 700; width < 700 && user.role === \"personal\"; width >= 700; width >= 700 && user.role === \"personal\"; width >= 900.",
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
       "start_line": 51,
-      "end_line": 110,
+      "end_line": 113,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
           "start_line": 51,
-          "end_line": 110,
-          "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+          "end_line": 113,
+          "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -197638,7 +197638,7 @@
         "Pressable",
         "View"
       ],
-      "sha256": "44735b38fcbf061a28d91d34f4e628e2d4834434f5e121112792465752fdb439"
+      "sha256": "00631af4dffb365b5118ad4e19be395da3580dc432bedae90930018f740188ce"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:constant:styles",
@@ -197799,28 +197799,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 140,
-              "end_line": 152,
+              "start_line": 143,
+              "end_line": 155,
               "snippet": "styles = StyleSheet.create({\n  header: { borderBottomWidth: 1 },\n  headerInner: {\n    paddingHorizontal: 18,\n    paddingVertical: 12,\n    maxWidth: 1320,\n    width: \"100%\",\n    alignSelf: \"center\",\n    flexDirection: \"row\",\n    alignItems: \"center\",\n    flexWrap: \"wrap\",\n  },\n})"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 140,
-      "end_line": 152,
+      "start_line": 143,
+      "end_line": 155,
       "value_type": "CallExpression",
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 140,
-          "end_line": 152,
+          "start_line": 143,
+          "end_line": 155,
           "snippet": "styles = StyleSheet.create({\n  header: { borderBottomWidth: 1 },\n  headerInner: {\n    paddingHorizontal: 18,\n    paddingVertical: 12,\n    maxWidth: 1320,\n    width: \"100%\",\n    alignSelf: \"center\",\n    flexDirection: \"row\",\n    alignItems: \"center\",\n    flexWrap: \"wrap\",\n  },\n})"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -197836,7 +197836,7 @@
       "uses_theme": false,
       "native_components": [],
       "value": "StyleSheet.create({\n  header: { borderBottomWidth: 1 },\n  headerInner: {\n    paddingHorizontal: 18,\n    paddingVertical: 12,\n    maxWidth: 1320,\n    width: \"100%\",\n    alignSelf: \"center\",\n    flexDirection: \"row\",\n    alignItems: \"center\",\n    flexWrap: \"wrap\",\n  },\n})",
-      "sha256": "de8e38d8c0e73e90ac873183ae017f7199382ffd458c85764ab672d2fa250136"
+      "sha256": "34eb3193d70c55796eb90625d0cfa8b120a2c7cfa702f98433126c0cf46111b9"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:function:Page%2Fcallback%3AuseEffect",
@@ -197997,28 +197997,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 119,
-              "end_line": 121,
+              "start_line": 122,
+              "end_line": 124,
               "snippet": "() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 119,
-      "end_line": 121,
+      "start_line": 122,
+      "end_line": 124,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 119,
-          "end_line": 121,
+          "start_line": 122,
+          "end_line": 124,
           "snippet": "() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -198033,7 +198033,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "55c9fd88cf38bfde0a58627e239298a1b85ffa96716b9e627e6f1816d4898a84"
+      "sha256": "92d841e623d72c80185721f2ddbf2bc09e94dffddfb37abb46072b9be0596a52"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:function:PersonalShell%2Fcallback%3AonPress",
@@ -198196,28 +198196,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 72,
-              "end_line": 72,
+              "start_line": 73,
+              "end_line": 73,
               "snippet": "() => router.push(\"/\")"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 72,
-      "end_line": 72,
+      "start_line": 73,
+      "end_line": 73,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 72,
-          "end_line": 72,
+          "start_line": 73,
+          "end_line": 73,
           "snippet": "() => router.push(\"/\")"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -198232,7 +198232,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "850ad44e8923f6f21dbbf26ef37d937096994e9dd77246bb7791c9c295f54a8c"
+      "sha256": "9bb59a1a23905dc9c5426515335d335e108d2207d25155ea6cfba01dfef7d5f2"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:function:PersonalShell%2Fcallback%3AonPress%3A2",
@@ -198395,28 +198395,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 93,
-              "end_line": 99,
+              "start_line": 95,
+              "end_line": 101,
               "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 93,
-      "end_line": 99,
+      "start_line": 95,
+      "end_line": 101,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 93,
-          "end_line": 99,
+          "start_line": 95,
+          "end_line": 101,
           "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -198433,7 +198433,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "31703c8cb6eb39dea027a3fd7d11a508c877bf68f7d454c7e0a368a4c7a2e806"
+      "sha256": "4fa993f9d8b715b83c6e88d590c3fb1378a254046230569dd841d2f5bffb87c8"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:Brand",
@@ -198631,7 +198631,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -198657,7 +198657,7 @@
         "Image",
         "View"
       ],
-      "sha256": "f2eebb52f0e3d425bb5562dbfa549429002d3c9257efcfe7bed81115b4819beb"
+      "sha256": "d1cde6715ca3d500cfa5b83d8df80f79a60d8004a2c77caa4766db955b7c1c35"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:Page",
@@ -198820,8 +198820,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
@@ -198832,8 +198832,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
@@ -198844,28 +198844,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 111,
-              "end_line": 139,
+              "start_line": 114,
+              "end_line": 142,
               "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 111,
-      "end_line": 139,
+      "start_line": 114,
+      "end_line": 142,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 111,
-          "end_line": 139,
+          "start_line": 114,
+          "end_line": 142,
           "snippet": "export function Page({\n  children,\n  resetKey,\n}: {\n  children: ReactNode;\n  resetKey?: string | number;\n}) {\n  const scrollRef = useRef<ScrollView>(null);\n  useEffect(() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }, [resetKey]);\n  const { width } = useWindowDimensions();\n  return (\n    <ScrollView\n      ref={scrollRef}\n      keyboardShouldPersistTaps=\"handled\"\n      contentContainerStyle={{\n        padding: width < 600 ? 18 : 32,\n        paddingBottom: 60,\n        width: \"100%\",\n        maxWidth: 1240,\n        alignSelf: \"center\",\n        flexGrow: 1,\n      }}\n    >\n      {children}\n    </ScrollView>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -198901,7 +198901,7 @@
       "native_components": [
         "ScrollView"
       ],
-      "sha256": "e5a929e1e1ceb58a24fc0388f861e7e045a46d572fd5125759cd0781788af80b"
+      "sha256": "b6922abb4da332669395a9bea472ce9a6c277e9a29016b50f901449878d6fc10"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:Page%2Fcallback%3AuseEffect",
@@ -199064,28 +199064,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 119,
-              "end_line": 121,
+              "start_line": 122,
+              "end_line": 124,
               "snippet": "() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 119,
-      "end_line": 121,
+      "start_line": 122,
+      "end_line": 124,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 119,
-          "end_line": 121,
+          "start_line": 122,
+          "end_line": 124,
           "snippet": "() => {\n    scrollRef.current?.scrollTo({ y: 0, animated: false });\n  }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -199100,7 +199100,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "48e2530c6b81fbc8c842af5e9cd5c4a0be1dd3d3079c3900f0afe6e1d0b080d3"
+      "sha256": "c0ef96c972c9be7da32ece10ba96eb2e70ba32d7ef2f7b23acb6b0863f884bd5"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:PersonalShell",
@@ -199274,8 +199274,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -199286,8 +199286,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -199298,8 +199298,8 @@
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
@@ -199309,8 +199309,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 72,
-              "end_line": 72,
+              "start_line": 73,
+              "end_line": 73,
               "snippet": "onPress={() => router.push(\"/\")}"
             }
           ],
@@ -199321,8 +199321,8 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 88,
-              "end_line": 88,
+              "start_line": 90,
+              "end_line": 90,
               "snippet": "onPress={toggleTheme}"
             }
           ],
@@ -199333,40 +199333,40 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 93,
-              "end_line": 99,
+              "start_line": 95,
+              "end_line": 101,
               "snippet": "onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}"
             }
           ],
           "confidence": "observed"
         },
         {
-          "description": "Condiciona execução/renderização a: !user; scheme === \"dark\"; user.role === \"personal\"; width < 700; width >= 900.",
+          "description": "Condiciona execução/renderização a: !user; scheme === \"dark\"; user.role === \"personal\"; width < 700; width < 700 && user.role === \"personal\"; width >= 700; width >= 700 && user.role === \"personal\"; width >= 900.",
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
               "start_line": 51,
-              "end_line": 110,
-              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+              "end_line": 113,
+              "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
             }
           ],
           "confidence": "observed"
         }
       ],
       "start_line": 51,
-      "end_line": 110,
+      "end_line": 113,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
           "start_line": 51,
-          "end_line": 110,
-          "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n            <Brand compact={width < 700} />\n          </Pressable>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            {user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
+          "end_line": 113,
+          "snippet": "export function PersonalShell({ children }: { children: ReactNode }) {\n  const t = useTheme();\n  const { scheme, toggleTheme } = useThemePreference();\n  const { user, logout } = useSession();\n  const [error, setError] = useState(\"\");\n  const { width } = useWindowDimensions();\n  if (!user)\n    return (\n      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n        {children}\n      </View>\n    );\n  return (\n    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>\n      <View\n        style={[\n          styles.header,\n          { backgroundColor: t.background, borderColor: t.border },\n        ]}\n      >\n        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>\n          <View style={[s.row, width < 700 ? { width: \"100%\", justifyContent: \"space-between\" } : { flexShrink: 1 }]}>\n            <Pressable accessibilityRole=\"link\" accessibilityLabel=\"Ir para o início\" onPress={() => router.push(\"/\")} style={{ flexShrink: 1 }}>\n              <Brand compact={width < 700} />\n            </Pressable>\n            {width < 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n          {width >= 900 && <AppTabs />}\n          <View style={[s.row, { marginLeft: \"auto\" }]}>\n            <View style={width < 700 ? { display: \"none\" } : undefined}>\n              <Label size={12} bold>\n                {user.name}\n              </Label>\n              <Label size={10} muted>\n                {user.role === \"personal\"\n                  ? \"Conta profissional\"\n                  : \"Conta do aluno\"}\n              </Label>\n            </View>\n            <Button variant=\"secondary\" label={scheme === \"dark\" ? \"Ativar tema claro\" : \"Ativar tema escuro\"} onPress={toggleTheme}>\n              {scheme === \"dark\" ? \"☀\" : \"☾\"}\n            </Button>\n            <Button\n              variant=\"secondary\"\n              onPress={async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }}\n            >\n              Sair\n            </Button>\n            {width >= 700 && user.role === \"personal\" && <EnrollmentNotifications key={user.id} />}\n          </View>\n        </View>\n      </View>\n      <Notice error>{error}</Notice>\n      <View style={{ flex: 1 }}>{children}</View>\n    </SafeAreaView>\n  );\n}"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -199419,7 +199419,7 @@
         "Pressable",
         "View"
       ],
-      "sha256": "0528dabaed0caf7d0758febc10f22ce1986a2c86452a5b492028d98a51eaddf0"
+      "sha256": "e839f5cc8c31eb4273c730a2f1f89763ba047a5a2844c7e84343768a7dc346b5"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:PersonalShell%2Fcallback%3AonPress",
@@ -199583,28 +199583,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 72,
-              "end_line": 72,
+              "start_line": 73,
+              "end_line": 73,
               "snippet": "() => router.push(\"/\")"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 72,
-      "end_line": 72,
+      "start_line": 73,
+      "end_line": 73,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 72,
-          "end_line": 72,
+          "start_line": 73,
+          "end_line": 73,
           "snippet": "() => router.push(\"/\")"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -199619,7 +199619,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "12181ebbb76ac52a993042d66078ad88f5dae633387525a28e2a45fcbbf81386"
+      "sha256": "06597b81ed7f687a7786609502bde145edc7eb627e8d67a28cbd6b42e4f4e246"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:interface-behavior:PersonalShell%2Fcallback%3AonPress%3A2",
@@ -199783,28 +199783,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 93,
-              "end_line": 99,
+              "start_line": 95,
+              "end_line": 101,
               "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 93,
-      "end_line": 99,
+      "start_line": 95,
+      "end_line": 101,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 93,
-          "end_line": 99,
+          "start_line": 95,
+          "end_line": 101,
           "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -199821,7 +199821,7 @@
       "uses_effect": false,
       "uses_theme": false,
       "native_components": [],
-      "sha256": "b897965ae73608b2d4399281f5a84c6fae2666a65628d56f7e05bec19c3e99c2"
+      "sha256": "bc2ca8f36bc3c6c64aba75847cd2c28bdb4dc46c09db95f3d34b46c0df14f424"
     },
     {
       "id": "ta-pago.code:src/components/personal/student-list-row.tsx:component:StudentListRow",
@@ -497944,7 +497944,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -497965,7 +497965,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "references"
       },
-      "sha256": "19ab0ecd9070c27915c7f7bfa2552d988de62d5b66930924dc0c84e02a536f77"
+      "sha256": "2ed0316d3633520122f82f568df58a6badfa2d518bbc34282fb336815e1022a7"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3ABrand%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
@@ -498017,7 +498017,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498038,7 +498038,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "renders"
       },
-      "sha256": "d592f73d76c7d2c5701cae3e2a784d08c6fbde6ca3ad6f5e18af2e09baa9fdfc"
+      "sha256": "57d58f6706f43501464ffdfba91f955467adacf96dac64394280d69c2c72dbaf"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3ABrand%7Cuses-constant%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Aconstant%3As",
@@ -498090,7 +498090,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498111,7 +498111,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:constant:s",
         "kind": "uses-constant"
       },
-      "sha256": "a1c34d959429759f1722956b41ac246f873830ff6fc7b788d2680799a8697d2b"
+      "sha256": "40819a9f47678a40f3a956c7219cb23fedb12c2a69fb13cf86cad77cf78bf6eb"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AButton",
@@ -498142,28 +498142,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 90,
-              "end_line": 90,
+              "start_line": 92,
+              "end_line": 92,
               "snippet": "Button"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 90,
-      "end_line": 90,
+      "start_line": 92,
+      "end_line": 92,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 90,
-          "end_line": 90,
+          "start_line": 92,
+          "end_line": 92,
           "snippet": "Button"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498184,7 +498184,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "kind": "references"
       },
-      "sha256": "9a5165fbb29e128f6f02b72f98d8567ed904a2ee5f1f3b0e71c38b7760d15a4f"
+      "sha256": "d7bda6cb946aa5d8d38e424b46d1dafca284e9f2778e3d81e71ffe0435000b14"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
@@ -498215,28 +498215,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 80,
-              "end_line": 80,
+              "start_line": 83,
+              "end_line": 83,
               "snippet": "Label"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 80,
-      "end_line": 80,
+      "start_line": 83,
+      "end_line": 83,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 80,
-          "end_line": 80,
+          "start_line": 83,
+          "end_line": 83,
           "snippet": "Label"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498257,7 +498257,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "references"
       },
-      "sha256": "ea058ef84325597ab6b7215055fbc53dab45c911775241419a0ef5b50e160fa7"
+      "sha256": "9ca15731fae42eefe42aaa4f0dbf83c404ae04c0a31db03c3b6b67b4de5828ca"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ANotice",
@@ -498288,28 +498288,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 106,
-              "end_line": 106,
+              "start_line": 109,
+              "end_line": 109,
               "snippet": "Notice"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 106,
-      "end_line": 106,
+      "start_line": 109,
+      "end_line": 109,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 106,
-          "end_line": 106,
+          "start_line": 109,
+          "end_line": 109,
           "snippet": "Notice"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498330,7 +498330,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
         "kind": "references"
       },
-      "sha256": "fe787466f628340f35b7bb7f00e45648d03f6d901c635fa423a6786ab1d88447"
+      "sha256": "a9ae40e8b43fa3d0d3df55bfda4ff22fd54bec3277e0651cad910d62b740dde1"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fenrollment-notifications.tsx%3Acomponent%3AEnrollmentNotifications",
@@ -498361,28 +498361,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 87,
-              "end_line": 87,
+              "start_line": 76,
+              "end_line": 76,
               "snippet": "EnrollmentNotifications"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 87,
-      "end_line": 87,
+      "start_line": 76,
+      "end_line": 76,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 87,
-          "end_line": 87,
+          "start_line": 76,
+          "end_line": 76,
           "snippet": "EnrollmentNotifications"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498403,7 +498403,7 @@
         "to": "ta-pago.code:src/components/personal/enrollment-notifications.tsx:component:EnrollmentNotifications",
         "kind": "renders"
       },
-      "sha256": "042ee061a9a06b537f8328da97c526e55081da03ea215a4a6e3259302cd59c8a"
+      "sha256": "fb1191175651ea6b8995225a05b6c76d7b23b00dadeea15d3c20b0463f18ad25"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3ABrand",
@@ -498434,28 +498434,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 73,
-              "end_line": 73,
+              "start_line": 74,
+              "end_line": 74,
               "snippet": "Brand"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 73,
-      "end_line": 73,
+      "start_line": 74,
+      "end_line": 74,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 73,
-          "end_line": 73,
+          "start_line": 74,
+          "end_line": 74,
           "snippet": "Brand"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498476,7 +498476,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:Brand",
         "kind": "renders"
       },
-      "sha256": "9bb4af52e3d787c1edfe524fd01c01fdb0674c0236f4d24192f7880419f95ed1"
+      "sha256": "0beb2cee40dc8f448da095256449efda448cca40b5e8142e999ba921e8a1fcd1"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3AButton",
@@ -498507,28 +498507,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 88,
-              "end_line": 88,
+              "start_line": 90,
+              "end_line": 90,
               "snippet": "Button"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 88,
-      "end_line": 88,
+      "start_line": 90,
+      "end_line": 90,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 88,
-          "end_line": 88,
+          "start_line": 90,
+          "end_line": 90,
           "snippet": "Button"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498549,7 +498549,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Button",
         "kind": "renders"
       },
-      "sha256": "6b3bbf90e75a204971c2759901ca8a53d0bfe7fd50beccc2ddd41821150d461a"
+      "sha256": "26394ab1f8b32d0e46301c10d9be184ad72c9b76eaad0542a35b232bc44b3e22"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",
@@ -498580,28 +498580,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 78,
-              "end_line": 78,
+              "start_line": 81,
+              "end_line": 81,
               "snippet": "Label"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 78,
-      "end_line": 78,
+      "start_line": 81,
+      "end_line": 81,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 78,
-          "end_line": 78,
+          "start_line": 81,
+          "end_line": 81,
           "snippet": "Label"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498622,7 +498622,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Label",
         "kind": "renders"
       },
-      "sha256": "56f400949930da9f8178c72e2ba579850949d01f38955eeb82dbb734ef22e710"
+      "sha256": "61e49489556215e3404960ebbb1d46bbdbf9ac6874bcae367cc46cb09992b9cf"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Crenders%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ANotice",
@@ -498653,28 +498653,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 106,
-              "end_line": 106,
+              "start_line": 109,
+              "end_line": 109,
               "snippet": "Notice"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 106,
-      "end_line": 106,
+      "start_line": 109,
+      "end_line": 109,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 106,
-          "end_line": 106,
+          "start_line": 109,
+          "end_line": 109,
           "snippet": "Notice"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498695,7 +498695,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:component:Notice",
         "kind": "renders"
       },
-      "sha256": "656fed75fc117f411e1ecd190d0d67ed0b450e55ed250bea3fd1c13c14057153"
+      "sha256": "c79260374f0e951d6495ccc2e893a803665282a36e78a8ba4a096221c034fa8d"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Cuses-constant%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Aconstant%3Astyles",
@@ -498747,7 +498747,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498768,7 +498768,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:constant:styles",
         "kind": "uses-constant"
       },
-      "sha256": "d41abbbda5328359898d010c601b9444716e7c0114a2b8276089da31c960d528"
+      "sha256": "78d6fe9b870fcc228bde71ff0fbc2efa23c52c5b7cae83c7f229b961d3eb9126"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Cuses-constant%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Aconstant%3As",
@@ -498799,28 +498799,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 76,
-              "end_line": 76,
+              "start_line": 72,
+              "end_line": 72,
               "snippet": "s"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 76,
-      "end_line": 76,
+      "start_line": 72,
+      "end_line": 72,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 76,
-          "end_line": 76,
+          "start_line": 72,
+          "end_line": 72,
           "snippet": "s"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498841,7 +498841,7 @@
         "to": "ta-pago.code:src/components/personal/ui.tsx:constant:s",
         "kind": "uses-constant"
       },
-      "sha256": "7ff63bbac163b72231e0ff9565e6f6b3927025d4b6167551a9a0bb18bfef28b2"
+      "sha256": "7ed36598e1723df92382701d53bfea6ecbe7d2430007af6617bcfe439eed2030"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Cuses-hook%7Cta-pago.code%3Asrc%2Ffeatures%2Fpersonal%2Fauth.tsx%3Ahook%3AuseSession",
@@ -498893,7 +498893,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498914,7 +498914,7 @@
         "to": "ta-pago.code:src/features/personal/auth.tsx:hook:useSession",
         "kind": "uses-hook"
       },
-      "sha256": "032e1a84ed62407d50c744dc3b7a54f14e164432bbf2110340c4ae7bc916f6b9"
+      "sha256": "404ff4d01e937287cae3c2db889f0c0269c3adeec2814d42127d0ff203a5bb9a"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Cuses-hook%7Cta-pago.code%3Asrc%2Fhooks%2Ftheme-preference.tsx%3Ahook%3AuseThemePreference",
@@ -498966,7 +498966,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -498987,7 +498987,7 @@
         "to": "ta-pago.code:src/hooks/theme-preference.tsx:hook:useThemePreference",
         "kind": "uses-hook"
       },
-      "sha256": "ef706999fd0204bbd31848aae2397610ef596040b61ce1796660973739df0291"
+      "sha256": "8a3d86f0a5c741085cbef2cbe77508e2bf69a3425c653f15fd0ce93901d8777c"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell%7Cuses-hook%7Cta-pago.code%3Asrc%2Fhooks%2Fuse-theme.ts%3Ahook%3AuseTheme",
@@ -499039,7 +499039,7 @@
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -499060,7 +499060,7 @@
         "to": "ta-pago.code:src/hooks/use-theme.ts:hook:useTheme",
         "kind": "uses-hook"
       },
-      "sha256": "0385f5074a0c839b616004d6ceaa64820f96e0aff98e8ed6743e6c5b3de52b95"
+      "sha256": "d854133b9603de01d3d2b9bea1d3fa4db214c224ac48f38c6866040b63880cfb"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Afunction%3APersonalShell%252Fcallback%253AonPress%253A2%7Chandles-event%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell",
@@ -499091,28 +499091,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 93,
-              "end_line": 99,
+              "start_line": 95,
+              "end_line": 101,
               "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 93,
-      "end_line": 99,
+      "start_line": 95,
+      "end_line": 101,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 93,
-          "end_line": 99,
+          "start_line": 95,
+          "end_line": 101,
           "snippet": "async () => {\n                try {\n                  await logout();\n                } catch (e) {\n                  setError(message(e));\n                }\n              }"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -499130,7 +499130,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:PersonalShell",
         "kind": "handles-event"
       },
-      "sha256": "cb908ce430ad6ceb5980f8961d8695fe5da2def5df1255f80611ccdd4be951c8"
+      "sha256": "7b25539640cc91af7d6870648aca6a88c212ab60d097fe92d306b5714df2553d"
     },
     {
       "id": "ta-pago.code:src/components/personal/shell.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Afunction%3APersonalShell%252Fcallback%253AonPress%7Chandles-event%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fshell.tsx%3Acomponent%3APersonalShell",
@@ -499161,28 +499161,28 @@
           "evidence": [
             {
               "source_path": "src/components/personal/shell.tsx",
-              "start_line": 72,
-              "end_line": 72,
+              "start_line": 73,
+              "end_line": 73,
               "snippet": "() => router.push(\"/\")"
             }
           ],
           "confidence": "observed"
         }
       ],
-      "start_line": 72,
-      "end_line": 72,
+      "start_line": 73,
+      "end_line": 73,
       "value_type": null,
       "evidence": [
         {
           "source_path": "src/components/personal/shell.tsx",
-          "start_line": 72,
-          "end_line": 72,
+          "start_line": 73,
+          "end_line": 73,
           "snippet": "() => router.push(\"/\")"
         }
       ],
       "confidence": "observed",
       "status": "current",
-      "source_sha256": "846af1fab801c189f6dccb497a06f80d6a0ecf11d163543cbfaafeda9a2b723d",
+      "source_sha256": "c0f6f6367332f0eaa0254d4ef7ea85120cafe15c640f588aa86c715643543f71",
       "extractor_version": "typescript-ast-v2",
       "chunking_version": "atomic-source-v1",
       "variant": "shared",
@@ -499200,7 +499200,7 @@
         "to": "ta-pago.code:src/components/personal/shell.tsx:component:PersonalShell",
         "kind": "handles-event"
       },
-      "sha256": "478ad64bf19e433adbe601dcf379c6427baa4c56584ebd93a2a7dc945ce49a7b"
+      "sha256": "c7708a480ed7db32e4415cfa1e23d05ac4ea1a51ab9667cf48917a66e6a9fe97"
     },
     {
       "id": "ta-pago.code:src/components/personal/student-list-row.tsx:symbol-relation:ta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fstudent-list-row.tsx%3Acomponent%3AStudentListRow%7Creferences%7Cta-pago.code%3Asrc%2Fcomponents%2Fpersonal%2Fui.tsx%3Acomponent%3ALabel",

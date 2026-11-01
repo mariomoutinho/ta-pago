@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/personal/shell.tsx",
     "backend-php/src/News.php",
     "server/news.ts",
     "shared/notifications.ts",
@@ -46,7 +47,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.9.0",
+  "version": "4.9.1",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -114,6 +115,8 @@ A reprodução automática sem controles foi verificada em 320 × 568, 390 × 74
 Validação local em 01/11/2026: navegador Chromium/Edge em 390 e 1280 px verificou avanço automático, seleção, pausa, retomada, ausência dos três destaques, abertura do cadastro e ausência de erros JavaScript. Em 320 px, verificou movimento reduzido, seleção manual e ausência de rolagem horizontal na página. Typecheck, build PHP/web e os seis testes de empacotamento passaram. As suítes documentais e de extração repetiram as cinco falhas já registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md), relacionadas a links simbólicos no Windows e proveniência.
 
 ## Central de novidades do personal
+
+Em celulares, o sino fica na mesma linha da marca T? Pago, no canto superior direito, respeitando o padding horizontal de 18 px do cabe?alho. Tema e sa?da ficam na linha abaixo. Em telas maiores, o sino ? o ?ltimo controle ? direita.
 
 O sino no cabe?alho abre uma janela com as 100 novidades mais recentes, limitadas a 90 dias ou ? reten??o configurada, se menor. Inclui cadastros enviados, conclus?es de treino e feedbacks. Um c?rculo vermelho sinaliza itens n?o lidos. GET /notifications/summary atualiza a quantidade a cada 15 segundos enquanto o app est? ativo e ao retornar ao primeiro plano. GET /notifications/feed devolve somente eventos do personal autenticado; alunos e outros profissionais n?o acessam seus avisos.
 
