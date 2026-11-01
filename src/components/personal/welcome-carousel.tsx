@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  AccessibilityInfo,
   AppState,
   Animated,
   Easing,
@@ -39,54 +38,39 @@ export function WelcomeCarousel() {
   const offset = useRef(new Animated.Value(0)).current;
   const [width, setWidth] = useState(0);
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(true);
   const [foreground, setForeground] = useState(AppState.currentState === "active");
-  const [motionRequested, setMotionRequested] = useState(false);
-  const motionAllowed = !reduceMotion || motionRequested;
 
   useEffect(() => {
-    let mounted = true;
-    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
-      if (mounted) setReduceMotion(enabled);
-    });
-    const motion = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion);
     const app = AppState.addEventListener("change", (state) => setForeground(state === "active"));
-    return () => {
-      mounted = false;
-      motion.remove();
-      app.remove();
-    };
+    return () => app.remove();
   }, []);
 
   useEffect(() => {
-    if (!width || paused || !motionAllowed || !foreground) return;
+    if (!width || !foreground) return;
     const timer = setInterval(() => {
       setActive((index) => (index + 1) % slides.length);
-    }, 2000);
+    }, 3000);
     return () => clearInterval(timer);
-  }, [width, paused, motionAllowed, foreground]);
+  }, [width, foreground]);
 
   useEffect(() => {
     const animation = Animated.timing(offset, {
       toValue: -active * width,
-      duration: motionAllowed ? 650 : 0,
+      duration: 650,
       easing: Easing.inOut(Easing.cubic),
       useNativeDriver: Platform.OS !== "web",
     });
     animation.start();
     return () => animation.stop();
-  }, [active, width, motionAllowed, offset]);
+  }, [active, width, offset]);
 
   function select(index: number) {
-    setPaused(true);
     setActive(index);
   }
 
   const swipe = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, gesture) =>
       Math.abs(gesture.dx) > 12 && Math.abs(gesture.dx) > Math.abs(gesture.dy) * 1.5,
-    onPanResponderGrant: () => setPaused(true),
     onPanResponderRelease: (_, gesture) => {
       if (Math.abs(gesture.dx) > 35) {
         setActive((index) => (index + (gesture.dx < 0 ? 1 : slides.length - 1)) % slides.length);
@@ -128,26 +112,12 @@ export function WelcomeCarousel() {
               accessibilityState={{ selected: active === index }}
               aria-selected={active === index}
               onPress={() => select(index)}
-              onFocus={() => setPaused(true)}
               style={styles.dotTarget}
             >
               <View style={[styles.dot, active === index && styles.dotActive]} />
             </Pressable>
           ))}
         </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={paused || !motionAllowed ? "Retomar carrossel" : "Pausar carrossel"}
-            onPress={() => {
-              if (!motionAllowed) {
-                setMotionRequested(true);
-                setPaused(false);
-              } else setPaused((value) => !value);
-            }}
-            style={styles.pause}
-          >
-            <Text style={styles.pauseText}>{paused || !motionAllowed ? "Reproduzir" : "Pausar"}</Text>
-          </Pressable>
       </View>
     </View>
   );
@@ -172,6 +142,4 @@ const styles = StyleSheet.create({
   dotTarget: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" },
   dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#686872" },
   dotActive: { width: 24, backgroundColor: "#F13B52" },
-  pause: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
-  pauseText: { color: "#B5B5BF", fontSize: 12 },
 });
