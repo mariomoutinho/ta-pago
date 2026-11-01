@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useSession } from "@/features/personal/auth";
 import { message } from "@/features/personal/api";
 import { Brand, Page } from "@/components/personal/shell";
+import { WelcomeCarousel } from "@/components/personal/welcome-carousel";
 import {
   Button,
   Card,
@@ -51,48 +52,8 @@ export default function SignIn() {
           { alignItems: "center", marginTop: width > 700 ? 50 : 10 },
         ]}
       >
-        <View
-          style={[
-            s.column,
-            {
-              padding: 24,
-              backgroundColor: "#0B0B0D",
-              borderRadius: 24,
-              minHeight: 350,
-              justifyContent: "center",
-            },
-          ]}
-        >
-          <View
-            style={{
-              backgroundColor: "#CF1026",
-              height: 5,
-              width: 60,
-              marginBottom: 30,
-            }}
-          />
-          <TextHero />
-          <View style={{ marginTop: 28 }}>
-            <View style={s.row}>
-              {[
-                "33 perguntas",
-                "13 critérios técnicos",
-                "Histórico preservado",
-              ].map((text) => (
-                <View
-                  key={text}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#38383E",
-                    borderRadius: 20,
-                    padding: 10,
-                  }}
-                >
-                  <WhiteText text={text} />
-                </View>
-              ))}
-            </View>
-          </View>
+        <View style={s.column}>
+          <WelcomeCarousel />
         </View>
         <Card style={[s.column, { padding: 32 }]}>
           <Label size={26} bold>
@@ -156,39 +117,4 @@ export default function SignIn() {
       </View>
     </Page>
   );
-}
-import { Text } from "react-native";
-function TextHero() {
-  return (
-    <>
-      <Text
-        style={{
-          fontSize: 12,
-          fontWeight: "700",
-          color: "#FF4C61",
-          letterSpacing: 2,
-        }}
-      >
-        ACOMPANHAMENTO DE VERDADE
-      </Text>
-      <Text
-        style={{
-          fontSize: 42,
-          fontWeight: "800",
-          color: "#fff",
-          lineHeight: 49,
-          marginVertical: 18,
-        }}
-      >
-        Cada presença.{"\n"}Uma conquista.
-      </Text>
-      <Text style={{ color: "#A7A7B1", fontSize: 15, lineHeight: 24 }}>
-        Alunos, treinos e avaliações no mesmo lugar.{"\n"}Evolução que vai além
-        dos números.
-      </Text>
-    </>
-  );
-}
-function WhiteText({ text }: { text: string }) {
-  return <Text style={{ color: "#D5D5DD", fontSize: 11 }}>{text}</Text>;
 }
