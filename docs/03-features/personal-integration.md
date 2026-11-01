@@ -22,12 +22,16 @@
     "backend-php/config.example.php",
     "tests/personal/auth-policy.test.ts",
     "tests/personal/browser/app.spec.ts",
-    "src/components/personal/dashboard.tsx"
+    "src/components/personal/dashboard.tsx",
+    "src/components/personal/formatted-field.tsx",
+    "src/features/personal/input-format.ts",
+    "src/components/personal/forms.tsx",
+    "tests/personal/input-format.test.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -51,6 +55,14 @@ O acompanhamento Compasso foi incorporado ao aplicativo Expo Tá Pago com compon
 Personal: alunos com saúde opcional, programas, modelos versionados, avaliação inicial com 33 perguntas, 13 critérios técnicos, registros mensais/físicos/de treino/sociais e notas. Sete abas organizam perfil, avaliações, evolução, treinamento, critérios técnicos, adaptação social e histórico. Gráficos usam valores numéricos registrados; critérios qualitativos não recebem notas inventadas. Avaliações concluídas são imutáveis, e correções de registros preservam valores anteriores no histórico.
 
 Aluno: aceita convite de uso único, consulta seu acompanhamento, preenche respostas de avaliações em rascunho, exporta seus dados e encerra o vínculo. O encerramento remove o acesso do personal, mas mantém o histórico disponível ao aluno. O personal não pode excluir um cadastro já vinculado; a exclusão definitiva pertence à conta do aluno. Antes de vincular, o cadastro é gerido pelo personal.
+
+## Formatos no cadastro de alunos
+
+As datas do cadastro e da edição aparecem em DD/MM/AAAA, com máscara automática e placeholder `__/__/____`. Datas já preenchidas são apresentadas no formato brasileiro; datas completas voltam ao formato ISO somente no estado enviado aos schemas e à API. Datas incompletas ou impossíveis continuam inválidas, sem correção automática de dia/mês. Campos opcionais vazios permanecem opcionais.
+
+O telefone mostra o placeholder `(__) _ ____ ____`, insere DDD e separadores durante a digitação e usa teclado telefônico. Celulares são apresentados como `(11) 9 1234 5678`; telefones fixos com oito dígitos também são aceitos. A colagem de número brasileiro com +55 é normalizada. Números internacionais legados não são truncados apenas pela exibição; novas edições seguem a máscara brasileira. A ficha pública pelo link usa os mesmos componentes e mantém a apresentação brasileira na revisão.
+
+Validação em 01/11/2026: seis testes de formatação verificam colagem, valores parciais, limpeza, datas ISO existentes, calendário/ano bissexto, campos opcionais e telefones. Dois cenários de navegador verificam cadastro manual, correção de data inválida, payload ISO, reabertura para edição e o fluxo público completo com revisão, envio e aprovação. Typecheck e os seis testes do pacote passaram. As suítes documentais e de extração mantiveram as cinco falhas anteriores de links simbólicos/proveniência registradas no [relatório de evolução](../06-operations/relatorio-evolucao-2026-10-27.md). Aparelhos físicos não foram testados.
 
 ## Painel do personal
 

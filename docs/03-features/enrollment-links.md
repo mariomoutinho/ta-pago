@@ -4,7 +4,7 @@
   "title": "Link de Cadastro de Alunos",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-11-01",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -16,12 +16,15 @@
     "shared/enrollment.ts",
     "src/app/alunos/link.tsx",
     "src/app/cadastro/[token].tsx",
-    "prisma/schema.prisma"
+    "prisma/schema.prisma",
+    "src/components/personal/formatted-field.tsx",
+    "src/features/personal/input-format.ts",
+    "src/components/personal/enrollment-fields.tsx"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -49,6 +52,8 @@ Contatos oferece busca, filtro, ficha e decisões: pending → active ou rejecte
 Meus alunos exibe ativos, pendentes e recebidos nos últimos sete dias. A lista Contatos usa as mesmas solicitações, sem copiar cadastros. Os contadores/contatos atualizam a cada 15 segundos e ao voltar à tela. Aprovação e recusa têm histórico persistido.
 
 ## Persistência e segurança
+
+O nascimento usa DD/MM/AAAA na tela, com placeholder `__/__/____` e separadores automáticos. O WhatsApp mostra `(__) _ ____ ____` antes do preenchimento e formata celular com DDD durante a digitação. A revisão preserva esses formatos. A API continua recebendo datas ISO; a máscara não altera os contratos de persistência, os consentimentos ou a validação de datas reais.
 
 Migração `20261016131704_enrollment_links`: EnrollmentLink (um por personal), EnrollmentChallenge (prova de preenchimento expirá­vel), EnrollmentRequest (único por personal e impressão HMAC do e-mail) e EnrollmentEvent. Nenhuma tabela existente é removida. Execute `npm run personal:setup` para gerar Prisma e aplicar migrações.
 

@@ -13,6 +13,46 @@ const db = createDb(url);
 let server: Server;
 let base: string;
 
+test("cadastro manual usa máscaras brasileiras e salva datas ISO sem alterar dados", async ({ page }) => {
+  await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: {
+    name: "Personal Máscaras", email: "mask-personal@example.test", role: "personal", password: "senha-ficticia-12345",
+  } });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + "/");
+  await page.getByRole("button", { name: "Adicionar aluno", exact: true }).click();
+  const birth = page.getByLabel("Data de nascimento", { exact: true });
+  const phone = page.getByLabel("Telefone", { exact: true });
+  await expect(birth).toHaveAttribute("placeholder", "__/__/____");
+  await expect(phone).toHaveAttribute("placeholder", "(__) _ ____ ____");
+  await expect(page.getByLabel("Início do acompanhamento *", { exact: true })).toHaveValue(/^\d{2}\/\d{2}\/\d{4}$/);
+  await page.getByLabel("Nome completo *", { exact: true }).fill("Aluno Máscara");
+  await page.getByLabel("Objetivo principal *", { exact: true }).fill("Mobilidade");
+  await birth.pressSequentially("25081990");
+  await phone.pressSequentially("11912345678");
+  await expect(birth).toHaveValue("25/08/1990");
+  await expect(phone).toHaveValue("(11) 9 1234 5678");
+  await birth.press("End");
+  await birth.press("Backspace");
+  await expect(birth).toHaveValue("25/08/199");
+  await birth.pressSequentially("0");
+  await birth.fill("31022000");
+  await page.getByRole("button", { name: "Salvar aluno", exact: true }).click();
+  await expect(page.getByText("Data inválida", { exact: false })).toBeVisible();
+  await birth.fill("25081990");
+  const savedResponse = page.waitForResponse(response => response.url().endsWith("/api/students") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Salvar aluno", exact: true }).click();
+  const saved = await savedResponse;
+  expect(saved.status()).toBe(201);
+  expect(saved.request().postDataJSON().birthDate).toBe("1990-08-25");
+  expect(saved.request().postDataJSON().phone).toBe("(11) 9 1234 5678");
+  const student = await saved.json();
+  await page.waitForURL(`**/alunos/${student.id}`);
+  await page.getByRole("tab", { name: "Opções", exact: true }).click();
+  await page.getByRole("button", { name: "Editar cadastro", exact: true }).click();
+  await expect(birth).toHaveValue("25/08/1990");
+  await expect(phone).toHaveValue("(11) 9 1234 5678");
+});
+
 test("cadastro público cria somente aluno e não oferece perfil de personal", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + "/entrar");
@@ -257,11 +297,16 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
   form.on("pageerror", (e) => errors.push(e.message));
   await form.goto(link);
   await expect(form.getByText("Boas-vindas!", { exact: false })).toBeVisible();
+  await expect(form.getByLabel("Data de nascimento", { exact: true })).toHaveAttribute("placeholder", "__/__/____");
+  await expect(form.getByLabel("WhatsApp *", { exact: true })).toHaveAttribute("placeholder", "(__) _ ____ ____");
+  await form.getByLabel("Data de nascimento", { exact: true }).pressSequentially("25081990");
+  await expect(form.getByLabel("Data de nascimento", { exact: true })).toHaveValue("25/08/1990");
   await form
     .getByLabel("Nome completo *", { exact: true })
     .fill("Aluno Público");
   await form.getByLabel("E-mail *", { exact: true }).fill("public@example.com");
   await form.getByLabel("WhatsApp *", { exact: true }).fill("11987654321");
+  await expect(form.getByLabel("WhatsApp *", { exact: true })).toHaveValue("(11) 9 8765 4321");
   await form.getByRole("button", { name: "Avançar", exact: true }).click();
   await form
     .getByRole("checkbox", { name: "Hipertrofia", exact: true })
@@ -285,6 +330,8 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
     name: "Li a política",
     exact: false,
   });
+  await expect(form.getByText("25/08/1990", { exact: true })).toBeVisible();
+  await expect(form.getByText("(11) 9 8765 4321", { exact: true })).toBeVisible();
   await expect(consent).not.toBeChecked();
   await consent.click();
   await form.screenshot({

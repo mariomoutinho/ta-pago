@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { api, message } from "@/features/personal/api";
 import { Brand, Page } from "@/components/personal/shell";
+import { FormattedField } from "@/components/personal/formatted-field";
 import {
   Button,
   Card,
@@ -79,8 +80,9 @@ export default function EnrollmentForm() {
     label: string,
     extra: object = {},
   ) => (
-    <Field
+    <FormattedField
       label={label}
+      format={key === "birthDate" ? "date" : key === "phone" ? "phone" : undefined}
       value={String(form[key] ?? "")}
       onChangeText={(value) => setForm({ ...form, [key]: value })}
       {...extra}
@@ -194,9 +196,7 @@ export default function EnrollmentForm() {
               {step === 0 && (
                 <>
                   {field("name", "Nome completo *", { autoComplete: "name" })}
-                  {field("birthDate", "Data de nascimento", {
-                    placeholder: "AAAA-MM-DD",
-                  })}
+                  {field("birthDate", "Data de nascimento")}
                   {field("email", "E-mail *", {
                     keyboardType: "email-address",
                     autoCapitalize: "none",
@@ -204,7 +204,6 @@ export default function EnrollmentForm() {
                   })}
                   {field("phone", "WhatsApp *", {
                     keyboardType: "phone-pad",
-                    placeholder: "DDD + número",
                   })}
                   {field("city", "Cidade")}
                   {field("state", "Estado")}

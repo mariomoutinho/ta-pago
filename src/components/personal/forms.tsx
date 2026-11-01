@@ -17,6 +17,7 @@ import type {
   Criterion,
 } from "@/features/personal/types";
 import { Button, Card, Choices, Field, Label, Notice, Section, s } from "./ui";
+import { FormattedField } from "./formatted-field";
 export function Fields({
   fields,
   values,
@@ -38,7 +39,7 @@ export function Fields({
             onChange={(value) => setValues({ ...values, [f.key]: value })}
           />
         ) : (
-          <Field
+          <FormattedField
             key={f.key}
             label={f.label + (f.required ? " *" : "")}
             value={values[f.key] ?? ""}
@@ -51,7 +52,7 @@ export function Fields({
                   ? "email-address"
                   : "default"
             }
-            placeholder={f.type === "date" ? "AAAA-MM-DD" : undefined}
+            format={f.type === "date" ? "date" : f.type === "tel" ? "phone" : undefined}
           />
         ),
       )}
@@ -112,7 +113,7 @@ export function StudentForm({
     <>
       <Notice>
         Informações de saúde são opcionais e ficam restritas ao acompanhamento.
-        Datas no formato AAAA-MM-DD.
+        Datas no formato DD/MM/AAAA.
       </Notice>
       {studentGroups.map((g) => (
         <Section title={g.title} key={g.title}>

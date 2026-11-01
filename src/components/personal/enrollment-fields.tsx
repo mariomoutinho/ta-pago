@@ -2,6 +2,7 @@ import { Pressable, View } from "react-native";
 import { Label, s } from "./ui";
 import { useTheme } from "@/hooks/use-theme";
 import type { EnrollmentDraft } from "../../../shared/enrollment";
+import { formatDateInput, formatPhoneInput } from "@/features/personal/input-format";
 export function Check({
   label,
   checked,
@@ -66,8 +67,8 @@ export function EnrollmentSummaryView({ form }: { form: EnrollmentDraft }) {
       {[
         ["Nome", form.name],
         ["E-mail", form.email],
-        ["WhatsApp", form.phone],
-        ["Nascimento", form.birthDate || "Não informado"],
+        ["WhatsApp", formatPhoneInput(form.phone)],
+        ["Nascimento", form.birthDate ? formatDateInput(form.birthDate) : "Não informado"],
         [
           "Cidade / estado",
           [form.city, form.state].filter(Boolean).join(" / ") ||
