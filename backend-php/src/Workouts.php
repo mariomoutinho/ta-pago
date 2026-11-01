@@ -3,6 +3,10 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Workouts {
+    private function favoriteExercise(string $id,array $body): array {
+        $exercise=$this->own('Exercise',$id);
+        return $this->db->update('Exercise',$exercise['id'],$this->validation->parse('exerciseFavoriteSchema',$body));
+    }
     private function groups(array $items): void {
         $seen=[]; $last=null; $count=0;
         foreach ([...$items,['groupId'=>null]] as $item) {
@@ -125,7 +129,7 @@ trait Workouts {
         $existing=$id?$this->own($table,$id):null;
         if ($method==='GET' && !$id) {
             $rows=$this->db->rows($table,'ownerId=?',[$this->user['id']],$table==='Exercise'?'name ASC':'createdAt DESC');
-            if ($table==='Exercise') $rows=array_values(array_filter($rows,fn($e)=>(!isset($_GET['q']) || mb_stripos($e['name'],substr((string)$_GET['q'],0,160))!==false) && (!isset($_GET['category']) || $e['category']===$_GET['category']) && (!isset($_GET['muscleGroup']) || $e['muscleGroup']===$_GET['muscleGroup'])));
+            if ($table==='Exercise') $rows=array_values(array_filter($rows,fn($e)=>(($_GET['favorite']??'')!=='true' || $e['favorite']) && (!isset($_GET['q']) || mb_stripos($e['name'],substr((string)$_GET['q'],0,160))!==false) && (!isset($_GET['category']) || $e['category']===$_GET['category']) && (!isset($_GET['muscleGroup']) || $e['muscleGroup']===$_GET['muscleGroup'])));
             foreach ($rows as &$r) {
                 if ($table==='WorkoutTemplate') $r['exercises']=$this->hydrateItems($r['exercises'],$this->user['id']);
                 if ($table==='Program') foreach ($r['workouts'] as &$w) $w['exercises']=$this->hydrateItems($w['exercises'],$this->user['id']);

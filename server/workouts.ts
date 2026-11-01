@@ -3,7 +3,7 @@ import { validExerciseGroups } from "../shared/workout-groups";
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
-import { exerciseSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
+import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
 
 export const planInclude = {
   workouts: {
@@ -94,6 +94,7 @@ export function workoutRoutes(db: Db) {
       await db.exercise.findMany({
         where: {
           ownerId: res.locals.user.id,
+          ...(query("favorite") === "true" ? { favorite: true } : {}),
           ...(query("q") ? { name: { contains: query("q") } } : {}),
           ...(query("muscleGroup")
             ? { muscleGroup: query("muscleGroup") }
@@ -115,6 +116,14 @@ export function workoutRoutes(db: Db) {
           },
         }),
       );
+  });
+  router.put("/exercises/:id/favorite", async (req, res) => {
+    const data = exerciseFavoriteSchema.parse(req.body);
+    const result = await db.exercise.updateMany({
+      where: { id: String(req.params.id), ownerId: res.locals.user.id }, data,
+    });
+    if (!result.count) throw new HttpError(404, "Exercício não encontrado");
+    res.json(await db.exercise.findUnique({ where: { id: String(req.params.id) } }));
   });
   router.put("/exercises/:id", async (req, res) => {
     const data = exerciseSchema.parse(req.body);

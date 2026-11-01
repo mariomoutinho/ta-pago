@@ -1390,6 +1390,13 @@
         "updatedAt": false,
         "default": "ativo"
       },
+      "favorite": {
+        "type": "Boolean",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": false
+      },
       "createdAt": {
         "type": "DateTime",
         "nullable": false,

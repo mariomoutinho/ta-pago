@@ -13,6 +13,9 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/migrations/20261101_exercise_favorites.sql",
+    "backend-php/tests/favorites-migration.php",
+    "backend-php/src/Workouts.php",
     "backend-php/bootstrap.php",
     "backend-php/src/Auth.php",
     "backend-php/config.example.php",
@@ -30,7 +33,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -153,6 +156,14 @@ Após autorização do responsável, o servidor recebeu a restrição de cadastr
 A atualização de Auth.php e config.php usou backup restrito fora de public_html, preservou todas as chaves existentes e não alterou esquema ou dados do banco. O atualizador temporário tinha autenticação própria, destinos fixos, verificação de hashes, restauração em falha e remoção automática; sua ausência foi conferida no diretório público. O frontend foi atualizado separadamente, mantendo o manifesto PWA e os demais arquivos publicados. Identidades, credenciais, IDs autorizados e o conteúdo privado dos backups não pertencem ao repositório nem ao catálogo.
 
 Para novas autorizações, seguir a [política de contas](../03-features/personal-integration.md): decisão do responsável, conta existente e configuração privada por ID. Não reabrir cadastro público de personal nem usar nome de exibição como autorização.
+
+## Atualização incremental de favoritos — 2026-11-01
+
+A coluna Exercise.favorite foi acrescentada pela migração identificada 20261101_exercise_favorites.sql, após ensaio em tabela temporária sintética e backup privado verificado dos exercícios e dos quatro arquivos de runtime afetados. A aplicação verificou hashes da versão anterior antes da escrita e preservou todos os campos existentes; o valor inicial é falso. A migração tem recibo em MigrationReceipt. Não foi aplicado schema.sql ao banco existente.
+
+O atualizador temporário exigiu POST autenticado por segredo efêmero, teve destino e arquivos permitidos fixos e foi removido após verificar a atualização. Configuração, chave de criptografia e autorizações de personal permaneceram preservadas. O backup fica fora de public_html. Em eventual rollback, restaurar os arquivos privados anteriores e o HTML anterior; conservar a coluna aditiva e o backup, sem apagar favoritos ou registros.
+
+A publicação enviou o JavaScript com hash primeiro e o HTML por último, conservando os assets anteriores e os metadados PWA. Foram conferidos hash remoto do JavaScript, referência ativa no HTML, health ok, manifesto standalone e resposta 401 para tentativa de favoritar sem sessão. O caminho do atualizador removido passou a retornar o fallback HTML da aplicação. O teste de navegador foi local e usou dados sintéticos; não foi alterada a seleção de favoritos da conta real durante a verificação.
 
 ## PWA e verificação em aparelhos
 

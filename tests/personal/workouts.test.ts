@@ -78,6 +78,26 @@ afterAll(async () => {
   await db.$disconnect();
   rmSync(folder, { recursive: true, force: true });
 });
+it("favoritos persistem por personal, validam booleano e sobrevivem à edição", async () => {
+  const created = await personal.post("/api/exercises").set(header).send({ ...exerciseData, name: "Favorito sintético" });
+  const id = created.body.id;
+  expect(created.body.favorite).toBe(false);
+  for (let i = 0; i < 2; i++) {
+    const saved = await personal.put(`/api/exercises/${id}/favorite`).set(header).send({ favorite: true });
+    expect(saved.status).toBe(200);
+    expect(saved.body.favorite).toBe(true);
+  }
+  expect((await other.put(`/api/exercises/${id}/favorite`).set(header).send({ favorite: false })).status).toBe(404);
+  expect((await student.put(`/api/exercises/${id}/favorite`).set(header).send({ favorite: true })).status).toBe(403);
+  for (const body of [{}, { favorite: "false" }, { favorite: null }]) {
+    expect((await personal.put(`/api/exercises/${id}/favorite`).set(header).send(body)).status).toBe(400);
+  }
+  await personal.put(`/api/exercises/${id}`).set(header).send({ ...exerciseData, name: "Favorito editado", status: "arquivado" });
+  expect((await personal.get("/api/exercises?favorite=true")).body.map((e: any) => e.id)).toContain(id);
+  expect((await other.get("/api/exercises?favorite=true")).body).toEqual([]);
+  await personal.put(`/api/exercises/${id}/favorite`).set(header).send({ favorite: false });
+  expect((await personal.get("/api/exercises?favorite=true")).body).toEqual([]);
+});
 it("personal cria e edita exercício; biblioteca privada e URLs validadas", async () => {
   const created = await personal
     .post("/api/exercises")

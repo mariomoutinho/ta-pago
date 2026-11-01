@@ -231,6 +231,7 @@ CREATE TABLE `Exercise` (
   `videoUrl` LONGTEXT NOT NULL,
   `notes` LONGTEXT NOT NULL,
   `status` VARCHAR(191) NOT NULL,
+  `favorite` TINYINT(1) NOT NULL,
   `createdAt` VARCHAR(24) NOT NULL,
   `updatedAt` VARCHAR(24) NOT NULL,
   KEY `ix_Exercise_0` (`ownerId`,`status`)

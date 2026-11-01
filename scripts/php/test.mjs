@@ -60,6 +60,17 @@ try {
   assert.equal((await req(pupil,'GET','/me/students')).length,1);
   const ex=await req(teacher,'POST','/exercises',{name:'Alongamento',muscleGroup:'Peitoral',category:'Alongamento'},201);
   const exOther=await req(other,'POST','/exercises',{name:'Privado',muscleGroup:'Costas',category:'Musculação'},201);
+  assert.equal(ex.favorite,false);
+  for(let i=0;i<2;i++) assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true})).favorite,true);
+  await req(other,'PUT',`/exercises/${ex.id}/favorite`,{favorite:false},404);
+  await req(pupil,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true},403);
+  await req(anon,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true},401);
+  for(const body of [{},{favorite:'false'},{favorite:null}]) await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,body,400);
+  assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}`,ex)).favorite,true);
+  assert.deepEqual((await req(teacher,'GET','/exercises?favorite=true')).map(e=>e.id),[ex.id]);
+  assert.deepEqual(await req(other,'GET','/exercises?favorite=true'),[]);
+  assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,{favorite:false})).favorite,false);
+  assert.deepEqual(await req(teacher,'GET','/exercises?favorite=true'),[]);
   const planData={title:'Rotina teste',objective:'Mobilidade',difficulty:'Iniciante',startsAt:'2026-10-01',workouts:[{name:'Treino A',exercises:[{exerciseId:ex.id}]}]};
   const plan=await req(teacher,'POST',`/students/${student.id}/workout-plans`,planData,201);
   assert.equal((await req(pupil,'GET','/me/workout-plans')).length,0);
@@ -139,6 +150,7 @@ try {
   await req(pupil,'GET','/me/workout-plans',undefined,401);
   console.log(`${checks} verificações HTTP passaram. Banco sintético preservado: ${name}`);
   fs.writeFileSync('data/php-last-test-config.txt',config);
+  console.log(run(['backend-php/tests/favorites-migration.php'],env));
   const migration=spawnSync(process.execPath,['scripts/php/migration-test.mjs',config],{env,stdio:'inherit'});
   assert.equal(migration.status,0,'Migração sintética');
 } finally { server.kill(); fs.closeSync(log); }

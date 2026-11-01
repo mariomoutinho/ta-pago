@@ -27,6 +27,7 @@ export const exerciseSchema = z.object({
   notes: text,
   status: z.enum(["ativo", "arquivado"]).default("ativo"),
 });
+export const exerciseFavoriteSchema = z.object({ favorite: z.boolean() });
 export const seriesRowSchema = z.object({
   type: z.enum(["repetitions-load", "repetitions-load-time", "repetitions-time", "time-incline", "running", "notes", "cadence"]).optional(),
   sets: z.number().int().min(1).max(100),
@@ -141,7 +142,7 @@ export const planSchema = z
       ctx.addIssue({ code: "custom", message: "Itens duplicados" });
   });
 export type ExerciseData = z.infer<typeof exerciseSchema>;
-export type Exercise = ExerciseData & { id: string };
+export type Exercise = ExerciseData & { id: string; favorite?: boolean };
 export type Prescription = z.infer<typeof prescriptionSchema> & {
   exercise?: Exercise;
   alternativeExercise?: Exercise | null;

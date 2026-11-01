@@ -4,13 +4,19 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-11-01",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
   "sources": [
+    "prisma/migrations/20261101120000_exercise_favorites/migration.sql",
+    "backend-php/migrations/20261101_exercise_favorites.sql",
+    "backend-php/tests/favorites-migration.php",
+    "backend-php/src/Workouts.php",
+    "backend-php/src/App.php",
+    "scripts/php/test.mjs",
     "src/components/workouts/workout-editor.tsx",
     "src/components/workouts/sortable-exercises.web.tsx",
     "src/components/workouts/sortable-exercises.tsx",
@@ -61,7 +67,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.2.0",
+  "version": "12.3.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -80,6 +86,14 @@
 ---
 
 # Treinos personalizados
+
+## Favoritos na biblioteca
+
+Cada exercício tem uma estrela para marcar ou remover dos favoritos. Mostrar exercícios alterna entre Todos e Favoritos; o filtro combina com busca, grupo muscular, categoria e status. A biblioteca aberta ao montar treinos oferece as mesmas ações. A marcação só muda na tela após confirmação do servidor; falhas mostram uma mensagem e permitem tentar novamente.
+
+Exercise.favorite é um booleano persistido, inicialmente falso. Como cada exercício pertence a um personal, seus favoritos são privados. PUT /exercises/:id/favorite exige personal autorizado, propriedade do exercício e corpo com favorite booleano; repetir o mesmo valor é idempotente. GET /exercises?favorite=true retorna somente favoritos do proprietário. Editar, arquivar ou restaurar o cadastro preserva a marcação. A migração SQLite 20261101120000_exercise_favorites e a migração incremental MySQL 20261101_exercise_favorites.sql acrescentam a coluna sem recriar tabelas ou alterar prescrições.
+
+Os testes de API cobrem isolamento, validação, persistência e edição; o cenário de navegador verifica estrela, recarga, remoção e combinação com busca em 390 px. O ensaio PHP usa tabela temporária sintética para verificar a preservação de um cadastro existente durante a migração incremental.
 
 Na biblioteca, **Editar exercício** abre um diálogo sobre a área visível da tela, com rolagem própria. A lista mantém sua posição, busca e filtros ao salvar ou cancelar, inclusive quando aberta dentro de Treinos preparados ou da rotina de um aluno. Salvar a edição atualiza o cadastro na biblioteca; adicionar ao treino continua sendo uma ação explícita. O cadastro de um exercício novo mantém seu fluxo anterior.
 

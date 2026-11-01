@@ -3,7 +3,7 @@ import { Image, Pressable, View } from "react-native";
 import { exerciseVideoThumbnail } from "@/features/personal/exercise-video";
 import { useTheme } from "@/hooks/use-theme";
 import { useResource } from "@/features/personal/use-resource";
-import { api } from "@/features/personal/api";
+import { api, message } from "@/features/personal/api";
 import {
   Badge,
   Button,
@@ -145,6 +145,21 @@ export function ExerciseLibrary({
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("ativo");
   const [success, setSuccess] = useState("");
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+  const [savingFavorites, setSavingFavorites] = useState<string[]>([]);
+  const [favoriteError, setFavoriteError] = useState("");
+  const isFavorite = (exercise: Exercise) => favorites[exercise.id] ?? exercise.favorite ?? false;
+  const saveFavorite = async (exercise: Exercise) => {
+    if (savingFavorites.includes(exercise.id)) return;
+    setSavingFavorites(current => [...current, exercise.id]);
+    setFavoriteError("");
+    try {
+      const saved = await api<Exercise>(`/exercises/${exercise.id}/favorite`, "PUT", { favorite: !isFavorite(exercise) });
+      setFavorites(current => ({ ...current, [exercise.id]: !!saved.favorite }));
+    } catch (error) { setFavoriteError(message(error)); }
+    finally { setSavingFavorites(current => current.filter(id => id !== exercise.id)); }
+  };
   const normalize = (v: string) =>
     v
       .normalize("NFD")
@@ -153,6 +168,7 @@ export function ExerciseLibrary({
   const visible = data?.filter(
     (e) =>
       e.status === status &&
+      (!onlyFavorites || isFavorite(e)) &&
       normalize(e.name).includes(normalize(search)) &&
       normalize(e.muscleGroup).includes(normalize(muscle)) &&
       normalize(e.category).includes(normalize(category)),
@@ -165,6 +181,7 @@ export function ExerciseLibrary({
       <Badge>Meus exercícios · biblioteca privada</Badge>
       <Notice>{success}</Notice>
       <Notice error>{error}</Notice>
+      <Notice error>{favoriteError}</Notice>
       {loading && <Notice>Carregando exercícios…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       <View style={{ backgroundColor: t.background, borderColor: t.border, borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 }}>
@@ -204,6 +221,9 @@ export function ExerciseLibrary({
           ))}
         </View>
       </View>}
+      <Choices label="Mostrar exercícios" value={onlyFavorites ? "favorites" : "all"}
+        onChange={value => setOnlyFavorites(value === "favorites")}
+        options={[{ value: "all", label: "Todos" }, { value: "favorites", label: "★ Favoritos" }]} />
       {!select && (
         <Choices
           label="Exercícios"
@@ -217,25 +237,26 @@ export function ExerciseLibrary({
       )}
       <View style={[s.row, { justifyContent: "space-between" }]}>
         <Label muted size={12}>{visible?.length ?? 0} exercício(s){muscle ? ` · ${muscle}` : ""}{category ? ` · ${category}` : ""}</Label>
-        {!!(search || muscle || category || status !== "ativo") && <Button variant="secondary" onPress={() => { setSearch(""); setMuscle(""); setCategory(""); setStatus("ativo"); }}>Limpar filtros</Button>}
+        {!!(search || muscle || category || status !== "ativo" || onlyFavorites) && <Button variant="secondary" onPress={() => { setSearch(""); setMuscle(""); setCategory(""); setStatus("ativo"); setOnlyFavorites(false); }}>Limpar filtros</Button>}
       </View>
       {!loading && !error && !visible?.length && (
         <Empty
           title={
-            data?.length
+            onlyFavorites ? "Nenhum favorito neste filtro" : data?.length
               ? "Sem resultados na busca"
               : "Você ainda não cadastrou exercícios."
           }
-          description="Cadastre um exercício ou ajuste os filtros."
+          description={onlyFavorites ? "Toque na estrela de um exercício para adicioná-lo aos favoritos ou ajuste os filtros." : "Cadastre um exercício ou ajuste os filtros."}
         />
       )}
       {visible?.map((e) => (
         <View key={e.id} style={{ borderWidth: 1, borderColor: t.border, borderRadius: 10, overflow: "hidden" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Pressable accessibilityRole="button"
             accessibilityLabel={`${expanded.includes(e.id) ? "Recolher" : "Expandir"} exercício ${e.name}`}
             aria-expanded={expanded.includes(e.id)}
             onPress={() => setExpanded(current => current.includes(e.id) ? current.filter(id => id !== e.id) : [...current, e.id])}
-            style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 12, padding: 10, minHeight: 86, backgroundColor: pressed ? t.backgroundElement : t.background })}>
+            style={({ pressed }) => ({ flex: 1, minWidth: 0, flexDirection: "row", alignItems: "center", gap: 12, padding: 10, minHeight: 86, backgroundColor: pressed ? t.backgroundElement : t.background })}>
             <View style={{ width: 64, height: 64, backgroundColor: t.accentSoft, borderRadius: 6, alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
               <ExerciseThumbnail key={`${e.videoUrl}:${e.imageUrl}`} exercise={e} />
             </View>
@@ -245,6 +266,15 @@ export function ExerciseLibrary({
             </View>
             <Label size={20}>{expanded.includes(e.id) ? "−" : "+"}</Label>
           </Pressable>
+          <Pressable accessibilityRole="button"
+            accessibilityLabel={`${isFavorite(e) ? "Remover dos favoritos" : "Favoritar exercício"} ${e.name}`}
+            accessibilityState={{ disabled: savingFavorites.includes(e.id), busy: savingFavorites.includes(e.id) }}
+            aria-pressed={isFavorite(e)} disabled={savingFavorites.includes(e.id)}
+            onPress={() => void saveFavorite(e)}
+            style={({ pressed }) => ({ minWidth: 44, minHeight: 48, alignItems: "center", justifyContent: "center", opacity: savingFavorites.includes(e.id) ? 0.4 : pressed ? 0.6 : 1 })}>
+            <Label size={26}>{isFavorite(e) ? "★" : "☆"}</Label>
+          </Pressable>
+          </View>
           {select && <View style={{ padding: 8, borderTopWidth: 1, borderColor: t.border }}>
             <Button variant="secondary" onPress={() => select(e)}>+ Adicionar ao treino</Button>
           </View>}

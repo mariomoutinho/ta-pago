@@ -46,6 +46,7 @@ final class App {
         if (str_starts_with($path,'/enrollment/')) return $this->enrollmentRoute($method,substr($path,11),$body);
         if ($path==='/templates' && $method==='GET') return array_map(fn($t)=>$this->template($t['id']),$this->db->rows('EvaluationTemplate','ownerId IN (?,?)',['system',$this->user['id']],'name ASC, version DESC'));
         if ($path==='/templates' && $method==='POST') return $this->newTemplate($body);
+        if (preg_match('~^/exercises/([^/]+)/favorite$~D',$path,$m) && $method==='PUT') return $this->favoriteExercise($m[1],$body);
         if (preg_match('~^/(exercises|programs|workout-templates|prescription-presets)(?:/([^/]+))?(/order)?$~D',$path,$m)) return $this->libraryRoute($method,$m[1],$m[2]??null,($m[3]??'')!=='',$body);
         if (preg_match('~^/workout-plans/([^/]+)(?:/workouts/([^/]+)/order)?$~D',$path,$m) && $method==='PUT') {
             $plan=$this->db->required('WorkoutPlan','id=?',[$m[1]],true); $this->student($plan['studentId'],false);

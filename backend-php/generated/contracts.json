@@ -719,6 +719,18 @@
       "rpe"
     ]
   },
+  "exerciseFavoriteSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "favorite": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "favorite"
+    ]
+  },
   "exerciseSchema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",

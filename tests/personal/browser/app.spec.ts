@@ -13,6 +13,31 @@ const db = createDb(url);
 let server: Server;
 let base: string;
 
+test("favoritos da biblioteca persistem após recarga e combinam com a busca", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: {
+    name: "Personal Favoritos", email: "favorites-browser@example.test", password: "senha-ficticia-12345",
+  } });
+  for (const name of ["Agachamento favorito", "Remada comum"]) {
+    await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Geral", category: "Musculação" } });
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + "/exercicios");
+  await page.getByRole("button", { name: "Favoritar exercício Agachamento favorito", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Remover dos favoritos Agachamento favorito", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Remover dos favoritos Agachamento favorito", exact: true })).toBeVisible();
+  await page.getByRole("radio", { name: "Mostrar exercícios: ★ Favoritos", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Expandir exercício Remada comum", exact: true })).toHaveCount(0);
+  await page.getByLabel("Buscar exercícios...", { exact: true }).fill("remada");
+  await expect(page.getByText("Nenhum favorito neste filtro", { exact: true })).toBeVisible();
+  await page.getByLabel("Buscar exercícios...", { exact: true }).fill("");
+  await page.getByRole("button", { name: "Remover dos favoritos Agachamento favorito", exact: true }).click();
+  await expect(page.getByText("Nenhum favorito neste filtro", { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Favoritar exercício Agachamento favorito", exact: true })).toHaveAttribute("aria-pressed", "false");
+});
+
 test("cadastro manual usa máscaras brasileiras e salva datas ISO sem alterar dados", async ({ page }) => {
   await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: {
     name: "Personal Máscaras", email: "mask-personal@example.test", role: "personal", password: "senha-ficticia-12345",
