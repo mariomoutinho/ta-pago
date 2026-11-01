@@ -72,6 +72,18 @@ final class Push {
         $state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);if($state['owner']===$owner)unlink($file);
         } finally {flock($lock,LOCK_UN);fclose($lock);}
     }
+    public function scheduleTest(string $owner,string $endpoint): void {
+        ensure(self::endpoint($endpoint),'Inscrição inválida');
+        $file=$this->root().'/'.hash('sha256',$endpoint).'.json';
+        $lock=fopen($file.'.lock','c');if(!$lock||!flock($lock,LOCK_EX))throw new \RuntimeException('Push storage');
+        try{
+            ensure(is_file($file),'Ative as notificações neste aparelho antes de testar',409);
+            $state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);
+            ensure($state['owner']===$owner,'Inscrição não encontrada',404);
+            ensure(time()-($state['lastTestAt']??0)>=90,'Aguarde o teste anterior antes de tentar novamente',429);
+            $state['testAt']=time()+15;$state['lastTestAt']=time();$this->save($file,$state);
+        }finally{flock($lock,LOCK_UN);fclose($lock);}
+    }
     public function dispatch(?string $owner=null): array {
         $counts=['sent'=>0,'failed'=>0,'expired'=>0];
         foreach(glob($this->root().'/*.json')?:[] as $file){
@@ -82,7 +94,8 @@ final class Push {
                 if(!in_array($state['owner'],$this->config['authorizedPersonalIds']??[],true)){unlink($file);continue;}
                 $rows=array_values(array_filter((new News($this->db,$this->config))->events($state['owner']),fn($event)=>$event['createdAt']>=$state['since']&&$event['createdAt']>=at(time()-86400)));
                 $ids=array_column($rows,'id');$state['sent']=array_values(array_intersect($state['sent'],$ids));
-                if(!array_diff($ids,$state['sent']))continue;
+                $testDue=isset($state['testAt'])&&$state['testAt']<=time();
+                if(!array_diff($ids,$state['sent'])&&!$testDue)continue;
                 $endpoint=$this->plain($state['endpoint']);ensure(self::endpoint($endpoint),'Push endpoint');
                 $authorization=$this->authorization($endpoint);$status=0;
                 if(($this->config['environment']??'production')==='test'&&isset($this->config['pushTestStatus']))$status=(int)$this->config['pushTestStatus'];
@@ -90,7 +103,7 @@ final class Push {
                     $curl=curl_init($endpoint);curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>'',CURLOPT_HTTPHEADER=>['Authorization: '.$authorization,'TTL: 86400','Urgency: normal','Content-Length: 0'],CURLOPT_RETURNTRANSFER=>true,CURLOPT_FOLLOWLOCATION=>false,CURLOPT_CONNECTTIMEOUT=>3,CURLOPT_TIMEOUT=>5,CURLOPT_PROTOCOLS=>CURLPROTO_HTTPS]);
                     curl_exec($curl);$status=(int)curl_getinfo($curl,CURLINFO_HTTP_CODE);curl_close($curl);
                 }
-                if($status>=200&&$status<300){$state['sent']=$ids;$state['attempts']=0;$state['retryAt']=0;$counts['sent']++;}
+                if($status>=200&&$status<300){$state['sent']=$ids;$state['attempts']=0;$state['retryAt']=0;if($testDue)unset($state['testAt']);$counts['sent']++;}
                 elseif(in_array($status,[404,410],true)){unlink($file);$counts['expired']++;continue;}
                 else{$state['attempts']++;$state['retryAt']=time()+min(3600,60*(2**min(6,$state['attempts']-1)));$counts['failed']++;}
                 $this->save($file,$state);

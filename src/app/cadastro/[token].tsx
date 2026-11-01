@@ -284,9 +284,18 @@ export default function EnrollmentForm() {
                   />
                   {field("experienceDuration", "Há quanto tempo pratica?")}
                   {field("preferredActivity", "Modalidade preferida")}
-                  {field("availability", "Disponibilidade semanal *", {
-                    multiline: true,
-                  })}
+                  <Field
+                    label="Disponibilidade em dias por semana *"
+                    placeholder="Ex.: 3"
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    value={form.availability.match(/^([1-7]) dias? por semana$/)?.[1] ?? ""}
+                    onChangeText={(value) => {
+                      const days=value.replace(/[^1-7]/g, "").slice(0,1);
+                      setForm({...form,availability:days?`${days} dias por semana`:""});
+                    }}
+                  />
+                  <Label muted>Informe de 1 a 7 dias em que pode treinar por semana.</Label>
                 </>
               )}
               {step === 3 && (

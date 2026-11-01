@@ -35,7 +35,7 @@ const form = {
   experienceDuration: "Um ano",
   previousTrainer: "Não",
   preferredActivity: "Musculação",
-  availability: "Segunda, quarta e sexta",
+  availability: "5 dias por semana",
   health: {
     restrictions: "Recomendação privada",
     injuries: "",
@@ -214,6 +214,7 @@ it("aprova uma vez e preserva a conta existente", async () => {
     where: { id: row.studentId! },
   });
   expect(s.accountId).toBeNull();
+  expect(s.weeklyFrequency).toBe(5);
   expect(s.injuries).toBe("");
   expect((await owner.get("/api/students")).body[0].id).toBe(s.id);
   const invitation = await owner

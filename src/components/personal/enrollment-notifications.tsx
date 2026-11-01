@@ -3,7 +3,7 @@ import { AppState, Pressable, View } from "react-native";
 import { router, useGlobalSearchParams, type Href } from "expo-router";
 import { api, message } from "@/features/personal/api";
 import { useSession } from "@/features/personal/auth";
-import { pushState, enablePush, clearNotificationsDevice, shouldOfferPush, rememberPushOffer, watchPushInstall, type PushState } from "@/features/personal/push-device";
+import { pushState, enablePush, clearNotificationsDevice, shouldOfferPush, rememberPushOffer, watchPushInstall, testPushNotification, testBackgroundNotification, type PushState } from "@/features/personal/push-device";
 import { useTheme } from "@/hooks/use-theme";
 import type { NewsItem } from "../../../shared/notifications";
 import { Button, Dialog, Label, Notice, s } from "./ui";
@@ -13,6 +13,7 @@ export function EnrollmentNotifications(){
   const params=useGlobalSearchParams<{novidades?:string}>();
   const [unread,setUnread]=useState(0),[open,setOpen]=useState(false),[offer,setOffer]=useState(false),[settings,setSettings]=useState(false);
   const [device,setDevice]=useState<PushState|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState("");
+  const [testResult,setTestResult]=useState('');
   const [items,setItems]=useState<NewsItem[]>([]),[loading,setLoading]=useState(false),[refreshKey,setRefreshKey]=useState(0);
   const refresh=useCallback(()=>setRefreshKey(value=>value+1),[]);
   const loadFeed=useCallback(async()=>{setLoading(true);try{const rows=await api<NewsItem[]>('/notifications/feed');setItems(rows);setUnread(rows.filter(row=>!row.read).length);setError("");}catch(error){setError(message(error));}finally{setLoading(false);}},[]);
@@ -32,7 +33,7 @@ export function EnrollmentNotifications(){
     let alive=true;const check=()=>void pushState().then(state=>{
       if(!alive)return;setDevice(state);
       if(user&&state.supported&&!state.enabled&&!state.blocked&&shouldOfferPush(user.id)){rememberPushOffer(user.id);setOffer(true);}
-    }).catch(()=>{if(alive)setError("Não foi possível verificar as notificações deste aparelho.");});check();const stop=watchPushInstall(check);return()=>{alive=false;stop();};
+    }).catch(()=>{if(alive)setError("Não foi possível verificar as notificações deste aparelho.");});check();const stop=watchPushInstall(check);const listener=AppState.addEventListener('change',state=>{if(state==='active')check();});return()=>{alive=false;stop();listener.remove();};
   },[user]);
   async function togglePush(){setBusy(true);setError("");try{if(device?.enabled){await clearNotificationsDevice();setDevice(await pushState());}else setDevice(await enablePush());setOffer(false);}catch(error){setError(message(error));}finally{setBusy(false);}}
   async function markRead(ids:string[]){await api('/notifications/read','POST',{ids});setItems(current=>current.map(item=>ids.includes(item.id)?{...item,read:true}:item));refresh();}
@@ -65,13 +66,19 @@ export function EnrollmentNotifications(){
       <Notice error>{error}</Notice>
       <View style={{gap:10,marginTop:16}}>
         <Button variant="secondary" onPress={refresh}>Atualizar novidades</Button>
-        <Button variant="secondary" onPress={()=>setSettings(value=>!value)}>Notificações neste aparelho</Button>
+        <Button variant="secondary" onPress={()=>{setSettings(value=>!value);void pushState().then(setDevice).catch(error=>setError(message(error)));}}>Notificações neste aparelho</Button>
       </View>
       {settings&&<View style={{gap:8,marginTop:12}}>
         <Notice>{device?.enabled?'Notificações ativadas neste aparelho.':'Ative os avisos para receber novidades com o aplicativo fechado. No iPhone, abra pelo ícone da tela inicial.'}</Notice>
         {device?.blocked&&<Notice>Libere a permissão nas configurações do navegador ou do celular.</Notice>}
         {device&&!device.supported&&<Notice>Use o Tá Pago instalado pelo navegador em um aparelho compatível.</Notice>}
         <Button disabled={busy||!device?.supported} onPress={()=>void togglePush()}>{busy?'Aguarde…':device?.enabled?'Desativar neste aparelho':'Ativar notificações neste aparelho'}</Button>
+        {device?.enabled&&<>
+          <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testPushNotification();setTestResult('Teste solicitado ao celular. Se o alerta não apareceu, confira as notificações do Tá Pago e do navegador nas configurações do Android.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta no celular</Button>
+          <Notice>{testResult}</Notice>
+          <Button variant="secondary" disabled={busy} onPress={async()=>{setBusy(true);setError('');setTestResult('');try{await testBackgroundNotification();setTestResult('Teste agendado. Feche o app agora e aguarde até 1 minuto e meio pelo alerta do Tá Pago.');}catch(error){setError(message(error));}finally{setBusy(false);}}}>Testar alerta com app fechado</Button>
+          <Label size={12} muted>No Android, confira também se Tá Pago e o navegador podem mostrar notificações e se o modo Não perturbe está desligado.</Label>
+        </>}
       </View>}
     </Dialog>}
   </>;

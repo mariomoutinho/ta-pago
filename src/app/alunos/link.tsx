@@ -26,6 +26,9 @@ import {
   copyEnrollmentLink,
   shareEnrollmentLink,
   whatsappEnrollment,
+  prepareWhatsAppWindow,
+  studentAccessWhatsAppUrl,
+  type StudentAccessMessage,
 } from "@/features/personal/enrollment-sharing";
 import {
   enrollmentStatus,
@@ -81,9 +84,21 @@ export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?
     row: EnrollmentSummary | EnrollmentDetail,
     status: string,
   ) {
-    await api(`/enrollment/requests/${row.id}/status`, "POST", { status });
+    const whatsapp=status==='active'?prepareWhatsAppWindow():null;
+    try{
+      await api(`/enrollment/requests/${row.id}/status`, "POST", { status });
+    }catch(error){whatsapp?.close();throw error;}
     setDetail(null);
     await reload();
+    if(whatsapp){
+      try{const access=await api<StudentAccessMessage>(`/enrollment/requests/${row.id}/access`,'POST',{});await whatsapp.open(studentAccessWhatsAppUrl(access));}
+      catch(error){whatsapp.close();throw new Error('Aluno aprovado. Não foi possível abrir o WhatsApp: '+message(error)+'. Use Enviar acesso pelo WhatsApp para tentar novamente.');}
+    }
+  }
+  async function sendAccess(row:EnrollmentSummary){
+    const whatsapp=prepareWhatsAppWindow();
+    try{const access=await api<StudentAccessMessage>(`/enrollment/requests/${row.id}/access`,'POST',{});await whatsapp.open(studentAccessWhatsAppUrl(access));}
+    catch(error){whatsapp.close();throw error;}
   }
   const rows = (contacts.data ?? []).filter(
     (x) =>
@@ -336,6 +351,7 @@ export default function EnrollmentLinkPage({ reviewOnly = false }: { reviewOnly?
                   )}
                   {row.status === "active" && (
                     <>
+                      <Button variant="secondary" disabled={busy} onPress={()=>void action(()=>sendAccess(row))}>Enviar acesso pelo WhatsApp</Button>
                       <Button
                         variant="secondary"
                         onPress={() =>

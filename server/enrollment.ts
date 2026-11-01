@@ -275,6 +275,17 @@ export function privateEnrollmentRoutes(db: Db) {
       }),
     });
   });
+  router.post('/requests/:id/access',async(_req,res)=>{
+    const result=await db.$transaction(async tx=>{
+      const row=await tx.enrollmentRequest.findFirstOrThrow({where:{id:res.locals.enrollment.id,personalId:owner(res)}});
+      if(row.status!=='active'||!row.studentId)throw new HttpError(409,'Aprove o cadastro antes de enviar o acesso');
+      const student=await tx.student.findFirstOrThrow({where:{id:row.studentId,personalId:owner(res)}});
+      if(student.linkStatus==='ended')throw new HttpError(409,'Vínculo encerrado');
+      let url=enrollmentOrigin()+'/entrar';
+      if(!student.accountId){const code=newToken();await tx.invitation.deleteMany({where:{studentId:student.id}});await tx.invitation.create({data:{studentId:student.id,tokenHash:sessionKey(code),expiresAt:new Date(Date.now()+172800000)}});url=enrollmentOrigin()+'/ativar?convite='+code;}
+      return {name:student.name,email:student.email,phone:student.phone,url,linked:!!student.accountId};
+    });res.json(result);
+  });
   router.post("/requests/:id/status", async (req, res) => {
     const { status } = z
       .object({ status: z.enum(["active", "rejected", "inactive"]) })
@@ -318,7 +329,7 @@ export function privateEnrollmentRoutes(db: Db) {
               secondaryGoals: form.specificGoals,
               experience: `${form.practicing}; ${form.daysPerWeek} dias/semana; ${form.experienceDuration}; personal anterior: ${form.previousTrainer}; modalidade: ${form.preferredActivity}`,
               availability: form.availability,
-              weeklyFrequency: Math.max(1, form.daysPerWeek),
+              weeklyFrequency: Number(form.availability.match(/^([1-7]) dias? por semana$/)?.[1]) || Math.max(1, form.daysPerWeek),
             },
           });
         studentId = student.id;

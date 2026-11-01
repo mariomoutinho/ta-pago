@@ -21,6 +21,7 @@ final class App {
         if ($method==='OPTIONS') { $this->status=204; return null; }
         if (in_array($path,['/auth/login','/auth/register','/me/claim'],true)) $this->rate('auth');
         if (str_starts_with($path,'/public/enrollment/')) $this->rate('enrollment',30);
+        if (str_starts_with($path,'/public/student-access/')) $this->rate('student-access');
         $this->writing=!in_array($method,['GET','HEAD'],true);
         if ($this->writing) $this->db->pdo->beginTransaction();
         try {
@@ -39,6 +40,7 @@ final class App {
         $this->user=$this->sessionUser();
         if ($path==='/auth/status' && $method==='GET') return ['user'=>$this->user];
         if (preg_match('~^/public/enrollment/([^/]+)$~D',$path,$m)) return $this->publicEnrollment($method,$m[1],$body);
+        if (preg_match('~^/public/student-access/([^/]+)$~D',$path,$m)) return $this->studentAccess($method,$m[1],$body);
         ensure($this->user!==null,'Entre na sua conta para continuar',401);
         if ($path==='/exercise-videos' && $method==='PUT') return $this->uploadVideo();
         if (preg_match('~^/exercise-videos/([a-f0-9]{64})/([a-f0-9]{32})\.mp4$~D',$path,$m) && in_array($method,['GET','HEAD'],true)) return $this->video($m[1],$m[2]);
@@ -53,6 +55,10 @@ final class App {
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
         if ($path==='/notifications/settings' && $method==='GET') return ['publicKey'=>(new Push($this->db,$this->config))->publicKey()];
+        if ($path==='/notifications/test'&&$method==='POST') {
+            ensure(is_string($body['endpoint']??null),'Inscrição inválida');
+            (new Push($this->db,$this->config))->scheduleTest($this->user['id'],$body['endpoint']);return ['scheduled'=>true];
+        }
         if ($path==='/notifications/summary' && $method==='GET') {
             $rows=$this->db->rows('EnrollmentRequest',"personalId=? AND status='pending' AND updatedAt>=?",[$this->user['id'],at(time()-$this->config['retentionDays']*86400)],'createdAt DESC');
             $feed=(new News($this->db,$this->config))->feed($this->user['id']);

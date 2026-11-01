@@ -13,6 +13,9 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/Auth.php",
+    "backend-php/src/Enrollment.php",
+    "backend-php/src/App.php",
     "backend-php/src/News.php",
     "backend-php/migrations/20261101_workout_completion.sql",
     "backend-php/tests/completion-migration.php",
@@ -24,7 +27,6 @@
     "backend-php/tests/favorites-migration.php",
     "backend-php/src/Workouts.php",
     "backend-php/bootstrap.php",
-    "backend-php/src/Auth.php",
     "backend-php/config.example.php",
     "backend-php/public/.htaccess",
     "backend-php/public/api/index.php",
@@ -40,7 +42,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -211,3 +213,9 @@ Até essas verificações, usar o pacote validado e o procedimento manual. Pende
 Aplicar apenas migrations/20261101_workout_completion.sql antes de publicar o c?digo que consulta conclus?es. A migra??o adiciona WorkoutCompletion, com FK ao treino e unicidade por treino/dia; n?o executar schema.sql na base existente. Ensaiar em banco sint?tico com treinos previamente preenchidos, preservar backup privado e conferir integridade dos registros anteriores.
 
 Publicar News.php e bootstrap antes das classes dependentes, atualizar generated/models.json, Workouts.php, Push.php e App.php. Preservar config.php, chaves, inscri??es e o cron existente, sem duplic?-lo. A central grava IDs de leitura no subdiret?rio storage/push/read, ou pushDirectory/read quando configurado; os arquivos de inscri??es permanecem na raiz. Atualizar o bundle e notifications-sw.js para abrir /?novidades=1 com mensagem gen?rica. Conferir sa?de da API, integridade dos arquivos e sa?da do cron ap?s a publica??o.
+
+## Acesso do aluno pelo WhatsApp e teste em segundo plano
+
+Esta atualiza??o n?o exige DDL: reutiliza Invitation e o armazenamento privado de inscri??es. Publicar Auth.php, Enrollment.php, Push.php e App.php, seguidos pelo bundle web. Preservar configura??o, lista de personals, chaves, inscri??es e cron. A aprova??o abre uma mensagem no WhatsApp do professor para confirma??o do envio, conforme prefer?ncia expl?cita; n?o requer credencial WhatsApp Business. Links individuais e n?meros reais n?o devem entrar no reposit?rio ou em diagn?sticos.
+
+O teste em segundo plano adiciona testAt e lastTestAt ? inscri??o selecionada, sob a mesma trava de arquivo do despachante. O cron existente processa o teste vencido e o remove ap?s aceite do provedor; n?o duplicar o cron e n?o limpar inscri??es para testar. O bot?o local verifica a solicita??o de exibi??o no aparelho; nenhum dos testes garante percep??o pelo usu?rio.

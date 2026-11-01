@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, it, expect } from "vitest";
+import { beforeAll, afterAll, it, expect,vi } from "vitest";
 import request from "supertest";
 import fs from "node:fs";
 import path from "node:path";
@@ -60,4 +60,14 @@ it("repete falhas com espera e remove inscrição expirada",async()=>{
   const state=JSON.parse(fs.readFileSync(file,"utf8"));state.retryAt=0;fs.writeFileSync(file,JSON.stringify(state));
   expect((await dispatchPush(db,ownerId,async()=>410)).expired).toBe(1);
   expect(fs.existsSync(file)).toBe(false);
+});
+it('agenda teste só para o aparelho do dono e envia uma única vez após o atraso',async()=>{
+ const testEndpoint=endpoint+'-background';
+ await owner.post('/api/notifications/subscribe').set(headers).send({endpoint:testEndpoint});
+ expect((await other.post('/api/notifications/test').set(headers).send({endpoint:testEndpoint})).status).toBe(404);
+ expect((await owner.post('/api/notifications/test').set(headers).send({endpoint:testEndpoint})).body.scheduled).toBe(true);
+ expect((await owner.post('/api/notifications/test').set(headers).send({endpoint:testEndpoint})).status).toBe(429);
+ expect((await dispatchPush(db,ownerId,async()=>{throw Error('Teste ainda não venceu');})).sent).toBe(0);
+ const time=Date.now();const clock=vi.spyOn(Date,'now').mockReturnValue(time+16000);
+ try{expect((await dispatchPush(db,ownerId,async()=>201)).sent).toBe(1);expect((await dispatchPush(db,ownerId,async()=>201)).sent).toBe(0);}finally{clock.mockRestore();}
 });

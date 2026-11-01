@@ -162,6 +162,17 @@ try {
   const syntheticEndpoint='https://fcm.googleapis.com/fcm/send/synthetic-subscription';
   for(const endpoint of ['https://127.0.0.1/push','https://fcm.googleapis.com.evil.test/push','http://fcm.googleapis.com/x','https://u:p@fcm.googleapis.com/x'])await req(teacher,'POST','/notifications/subscribe',{endpoint},400);
   await req(teacher,'POST','/notifications/subscribe',{endpoint:syntheticEndpoint});
+  await req(other,'POST','/notifications/test',{endpoint:syntheticEndpoint},404);
+  await req(teacher,'POST','/notifications/test',{endpoint:syntheticEndpoint});
+  await req(teacher,'POST','/notifications/test',{endpoint:syntheticEndpoint},429);
+  const scheduledFolder=config.replace(/\.php$/,'-push');
+  const scheduledFile=path.join(scheduledFolder,fs.readdirSync(scheduledFolder).find(file=>file.endsWith('.json')));
+  const scheduledState=JSON.parse(fs.readFileSync(scheduledFile,'utf8'));assert.ok(scheduledState.testAt>Date.now()/1000);
+  // Os feedbacks anteriores à inscrição não contam como teste nem como novidade elegível.
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','201'],env)).sent,0);
+  scheduledState.testAt=0;fs.writeFileSync(scheduledFile,JSON.stringify(scheduledState));
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','201'],env)).sent,1);
+  assert.equal(JSON.parse(run(['backend-php/tests/push.php','201'],env)).sent,0);
   const link=await req(teacher,'GET','/enrollment/link'); assert.equal(new URL(link.url).pathname,'/cadastro/'+link.token);
   const challenge=await req(anon,'GET','/public/enrollment/'+link.token);
   await new Promise(r=>setTimeout(r,2100));
@@ -190,6 +201,18 @@ try {
   const decipher=createDecipheriv('aes-256-gcm',Buffer.from('ab'.repeat(32),'hex'),iv); decipher.setAuthTag(tag);
   assert.equal(JSON.parse(Buffer.concat([decipher.update(cipher),decipher.final()]).toString()).email,enrollment.email);
   await req(teacher,'POST',`/enrollment/requests/${requests[0].id}/status`,{status:'active'});
+  await req(other,'POST',`/enrollment/requests/${requests[0].id}/access`,{},404);
+  const access=await req(teacher,'POST',`/enrollment/requests/${requests[0].id}/access`,{});
+  assert.equal(access.email,enrollment.email);assert.equal(access.password,undefined);
+  const accessCode=new URL(access.url).searchParams.get('convite');assert.match(accessCode,/^[a-f0-9]{64}$/);
+  const accessPath='/public/student-access/'+accessCode;
+  assert.equal((await req(anon,'GET',accessPath)).existingAccount,false);
+  await req(anon,'POST',accessPath,{password:'curta'},400);
+  await req(anon,'POST',accessPath,{password,role:'personal',email:'forged@example.test'},201);
+  await req(anon,'POST',accessPath,{password},400);
+  const activated=client();await req(activated,'POST','/auth/login',{email:enrollment.email,password});
+  assert.equal((await req(activated,'GET','/me/students')).length,1);
+  assert.equal((await req(teacher,'POST',`/enrollment/requests/${requests[0].id}/access`,{})).linked,true);
   assert.equal((await req(teacher,'GET','/notifications/summary')).pending,0);
   await req(teacher,'DELETE',`/enrollment/requests/${requests[0].id}`,undefined,409);
   for(const type of ['repetitions-load','repetitions-load-time','repetitions-time','time-incline','running','notes','cadence']){

@@ -3,6 +3,25 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Auth {
+    private function studentAccess(string $method,string $code,array $body): array {
+        ensure(preg_match('/^[a-f0-9]{64}$/D',$code)===1,'Convite inválido ou expirado');
+        $invite=$this->db->one('Invitation','tokenHash=?',[hash('sha256',$code)],$this->writing);
+        ensure($invite!==null&&!$invite['consumedAt']&&$invite['expiresAt']>now(),'Convite inválido ou expirado');
+        $student=$this->db->required('Student','id=?',[$invite['studentId']],$this->writing);
+        $enrollment=$this->db->one('EnrollmentRequest',"studentId=? AND status='active'",[$student['id']]);
+        ensure($enrollment!==null&&!$student['accountId']&&$student['linkStatus']!=='ended'&&$student['email'],'Convite inválido ou expirado');
+        $existing=$this->db->one('User','email=?',[strtolower($student['email'])]);
+        if($method==='GET')return ['name'=>$student['name'],'email'=>$student['email'],'existingAccount'=>$existing!==null];
+        ensure($method==='POST','Recurso não encontrado',404);
+        $password=$body['password']??null;
+        ensure(is_string($password)&&mb_strlen($password)>=12&&mb_strlen($password)<=128,'Use entre 12 e 128 caracteres na senha');
+        ensure($existing===null,'Você já tem conta. Entre com sua senha e aceite o convite.',409);
+        $user=$this->db->create('User',['name'=>$student['name'],'email'=>strtolower($student['email']),'role'=>'student','passwordHash'=>passwordHash($password)]);
+        $this->db->update('Student',$student['id'],['accountId'=>$user['id'],'linkStatus'=>'active']);
+        $this->db->update('Invitation',$invite['id'],['consumedAt'=>now()]);
+        $this->history($student['id'],'Acesso ativado pelo aluno');
+        $this->status=201;return ['ok'=>true];
+    }
     private function authorizedAccount(array $user): bool {
         return $user['role']!=='personal' || in_array($user['id'],$this->config['authorizedPersonalIds']??[],true);
     }

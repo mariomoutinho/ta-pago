@@ -28,6 +28,7 @@ import { workoutTemplateRoutes } from "./workout-templates";
 import { planInclude, workoutRoutes } from "./workouts";
 import { exerciseMediaRoutes } from "./exercise-media";
 import { notificationRoutes, dispatchPush } from "./push";
+import { studentAccessRoutes } from "./student-access";
 
 type Identity = { id: string; name: string; email: string; role: string };
 const identity = (res: express.Response) => res.locals.user as Identity;
@@ -201,6 +202,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
     }
   });
   app.use("/api/public/enrollment", publicEnrollmentRoutes(db, owner => dispatchPush(db, owner, undefined, [...authorizedPersonalIds])));
+  app.use("/api/public/student-access",studentAccessRoutes(db));
   app.use("/api", async (req, res, next) => {
     const user = await sessionUser(req);
     if (!user) throw new HttpError(401, "Entre na sua conta para continuar");

@@ -11,6 +11,13 @@
   ],
   "indexable": true,
   "sources": [
+    "server/student-access.ts",
+    "src/app/ativar.tsx",
+    "src/features/personal/whatsapp-window.ts",
+    "src/features/personal/whatsapp-window.web.ts",
+    "src/features/personal/enrollment-sharing.ts",
+    "tests/personal/student-access.test.ts",
+    "backend-php/src/Enrollment.php",
     "src/components/personal/shell.tsx",
     "backend-php/src/News.php",
     "server/news.ts",
@@ -47,7 +54,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.9.1",
+  "version": "4.10.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -143,3 +150,19 @@ Use personal:setup para migrações e seed idempotente, personal:build e persona
 ## Configuração
 
 PERSONAL_DATABASE_URL define SQLite; PERSONAL_API_PORT e PERSONAL_API_HOST definem escuta. PERSONAL_APP_ORIGINS lista origens web permitidas, separadas por vírgula. EXPO_PUBLIC_PERSONAL_API_URL define endereço público da API para dispositivo; jamais coloque segredo em variável EXPO_PUBLIC. COOKIE_SECURE=true é necessário ao operar com HTTPS. Produção exige configuração própria de HTTPS, backup, operação e validação em dispositivos. Não há deploy público nesta entrega.
+
+## Disponibilidade e acesso ap?s aprova??o
+
+A ficha p?blica solicita Disponibilidade em dias por semana com teclado num?rico e valor de 1 a 7. O campo Dias de atividade por semana continua descrevendo a pr?tica atual. Para preservar fichas anteriores, a disponibilidade continua armazenada como texto; o novo formul?rio envia N dias por semana. Na aprova??o, esse valor determina weeklyFrequency quando estiver nesse formato; fichas legadas conservam a regra anterior.
+
+Ao aprovar, a interface reserva uma janela durante o toque e abre a conversa do WhatsApp do aluno com mensagem pronta. O professor confirma o envio no pr?prio WhatsApp; n?o h? integra??o de envio autom?tico. A mensagem cont?m e-mail e link de ativa??o, sem senha. O bot?o Enviar acesso pelo WhatsApp permite repetir; cada novo link invalida o anterior. Aprova??o ? mantida se a prepara??o ou abertura da mensagem falhar, com erro expl?cito.
+
+POST /enrollment/requests/:id/access exige personal propriet?rio, ficha aprovada e v?nculo n?o encerrado. Para aluno sem conta vinculada, gera Invitation de uso ?nico, com token aleat?rio de 32 bytes, somente hash persistido e validade de 48 horas. O link abre /ativar?convite=TOKEN. GET /public/student-access/:code apresenta nome, e-mail e indica??o de conta existente somente com convite v?lido. POST cria exclusivamente conta de aluno e v?nculo, consome o convite e guarda hash da senha, com transa??o e limita??o de tentativas. N?o aceita e-mail nem papel fornecidos pelo cliente e nunca redefine conta existente.
+
+Se j? existe conta com esse e-mail, a tela exige a senha atual e usa o fluxo autenticado de aceite. Se o aluno j? est? vinculado, a mensagem aponta para /entrar e n?o gera convite. Nenhuma mensagem real de aluno foi enviada durante a valida??o. Testes Node verificam escopo, aprova??o, senha m?nima, papel fixo, expira??o, consumo e preserva??o da senha existente; o navegador percorre ficha, disponibilidade num?rica, mensagem interceptada e ativa??o at? os treinos.
+
+## Diagn?stico de alertas no aparelho
+
+Notifica??es ativadas confirma a inscri??o e a permiss?o informada pelo navegador; n?o comprova exibi??o pelo Android. A interface revalida o estado ao retornar ao primeiro plano e ao abrir as op??es. Testar alerta no celular solicita uma notifica??o local ao worker, sem criar cadastro nem enviar dados a outro aparelho. Testar alerta com app fechado agenda um aviso somente para a inscri??o atual: POST /notifications/test exige propriet?rio, inscri??o v?lida e intervalo m?nimo de 90 segundos entre testes.
+
+O teste fica persistido na inscri??o privada com vencimento em 15 segundos. O cron existente envia na pr?xima execu??o, normalmente em at? 90 segundos; repeti??o ap?s aceite do provedor n?o envia outro teste. Falhas seguem o retry existente. O agendamento n?o cria evento na central nem altera cadastro. A inscri??o de outro personal n?o pode ser usada. Testes usam apenas endpoints sint?ticos e transporte simulado. Aceite do provedor n?o equivale a alerta exibido, e a entrega no celular do respons?vel permanece dependente de teste f?sico.

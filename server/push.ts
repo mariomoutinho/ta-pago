@@ -9,7 +9,7 @@ import { retentionDays } from "./enrollment";
 import { newsEvents, newsFeed, markNewsRead } from "./news";
 
 const root = () => path.resolve(process.env.PERSONAL_PUSH_DIRECTORY ?? "data/push");
-type Subscription = { owner: string; endpoint: string; since: string; sent: string[]; attempts: number; retryAt: number };
+type Subscription = { owner: string; endpoint: string; since: string; sent: string[]; attempts: number; retryAt: number; testAt?:number;lastTestAt?:number };
 export function pushEndpoint(value: string) {
   try {
     const url = new URL(value);
@@ -60,12 +60,13 @@ export async function dispatchPush(db: Db, owner?: string, transport?: (endpoint
       const since=Math.max(Date.parse(state.since),Date.now()-86400000);
       const rows = (await newsEvents(db,state.owner)).filter(item=>Date.parse(item.createdAt)>=since);
       const ids = rows.map(row => row.id);
-      if (!ids.some(id => !state.sent.includes(id))) return;
+      const testDue=state.testAt!==undefined&&state.testAt<=Date.now();
+      if (!ids.some(id => !state.sent.includes(id))&&!testDue) return;
       try {
         const endpoint = unseal<{ endpoint: string }>(state.endpoint).endpoint;
         const authorization = pushAuthorization(endpoint);
         const status = transport ? await transport(endpoint, authorization) : (await fetch(endpoint, { method: "POST", headers: { Authorization: authorization, TTL: "86400", Urgency: "normal" }, body: "", redirect: "error", signal: AbortSignal.timeout(5000) as NonNullable<Parameters<typeof fetch>[1]>["signal"] })).status;
-        if (status >= 200 && status < 300) { state.sent = ids; state.retryAt = 0; state.attempts = 0; counts.sent++; }
+        if (status >= 200 && status < 300) { state.sent = ids; state.retryAt = 0; state.attempts = 0;if(testDue)delete state.testAt; counts.sent++; }
         else if ([404, 410].includes(status)) { fs.unlinkSync(file); counts.expired++; return; }
         else throw new Error("Push provider");
       } catch { state.attempts++; state.retryAt = Date.now() + Math.min(3600000, 60000 * 2 ** Math.min(state.attempts - 1, 6)); counts.failed++; }
@@ -81,6 +82,17 @@ export function notificationRoutes(db: Db) {
   router.get("/feed",async(_req,res)=>res.json(await newsFeed(db,res.locals.user.id)));
   router.post("/read",async(req,res)=>{await markNewsRead(db,res.locals.user.id,req.body.ids);res.json({ok:true});});
   router.get("/settings", (_req, res) => res.json({ publicKey: pushPublicKey() }));
+  router.post('/test',async(req,res)=>{
+    const endpoint=req.body.endpoint;if(typeof endpoint!=='string'||!pushEndpoint(endpoint))throw new HttpError(400,'Inscrição inválida');
+    const file=fileFor(endpoint);fs.mkdirSync(root(),{recursive:true,mode:0o700});
+    const result=await locked(file,async()=>{
+      if(!fs.existsSync(file))throw new HttpError(409,'Ative as notificações neste aparelho antes de testar');
+      const state:Subscription=JSON.parse(fs.readFileSync(file,'utf8'));
+      if(state.owner!==res.locals.user.id)throw new HttpError(404,'Inscrição não encontrada');
+      if(Date.now()-(state.lastTestAt??0)<90000)throw new HttpError(429,'Aguarde o teste anterior antes de tentar novamente');
+      state.testAt=Date.now()+15000;state.lastTestAt=Date.now();save(file,state);return true;
+    });if(!result)throw new HttpError(409,'Tente novamente');res.json({scheduled:true});
+  });
   for (const action of ["subscribe", "unsubscribe"] as const) router.post("/" + action, async (req, res) => {
     const endpoint = req.body.endpoint;
     if (typeof endpoint !== "string" || !pushEndpoint(endpoint)) throw new HttpError(400, "Este serviço de notificações não é compatível");

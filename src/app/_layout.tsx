@@ -12,7 +12,8 @@ import { Button, Notice, Label } from "@/components/personal/ui";
 void SplashScreen.preventAutoHideAsync().catch(() => {});
 function Navigation() {
   const { user, loading, error, refresh } = useSession();
-  const publicForm = usePathname().startsWith("/cadastro/");
+  const pathname=usePathname();
+  const publicForm = pathname.startsWith("/cadastro/") || pathname==='/ativar';
   useEffect(() => {
     if (!loading || publicForm) void SplashScreen.hideAsync();
   }, [loading, publicForm]);
@@ -20,6 +21,7 @@ function Navigation() {
     return (
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="cadastro/[token]" />
+        <Stack.Screen name="ativar" />
       </Stack>
     );
   if (loading) return <Label>Carregando Tá Pago…</Label>;
@@ -56,6 +58,7 @@ function Navigation() {
           <Stack.Screen name="treinos" />
         </Stack.Protected>
         <Stack.Screen name="cadastro/[token]" />
+        <Stack.Screen name="ativar" />
       </Stack>
     </PersonalShell>
   );

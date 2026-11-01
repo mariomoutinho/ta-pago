@@ -35,3 +35,18 @@ export async function clearNotificationsDevice() {
   try { await api("/notifications/unsubscribe", "POST", { endpoint: subscription.endpoint }); }
   finally { await subscription.unsubscribe(); }
 }
+export async function testPushNotification(){
+  const state=await pushState();
+  if(!state.enabled)throw new Error('Ative as notificações neste aparelho antes de testar.');
+  const registration=await navigator.serviceWorker.ready;
+  await registration.showNotification('Teste do Tá Pago',{
+    body:'As notificações do Tá Pago podem aparecer neste aparelho.',
+    icon:'/assets/pwa/icon-192.png',tag:'tapago-device-test',data:{url:'/?novidades=1'},
+  });
+}
+export async function testBackgroundNotification(){
+  const state=await pushState();if(!state.enabled)throw new Error('Ative as notificações neste aparelho antes de testar.');
+  const subscription=await(await navigator.serviceWorker.ready).pushManager.getSubscription();
+  if(!subscription)throw new Error('Ative as notificações novamente antes de testar.');
+  await api('/notifications/test','POST',{endpoint:subscription.endpoint});
+}

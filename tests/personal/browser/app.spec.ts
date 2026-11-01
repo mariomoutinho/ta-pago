@@ -15,6 +15,7 @@ process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 let server: Server;
 let base: string;
 test.beforeEach(async({page},info)=>{
+  await page.addInitScript(()=>{(window as any).__whatsappDrafts=[];window.open=(()=>({closed:false,opener:null,close(){this.closed=true;},location:{replace(url:string){(window as any).__whatsappDrafts.push(url);}}})) as any;});
   if(!info.title.includes('convite inicial'))await page.addLocatorHandler(page.getByRole('button',{name:'Agora não',exact:true}),async locator=>{await locator.click();});
 });
 
@@ -77,6 +78,7 @@ test("analisar cadastros abre diretamente aprovação e recusa sem mostrar o lin
   await page.route("**/api/notifications/read",route=>route.fulfill({json:{ok:true}}));
   await page.route("**/api/enrollment/requests",route=>route.fulfill({json:[{id:"review-fixture",name:"Aluno Revisão",email:"review@example.test",phone:"00000000000",goals:["Outro"],status,createdAt:"2026-11-01T12:00:00.000Z",studentId:null}]}));
   await page.route("**/api/enrollment/requests/review-fixture/status",route=>{status=route.request().postDataJSON().status;return route.fulfill({json:{ok:true}});});
+  await page.route("**/api/enrollment/requests/review-fixture/access",route=>route.fulfill({json:{name:'Aluno Revisão',email:'review@example.test',phone:'11999990000',url:base+'/ativar?convite='+'a'.repeat(64),linked:false}}));
   await page.setViewportSize({width:390,height:740});
   await page.goto(base+"/");
   await page.getByRole("button",{name:"Novidades, 1 não lidas",exact:true}).click();
@@ -453,8 +455,8 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
     .click();
   await form.getByRole("button", { name: "Avançar", exact: true }).click();
   await form
-    .getByLabel("Disponibilidade semanal *", { exact: true })
-    .fill("Segunda e quarta");
+    .getByLabel("Disponibilidade em dias por semana *", { exact: true })
+    .fill("2");
   await form.getByRole("button", { name: "Avançar", exact: true }).click();
   await form
     .getByLabel("Adaptações necessárias", { exact: true })
@@ -507,12 +509,24 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
   await page.getByRole("button", { name: "Fechar", exact: true }).click();
   await page.getByRole("button", { name: "Aprovar", exact: true }).click();
   await expect(page.getByText("Ativo", { exact: true }).last()).toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>(window as any).__whatsappDrafts.length)).toBe(1);
+  const draft=await page.evaluate(()=>(window as any).__whatsappDrafts[0] as string);
+  expect(new URL(draft).pathname).toBe('/5511987654321');
+  const draftText=new URL(draft).searchParams.get('text')!;
+  expect(draftText).toContain('Login:');expect(draftText).toContain('/ativar?convite=');expect(draftText).toContain('48 horas');
   await page
     .getByRole("button", { name: "Abrir acompanhamento", exact: true })
     .click();
   await expect(
     page.getByRole("heading", { name: "Aluno Público" }),
   ).toBeVisible();
+  const activationUrl=draftText.match(/https?:\/\/\S+\/ativar\?convite=[a-f0-9]{64}/)![0];
+  await form.goto(activationUrl);
+  await expect(form.getByLabel('E-mail de acesso',{exact:true})).toBeVisible();
+  await form.getByLabel('Crie sua senha',{exact:true}).fill('senha-ficticia-12345');
+  await form.getByLabel('Confirme sua senha',{exact:true}).fill('senha-ficticia-12345');
+  await form.getByRole('button',{name:'Ativar meu acesso',exact:true}).click();
+  await expect(form.getByRole('button',{name:'Ver meus treinos',exact:true})).toBeVisible();
   expect(errors).toEqual([]);
   await publicContext.close();
 });

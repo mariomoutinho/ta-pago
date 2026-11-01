@@ -31,3 +31,12 @@ export async function shareEnrollmentLink(url: string) {
 export async function whatsappEnrollment(url: string) {
   await Linking.openURL(whatsappEnrollmentUrl(url));
 }
+export type StudentAccessMessage={name:string;email:string;phone:string;url:string;linked:boolean};
+export function studentAccessMessage(data:StudentAccessMessage){
+  return `Olá, ${data.name}! Seu cadastro no Tá Pago foi aprovado.\n\nLogin: ${data.email}\n${data.linked?'Acesse com a senha da sua conta:':'Abra o link para definir sua senha e ativar seu acesso. Se já tem conta, entre com sua senha atual. O link é válido por 48 horas:'}\n${data.url}\n\nSeus treinos estarão disponíveis assim que forem liberados pelo seu personal.`;
+}
+export function studentAccessWhatsAppUrl(data:StudentAccessMessage){
+  let phone=data.phone.replace(/\D/g,'');if(phone.length===10||phone.length===11)phone='55'+phone;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(studentAccessMessage(data))}`;
+}
+export {prepareWhatsAppWindow} from './whatsapp-window';

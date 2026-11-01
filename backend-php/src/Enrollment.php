@@ -79,13 +79,26 @@ trait Enrollment {
                 $form=$this->unseal($r['payload']); return [...array_intersect_key($r,array_flip(['id','status','createdAt','studentId'])),...array_intersect_key($form,array_flip(['name','email','phone','goals']))];
             },$this->db->rows('EnrollmentRequest','personalId=?',[$owner],'createdAt DESC'));
         }
-        if (preg_match('~^/requests/([^/]+)(/status)?$~D',$path,$m)) {
+        if (preg_match('~^/requests/([^/]+)(/status|/access)?$~D',$path,$m)) {
             $r=$this->db->required('EnrollmentRequest','id=? AND personalId=?',[$m[1],$owner],$this->writing);
+            if($method==='POST'&&($m[2]??'')==='/access'){
+                ensure($r['status']==='active'&&$r['studentId'],'Aprove o cadastro antes de enviar o acesso',409);
+                $student=$this->db->required('Student','id=? AND personalId=?',[$r['studentId'],$owner],true);
+                ensure($student['linkStatus']!=='ended','Vínculo encerrado',409);
+                $url=$this->config['origin'].$this->config['basePath'].'/entrar';
+                if(!$student['accountId']){
+                    $code=bin2hex(random_bytes(32));
+                    $this->db->query('DELETE FROM Invitation WHERE studentId=?',[$student['id']]);
+                    $this->db->create('Invitation',['studentId'=>$student['id'],'tokenHash'=>hash('sha256',$code),'expiresAt'=>at(time()+172800)]);
+                    $url=$this->config['origin'].$this->config['basePath'].'/ativar?convite='.$code;
+                }
+                return ['name'=>$student['name'],'email'=>$student['email'],'phone'=>$student['phone'],'url'=>$url,'linked'=>(bool)$student['accountId']];
+            }
             if ($method==='GET' && !isset($m[2])) return [...array_intersect_key($r,array_flip(['id','status','studentId','createdAt','policyVersion','consentAt','healthConsentAt'])),
                 'form'=>[...$this->unseal($r['payload']),'health'=>$r['healthPayload']?$this->unseal($r['healthPayload']):['restrictions'=>'','injuries'=>'','adaptations'=>'']],
                 'events'=>$this->db->rows('EnrollmentEvent','requestId=?',[$r['id']],'createdAt ASC')];
             if ($method==='DELETE' && !isset($m[2])) { ensure($r['status']!=='active','Desative o vínculo antes de excluir',409); $this->db->delete('EnrollmentRequest',$r['id']); return ['ok'=>true]; }
-            if ($method==='POST' && isset($m[2])) {
+            if ($method==='POST' && ($m[2]??'')==='/status') {
                 $status=$body['status']??'';
                 ensure(in_array($status,['active','rejected','inactive'],true),'Status inválido');
                 if ($status===$r['status']) return ['ok'=>true];
@@ -98,7 +111,7 @@ trait Enrollment {
                     $student=$matches[0]??$this->db->create('Student',['personalId'=>$owner,'name'=>$form['name'],'email'=>$form['email'],'phone'=>$form['phone'],'birthDate'=>$form['birthDate']?:null,
                         'sex'=>$form['gender'],'startDate'=>gmdate('Y-m-d'),'mainGoal'=>implode(', ',$form['goals']),'secondaryGoals'=>$form['specificGoals'],
                         'experience'=>$form['practicing'].'; '.$form['daysPerWeek'].' dias/semana; '.$form['experienceDuration'].'; personal anterior: '.$form['previousTrainer'].'; modalidade: '.$form['preferredActivity'],
-                        'availability'=>$form['availability'],'weeklyFrequency'=>max(1,$form['daysPerWeek'])]);
+                        'availability'=>$form['availability'],'weeklyFrequency'=>preg_match('/^([1-7]) dias? por semana$/D',$form['availability'],$days)?(int)$days[1]:max(1,$form['daysPerWeek'])]);
                     $studentId=$student['id']; $this->history($studentId,'Cadastro por link aprovado',['requestId'=>$r['id']]);
                 }
                 if ($status==='inactive' && $studentId) {
