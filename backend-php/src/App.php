@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace TaPago;
 
 final class App {
-    use Auth, Students, Evaluations, Workouts, Enrollment;
+    use Auth, Students, Evaluations, Workouts, Enrollment, Media;
     public int $status=200;
     public ?array $user=null;
     private ?string $sessionId=null;
@@ -34,6 +34,8 @@ final class App {
         if ($path==='/auth/status' && $method==='GET') return ['user'=>$this->user];
         if (preg_match('~^/public/enrollment/([^/]+)$~D',$path,$m)) return $this->publicEnrollment($method,$m[1],$body);
         ensure($this->user!==null,'Entre na sua conta para continuar',401);
+        if ($path==='/exercise-videos' && $method==='PUT') return $this->uploadVideo();
+        if (preg_match('~^/exercise-videos/([a-f0-9]{64})/([a-f0-9]{32})\.mp4$~D',$path,$m) && in_array($method,['GET','HEAD'],true)) return $this->video($m[1],$m[2]);
         if ($path==='/auth/logout' && $method==='POST') { $this->db->delete('Session',$this->sessionId); $this->cookie('',time()-3600); return ['ok'=>true]; }
         if ($path==='/me/claim' && $method==='POST') return $this->claim($body);
         if ($path==='/me/students' && $method==='GET') {

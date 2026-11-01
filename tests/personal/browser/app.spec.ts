@@ -10,8 +10,39 @@ import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
+process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
 let server: Server;
 let base: string;
+
+test("upload de MP4 salva e reproduz no player próprio sem iframe do YouTube", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: {
+    name: "Personal Upload", email: "upload-browser@example.test", role: "personal", password: "senha-ficticia-12345",
+  } });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base + "/exercicios");
+  await page.getByRole("button", { name: "+ Criar exercício", exact: true }).click();
+  await page.getByLabel("Nome do exercício *", { exact: true }).fill("Vídeo próprio sintético");
+  await page.getByLabel("Grupo muscular *", { exact: true }).fill("Geral");
+  await page.getByLabel("Categoria *", { exact: true }).fill("Mobilidade");
+  await page.getByRole("radio", { name: "Vídeo do exercício: Enviar vídeo", exact: true }).click();
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Selecionar vídeo do dispositivo", exact: true }).click();
+  await (await chooser).setFiles(path.resolve("tests/personal/fixtures/exercise.mp4"));
+  await expect(page.getByText("exercise.mp4", { exact: true })).toBeVisible();
+  await page.getByRole("radio", { name: "Vídeo do exercício: Enviar vídeo", exact: true }).click();
+  await expect(page.getByText("exercise.mp4", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar exercício", exact: true }).click();
+  await page.getByRole("button", { name: "Expandir exercício Vídeo próprio sintético", exact: true }).click();
+  const video = page.getByLabel("Vídeo: Vídeo próprio sintético", { exact: true });
+  await expect(video).toHaveAttribute("src", /\/api\/exercise-videos\/.+\.mp4$/);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await video.evaluate(async (element: HTMLVideoElement) => { element.muted = true; await element.play(); });
+  await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.currentTime)).toBeGreaterThan(0.2);
+  await page.reload();
+  await page.getByRole("button", { name: "Expandir exercício Vídeo próprio sintético", exact: true }).click();
+  await expect(video).toBeVisible();
+});
 
 test("favoritos da biblioteca persistem após recarga e combinam com a busca", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };

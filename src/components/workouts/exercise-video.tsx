@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
 import { Notice } from "@/components/personal/ui";
 import { apiBase } from "@/features/personal/api";
+import { readSession } from "@/features/personal/session-storage";
 import type { ExerciseVideoSource } from "@/features/personal/exercise-video";
 export function ExerciseVideo({
   source,
@@ -13,6 +14,13 @@ export function ExerciseVideo({
 }) {
   const [failed, setFailed] = useState(false);
   const origin = new URL(apiBase()).origin;
+  const privateVideo = source.kind === "file" && new URL(source.url).origin === origin && new URL(source.url).pathname.startsWith("/api/exercise-videos/");
+  const [session, setSession] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    if (privateVideo) void readSession().then(value => { if (active) setSession(value); }).catch(() => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, [privateVideo]);
   const escaped = source.url
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
@@ -21,7 +29,9 @@ export function ExerciseVideo({
   const element =
     source.kind === "youtube"
       ? `<iframe src="${escaped}" allow="encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-      : `<video src="${escaped}" controls playsinline preload="metadata"></video>`;
+      : privateVideo
+        ? `<video controls playsinline></video><script>fetch(${JSON.stringify(source.url).replace(/</g, "\\u003c")},{headers:{Authorization:${JSON.stringify(`Bearer ${session ?? ""}`)}}}).then(function(r){if(!r.ok)throw Error('video');return r.blob()}).then(function(blob){document.querySelector('video').src=URL.createObjectURL(blob)}).catch(function(){window.ReactNativeWebView.postMessage('video-error')})</script>`
+        : `<video src="${escaped}" controls playsinline preload="metadata"></video>`;
   return (
     <View style={{ gap: 8 }}>
       <View
@@ -34,7 +44,7 @@ export function ExerciseVideo({
           backgroundColor: "#000",
         }}
       >
-        <WebView
+        {(!privateVideo || session) && <WebView
           accessibilityLabel={`Vídeo: ${title}`}
           source={{
             html: `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:#000}iframe,video{width:100%;height:100%;border:0}</style></head><body>${element}</body></html>`,
@@ -53,8 +63,9 @@ export function ExerciseVideo({
           setSupportMultipleWindows={false}
           onError={() => setFailed(true)}
           onHttpError={() => setFailed(true)}
+          onMessage={event => { if (event.nativeEvent.data === "video-error") setFailed(true); }}
           style={{ flex: 1, backgroundColor: "#000" }}
-        />
+        />}
       </View>
       {failed && (
         <Notice error>

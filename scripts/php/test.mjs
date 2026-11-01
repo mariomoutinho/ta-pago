@@ -60,24 +60,47 @@ try {
   assert.equal((await req(pupil,'GET','/me/students')).length,1);
   const ex=await req(teacher,'POST','/exercises',{name:'Alongamento',muscleGroup:'Peitoral',category:'Alongamento'},201);
   const exOther=await req(other,'POST','/exercises',{name:'Privado',muscleGroup:'Costas',category:'Musculação'},201);
+  const mp4=fs.readFileSync('tests/personal/fixtures/exercise.mp4'); // Animação silenciosa sintética gerada com canvas/MediaRecorder.
+  async function upload(c,bytes=mp4,type='video/mp4',status=201) {
+    const response=await fetch('http://127.0.0.1:33317/api/exercise-videos',{method:'PUT',headers:{'Content-Type':type,'X-Requested-With':'TaPago',Cookie:c.cookie},body:bytes});
+    assert.equal(response.status,status); checks++; return response.json();
+  }
+  await upload(anon,mp4,'video/mp4',401); await upload(pupil,mp4,'video/mp4',403);
+  await upload(teacher,Buffer.from('<script>invalid</script>'),'video/mp4',415);
+  await upload(teacher,mp4,'text/html',415);
+  await upload(teacher,Buffer.alloc(25*1024*1024+1),'video/mp4',413);
+  const uploaded=await upload(teacher);
+  await req(other,'POST','/exercises',{...exOther,videoUrl:uploaded.url},400);
+  await req(teacher,'PUT',`/exercises/${ex.id}`,{...ex,videoUrl:uploaded.url});
+  const videoPath=new URL(uploaded.url).pathname.replace('/api','');
+  async function video(c,range,status) {
+    const response=await fetch('http://127.0.0.1:33317/api'+videoPath,{headers:{Cookie:c.cookie,...(range?{Range:range}:{})}});
+    assert.equal(response.status,status); checks++; return response;
+  }
+  const range=await video(teacher,'bytes=0-15',206);
+  assert.equal(range.headers.get('content-length'),'16'); assert.equal((await range.arrayBuffer()).byteLength,16);
+  await video(teacher,'bytes=999999-9999999',416); await video(other,null,404); await video(anon,null,401); await video(pupil,null,404);
   assert.equal(ex.favorite,false);
   for(let i=0;i<2;i++) assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true})).favorite,true);
   await req(other,'PUT',`/exercises/${ex.id}/favorite`,{favorite:false},404);
   await req(pupil,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true},403);
   await req(anon,'PUT',`/exercises/${ex.id}/favorite`,{favorite:true},401);
   for(const body of [{},{favorite:'false'},{favorite:null}]) await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,body,400);
-  assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}`,ex)).favorite,true);
+  assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}`,{...ex,videoUrl:uploaded.url})).favorite,true);
   assert.deepEqual((await req(teacher,'GET','/exercises?favorite=true')).map(e=>e.id),[ex.id]);
   assert.deepEqual(await req(other,'GET','/exercises?favorite=true'),[]);
   assert.equal((await req(teacher,'PUT',`/exercises/${ex.id}/favorite`,{favorite:false})).favorite,false);
   assert.deepEqual(await req(teacher,'GET','/exercises?favorite=true'),[]);
   const planData={title:'Rotina teste',objective:'Mobilidade',difficulty:'Iniciante',startsAt:'2026-10-01',workouts:[{name:'Treino A',exercises:[{exerciseId:ex.id}]}]};
   const plan=await req(teacher,'POST',`/students/${student.id}/workout-plans`,planData,201);
+  await video(pupil,null,404);
   assert.equal((await req(pupil,'GET','/me/workout-plans')).length,0);
   await req(teacher,'PUT',`/workout-plans/${plan.id}`,{...planData,status:'ativo',revision:1,workouts:[{name:'Vazio',exercises:[]}]},400);
   await req(teacher,'PUT',`/workout-plans/${plan.id}`,{...planData,status:'ativo',revision:1,workouts:[{name:'Invasão',exercises:[{exerciseId:exOther.id}]}]},400);
   const published=await req(teacher,'PUT',`/workout-plans/${plan.id}`,{...planData,workouts:plan.workouts,status:'ativo',revision:1});
   assert.equal(published.revision,2);
+  const studentVideo=await video(pupil,'bytes=-16',206);
+  assert.equal(studentVideo.headers.get('content-type'),'video/mp4');
   await req(teacher,'PUT',`/workout-plans/${plan.id}`,{...planData,status:'ativo',revision:1},409);
   const visible=await req(pupil,'GET','/me/workout-plans'); assert.equal(visible.length,1); assert.equal(visible[0].workouts.length,1);
   const wid=visible[0].workouts[0].id;

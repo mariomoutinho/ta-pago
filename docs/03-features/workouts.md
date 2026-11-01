@@ -11,6 +11,12 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/Media.php",
+    "backend-php/public/api/index.php",
+    "server/exercise-media.ts",
+    "src/features/personal/video-upload.ts",
+    "src/features/personal/video-upload.web.ts",
+    "scripts/php/browser-test.mjs",
     "prisma/migrations/20261101120000_exercise_favorites/migration.sql",
     "backend-php/migrations/20261101_exercise_favorites.sql",
     "backend-php/tests/favorites-migration.php",
@@ -67,7 +73,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.3.0",
+  "version": "12.4.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -86,6 +92,18 @@
 ---
 
 # Treinos personalizados
+
+## Upload de vídeo próprio
+
+No cadastro e na edição de exercícios, Vídeo do exercício permite escolher YouTube / URL ou Enviar vídeo. O arquivo selecionado é enviado ao salvar, após validar os campos do exercício; cancelar antes de salvar não envia o arquivo. O formulário mostra o nome, permite trocar/remover e informa progresso de envio na web. Uma falha preserva o formulário para nova tentativa; após upload bem-sucedido, uma falha ao salvar o cadastro reutiliza a URL já recebida na tentativa seguinte.
+
+O envio aceita MP4 de até 25 MiB, preferencialmente H.264. Não há transcodificação: a compatibilidade do codec depende do navegador/aparelho. PUT /exercise-videos recebe o arquivo binário, exige personal autorizado e cabeçalho de escrita, limita tamanho e verifica assinatura MP4. Nomes aleatórios e permissões restritas impedem usar nomes de arquivo fornecidos pelo cliente. O limite de armazenamento é 1 GiB por personal; a versão PHP também limita tentativas de upload. Não foi contratado armazenamento externo.
+
+Os arquivos ficam fora da pasta pública: no PHP, storage/exercise-videos dentro da pasta privada, ou mediaDirectory configurado; no Express, PERSONAL_MEDIA_DIRECTORY ou data/exercise-videos. GET/HEAD /exercise-videos/:owner/:id.mp4 exige sessão, suporta intervalos HTTP para reprodução e permite o proprietário ou aluno com o exercício/alternativa em plano publicado ativo/arquivado. Trocar a URL de um exercício não permite vincular o arquivo privado de outro personal. VideoUrl conserva o endereço autenticado, sem migração de banco.
+
+O player HTML de arquivos usa controles próprios do navegador, sem iframe ou marca do YouTube. Links existentes continuam funcionando. Na implementação nativa, arquivos privados da mesma API são carregados com o token da sessão e apresentados como blob no WebView; esse caminho precisa de validação em binários Android/iOS. Os testes de navegador cobrem o PWA com MP4 sintético silencioso, reprodução real, recarga e permanência do YouTube. Os testes de API cobrem autorização, arquivo inválido, limites e leitura parcial.
+
+Arquivos substituídos/removidos do cadastro são conservados para evitar exclusão involuntária; não há coleta automática de órfãos. O backup operacional deve incluir storage/exercise-videos. Pacotes de atualização não devem incluir nem substituir essa pasta. A quota inclui arquivos conservados; limpeza futura exige conferir referências e backup.
 
 ## Favoritos na biblioteca
 

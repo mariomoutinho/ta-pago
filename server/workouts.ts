@@ -1,4 +1,5 @@
 import { orderSchema, ordered } from "./workout-order";
+import { validateVideoOwner } from "./exercise-media";
 import { validExerciseGroups } from "../shared/workout-groups";
 import { Router } from "express";
 import type { Db } from "./db";
@@ -106,12 +107,14 @@ export function workoutRoutes(db: Db) {
     );
   });
   router.post("/exercises", async (req, res) => {
+    const data = exerciseSchema.parse(req.body);
+    validateVideoOwner(data.videoUrl, res.locals.user.id);
     res
       .status(201)
       .json(
         await db.exercise.create({
           data: {
-            ...exerciseSchema.parse(req.body),
+            ...data,
             ownerId: res.locals.user.id,
           },
         }),
@@ -127,6 +130,7 @@ export function workoutRoutes(db: Db) {
   });
   router.put("/exercises/:id", async (req, res) => {
     const data = exerciseSchema.parse(req.body);
+    validateVideoOwner(data.videoUrl, res.locals.user.id);
     const result = await db.exercise.updateMany({
       where: { id: String(req.params.id), ownerId: res.locals.user.id },
       data,

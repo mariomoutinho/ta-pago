@@ -16,13 +16,15 @@ try {
     \TaPago\ensure(str_starts_with($path,$prefix.'/'),'Recurso não encontrado',404);
     $path=rawurldecode(substr($path,strlen($prefix)));
     \TaPago\ensure(!str_contains($path,'..') && !str_contains($path,"\0"),'Caminho inválido');
-    $raw=file_get_contents('php://input',false,null,0,1048577);
+    $upload=$path==='/exercise-videos' && $_SERVER['REQUEST_METHOD']==='PUT';
+    $raw=$upload ? '' : file_get_contents('php://input',false,null,0,1048577);
     \TaPago\ensure(strlen($raw)<=1048576,'Requisição muito grande',413);
     $body=$raw==='' ? [] : json_decode($raw,true,64,JSON_THROW_ON_ERROR);
     \TaPago\ensure(is_array($body) && ($raw==='' || str_starts_with(ltrim($raw),'{')),'Objeto JSON obrigatório');
     $app=new \TaPago\App(tapagoDb($config),$config);
     $result=$app->handle($_SERVER['REQUEST_METHOD'],$path,$body);
     http_response_code($app->status);
+    if ($result instanceof \TaPago\VideoStream) { $result->send(); exit; }
     if ($app->status!==204) echo \TaPago\encode($result);
 } catch (\TaPago\HttpError $e) {
     http_response_code($e->status); echo json_encode(['error'=>$e->getMessage()],JSON_UNESCAPED_UNICODE);

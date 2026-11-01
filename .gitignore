@@ -57,3 +57,4 @@ server/generated/
 test-results/
 playwright-report/
 backend-php/config.php
+backend-php/storage/

@@ -1,12 +1,13 @@
 import { beforeAll, afterAll, it, expect } from "vitest";
 import request from "supertest";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createDb } from "../../server/db";
 import { createTestApp as createApp, provisionPersonal } from "./fixtures";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-workouts-"));
+process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
 const url = `file:${folder}/test.db`,
   db = createDb(url),
   app = createApp(db);
@@ -77,6 +78,35 @@ beforeAll(async () => {
 afterAll(async () => {
   await db.$disconnect();
   rmSync(folder, { recursive: true, force: true });
+});
+it("upload MP4 é privado, valida arquivos e libera reprodução só em treino publicado", async () => {
+  const file = readFileSync("tests/personal/fixtures/exercise.mp4");
+  const upload = (agent: typeof personal, bytes = file, type = "video/mp4") => agent.put("/api/exercise-videos").set(header).set("Content-Type", type).send(bytes);
+  expect((await upload(student)).status).toBe(403);
+  expect((await upload(request.agent(app))).status).toBe(401);
+  expect((await upload(personal, Buffer.from("<script>invalid</script>"))).status).toBe(415);
+  expect((await upload(personal, file, "text/html")).status).toBe(415);
+  const saved = await upload(personal);
+  expect(saved.status).toBe(201);
+  const videoUrl = saved.body.url, videoPath = new URL(videoUrl).pathname;
+  const created = await personal.post("/api/exercises").set(header).send({ ...exerciseData, name: "Vídeo sintético", videoUrl });
+  expect(created.status).toBe(201);
+  expect((await other.post("/api/exercises").set(header).send({ ...exerciseData, videoUrl })).status).toBe(400);
+  expect((await personal.get(videoPath)).headers["content-type"]).toContain("video/mp4");
+  const range = await personal.get(videoPath).set("Range", "bytes=0-15");
+  expect(range.status).toBe(206);
+  expect(range.headers["content-length"]).toBe("16");
+  expect((await other.get(videoPath)).status).toBe(404);
+  expect((await student.get(videoPath)).status).toBe(404);
+  expect((await request(app).get(videoPath)).status).toBe(401);
+  const draft = await personal.post(`/api/students/${studentId}/workout-plans`).set(header).send({ ...planData, workouts: [{ name: "Vídeo", exercises: [{ exerciseId: created.body.id }] }] });
+  expect(draft.status).toBe(201);
+  expect((await student.get(videoPath)).status).toBe(404);
+  const published = await personal.put(`/api/workout-plans/${draft.body.id}`).set(header).send({ ...draft.body, status: "ativo" });
+  expect(published.status).toBe(200);
+  expect((await student.get(videoPath).set("Range", "bytes=-16")).status).toBe(206);
+  expect((await stranger.get(videoPath)).status).toBe(404);
+  await db.workoutPlan.delete({ where: { id: draft.body.id } });
 });
 it("favoritos persistem por personal, validam booleano e sobrevivem à edição", async () => {
   const created = await personal.post("/api/exercises").set(header).send({ ...exerciseData, name: "Favorito sintético" });

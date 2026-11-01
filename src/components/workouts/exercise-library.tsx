@@ -4,6 +4,8 @@ import { exerciseVideoThumbnail } from "@/features/personal/exercise-video";
 import { useTheme } from "@/hooks/use-theme";
 import { useResource } from "@/features/personal/use-resource";
 import { api, message } from "@/features/personal/api";
+import { pickVideo, uploadVideo } from "@/features/personal/video-upload";
+import type { DocumentPickerAsset } from "expo-document-picker";
 import {
   Badge,
   Button,
@@ -71,6 +73,20 @@ function ExerciseForm({
   cancel: () => void;
 }) {
   const [data, setData] = useState<ExerciseData>(exercise ?? empty);
+  const [videoMode, setVideoMode] = useState(exercise?.videoUrl.includes("/api/exercise-videos/") ? "upload" : "url");
+  const [videoFile, setVideoFile] = useState<DocumentPickerAsset | null>(null);
+  const [videoError, setVideoError] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const chooseVideo = async () => {
+    setVideoError("");
+    try {
+      const selected = await pickVideo();
+      if (selected.canceled) return;
+      const file = selected.assets[0];
+      if (!/\.mp4$/i.test(file.name) || (file.size ?? 0) > 25 * 1024 * 1024) throw new Error("Selecione um vídeo MP4 de até 25 MB.");
+      setVideoFile(file);
+    } catch (error) { setVideoError(message(error)); }
+  };
   return (
     <Card>
       <Label size={20} bold>
@@ -85,6 +101,15 @@ function ExerciseForm({
             throw new Error(
               parsed.error.issues.map((i) => i.message).join(" · "),
             );
+          if (videoFile && videoMode === "upload") {
+            setUploadProgress(0);
+            try {
+              const videoUrl = await uploadVideo(videoFile, setUploadProgress);
+              parsed.data.videoUrl = videoUrl;
+              setData(current => ({ ...current, videoUrl }));
+              setVideoFile(null);
+            } finally { setUploadProgress(null); }
+          }
           done(
             await api<Exercise>(
               exercise ? `/exercises/${exercise.id}` : "/exercises",
@@ -111,10 +136,21 @@ function ExerciseForm({
             ["equipment", "Equipamento"],
             ["description", "Descrição / instruções"],
             ["imageUrl", "Imagem (URL http/https)"],
-            ["videoUrl", "Vídeo (URL http/https)"],
             ["notes", "Observações do exercício"],
           ]}
         />
+        <Choices label="Vídeo do exercício" value={videoMode}
+          onChange={mode => { if (mode === videoMode) return; setVideoMode(mode); setVideoFile(null); setVideoError(""); setData(current => ({ ...current, videoUrl: "" })); }}
+          options={[{ value: "url", label: "YouTube / URL" }, { value: "upload", label: "Enviar vídeo" }]} />
+        {videoMode === "url" ? <Field label="Vídeo (URL http/https)" placeholder="Cole o link do YouTube" value={data.videoUrl}
+          onChangeText={videoUrl => setData(current => ({ ...current, videoUrl }))} /> : <View style={{ gap: 8 }}>
+          <Label muted>Envie um MP4 de até 25 MB, preferencialmente H.264. Ele será reproduzido no Tá Pago, sem marcas do YouTube.</Label>
+          <Button variant="secondary" disabled={uploadProgress !== null} onPress={() => void chooseVideo()}>{videoFile || data.videoUrl ? "Trocar vídeo" : "Selecionar vídeo do dispositivo"}</Button>
+          <Label>{videoFile ? videoFile.name : data.videoUrl ? "Vídeo enviado e salvo." : "Nenhum vídeo selecionado."}</Label>
+          {!!(videoFile || data.videoUrl) && <Button variant="secondary" disabled={uploadProgress !== null} onPress={() => { setVideoFile(null); setData(current => ({ ...current, videoUrl: "" })); }}>Remover vídeo</Button>}
+          <Notice>{uploadProgress === null ? "O vídeo será enviado ao salvar o exercício." : `Enviando vídeo… ${uploadProgress}%`}</Notice>
+        </View>}
+        <Notice error>{videoError}</Notice>
       </SaveForm>
     </Card>
   );

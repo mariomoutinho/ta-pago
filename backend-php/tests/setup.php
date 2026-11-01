@@ -10,6 +10,7 @@ $config=['environment'=>'test','origin'=>'http://127.0.0.1:33317','basePath'=>''
     'dsn'=>(getenv('TAPAGO_TEST_DSN')?:'mysql:host=127.0.0.1;port=33316;charset=utf8mb4').';dbname='.$name,
     'dbUser'=>getenv('TAPAGO_TEST_USER')?:'root','dbPassword'=>getenv('TAPAGO_TEST_PASSWORD')?:'isolated_test_only',
     'enrollmentKey'=>str_repeat('ab',32),'retentionDays'=>90,'registrationEnabled'=>true,
+    'mediaDirectory'=>dirname(__DIR__,2).'/data/'.$name.'-media',
     'authorizedPersonalIds'=>['test-legacy','test-teacher-a','test-teacher-b']];
 $file=dirname(__DIR__,2).'/data/'.$name.'.php';
 if (!is_dir(dirname($file))) mkdir(dirname($file),0700,true);

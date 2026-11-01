@@ -68,6 +68,28 @@ try {
       assert.equal(response.status(),status,await response.text());
       return response.json();
     };
+    const videoName=`Vídeo próprio ${width} ${Date.now()}`;
+    await page.goto('http://127.0.0.1:33317/exercicios');
+    await page.getByRole('button',{name:'+ Criar exercício',exact:true}).click();
+    await page.getByLabel('Nome do exercício *',{exact:true}).fill(videoName);
+    await page.getByLabel('Grupo muscular *',{exact:true}).fill('Geral');
+    await page.getByLabel('Categoria *',{exact:true}).fill('Mobilidade');
+    await page.getByRole('radio',{name:'Vídeo do exercício: Enviar vídeo',exact:true}).click();
+    const chooser=page.waitForEvent('filechooser');
+    await page.getByRole('button',{name:'Selecionar vídeo do dispositivo',exact:true}).click();
+    await (await chooser).setFiles(path.resolve('tests/personal/fixtures/exercise.mp4'));
+    await page.getByText('exercise.mp4',{exact:true}).waitFor();
+    await page.getByRole('radio',{name:'Vídeo do exercício: Enviar vídeo',exact:true}).click();
+    await page.getByText('exercise.mp4',{exact:true}).waitFor();
+    await page.getByRole('button',{name:'Salvar exercício',exact:true}).click();
+    await page.getByRole('button',{name:`Expandir exercício ${videoName}`,exact:true}).click();
+    const video=page.getByLabel(`Vídeo: ${videoName}`,{exact:true});
+    await video.evaluate(async element=>{element.muted=true;await element.play();});
+    await page.waitForFunction(()=>document.querySelector('video')?.currentTime>0.2);
+    assert.equal(await page.locator('iframe').count(),0);
+    await page.reload();
+    await page.getByRole('button',{name:`Expandir exercício ${videoName}`,exact:true}).click();
+    await video.waitFor();
     const student=await api('POST','/students',{name:`Aluno navegador ${width}`,startDate:'2026-10-01',mainGoal:'Mobilidade'},201);
     const exercise=await api('POST','/exercises',{name:`Exercício navegador ${width}`,muscleGroup:'Peitoral',category:'Alongamento'},201);
     const planData={title:`Rotina navegador ${width}`,objective:'Mobilidade',difficulty:'Iniciante',startsAt:'2026-10-01',workouts:[{name:'Treino A',exercises:[{exerciseId:exercise.id}]}]};
@@ -88,5 +110,5 @@ try {
     await page.getByRole('button',{name:'Entrar',exact:true}).waitFor();
     await context.close();
   }
-  console.log(`Expo Web + PHP: /, /entrar, /api/health, sessão, aluno/treino publicado persistindo após recarga, logout, manifesto PWA sem SW/cache e ${assets.length} arquivos públicos passaram em 390px e 1280px.`);
+  console.log(`Expo Web + PHP: upload/reprodução MP4 sem iframe, /, /entrar, /api/health, sessão, aluno/treino publicado persistindo após recarga, logout, manifesto PWA sem SW/cache e ${assets.length} arquivos públicos passaram em 390px e 1280px.`);
 } finally {await browser?.close();server?.kill();fs.closeSync(log);}

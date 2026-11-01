@@ -146,6 +146,7 @@ trait Workouts {
         }
         if (($method==='POST' && !$id)||($method==='PUT' && $id && !$order && $table!=='PrescriptionPreset')) {
             $d=$this->validation->parse($schema,$body);
+            if ($table==='Exercise') $this->validateVideoOwner($d['videoUrl']);
             if ($table==='PrescriptionPreset') {
                 $this->series($d['series']);
                 foreach ($this->db->rows($table,'ownerId=?',[$this->user['id']]) as $p) if ($p['name']===$d['name'] && $p['series']===$d['series'] && $p['configuration']===($d['configuration']??null)) return $p;

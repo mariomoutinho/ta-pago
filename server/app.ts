@@ -26,6 +26,7 @@ import {
 import { hashPassword, newToken, sessionKey, verifyPassword } from "./security";
 import { workoutTemplateRoutes } from "./workout-templates";
 import { planInclude, workoutRoutes } from "./workouts";
+import { exerciseMediaRoutes } from "./exercise-media";
 
 type Identity = { id: string; name: string; email: string; role: string };
 const identity = (res: express.Response) => res.locals.user as Identity;
@@ -207,6 +208,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   });
 
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
+  app.use("/api", exerciseMediaRoutes(db));
   app.use("/api", workoutRoutes(db));
   app.use("/api/workout-templates", workoutTemplateRoutes(db));
 

@@ -13,6 +13,7 @@
   ],
   "indexable": true,
   "sources": [
+    "backend-php/src/Media.php",
     "backend-php/migrations/20261101_exercise_favorites.sql",
     "backend-php/tests/favorites-migration.php",
     "backend-php/src/Workouts.php",
@@ -33,7 +34,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -164,6 +165,14 @@ A coluna Exercise.favorite foi acrescentada pela migração identificada 2026110
 O atualizador temporário exigiu POST autenticado por segredo efêmero, teve destino e arquivos permitidos fixos e foi removido após verificar a atualização. Configuração, chave de criptografia e autorizações de personal permaneceram preservadas. O backup fica fora de public_html. Em eventual rollback, restaurar os arquivos privados anteriores e o HTML anterior; conservar a coluna aditiva e o backup, sem apagar favoritos ou registros.
 
 A publicação enviou o JavaScript com hash primeiro e o HTML por último, conservando os assets anteriores e os metadados PWA. Foram conferidos hash remoto do JavaScript, referência ativa no HTML, health ok, manifesto standalone e resposta 401 para tentativa de favoritar sem sessão. O caminho do atualizador removido passou a retornar o fallback HTML da aplicação. O teste de navegador foi local e usou dados sintéticos; não foi alterada a seleção de favoritos da conta real durante a verificação.
+
+## Armazenamento de vídeos próprios
+
+Uploads são armazenados em tapago-private/storage/exercise-videos, com diretórios 0700 e arquivos 0600. Preservar essa pasta em atualizações e incluir seus arquivos no backup privado, junto com o banco que contém as URLs. mediaDirectory permite definir um destino privado alternativo. Não apontar para public_html e não publicar backups. O pacote de atualização distribui somente código; não inclui vídeos, dados ou configuração real.
+
+O front controller diferencia exclusivamente PUT /exercise-videos de requisições JSON, e a autenticação ocorre antes de ler o binário. O upload aceita até 25 MiB; arquivos MP4 são servidos pela API autenticada, com suporte a Range. A quota conservadora por personal é 1 GiB; não há compressão ou transcodificação no servidor. Preservar vídeos substituídos até revisão de referências e backup, sem limpeza automática.
+
+Na publicação de 2026-11-01, foram atualizados Media.php, bootstrap.php, Workouts.php, App.php e o front controller, com backup privado, verificação da base e dos hashes finais e remoção do atualizador temporário. O armazenamento privado foi criado e sua permissão de escrita foi conferida. Não houve alteração de banco, credenciais, chave de criptografia ou autorizações. Os testes locais passaram com 113 verificações HTTP, incluindo upload/leitura parcial e isolamento, e reprodução real no pacote PHP em 390 e 1280 px. Android/iOS em aparelhos e binários nativos continuam exigindo validação própria.
 
 ## PWA e verificação em aparelhos
 
