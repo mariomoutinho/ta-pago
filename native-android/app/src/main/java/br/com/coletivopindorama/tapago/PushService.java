@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import java.util.Map;
@@ -17,11 +19,13 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 
 public class PushService extends FirebaseMessagingService {
-    static final String CHANNEL = "tapago_news_v1";
+    static final String CHANNEL = "tapago_news_sound_v2";
     static void channel(Context context) {
         NotificationChannel channel = new NotificationChannel(CHANNEL, "Novidades do Tá Pago", NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription("Cadastros recebidos, treinos concluídos e feedbacks dos alunos.");
         channel.enableVibration(true);
+        channel.setSound(Uri.parse("android.resource://"+context.getPackageName()+"/raw/tapago_alert"),
+            new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
         context.getSystemService(NotificationManager.class).createNotificationChannel(channel);
     }
     @Override public void onNewToken(String token) {

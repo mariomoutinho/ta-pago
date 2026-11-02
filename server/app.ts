@@ -29,6 +29,7 @@ import { planInclude, workoutRoutes } from "./workouts";
 import { exerciseMediaRoutes } from "./exercise-media";
 import { notificationRoutes, dispatchPush } from "./push";
 import {androidNotificationRoutes,dispatchAndroidPush} from './android-push';
+import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../shared/password';
 import { studentAccessRoutes } from "./student-access";
 
 type Identity = { id: string; name: string; email: string; role: string };
@@ -123,7 +124,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   });
   const authSchema = z.object({
     email: z.email().transform((v) => v.toLowerCase()),
-    password: z.string().min(12, "Use pelo menos 12 caracteres").max(128),
+    password: z.string().refine(passwordHasMinimum, PASSWORD_MINIMUM_MESSAGE),
   });
   const publicUser = (u: Identity) => ({
     id: u.id,

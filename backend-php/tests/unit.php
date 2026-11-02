@@ -27,8 +27,18 @@ $v=new \TaPago\Validation();
 foreach ([['weight'=>'abc','waist'=>null],['weight'=>-1,'waist'=>null]] as $data) {
     try { $v->parse('physicalSchema',$data); throw new RuntimeException('Validação aceitou medida inválida'); } catch (\TaPago\HttpError) {}
 }
-$_SERVER['REMOTE_ADDR']='synthetic-rate-test';
 $_SERVER['HTTP_X_REQUESTED_WITH']='TaPago';
+foreach(['abcdef','123456','!@#$%^','😀😀😀😀😀😀','      ',str_repeat('a',129)] as $index=>$value){
+    $_SERVER['REMOTE_ADDR']='synthetic-password-'.$index;$email='password-'.$index.'@example.test';
+    $app=new \TaPago\App($db,tapagoConfig());$created=$app->handle('POST','/auth/register',['name'=>'Aluno Sintético','email'=>$email,'password'=>$value,'role'=>'student']);
+    check($app->status===201&&$created['user']['role']==='student','Senha válida de seis caracteres foi recusada');
+    check((new \TaPago\App($db,tapagoConfig()))->handle('POST','/auth/login',['email'=>$email,'password'=>$value])['user']['id']===$created['user']['id'],'Login com a senha preservada');
+}
+foreach(['','abcde','😀😀😀',null] as $index=>$value){
+    $_SERVER['REMOTE_ADDR']='synthetic-short-password-'.$index;
+    try{(new \TaPago\App($db,tapagoConfig()))->handle('POST','/auth/register',['name'=>'Aluno Sintético','email'=>'short-password@example.test','password'=>$value,'role'=>'student']);throw new RuntimeException('Senha curta aceita');}catch(\TaPago\HttpError $e){check($e->status===400,'Senha curta deve falhar na validação');}
+}
+$_SERVER['REMOTE_ADDR']='synthetic-rate-test';
 for ($i=1;$i<=21;$i++) {
     try { (new \TaPago\App($db,tapagoConfig()))->handle('POST','/auth/login',['email'=>'inválido','password'=>'senha sintética']); throw new RuntimeException('Limite/validação ausente'); }
     catch (\TaPago\HttpError $e) { check($e->status===($i<=20?400:429),'Limite de requisições'); }

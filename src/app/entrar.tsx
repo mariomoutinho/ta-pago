@@ -90,7 +90,7 @@ export default function SignIn({ afterLogin = "/" }: { afterLogin?: Href } = {})
               autoComplete={register ? "new-password" : "current-password"}
             />
             <Label size={11} muted>
-              Mínimo de 12 caracteres.
+              Mínimo de 6 caracteres.
             </Label>
             <Notice error>{error}</Notice>
             <Button disabled={busy} onPress={() => void submit()}>

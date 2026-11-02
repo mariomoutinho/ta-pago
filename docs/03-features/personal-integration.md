@@ -4,13 +4,15 @@
   "title": "Módulo Personal integrado",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-02",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
   "sources": [
+    "shared/password.ts",
+    "tests/personal/password-policy.test.ts",
     "src/app/notificacao.tsx",
     "backend-php/src/AndroidPush.php",
     "server/android-push.ts",
@@ -59,7 +61,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.12.0",
+  "version": "4.13.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -166,7 +168,13 @@ POST /enrollment/requests/:id/access exige personal propriet?rio, ficha aprovada
 
 Se j? existe conta com esse e-mail, a tela exige a senha atual e usa o fluxo autenticado de aceite. Se o aluno j? est? vinculado, a mensagem aponta para /entrar e n?o gera convite. Nenhuma mensagem real de aluno foi enviada durante a valida??o. Testes Node verificam escopo, aprova??o, senha m?nima, papel fixo, expira??o, consumo e preserva??o da senha existente; o navegador percorre ficha, disponibilidade num?rica, mensagem interceptada e ativa??o at? os treinos.
 
-## Diagn?stico de alertas no aparelho
+## Senhas de acesso
+
+Cadastro público, ativação por convite e login aceitam qualquer senha com pelo menos seis caracteres, sem exigir combinação de tipos e sem limite específico de 128 caracteres. Espaços são preservados. A interface e o servidor Express contam pontos de código Unicode por `Array.from`; PHP usa `mb_strlen`, evitando aceitar três emojis como seis caracteres. A confirmação na ativação deve coincidir com a senha. Os limites gerais de tamanho da requisição continuam independentes da regra da senha. Senhas existentes e seus hashes não são alterados.
+
+`shared/password.ts` concentra o mínimo e a mensagem usados pelo cliente e Express. PHP aplica a mesma regra em `Auth.php`. Testes cobrem seis letras, números, símbolos, emojis, espaços e senha de 129 caracteres, rejeição abaixo de seis, ativação com convite e login após ativação. O navegador percorre aprovação, mensagem pronta no WhatsApp e ativação com seis caracteres. A checagem em produção usou somente login de endereço sintético inexistente, sem criar ou modificar contas.
+
+## Diagnóstico de alertas no aparelho
 
 Notifica??es ativadas confirma a inscri??o e a permiss?o informada pelo navegador; n?o comprova exibi??o pelo Android. A interface revalida o estado ao retornar ao primeiro plano e ao abrir as op??es. Testar alerta no celular solicita uma notifica??o local ao worker, sem criar cadastro nem enviar dados a outro aparelho. Testar alerta com app fechado agenda um aviso somente para a inscri??o atual: POST /notifications/test exige propriet?rio, inscri??o v?lida e intervalo m?nimo de 90 segundos entre testes.
 

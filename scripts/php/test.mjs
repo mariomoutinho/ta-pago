@@ -236,9 +236,10 @@ try {
   const accessPath='/public/student-access/'+accessCode;
   assert.equal((await req(anon,'GET',accessPath)).existingAccount,false);
   await req(anon,'POST',accessPath,{password:'curta'},400);
-  await req(anon,'POST',accessPath,{password,role:'personal',email:'forged@example.test'},201);
+  const activationPassword='abcdef';
+  await req(anon,'POST',accessPath,{password:activationPassword,role:'personal',email:'forged@example.test'},201);
   await req(anon,'POST',accessPath,{password},400);
-  const activated=client();await req(activated,'POST','/auth/login',{email:enrollment.email,password});
+  const activated=client();await req(activated,'POST','/auth/login',{email:enrollment.email,password:activationPassword});
   assert.equal((await req(activated,'GET','/me/students')).length,1);
   assert.equal((await req(teacher,'POST',`/enrollment/requests/${requests[0].id}/access`,{})).linked,true);
   assert.equal((await req(teacher,'GET','/notifications/summary')).pending,0);

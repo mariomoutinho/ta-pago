@@ -14,7 +14,7 @@ trait Auth {
         if($method==='GET')return ['name'=>$student['name'],'email'=>$student['email'],'existingAccount'=>$existing!==null];
         ensure($method==='POST','Recurso não encontrado',404);
         $password=$body['password']??null;
-        ensure(is_string($password)&&mb_strlen($password)>=12&&mb_strlen($password)<=128,'Use entre 12 e 128 caracteres na senha');
+        ensure(is_string($password)&&mb_strlen($password)>=6,'Use pelo menos 6 caracteres na senha.');
         ensure($existing===null,'Você já tem conta. Entre com sua senha e aceite o convite.',409);
         $user=$this->db->create('User',['name'=>$student['name'],'email'=>strtolower($student['email']),'role'=>'student','passwordHash'=>passwordHash($password)]);
         $this->db->update('Student',$student['id'],['accountId'=>$user['id'],'linkStatus'=>'active']);
@@ -53,7 +53,7 @@ trait Auth {
         ensure(is_string($input['email']??null) && (!$register || is_string($input['name']??null)),'Cadastro inválido');
         $email=strtolower(trim($input['email']??'')); $password=$input['password']??null;
         ensure(filter_var($email,FILTER_VALIDATE_EMAIL)!==false && strlen($email)<=254,'E-mail inválido');
-        ensure(is_string($password) && mb_strlen($password)>=12 && mb_strlen($password)<=128,'Use entre 12 e 128 caracteres na senha');
+        ensure(is_string($password) && mb_strlen($password)>=6,'Use pelo menos 6 caracteres na senha.');
         if ($register) {
             ensure($this->config['registrationEnabled']??false,'Criação de contas indisponível',403);
             $name=trim($input['name']??''); $role=$input['role']??'';

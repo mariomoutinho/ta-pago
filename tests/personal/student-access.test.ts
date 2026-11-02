@@ -21,7 +21,8 @@ it('exige aprovação, isola o envio e nunca oferece senha existente',async()=>{
  expect(await db.invitation.findUnique({where:{tokenHash:sessionKey(code)}})).toBeTruthy();
  expect((await request(app).get('/api/public/student-access/'+code)).body.existingAccount).toBe(false);
  expect((await request(app).post('/api/public/student-access/'+code).set(headers).send({password:'curta'})).status).toBe(400);
- expect((await request(app).post('/api/public/student-access/'+code).set(headers).send({password:'senha-ficticia-12345',role:'personal',email:'forged@example.test'})).status).toBe(201);
+ expect((await request(app).post('/api/public/student-access/'+code).set(headers).send({password:'abcdef',role:'personal',email:'forged@example.test'})).status).toBe(201);
+ expect((await request(app).post('/api/auth/login').set(headers).send({email:'access-student@example.test',password:'abcdef'})).status).toBe(200);
  const user=await db.user.findUniqueOrThrow({where:{email:'access-student@example.test'}});expect(user.role).toBe('student');expect(user.passwordHash).not.toContain('senha-ficticia');
  expect((await db.student.findUniqueOrThrow({where:{id:studentId}})).accountId).toBe(user.id);
  expect((await request(app).post('/api/public/student-access/'+code).set(headers).send({password:'outra-senha-12345'})).status).toBe(400);

@@ -4,11 +4,13 @@
   "title": "APK Android conectado ao site",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-02",
   "language": "pt-BR",
   "tags": ["06-operations", "android"],
   "indexable": true,
   "sources": [
+    "native-android/app/src/main/res/raw/tapago_alert.wav",
+    "scripts/android/generate-alert.mjs",
     "native-android/app/build.gradle",
     "native-android/app/src/main/AndroidManifest.xml",
     "native-android/app/src/main/java/br/com/coletivopindorama/tapago/MainActivity.java",
@@ -27,7 +29,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "authority": "code",
   "audience": ["developer", "operations", "reviewer"],
   "sensitivity": "internal",
@@ -44,7 +46,7 @@
 
 O projeto `native-android` é um contêiner Android separado do aplicativo Expo e abre exclusivamente a origem HTTPS do Tá Pago. Preserva `src/app`, `src/components`, `src/constants` e `src/hooks`. O conteúdo continua servido pelo site: mudanças de telas e funcionalidades web aparecem ao carregar o aplicativo, sem gerar outro APK. Mudanças do contêiner, permissões e integração de notificações exigem recompilação e atualização do APK.
 
-O pacote é `br.com.coletivopindorama.tapago`, versão 1.1.1, versionCode 10101, com Android 8 ou superior. Tem ícone da marca, tema sem ActionBar, respeita barras do sistema, recortes da tela e teclado. Não oferece navegação offline nem replica o banco no dispositivo. A sessão usa cookies da WebView, separados da instalação PWA/navegador; o usuário precisa entrar novamente após a primeira instalação. A atualização assinada com a mesma chave preserva os dados do aplicativo.
+O pacote é `br.com.coletivopindorama.tapago`, versão 1.1.2, versionCode 10102, com Android 8 ou superior. Tem ícone da marca, tema sem ActionBar, respeita barras do sistema, recortes da tela e teclado. Não oferece navegação offline nem replica o banco no dispositivo. A sessão usa cookies da WebView, separados da instalação PWA/navegador; o usuário precisa entrar novamente após a primeira instalação. A atualização assinada com a mesma chave preserva os dados do aplicativo.
 
 ## Capacidades e fronteiras
 
@@ -93,3 +95,13 @@ O [APK Android 1.1.0](https://tapago.coletivopindorama.com.br/downloads/ta-pago-
 Validações: seis testes unitários Java, onze testes focados de push Express e concorrência na ativação, dois fluxos de navegador (ponte nativa e direcionamento com login), 164 verificações HTTP PHP e migrações sintéticas passaram. Typecheck do app e servidor, lint PHP, validações documentais e checagens dos catálogos passaram. Na suíte completa Personal, 120 testes passaram e um teste anterior de importação falhou por tentar executar o shim Unix do Prisma no Windows (`ENOENT`). Permanecem as falhas preexistentes em docs:test (31 passaram, duas restrições de symlink do Windows) e code:test (17 passaram, duas restrições de symlink e uma expectativa de proveniência). Não há comprovação de execução da CI remota nesta etapa.
 
 A revisão final 1.1.1 dá prioridade ao destino do aviso/link sobre o estado da WebView salvo pelo Android. O APK final, também com 2.922.624 bytes, foi publicado em [Baixar Tá Pago 1.1.1](https://tapago.coletivopindorama.com.br/downloads/ta-pago-android-1.1.1.apk), com SHA-256 `cbec95d5bddb570c5ce75d05f835cf79d0c48a6ce99ebcc93f48f8e5be4253bd`, assinatura v2 verificada, seis testes unitários e lint sem erros. A entrega real e o clique foram repetidos com sucesso nessa versão no emulador; o primeiro teste teve origem na Hostinger e a repetição usou a mesma identidade FCM a partir do ambiente local. O APK final preserva o pacote e a chave de assinatura para atualização direta, com versionCode 10101.
+
+## Som das notificações — versão 1.1.2
+
+Em 02/11/2026, o responsável informou recebimento real no celular, popup após cadastro e abertura da tela de aprovação, mas sem som. A versão 1.1.2 inclui um toque original de duas notas, WAV PCM mono de aproximadamente 0,65 segundo, gerado deterministicamente por `scripts/android/generate-alert.mjs`. O canal `tapago_news_sound_v2` configura explicitamente a URI `android.resource` do toque com uso `USAGE_NOTIFICATION` e conteúdo `CONTENT_TYPE_SONIFICATION`, importância alta e vibração. O novo identificador aplica o comportamento sonoro às instalações anteriores, pois o Android não permite reconfigurar o som de um canal já criado. O canal anterior não é apagado; os novos avisos usam o canal com som.
+
+A atualização mantém os mesmos vínculos de conta, permissão global e destino dos alertas. Não solicita acesso para contornar Não perturbe nem altera o volume do aparelho. Modo silencioso/vibração, Não perturbe, volume zero ou escolhas posteriores do usuário no canal podem silenciar os avisos. Referência: [canais de notificação do Android](https://developer.android.com/develop/ui/compose/notifications/channels).
+
+No emulador, o teste instrumentado confirmou URI e atributos do canal, importância alta, decodificação do WAV pelo MediaPlayer e duração esperada. Uma mensagem real FCM foi recebida no novo canal e seu toque abriu a Activity. O emulador foi executado sem saída de áudio; esses testes não comprovam som audível no celular. A assinatura v2 e a instalação sobre a versão anterior foram verificadas. O [APK 1.1.2](https://tapago.coletivopindorama.com.br/downloads/ta-pago-android-1.1.2.apk) tem 2.951.492 bytes e SHA-256 `d0d13e2faba2dca31ff850c3c9cab6e8290d69806daa3d9af61de37d20db4328`; download e checksum remoto foram conferidos.
+
+Nesta revisão, nove testes Express de senha/convite/autorização, duas jornadas de navegador (incluindo ativação com seis caracteres e destino do aviso), 164 verificações HTTP PHP, a matriz de senhas do teste unitário PHP e migrações sintéticas passaram. Typecheck do app e servidor, lint PHP, validação documental e checagens dos catálogos também passaram. Permanecem as mesmas falhas anteriores de infraestrutura nas suítes docs:test (31/33 passaram, symlinks no Windows) e code:test (17/20 passaram, symlinks e expectativa de proveniência). A regra de seis caracteres foi publicada na API PHP e no bundle web; a verificação remota confirmou validação aceita para seis caracteres e 129 caracteres, sem criar ou alterar contas reais.

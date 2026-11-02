@@ -4,7 +4,7 @@
   "title": "Tá Pago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-02",
   "language": "pt-BR",
   "tags": [
     "project"
@@ -33,7 +33,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.8.0",
+  "version": "4.9.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -93,7 +93,9 @@ O cadastro público cria somente contas de aluno. Contas de personal existentes 
 
 **Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. O backend PHP/MySQL atende à hospedagem Single; Express/Prisma/SQLite permanece como implementação anterior e para desenvolvimento local. Ambos implementam autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
 
-O [APK Android 1.1.1](docs/06-operations/android-apk.md) acompanha o site e integra notificações nativas via Firebase: novos cadastros, treinos concluídos e feedbacks. A ativação solicita a permissão do Android e registra o aparelho na conta do personal; tocar no aviso resolve o destino pelo feed autenticado. O APK 1.0.0 requer atualização. A configuração de envio fica no servidor privado, separada do APK e do Web Push do navegador.
+O [APK Android 1.1.2](docs/06-operations/android-apk.md) acompanha o site e integra notificações nativas via Firebase: novos cadastros, treinos concluídos e feedbacks. Inclui toque próprio no canal de novidades, sujeito ao volume e modo de som do Android. A ativação solicita a permissão do Android e registra o aparelho na conta do personal; tocar no aviso resolve o destino pelo feed autenticado. A configuração de envio fica no servidor privado, separada do APK e do Web Push do navegador.
+
+Senhas de cadastro e ativação exigem somente seis caracteres ou mais, sem obrigatoriedade de números, letras, símbolos ou mistura entre eles. Login e ativação preservam o texto digitado, inclusive espaços e Unicode; senhas anteriores continuam válidas.
 
 O modo padrão de conhecimento é **busca local + Codex**, sem chave de API ou PostgreSQL. Execute `npm run knowledge:context -- "Como useTheme seleciona as cores?"`; o Codex usa as fontes retornadas para responder na sessão. `npm run knowledge:health` valida o catálogo local. Veja [o guia](knowledge/RAG.md).
 

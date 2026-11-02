@@ -5,6 +5,9 @@ import android.content.Context;
 import android.app.Instrumentation;
 import android.app.Activity;
 import android.os.Bundle;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.File;
@@ -27,6 +30,13 @@ public class PushDeliveryTest extends Instrumentation {
         check(BuildConfig.PUSH_CONFIGURED);
         Context context = getTargetContext();
         PushService.channel(context);
+        var channel=context.getSystemService(NotificationManager.class).getNotificationChannel(PushService.CHANNEL);
+        check(channel.getImportance()==NotificationManager.IMPORTANCE_HIGH);
+        check(Uri.parse("android.resource://"+context.getPackageName()+"/raw/tapago_alert").equals(channel.getSound()));
+        check(channel.getAudioAttributes().getUsage()==AudioAttributes.USAGE_NOTIFICATION);
+        MediaPlayer player=MediaPlayer.create(context,R.raw.tapago_alert);
+        check(player!=null);
+        try{check(player.getDuration()>=600&&player.getDuration()<=1000);}finally{player.release();}
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();messaging.setAutoInitEnabled(true);
         String token = Tasks.await(messaging.getToken(), 45, TimeUnit.SECONDS);
         String binding = UUID.randomUUID().toString().replace("-", "");
@@ -40,6 +50,7 @@ public class PushDeliveryTest extends Instrumentation {
         var notifications = context.getSystemService(NotificationManager.class).getActiveNotifications();
         check(notifications.length == 1);
         check("Teste do Tá Pago".equals(notifications[0].getNotification().extras.getString("android.title")));
+        check(PushService.CHANNEL.equals(notifications[0].getNotification().getChannelId()));
         var monitor = addMonitor(MainActivity.class.getName(), null, false);
         notifications[0].getNotification().contentIntent.send();
         var activity = waitForMonitorWithTimeout(monitor, 10000);

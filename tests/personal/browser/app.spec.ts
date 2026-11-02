@@ -575,8 +575,13 @@ test("link local, formulário público em cinco etapas e aprovação", async ({
   const activationUrl=draftText.match(/https?:\/\/\S+\/ativar\?convite=[a-f0-9]{64}/)![0];
   await form.goto(activationUrl);
   await expect(form.getByLabel('E-mail de acesso',{exact:true})).toBeVisible();
-  await form.getByLabel('Crie sua senha',{exact:true}).fill('senha-ficticia-12345');
-  await form.getByLabel('Confirme sua senha',{exact:true}).fill('senha-ficticia-12345');
+  await expect(form.getByText('Mínimo de 6 caracteres. Pode usar letras, números ou símbolos.',{exact:true})).toBeVisible();
+  await form.getByLabel('Crie sua senha',{exact:true}).fill('abcde');
+  await form.getByLabel('Confirme sua senha',{exact:true}).fill('abcde');
+  await form.getByRole('button',{name:'Ativar meu acesso',exact:true}).click();
+  await expect(form.getByText('Use pelo menos 6 caracteres na senha.',{exact:true})).toBeVisible();
+  await form.getByLabel('Crie sua senha',{exact:true}).fill('abcdef');
+  await form.getByLabel('Confirme sua senha',{exact:true}).fill('abcdef');
   await form.getByRole('button',{name:'Ativar meu acesso',exact:true}).click();
   await expect(form.getByRole('button',{name:'Ver meus treinos',exact:true})).toBeVisible();
   expect(errors).toEqual([]);

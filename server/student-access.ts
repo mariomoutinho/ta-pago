@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { hashPassword, sessionKey } from "./security";
+import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../shared/password';
 
 export function studentAccessRoutes(db:Db){
   const router=Router();
@@ -13,7 +14,7 @@ export function studentAccessRoutes(db:Db){
     const existing=await db.user.findUnique({where:{email:invite.student.email.toLowerCase()}});
     res.json({name:invite.student.name,email:invite.student.email,existingAccount:!!existing});
   }).post(async(req,res)=>{
-    const password=z.string().min(12,'Use pelo menos 12 caracteres').max(128).parse(req.body.password);
+    const password=z.string().refine(passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE).parse(req.body.password);
     const passwordHash=await hashPassword(password);
     await db.$transaction(async tx=>{
       const invite=await invitation(tx,String(req.params.code));

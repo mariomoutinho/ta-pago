@@ -14,8 +14,8 @@ android {
         applicationId 'br.com.coletivopindorama.tapago'
         minSdk 26
         targetSdk 36
-        versionCode 10101
-        versionName '1.1.1'
+        versionCode 10102
+        versionName '1.1.2'
         buildConfigField 'boolean', 'PUSH_CONFIGURED', firebaseClient != null ? 'true' : 'false'
         if (firebaseClient != null) {
             resValue 'string', 'google_app_id', firebaseClient.client_info.mobilesdk_app_id
