@@ -104,13 +104,14 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkou
     </Dialog>}
   </View>;
 }
-function PlanCard({ plan, onOpen, onActions }: {
-  plan: Plan; onOpen: () => void; onActions?: () => void;
+function PlanCard({ plan, onOpen, onActions, onPublish }: {
+  plan: Plan; onOpen: () => void; onActions?: () => void; onPublish?: () => void;
 }) {
   const t = useTheme();
   const status = plan.status === "rascunho" ? "Rascunho" : plan.status === "arquivado" ? "Arquivada"
     : plan.startsAt > today() ? "Futura" : plan.endsAt && plan.endsAt < today() ? "Encerrada" : "Atual";
-  return <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: t.border, backgroundColor: t.background, borderRadius: 8 }}>
+  return <View style={{ borderWidth: 1, borderColor: t.border, backgroundColor: t.background, borderRadius: 8 }}>
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
     <Pressable accessibilityRole="button" accessibilityLabel={`Abrir rotina ${plan.title}`} onPress={onOpen}
       style={({ pressed }) => ({ flex: 1, flexDirection: "row", alignItems: "center", gap: 12, padding: 14, minHeight: 96, opacity: pressed ? 0.7 : 1 })}>
       <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: t.accentSoft, alignItems: "center", justifyContent: "center" }}><Label size={22}>↔</Label></View>
@@ -123,6 +124,11 @@ function PlanCard({ plan, onOpen, onActions }: {
     </Pressable>
     {onActions && <Pressable accessibilityRole="button" accessibilityLabel={`Opções da rotina ${plan.title}`} onPress={onActions}
       style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", alignSelf: "flex-start", marginTop: 6 }}><Label size={22}>⋮</Label></Pressable>}
+    </View>
+    {onPublish && <View style={{ padding: 14, paddingTop: 0, gap: 8 }}>
+      <Label size={12}>Rascunho: o aluno ainda não vê estes treinos.</Label>
+      <Button onPress={onPublish} label={`Liberar rotina ${plan.title} para o aluno`}>Liberar para o aluno</Button>
+    </View>}
   </View>;
 }
 export function WorkoutPlans({
@@ -154,6 +160,7 @@ export function WorkoutPlans({
   const [programData, setProgramData] = useState<PlanData | undefined>();
   const programs = useResource<Program[]>(programPicker ? "/programs" : null);
   const [archive, setArchive] = useState<Plan | null>(null);
+  const [publish, setPublish] = useState<Plan | null>(null);
   const [discard, setDiscard] = useState(false);
   const [childScreen, setChildScreen] = useState(false);
   const [success, setSuccess] = useState("");
@@ -187,7 +194,7 @@ export function WorkoutPlans({
             initialTemplatePicker={initialTemplatePicker}
             plan={editing === "new" ? undefined : editing}
             cancel={() => setDiscard(true)}
-            done={() => {
+            done={(saved) => {
               if (editing === "new") {
                 setSection("Rotinas de treino");
                 setFilter("Todas");
@@ -198,7 +205,7 @@ export function WorkoutPlans({
               setEditing(null);
               setProgramData(undefined);
               setAddingWorkout(false);
-              setSuccess(addingWorkout ? "Treino adicionado com sucesso." : "Plano salvo com sucesso.");
+              setSuccess(saved.status === "rascunho" ? "Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto." : saved.status === "ativo" ? "Rotina salva e liberada para o aluno." : "Plano arquivado salvo.");
               void reload();
             }}
           />
@@ -260,6 +267,7 @@ export function WorkoutPlans({
           </View>}
           {!loading && !error && !visible.length && <Notice>{section === "Arquivadas" ? "Nenhuma rotina arquivada." : "Nenhuma rotina neste filtro."}</Notice>}
           {visible.map(plan => <PlanCard key={plan.id} plan={plan} onOpen={() => setSelected(plan.id)}
+            onPublish={!studentView && plan.status === "rascunho" ? () => setPublish(plan) : undefined}
             onActions={studentView ? undefined : () => setActions(plan)} />)}
         </View>
       </>}
@@ -298,6 +306,16 @@ export function WorkoutPlans({
           }}
         />
       )}
+      {publish && <Confirm
+        title="Liberar rotina para o aluno?"
+        description="O aluno vinculado poderá consultar todos os treinos desta rotina."
+        onClose={() => setPublish(null)}
+        onConfirm={async () => {
+          await api(`/workout-plans/${publish.id}`, "PUT", { ...publish, status: "ativo" });
+          setSuccess("Rotina liberada para o aluno.");
+          await reload();
+        }}
+      />}
     </View>
   );
 }

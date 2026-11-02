@@ -37,7 +37,7 @@ export function PlanForm({
   initialGroup?: string;
   studentId: string;
   plan?: Plan;
-  done: () => void;
+  done: (saved: Plan) => void;
   cancel: () => void;
 }) {
   const [data, setData] = useState<PlanData>(
@@ -63,7 +63,7 @@ export function PlanForm({
   return (
     <SaveForm
       hideActions={focused || templatePicker}
-      label={addingWorkout ? "Salvar treino" : "Salvar plano"}
+      label={addingWorkout ? "Salvar treino" : data.status === "rascunho" ? "Salvar rascunho" : data.status === "ativo" ? "Salvar e liberar para o aluno" : "Salvar plano arquivado"}
       cancel={cancel}
       save={async () => {
         if (pending)
@@ -77,14 +77,14 @@ export function PlanForm({
               .map((i) => `${i.path.join(".")}: ${i.message}`)
               .join(" · "),
           );
-        await api(
+        const saved = await api<Plan>(
           plan
             ? `/workout-plans/${plan.id}`
             : `/students/${studentId}/workout-plans`,
           plan ? "PUT" : "POST",
           parsed.data,
         );
-        done();
+        done(saved);
       }}
     >
       <View style={addingWorkout || focused || templatePicker ? { display: "none" } : undefined}><TextFields
@@ -116,7 +116,7 @@ export function PlanForm({
         options={(plan?.publishedAt
           ? ["ativo", "arquivado"]
           : ["rascunho", "ativo", "arquivado"]
-        ).map((value) => ({ value, label: value }))}
+        ).map((value) => ({ value, label: value === "rascunho" ? "Rascunho — só você vê" : value === "ativo" ? "Ativo — liberar para o aluno" : "Arquivado" }))}
       />
       <Label muted>
         Ao salvar como ativo, o plano será disponibilizado à conta vinculada

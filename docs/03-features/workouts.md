@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-02",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -78,7 +78,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.5.0",
+  "version": "12.6.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -97,6 +97,12 @@
 ---
 
 # Treinos personalizados
+
+## Salvar e liberar para o aluno
+
+Uma rotina nova começa como rascunho, visível somente ao personal. O botão **Salvar rascunho** e a confirmação explicam que o aluno ainda não recebe esses treinos. Na lista do personal, cada rascunho oferece **Liberar para o aluno**, com confirmação antes de publicar. A ação usa a atualização existente do plano, conserva a revisão para detectar alterações concorrentes e aplica as validações de publicação: todos os treinos devem conter exercícios válidos.
+
+No formulário, **Ativo — liberar para o aluno** muda a ação para **Salvar e liberar para o aluno**. A confirmação distingue rotina publicada, rascunho e arquivo. Os rascunhos continuam protegidos pela API; nenhuma publicação automática ocorre ao salvar.
 
 ## Upload de vídeo próprio
 

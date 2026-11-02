@@ -660,11 +660,11 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     .getByRole("button", { name: "Confirmar prescrição", exact: true })
     .click();
   await page
-    .getByRole("radio", { name: "Status do plano: ativo", exact: true })
+    .getByRole("radio", { name: "Status do plano: Ativo — liberar para o aluno", exact: true })
     .click();
-  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar e liberar para o aluno", exact: true }).click();
   await expect(
-    page.getByText("Plano salvo com sucesso.", { exact: true }),
+    page.getByText("Rotina salva e liberada para o aluno.", { exact: true }),
   ).toBeVisible();
   await page.reload();
   await page
@@ -1088,7 +1088,7 @@ test("perfil compacto preserva atalhos, opções e anotações", async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
-test("personal prepara treino sem aluno e copia para o perfil sem alterar o modelo", async ({ page }) => {
+test("personal prepara treino sem aluno e copia para o perfil sem alterar o modelo", async ({ page, browser }) => {
   const headers = { "X-Requested-With": "TaPago" };
   await provisionBrowserPersonal(db, page.request, base, { headers, data: {
     name: "Personal Modelos", email: "templates-browser@example.com", password: "senha-ficticia-12345", role: "personal",
@@ -1123,12 +1123,31 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   await page.getByRole("button", { name: "Usar treino Treino de força preparado", exact: true }).click();
   await page.getByLabel("Nome do plano *", { exact: true }).fill("Plano individual do aluno");
   await page.getByLabel("Nome do treino *", { exact: true }).fill("Treino adaptado ao aluno");
-  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
-  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText("Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto.", { exact: true })).toBeVisible();
   const plans = await (await page.request.get(base + `/api/students/${studentId}/workout-plans`)).json();
   expect(plans[0].workouts[0].name).toBe("Treino adaptado ao aluno");
   expect(plans[0].workouts[0].exercises[0].series[0].sets).toBe(3);
   expect(plans[0].status).toBe("rascunho");
+  const invite = await (await page.request.post(base + '/api/students/' + studentId + '/invite', { headers })).json();
+  const pupilContext = await browser.newContext();
+  try {
+    const pupil = await pupilContext.newPage();
+    await pupil.request.post(base + '/api/auth/register', { headers, data: { name: 'Aluno Publicação', email: 'publication-pupil@example.test', password: 'abcdef', role: 'student' } });
+    await pupil.request.post(base + '/api/me/claim', { headers, data: { code: invite.code } });
+    expect(await (await pupil.request.get(base + '/api/me/workout-plans')).json()).toEqual([]);
+    await page.getByRole('button', { name: 'Liberar rotina Plano individual do aluno para o aluno', exact: true }).click();
+    await page.getByRole('button', { name: 'Cancelar', exact: true }).click();
+    expect(await (await pupil.request.get(base + '/api/me/workout-plans')).json()).toEqual([]);
+    await page.getByRole('button', { name: 'Liberar rotina Plano individual do aluno para o aluno', exact: true }).click();
+    await page.getByRole('button', { name: 'Confirmar', exact: true }).click();
+    await expect(page.getByText('Rotina liberada para o aluno.', { exact: true })).toBeVisible();
+    await pupil.goto(base + '/treinos');
+    await pupil.getByRole('button', { name: 'Abrir rotina Plano individual do aluno', exact: true }).click();
+    await expect(pupil.getByRole('button', { name: 'Treino adaptado ao aluno', exact: true })).toBeVisible();
+    expect((await (await pupil.request.get(base + '/api/me/workout-plans')).json())[0].publishedAt).toBeTruthy();
+    await expect(pupil.getByRole('button', { name: /Liberar rotina/ })).toHaveCount(0);
+  } finally { await pupilContext.close(); }
   expect((await (await page.request.get(base + "/api/workout-templates")).json())[0].name).toBe("Treino de força preparado");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "test-results/prepared-workout-mobile.png", fullPage: true });
@@ -1381,8 +1400,8 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
   await expect(page.getByLabel("Nome do plano *", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: "Expandir exercício Leg press", exact: true }).click(); await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
-  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click(); await page.getByLabel("Série/repetições 1", { exact: true }).fill("2/15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
-  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click(); await page.getByLabel("Série/repetições 1", { exact: true }).fill("2/15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText("Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto.", { exact: true })).toBeVisible();
   saved = await getPlan(); expect(saved.workouts[0].exercises).toHaveLength(6);
   expect(saved.workouts[0].exercises.filter((item: { groupId: string }) => item.groupId === "circuito")).toHaveLength(4);
   expect(saved.workouts[0].exercises[3].series[0].sets).toBe(2);
@@ -1446,8 +1465,8 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
   await page.getByRole("button", { name: "Salvar preset", exact: true }).click();
   await expect(page.getByText("Preset salvo.", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
-  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
-  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText("Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto.", { exact: true })).toBeVisible();
   const saved = (await (await page.request.get(endpoint)).json())[0];
   expect(saved.workouts[0].exercises[0].series).toEqual([
     { type: "repetitions-time", sets: 1, repetitions: "1", load: null, restSeconds: null, durationSeconds: 20 },
@@ -1501,8 +1520,8 @@ for (const destination of ["aluno", "preparado"] as const) {
     await page.getByRole("button", { name: "Usar preset 3/8", exact: true }).click();
     await expect(page.getByLabel("Série/repetições 1", { exact: true }).filter({ visible: true })).toHaveValue("3/8");
     await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
-    await page.getByRole("button", { name: destination === "aluno" ? "Salvar plano" : "Salvar treino preparado", exact: true }).click();
-    await expect(page.getByText(destination === "aluno" ? "Plano salvo com sucesso." : "Treino preparado salvo.", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: destination === "aluno" ? "Salvar rascunho" : "Salvar treino preparado", exact: true }).click();
+    await expect(page.getByText(destination === "aluno" ? "Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto." : "Treino preparado salvo.", { exact: true })).toBeVisible();
     const saved = (await (await page.request.get(endpoint)).json())[0];
     const exercises = destination === "aluno" ? saved.workouts[0].exercises : saved.exercises;
     expect(exercises[0].series[0]).toMatchObject({ sets: 3, repetitions: "8", type: "repetitions-load" });
@@ -1541,8 +1560,8 @@ test("Programas organiza rotinas com treinos e copia para o aluno sem alterar a 
   await page.getByRole("button", { name: "Usar rotina de Programas", exact: true }).click();
   await page.getByRole("button", { name: "Usar rotina Programa antigo", exact: true }).click();
   await page.getByLabel("Nome do plano *", { exact: true }).fill("Rotina adaptada");
-  await page.getByRole("button", { name: "Salvar plano", exact: true }).click();
-  await expect(page.getByText("Plano salvo com sucesso.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText("Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto.", { exact: true })).toBeVisible();
   const plans = await (await page.request.get(base + "/api/students/" + student.id + "/workout-plans")).json();
   expect(plans[0].workouts).toHaveLength(2); expect(plans[0].workouts[0].exercises[0].series[0].sets).toBe(3);
   expect((await (await page.request.get(base + "/api/programs")).json())[0].name).toBe("Programa antigo");
