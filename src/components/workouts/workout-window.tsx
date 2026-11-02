@@ -9,14 +9,18 @@ import { SeriesEditor } from "./series-editor";
 import { ExerciseDetails, PrescriptionView } from "./exercise-view";
 import { PrescriptionForm } from "./prescription-form";
 import { WorkoutExerciseList, type WorkoutChange } from "./workout-exercise-list";
+import { StudentPrescription } from './student-prescription';
+import { useRestTimer } from './rest-timer';
 
-export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises, addToGroup }: {
+export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises, addToGroup, student }: {
+  student?: { revision: number; editable: boolean; reload: () => Promise<void> };
   addToGroup?: (groupId: string) => void;
   saveSeries?: (index: number, rows: SeriesRow[]) => Promise<void>;
   saveExercises?: (items: Prescription[], operation: WorkoutChange) => Promise<void>;
   workout: WorkoutData; close: () => void; edit?: () => void; add?: () => void;
 }) {
   const [optimistic, setOptimistic] = useState<WorkoutData | null>(null);
+  const rest = useRestTimer();
   const current = optimistic ?? workout;
   const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -40,6 +44,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
       {!!current.subtitle && <Label bold>{current.subtitle}</Label>}
       {!!current.instructions && <Notice>{current.instructions}</Notice>}
       <Notice error>{error}</Notice><Notice>{success}</Notice>
+      {rest.panel}
       {!current.exercises.length && <Notice>Este treino ainda não possui exercícios. Adicione exercícios pela biblioteca.</Notice>}
       <View style={editing ? { display: "none" } : undefined}><WorkoutExerciseList items={current.exercises} disabled={busy || hasDirty || !!editing} change={saveExercises ? change : undefined} editItem={saveExercises ? setEditing : undefined} addToGroup={addToGroup} normalActions={(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {edit && <Button disabled={busy || hasDirty || !!editing} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
@@ -49,7 +54,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
         {!!item.notes && <Notice>{item.notes}</Notice>}
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}
         <SeriesEditor item={item} disabled={busy || !!editing} onDirty={value => { const key = exerciseKey(item); if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
-      </> : <PrescriptionView item={item} />} /></View>
+      </> : student ? <StudentPrescription item={item} {...student} startRest={rest.start} /> : <PrescriptionView item={item} />} /></View>
       {editing && <Card><PrescriptionForm item={current.exercises.find(item => exerciseKey(item) === editing)!} cancel={() => setEditing(null)} done={async item => { await change(current.exercises.map(previous => exerciseKey(previous) === editing ? item : previous), "edit"); setEditing(null); }} /></Card>}
     </View>
   </WorkoutScreen>;

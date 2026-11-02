@@ -245,6 +245,7 @@ CREATE TABLE `WorkoutExercise` (
   `orderIndex` INT NOT NULL,
   `groupId` LONGTEXT NULL,
   `series` JSON NOT NULL,
+  `studentLoads` JSON NULL,
   `sets` INT NULL,
   `repetitions` LONGTEXT NOT NULL,
   `load` DOUBLE NULL,

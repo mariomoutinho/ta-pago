@@ -11,6 +11,12 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/student-prescription.tsx",
+    "src/components/workouts/rest-timer.tsx",
+    "src/features/personal/rest-sound.web.ts",
+    "shared/rest-timer.ts",
+    "backend-php/migrations/20261102_student_loads.sql",
+    "backend-php/tests/student-loads-migration.php",
     "shared/notifications.ts",
     "src/components/workouts/feedbacks.tsx",
     "backend-php/migrations/20261101_workout_completion.sql",
@@ -78,7 +84,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.6.0",
+  "version": "12.7.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -97,6 +103,18 @@
 ---
 
 # Treinos personalizados
+
+## Cargas do aluno e intervalo
+
+O aluno com vínculo ativo pode usar **Editar cargas** nos exercícios de uma rotina ativa publicada. Há uma carga por linha de séries, inclusive em exercícios sem carga originalmente preenchida; prescrições antigas sem linhas usam uma carga geral. Aceita zero e decimais com vírgula ou ponto. Um campo vazio volta à carga prescrita. Os valores persistem no servidor em `WorkoutExercise.studentLoads`, separados de `load` e `series`, sem alterar séries, repetições ou prescrições do personal.
+
+`PUT /me/workout-exercises/:id/loads` valida a conta vinculada, vínculo ativo, publicação, exclusão lógica e revisão do plano; aceita somente revisão e lista de cargas não negativas. A leitura descarta ajustes cuja assinatura da prescrição não corresponde mais à série/carga atualizada pelo professor. Planos arquivados ou vínculos encerrados permanecem somente para consulta. Aplicar a migração incremental `20261102_student_loads.sql` antes de atualizar os modelos e o runtime PHP; não executar o esquema completo na base existente.
+
+Na consulta do aluno, intervalos maiores que zero são botões. O toque inicia uma contagem regressiva compartilhada na tela do treino, pelo prazo real do relógio, e substitui um intervalo anterior. Ao zerar, apresenta **Intervalo concluído**, tenta emitir três sinais sonoros via Web Audio e vibra em dispositivos compatíveis. Cancelar ou sair da tela do treino encerra o cronômetro. Recolher exercícios não interrompe a contagem. O som é preparado no toque para respeitar as políticas de reprodução do navegador. O APK atual usa a mesma implementação web.
+
+O treino precisa permanecer aberto; o aplicativo não agenda alarme nativo com a tela bloqueada ou o processo suspenso. Ao retomar uma aba suspensa, o relógio recalcula o tempo pelo prazo, sem acumular atraso por ticks. Som e vibração dependem do volume, permissões e capacidades do dispositivo. O fallback React Native oferece alerta visual e vibração; o sinal sonoro está implementado na web e na WebView do APK.
+
+A validação automatizada cobre autorização e persistência nos dois backends, preservação da prescrição, migração sobre dados sintéticos, recarga em sessão separada, contagem regressiva, solicitação do sinal sonoro e cancelamento. A audibilidade e vibração em aparelhos reais exigem conferência no dispositivo.
 
 ## Salvar e liberar para o aluno
 

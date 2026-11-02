@@ -2,6 +2,8 @@ import { orderSchema, ordered } from "./workout-order";
 import { validateVideoOwner } from "./exercise-media";
 import { validExerciseGroups } from "../shared/workout-groups";
 import { Router } from "express";
+import { createHash } from "node:crypto";
+import { studentLoadsSchema } from "../shared/workouts";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
@@ -24,11 +26,23 @@ export const planInclude = {
 };
 export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>) {
   const router = Router();
+  const loadPrescription = (item: { series: unknown; load: number | null }) => createHash('sha256').update(JSON.stringify([item.series,item.load])).digest('hex');
+  router.put('/me/workout-exercises/:id/loads', async (req,res) => {
+    if(res.locals.user.role!=='student')throw new HttpError(403,'Acesso do aluno');
+    const data=studentLoadsSchema.parse(req.body);
+    const saved=await db.$transaction(async tx=>{
+      const item=await tx.workoutExercise.findFirst({where:{id:String(req.params.id),deletedAt:null,workout:{deletedAt:null,plan:{publishedAt:{not:null},status:'ativo',student:{accountId:res.locals.user.id,linkStatus:'active'}}}},include:{workout:{include:{plan:true}}}});
+      if(!item)throw new HttpError(404,'Prescrição não encontrada');
+      if(item.workout.plan.revision!==data.revision)throw new HttpError(409,'O professor atualizou o treino. Abra novamente antes de salvar.');
+      if(data.loads.length!==Math.max(1,(item.series as unknown[]).length))throw new HttpError(400,'Quantidade de cargas inválida');
+      const value={prescription:loadPrescription(item),loads:data.loads};
+      await tx.workoutExercise.update({where:{id:item.id},data:{studentLoads:value}});return value;
+    });res.json(saved);
+  });
   router.get("/me/workout-plans", async (_req, res) => {
     if (res.locals.user.role !== "student")
       throw new HttpError(403, "Acesso do aluno");
-    res.json(
-      await db.workoutPlan.findMany({
+    const plans=await db.workoutPlan.findMany({
         where: {
           student: { accountId: res.locals.user.id },
           publishedAt: { not: null },
@@ -41,8 +55,12 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
           },
         },
         orderBy: { startsAt: "desc" },
-      }),
-    );
+      });
+    for(const plan of plans)for(const workout of plan.workouts)for(const item of workout.exercises){
+      const saved=item.studentLoads as {prescription?:string}|null;
+      if(saved?.prescription!==loadPrescription(item))item.studentLoads=null;
+    }
+    res.json(plans);
   });
   router.post("/me/workouts/:id/feedbacks", async (req, res) => {
     if (res.locals.user.role !== "student")

@@ -287,6 +287,7 @@ model WorkoutExercise {
   orderIndex Int
   groupId String?
   series Json @default("[]")
+  studentLoads Json?
   sets Int?
   repetitions String @default("")
   load Float?

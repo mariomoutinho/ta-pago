@@ -34,6 +34,7 @@ function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkou
   if (workoutIndex >= 0) {
     const i = workoutIndex, w = plan.workouts[i];
     return <WorkoutWindow workout={w} close={() => setOpen(null)}
+          student={studentView ? { revision: plan.revision!, editable: plan.status === 'ativo' && plan.student?.linkStatus === 'active', reload } : undefined}
           addToGroup={editWorkout ? groupId => { editWorkout(i, true, groupId); } : undefined}
           saveExercises={studentView ? undefined : async (items, operation) => {
             if (operation === "order") {

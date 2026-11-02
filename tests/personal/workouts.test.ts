@@ -581,3 +581,30 @@ it("combina e exclui em lote apenas associações do próprio plano, mantendo bi
   const untouched = (await owner.get("/api/students/" + targets[1].id + "/workout-plans")).body[0];
   expect(untouched.revision).toBe(1); expect(untouched.workouts[0].exercises).toHaveLength(3);
 });
+
+it("aluno salva cargas isoladas, preserva prescrição e respeita vínculo e revisão", async () => {
+ const owner=request.agent(app), viewer=request.agent(app), outsider=request.agent(app);
+ await provisionPersonal(db,{name:'Personal Cargas',email:'loads-owner@example.test',password:'abcdef'});
+ await owner.post('/api/auth/login').set(header).send({email:'loads-owner@example.test',password:'abcdef'});
+ for(const [agent,email] of [[viewer,'loads-viewer@example.test'],[outsider,'loads-outsider@example.test']] as const)await agent.post('/api/auth/register').set(header).send({name:'Aluno Cargas',email,password:'abcdef',role:'student'});
+ const target=(await owner.post('/api/students').set(header).send({name:'Aluno Cargas',mainGoal:'Força',startDate:'2026-11-02'})).body;
+ const invite=(await owner.post('/api/students/'+target.id+'/invite').set(header)).body;
+ await viewer.post('/api/me/claim').set(header).send({code:invite.code});
+ const ex=(await owner.post('/api/exercises').set(header).send(exerciseData)).body;
+ const created=(await owner.post('/api/students/'+target.id+'/workout-plans').set(header).send({...planData,status:'ativo',workouts:[{name:'A',exercises:[{exerciseId:ex.id,load:20,series:[{sets:3,repetitions:'10',load:20,restSeconds:60},{sets:2,repetitions:'8',load:25,restSeconds:60}]}]}]})).body;
+ const item=created.workouts[0].exercises[0], endpoint='/api/me/workout-exercises/'+item.id+'/loads';
+ for(const agent of [owner,outsider])expect((await agent.put(endpoint).set(header).send({revision:1,loads:[12.5,0]})).status).toBeGreaterThanOrEqual(400);
+ for(const loads of [[-1,null],[1],[1000001,0],['20',0]])expect((await viewer.put(endpoint).set(header).send({revision:1,loads})).status).toBe(400);
+ expect((await viewer.put(endpoint).set(header).send({revision:1,loads:[12.5,0],repetitions:'999'})).status).toBe(400);
+ expect((await viewer.put(endpoint).set(header).send({revision:99,loads:[12.5,0]})).status).toBe(409);
+ expect((await viewer.put(endpoint).set(header).send({revision:1,loads:[12.5,0]})).status).toBe(200);
+ let read=(await viewer.get('/api/me/workout-plans')).body.find((p:any)=>p.id===created.id).workouts[0].exercises[0];
+ expect(read.studentLoads.loads).toEqual([12.5,0]);expect(read.series).toEqual(item.series);expect(read.load).toBe(20);
+ expect((await viewer.put(endpoint).set(header).send({revision:1,loads:[null,0]})).status).toBe(200);
+ const changed=await owner.put('/api/workout-plans/'+created.id).set(header).send({...created,workouts:[{...created.workouts[0],exercises:[{...item,series:[{...item.series[0],load:30},item.series[1]]}]}]});
+ expect(changed.status).toBe(200);
+ read=(await viewer.get('/api/me/workout-plans')).body.find((p:any)=>p.id===created.id).workouts[0].exercises[0];expect(read.studentLoads).toBeNull();
+ expect((await viewer.put(endpoint).set(header).send({revision:1,loads:[12,0]})).status).toBe(409);
+ await owner.put('/api/workout-plans/'+created.id).set(header).send({...changed.body,status:'arquivado'});
+ expect((await viewer.put(endpoint).set(header).send({revision:3,loads:[12,0]})).status).toBe(404);
+});

@@ -52,6 +52,9 @@ trait Workouts {
     private function plan(array $p): array {
         $p['workouts']=array_map(function($w) {
             $w['exercises']=$this->hydrateItems($this->db->rows('WorkoutExercise','workoutId=? AND deletedAt IS NULL',[$w['id']],'orderIndex ASC'));
+            foreach ($w['exercises'] as &$item) {
+                if (($item['studentLoads']['prescription']??null)!==$this->loadPrescription($item)) $item['studentLoads']=null;
+            } unset($item);
             $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
             $w['completions']=$this->db->rows('WorkoutCompletion','workoutId=?',[$w['id']],'createdAt DESC LIMIT 30');
             return $w;
@@ -65,6 +68,21 @@ trait Workouts {
             }
         }
         usort($out,fn($a,$b)=>strcmp($b['startsAt'],$a['startsAt'])); return $out;
+    }
+    private function loadPrescription(array $item): string {
+        return hash('sha256',json_encode([$item['series'],$item['load']],JSON_THROW_ON_ERROR));
+    }
+    private function studentLoads(string $id,array $body): array {
+        $this->pupil(); ensure(!array_diff(array_keys($body),['revision','loads']),'Informe somente as cargas');
+        $d=$this->validation->parse('studentLoadsSchema',$body);
+        $item=$this->db->required('WorkoutExercise','id=? AND deletedAt IS NULL',[$id],true);
+        $w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$item['workoutId']],true);
+        $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
+        $s=$this->student($p['studentId'],true); ensure($s['linkStatus']==='active','Vínculo encerrado',403);
+        ensure($p['revision']===$d['revision'],'O professor atualizou o treino. Abra novamente antes de salvar.',409);
+        ensure(count($d['loads'])===max(1,count($item['series'])),'Quantidade de cargas inválida');
+        $value=['prescription'=>$this->loadPrescription($item),'loads'=>$d['loads']];
+        $this->db->update('WorkoutExercise',$id,['studentLoads'=>$value]);return $value;
     }
     private function feedback(string $id,array $body): array {
         $this->pupil(); $data=$this->validation->parse('workoutFeedbackSchema',$body);

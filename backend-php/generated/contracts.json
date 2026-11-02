@@ -1989,6 +1989,39 @@
       ]
     }
   },
+  "studentLoadsSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "revision": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      },
+      "loads": {
+        "minItems": 1,
+        "maxItems": 50,
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "required": [
+      "revision",
+      "loads"
+    ],
+    "additionalProperties": false
+  },
   "workoutFeedbackSchema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",

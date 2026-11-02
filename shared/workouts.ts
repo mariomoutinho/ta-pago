@@ -144,6 +144,7 @@ export const planSchema = z
 export type ExerciseData = z.infer<typeof exerciseSchema>;
 export type Exercise = ExerciseData & { id: string; favorite?: boolean };
 export type Prescription = z.infer<typeof prescriptionSchema> & {
+  studentLoads?: { prescription: string; loads: (number | null)[] } | null;
   exercise?: Exercise;
   alternativeExercise?: Exercise | null;
 };
@@ -167,3 +168,8 @@ export const workoutFeedbackSchema = z.object({
   comment: z.string().trim().min(1, "Escreva seu feedback").max(2000, "Use até 2000 caracteres"),
 });
 export type WorkoutFeedback = { id: string; comment: string; createdAt: string };
+
+export const studentLoadsSchema = z.object({
+  revision: z.number().int().positive(),
+  loads: z.array(z.number().finite().min(0).max(1000000).nullable()).min(1).max(50),
+}).strict();

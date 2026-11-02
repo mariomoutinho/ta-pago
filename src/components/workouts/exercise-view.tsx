@@ -62,7 +62,7 @@ export function ExerciseDetails({ exercise, collapsible = false, compact = false
     </View>
   );
 }
-export function PrescriptionView({ item, hideSeries = false }: { item: Prescription; hideSeries?: boolean }) {
+export function PrescriptionView({ item, hideSeries = false, studentLoads = false, startRest }: { item: Prescription; hideSeries?: boolean; studentLoads?: boolean; startRest?: (seconds: number, label: string) => void }) {
   const values = [
     item.sets !== null ? `${item.sets} séries` : "",
     item.repetitions ? `${item.repetitions} repetições` : "",
@@ -78,11 +78,11 @@ export function PrescriptionView({ item, hideSeries = false }: { item: Prescript
       {item.exercise && <ExerciseDetails exercise={item.exercise} compact />}
       {!hideSeries && !!item.series?.length && <View style={{ gap: 8 }}>
         {item.series.map((row, i) => <View key={i} style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {seriesFields(row.type ?? "repetitions-load").map(field => <View key={field.key} style={{ flex: 1, minWidth: 70, gap: 4 }}><Label size={12} bold>{field.label}</Label><Label>{seriesValue(row, field.key) || "—"}</Label></View>)}
+          {[...seriesFields(row.type ?? "repetitions-load"), ...(studentLoads && !seriesFields(row.type ?? "repetitions-load").some(field => field.key === 'load') ? [{ key: 'load' as const, label: 'Carga (kg)' }] : [])].map(field => <View key={field.key} style={{ flex: 1, minWidth: 70, gap: 4 }}><Label size={12} bold>{field.label}</Label>{field.key === 'restSeconds' && startRest && !!row.restSeconds ? <Button variant="secondary" label={`Iniciar intervalo de ${row.restSeconds} segundos da série ${i + 1}`} onPress={() => startRest(row.restSeconds!, `${item.exercise?.name ?? 'Exercício'} · série ${i + 1}`)}>{row.restSeconds} s ▶</Button> : <Label>{seriesValue(row, field.key) || "—"}</Label>}</View>)}
         </View>)}
       </View>}
       {values.filter(v => !(hideSeries || item.series?.length) || !(/ séries$| repetições$| kg$|^Descanso:|^Duração:/.test(v))).map((v) => (
-        <Label key={v}>{v}</Label>
+        startRest && v.startsWith('Descanso:') && !!item.restSeconds ? <Button key={v} variant="secondary" label={`Iniciar intervalo de ${item.restSeconds} segundos`} onPress={() => startRest(item.restSeconds!, item.exercise?.name ?? 'Exercício')}>{v} ▶</Button> : <Label key={v}>{v}</Label>
       ))}
       {!!item.notes && <Notice>{item.notes}</Notice>}
       {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name + ". Utilize somente como alternativa ao exercício principal, seguindo a prescrição e as orientações do personal."}</Notice>}
