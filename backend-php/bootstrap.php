@@ -9,6 +9,7 @@ require_once __DIR__.'/src/Auth.php';
 require_once __DIR__.'/src/Students.php';
 require_once __DIR__.'/src/Evaluations.php';
 require_once __DIR__.'/src/Workouts.php';
+require_once __DIR__.'/src/Groups.php';
 require_once __DIR__.'/src/Enrollment.php';
 require_once __DIR__.'/src/App.php';
 

@@ -2,20 +2,20 @@
 {
   "id": "ta-pago.docs.03-features.challenges",
   "title": "Desafios coletivos",
-  "status": "proposed",
+  "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-09-22",
+  "updated_at": "2026-11-02",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
-  "sources": [],
+  "sources": ["src/app/grupos.tsx", "src/app/grupo/[code].tsx", "server/groups.ts", "backend-php/src/Groups.php", "shared/groups.ts", "prisma/schema.prisma", "backend-php/migrations/20261102_training_groups.sql"],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.0.0",
-  "authority": "proposal",
+  "version": "3.0.0",
+  "authority": "code",
   "audience": [
     "developer",
     "ai_agent",
@@ -34,32 +34,16 @@
 
 # Desafios coletivos
 
-## Estado
+## Estado observado
 
-Planejado, não implementado. Referência: RF-06 nos [requisitos funcionais](../01-requirements/functional-requirements.md).
+O personal cria desafios dentro dos seus grupos, com título, data inicial, data final e meta individual de treinos. A tela aceita datas DD/MM/AAAA e valida o período. Participam os alunos que aceitaram ingressar naquele grupo e mantêm vínculo ativo com o personal.
 
-## Objetivo
+## Contagem e ranking
 
-Criar desafios de grupo com objetivo, métrica, participantes e período.
+A métrica é quantidade de treinos concluídos: usa WorkoutCompletion, único por treino/dia de São Paulo. Uma foto ou comentário não adiciona pontos. Contam conclusões registradas após a entrada no grupo, com completedOn dentro do intervalo inclusivo do desafio, em treinos do personal do grupo. Conclusões de outro professor e anteriores à participação não contam. Não há registro retroativo. Dois treinos diferentes concluídos no mesmo dia contam como duas atividades.
 
-## Fluxo proposto
+O ranking mostra nome e quantidade/meta, por contagem decrescente e nome em caso de empate. A meta atingida é sinalizada; o total pode superar a meta. Desafios futuros e encerrados permanecem consultáveis com o próprio período. Sair do grupo remove a participação no ranking; voltar não recupera pontos anteriores à nova entrada.
 
-Criar desafio → participar → registrar atividade elegível → acompanhar progresso → encerrar.
+## Limites e validação
 
-## Critérios de aceitação propostos
-
-Atividade fora do período não soma; uma mesma atividade não é contada duas vezes no mesmo desafio.
-
-Erros devem ser apresentados sem perder dados já preenchidos. Acesso deve respeitar as permissões do usuário, inclusive ao consultar registros diretamente.
-
-## Dados e dependências
-
-Depende de identidade e autorização futuras e do [modelo conceitual](../02-architecture/data-model.md). Persistência e serviços ainda não foram definidos.
-
-## Questões em aberto
-
-Critério de ingresso tardio, cancelamento, fuso, métricas e revisão de resultados.
-
-## Validação futura
-
-Cobrir fluxo principal, entrada inválida, acesso indevido e repetição de operação. Estes cenários são requisitos de testes futuros, não evidência de testes existentes.
+Métricas de distância/calorias, equipes, prêmios, validação por dispositivos, regras competitivas personalizadas e edição/exclusão de desafio ainda não estão implementadas. Conclusões são autorrelatadas pelo aluno; foto é opcional. Os testes cobrem autoria do desafio, limites de acesso, participação voluntária, não duplicação da conclusão e ranking.

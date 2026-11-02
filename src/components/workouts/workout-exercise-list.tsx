@@ -11,7 +11,8 @@ import { SortableExercises } from "./sortable-exercises";
 export type WorkoutChange = "order" | "combine" | "separate" | "delete" | "duplicate" | "membership" | "edit";
 let sequence = 0;
 const nextOccurrenceKey = () => "local-" + Date.now() + "-" + ++sequence;
-export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false }: {
+export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false, completion }: {
+  completion?: (item: Prescription) => ReactNode;
   unmountCollapsed?: boolean;
   items: Prescription[]; disabled?: boolean;
   change?: (next: Prescription[], operation: WorkoutChange) => Promise<void>;
@@ -85,6 +86,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
       return <Card style={{ padding: 10, marginBottom: 8, borderColor: keys.some(key => selected.has(key)) ? t.accent : t.border }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
           {change && handle}
+          {completion&&<View>{block.items.map(item=><View key={exerciseKey(item)}>{completion(item)}</View>)}</View>}
           {change && <ExerciseCheckbox label={"Selecionar " + name} checked={checked} mixed={!checked && keys.some(key => selected.has(key))} disabled={disabled} toggle={() => toggleSelection(keys)} />}
           <Pressable accessibilityRole="button" accessibilityLabel={"Detalhes de " + name} aria-expanded={open} onPress={() => toggle(key)} style={{ flex: 1, minWidth: 0, minHeight: 44, justifyContent: "center" }}>
             {block.items.map(item => <Label key={exerciseKey(item)} bold>{item.exercise?.name ?? "Exercício indisponível"}</Label>)}

@@ -33,7 +33,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.9.0",
+  "version": "4.10.0",
   "authority": "product",
   "audience": [
     "developer",
@@ -91,7 +91,7 @@ O Tá Pago será uma rede social fitness para amigos compartilharem treinos, par
 
 O cadastro público cria somente contas de aluno. Contas de personal existentes exigem autorização por ID na configuração do servidor; a instalação atual mantém apenas a conta do responsável autorizada. Consulte a [política de contas do módulo Personal](docs/03-features/personal-integration.md).
 
-**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. O backend PHP/MySQL atende à hospedagem Single; Express/Prisma/SQLite permanece como implementação anterior e para desenvolvimento local. Ambos implementam autorização por proprietário. Feed, grupos, rankings e desafios continuam planejados.
+**Módulo Personal integrado.** O aplicativo usa a identidade Tá Pago (logo TP, preto, branco e vermelho), contas de personal e aluno, cadastro, programas, avaliações de 33 perguntas, 13 critérios técnicos e histórico. O backend PHP/MySQL atende à hospedagem Single; Express/Prisma/SQLite permanece como implementação anterior e para desenvolvimento local. Ambos implementam autorização por proprietário. Grupos privados e desafios por quantidade de treinos estão implementados com participação voluntária; feed público, rankings globais e outras modalidades permanecem planejados.
 
 O [APK Android 1.1.2](docs/06-operations/android-apk.md) acompanha o site e integra notificações nativas via Firebase: novos cadastros, treinos concluídos e feedbacks. Inclui toque próprio no canal de novidades, sujeito ao volume e modo de som do Android. A ativação solicita a permissão do Android e registra o aparelho na conta do personal; tocar no aviso resolve o destino pelo feed autenticado. A configuração de envio fica no servidor privado, separada do APK e do Web Push do navegador.
 

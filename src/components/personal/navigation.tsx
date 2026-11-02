@@ -15,10 +15,12 @@ export default function PersonalNavigation() {
           ["/exercicios", "Exercícios"],
           ["/treinos-preparados", "Treinos preparados"],
           ["/modelos", "Avaliações"],
+          ["/grupos", "Grupos e desafios"],
         ]
       : [
           ["/", "Meu acompanhamento"],
           ["/treinos", "Treinos"],
+          ["/grupos", "Grupos e desafios"],
         ];
   return (
     <ScrollView

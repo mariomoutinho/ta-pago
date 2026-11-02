@@ -11,6 +11,7 @@ import { PrescriptionForm } from "./prescription-form";
 import { WorkoutExerciseList, type WorkoutChange } from "./workout-exercise-list";
 import { StudentPrescription } from './student-prescription';
 import { useRestTimer } from './rest-timer';
+import { useStudentProgress } from './student-progress';
 
 export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises, addToGroup, student }: {
   student?: { revision: number; editable: boolean; reload: () => Promise<void> };
@@ -22,6 +23,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
   const [optimistic, setOptimistic] = useState<WorkoutData | null>(null);
   const rest = useRestTimer();
   const current = optimistic ?? workout;
+  const progress=useStudentProgress(current,student,rest.cancel);
   const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -45,8 +47,9 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
       {!!current.instructions && <Notice>{current.instructions}</Notice>}
       <Notice error>{error}</Notice><Notice>{success}</Notice>
       {rest.panel}
+      {progress.notice}
       {!current.exercises.length && <Notice>Este treino ainda não possui exercícios. Adicione exercícios pela biblioteca.</Notice>}
-      <View style={editing ? { display: "none" } : undefined}><WorkoutExerciseList items={current.exercises} disabled={busy || hasDirty || !!editing} change={saveExercises ? change : undefined} editItem={saveExercises ? setEditing : undefined} addToGroup={addToGroup} normalActions={(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      <View style={editing ? { display: "none" } : undefined}><WorkoutExerciseList completion={progress.completion} items={current.exercises} disabled={busy || hasDirty || !!editing} change={saveExercises ? change : undefined} editItem={saveExercises ? setEditing : undefined} addToGroup={addToGroup} normalActions={(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {edit && <Button disabled={busy || hasDirty || !!editing} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
         {add && <Button disabled={busy || hasDirty || !!editing} onPress={add}>Adicionar exercício</Button>}
       </View>} details={(item, index) => saveSeries ? <>
@@ -54,8 +57,9 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
         {!!item.notes && <Notice>{item.notes}</Notice>}
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}
         <SeriesEditor item={item} disabled={busy || !!editing} onDirty={value => { const key = exerciseKey(item); if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
-      </> : student ? <StudentPrescription item={item} {...student} startRest={rest.start} /> : <PrescriptionView item={item} />} /></View>
+      </> : student ? <StudentPrescription item={item} {...student} completedSets={progress.counts(item)} progressBusy={progress.busy} startRest={(row,seconds,label)=>void progress.interval(item,row,seconds,label,rest.start)} /> : <PrescriptionView item={item} />} /></View>
       {editing && <Card><PrescriptionForm item={current.exercises.find(item => exerciseKey(item) === editing)!} cancel={() => setEditing(null)} done={async item => { await change(current.exercises.map(previous => exerciseKey(previous) === editing ? item : previous), "edit"); setEditing(null); }} /></Card>}
+      {progress.dialog}
     </View>
   </WorkoutScreen>;
 }

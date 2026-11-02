@@ -54,8 +54,9 @@ trait Workouts {
             $w['exercises']=$this->hydrateItems($this->db->rows('WorkoutExercise','workoutId=? AND deletedAt IS NULL',[$w['id']],'orderIndex ASC'));
             foreach ($w['exercises'] as &$item) {
                 if (($item['studentLoads']['prescription']??null)!==$this->loadPrescription($item)) $item['studentLoads']=null;
+                if (!$this->validProgress($item)) $item['studentProgress']=null;
             } unset($item);
-            $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
+            $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','photo','groupId','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
             $w['completions']=$this->db->rows('WorkoutCompletion','workoutId=?',[$w['id']],'createdAt DESC LIMIT 30');
             return $w;
         },$this->db->rows('Workout','planId=? AND deletedAt IS NULL',[$p['id']],'orderIndex ASC')); return $p;
@@ -86,12 +87,37 @@ trait Workouts {
     }
     private function feedback(string $id,array $body): array {
         $this->pupil(); $data=$this->validation->parse('workoutFeedbackSchema',$body);
+        ensure($data['comment']!==''||$data['photo']!=='','Escreva um comentário ou selecione uma foto');
+        if ($data['photo']!=='') {
+            $bytes=base64_decode(substr($data['photo'],23),true);$image=$bytes===false?false:@getimagesizefromstring($bytes);
+            ensure($image && $image[2]===IMAGETYPE_JPEG && $image[0]*$image[1]<=4000000,'Foto inválida');
+        }
         $w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$id],true);
         $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
         $s=$this->student($p['studentId'],true); ensure($s['linkStatus']==='active','Vínculo encerrado',403);
+        if ($data['groupId']) $this->postingGroup($data['groupId'],$s['personalId']);
         $f=$this->db->one('WorkoutFeedback','workoutId=? AND requestId=?',[$id,$data['requestId']]);
         if(!$f){$f=$this->db->create('WorkoutFeedback',[...$data,'workoutId'=>$id]);$this->deferredNotifications[]=$s['personalId'];}
-        $this->status=201; return array_intersect_key($f,array_flip(['id','comment','createdAt']));
+        $this->status=201; return array_intersect_key($f,array_flip(['id','comment','photo','groupId','createdAt']));
+    }
+    private function progressPrescription(array $item): string {
+        return hash('sha256',json_encode([$item['series'],$item['sets'],$item['exerciseId']],JSON_THROW_ON_ERROR));
+    }
+    private function validProgress(array $item): bool {
+        return ($item['studentProgress']['date']??null)===(new \DateTimeImmutable('now',new \DateTimeZone('America/Sao_Paulo')))->format('Y-m-d') && ($item['studentProgress']['prescription']??null)===$this->progressPrescription($item);
+    }
+    private function studentProgress(string $id,array $body): array {
+        $this->pupil();ensure(!array_diff(array_keys($body),['revision','version','completedSets']),'Campos inválidos');$d=$this->validation->parse('studentProgressSchema',$body);
+        $item=$this->db->required('WorkoutExercise','id=? AND deletedAt IS NULL',[$id],true);
+        $w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$item['workoutId']],true);
+        $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
+        $s=$this->student($p['studentId'],true);ensure($s['linkStatus']==='active','Vínculo encerrado',403);
+        ensure($p['revision']===$d['revision'],'Treino atualizado. Abra novamente.',409);
+        $old=$this->validProgress($item)?$item['studentProgress']:null;ensure(($old['version']??0)===$d['version'],'Progresso atualizado em outra sessão. Reabra o treino.',409);
+        $sets=$item['series']?array_column($item['series'],'sets'):[$item['sets']??1];ensure(count($sets)===count($d['completedSets']),'Quantidade de séries inválida');
+        foreach($sets as $i=>$total)ensure($d['completedSets'][$i]<=$total,'Séries acima da prescrição');
+        $value=['prescription'=>$this->progressPrescription($item),'date'=>(new \DateTimeImmutable('now',new \DateTimeZone('America/Sao_Paulo')))->format('Y-m-d'),'completedSets'=>$d['completedSets'],'version'=>$d['version']+1];
+        $this->db->update('WorkoutExercise',$id,['studentProgress'=>$value]);return $value;
     }
     private function completeWorkout(string $id): array {
         $this->pupil();$w=$this->db->required('Workout','id=? AND deletedAt IS NULL',[$id],true);

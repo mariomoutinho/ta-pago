@@ -1479,6 +1479,12 @@
         "id": false,
         "updatedAt": false
       },
+      "studentProgress": {
+        "type": "Json",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
       "sets": {
         "type": "Int",
         "nullable": true,
@@ -1611,6 +1617,19 @@
         "id": false,
         "updatedAt": false
       },
+      "photo": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "groupId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
       "createdAt": {
         "type": "DateTime",
         "nullable": false,
@@ -1625,6 +1644,12 @@
         "target": "Workout",
         "reference": "id",
         "onDelete": "Cascade"
+      },
+      {
+        "field": "groupId",
+        "target": "FitnessGroup",
+        "reference": "id",
+        "onDelete": "SetNull"
       }
     ],
     "unique": [
@@ -1639,6 +1664,172 @@
         "createdAt"
       ]
     ]
+  },
+  "FitnessGroup": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "description": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
+      "inviteCode": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Restrict"
+      }
+    ],
+    "unique": [
+      [
+        "inviteCode"
+      ]
+    ],
+    "indexes": []
+  },
+  "FitnessGroupMember": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "groupId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "accountId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "joinedAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "groupId",
+        "target": "FitnessGroup",
+        "reference": "id",
+        "onDelete": "Cascade"
+      },
+      {
+        "field": "accountId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "groupId",
+        "accountId"
+      ]
+    ],
+    "indexes": []
+  },
+  "FitnessChallenge": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "groupId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "title": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "startsAt": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "endsAt": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "goal": {
+        "type": "Int",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "groupId",
+        "target": "FitnessGroup",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [],
+    "indexes": []
   },
   "WorkoutCompletion": {
     "fields": {

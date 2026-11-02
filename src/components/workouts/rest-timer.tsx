@@ -27,7 +27,7 @@ export function useRestTimer() {
     return () => clearInterval(interval);
   }, [timer]);
   useEffect(() => () => { sound.current?.close(); }, []);
-  return { start, panel: timer && <Card>
+  return { start, cancel, panel: timer && <Card>
     <View style={{ gap: 8 }}>
       <Label bold>{remaining ? 'Intervalo em andamento' : 'Intervalo concluído! Hora de continuar.'}</Label>
       <Label>{timer.label}</Label>

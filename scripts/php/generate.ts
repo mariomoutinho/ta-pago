@@ -4,12 +4,13 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { z } from 'zod';
 import * as validation from '../../shared/validation';
 import * as workouts from '../../shared/workouts';
+import * as groups from '../../shared/groups';
 import { programRoutineSchema } from '../../shared/programs';
 import { enrollmentSchema, policyVersion } from '../../shared/enrollment';
 import { initialQuestions, technicalCriteria } from '../../shared/questionnaire';
 
 mkdirSync('backend-php/generated', { recursive: true });
-const schemas = { ...validation, ...workouts, programRoutineSchema, enrollmentSchema };
+const schemas = { ...validation, ...workouts, ...groups, programRoutineSchema, enrollmentSchema };
 const contracts = Object.fromEntries(Object.entries(schemas).filter(([name, value]) => name.endsWith('Schema') && value instanceof z.ZodType)
   .map(([name, value]) => [name, z.toJSONSchema(value as z.ZodType, { io: 'input', unrepresentable: 'any', override: ({ zodSchema, jsonSchema }) => {
     const def = (zodSchema as any)._zod.def;

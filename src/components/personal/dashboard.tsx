@@ -213,6 +213,7 @@ export function PersonalDashboard() {
                 icon="≡"
                 onPress={() => go("/treinos-preparados")}
               />
+              <Shortcut title="Grupos e desafios" caption="Convide e acompanhe seus alunos" icon="⚑" onPress={()=>go('/grupos')} />
               <Shortcut
                 title="Modelos de avaliação"
                 caption="Questionários e versões"

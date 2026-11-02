@@ -246,6 +246,7 @@ CREATE TABLE `WorkoutExercise` (
   `groupId` LONGTEXT NULL,
   `series` JSON NOT NULL,
   `studentLoads` JSON NULL,
+  `studentProgress` JSON NULL,
   `sets` INT NULL,
   `repetitions` LONGTEXT NOT NULL,
   `load` DOUBLE NULL,
@@ -266,9 +267,39 @@ CREATE TABLE `WorkoutFeedback` (
   `workoutId` VARCHAR(191) NOT NULL,
   `requestId` VARCHAR(191) NOT NULL,
   `comment` LONGTEXT NOT NULL,
+  `photo` LONGTEXT NOT NULL,
+  `groupId` VARCHAR(191) NULL,
   `createdAt` VARCHAR(24) NOT NULL,
   UNIQUE KEY `uq_WorkoutFeedback_0` (`workoutId`,`requestId`),
   KEY `ix_WorkoutFeedback_0` (`workoutId`,`createdAt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `FitnessGroup` (
+  `id` VARCHAR(191) NOT NULL PRIMARY KEY,
+  `ownerId` VARCHAR(191) NOT NULL,
+  `name` LONGTEXT NOT NULL,
+  `description` LONGTEXT NOT NULL,
+  `inviteCode` VARCHAR(191) NOT NULL,
+  `createdAt` VARCHAR(24) NOT NULL,
+  UNIQUE KEY `uq_FitnessGroup_0` (`inviteCode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `FitnessGroupMember` (
+  `id` VARCHAR(191) NOT NULL PRIMARY KEY,
+  `groupId` VARCHAR(191) NOT NULL,
+  `accountId` VARCHAR(191) NOT NULL,
+  `joinedAt` VARCHAR(24) NOT NULL,
+  UNIQUE KEY `uq_FitnessGroupMember_0` (`groupId`,`accountId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `FitnessChallenge` (
+  `id` VARCHAR(191) NOT NULL PRIMARY KEY,
+  `groupId` VARCHAR(191) NOT NULL,
+  `title` LONGTEXT NOT NULL,
+  `startsAt` LONGTEXT NOT NULL,
+  `endsAt` LONGTEXT NOT NULL,
+  `goal` INT NOT NULL,
+  `createdAt` VARCHAR(24) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `WorkoutCompletion` (
@@ -360,6 +391,16 @@ ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_exerciseId` FOR
 ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_alternativeExerciseId` FOREIGN KEY (`alternativeExerciseId`) REFERENCES `Exercise` (`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `WorkoutFeedback` ADD CONSTRAINT `fk_WorkoutFeedback_workoutId` FOREIGN KEY (`workoutId`) REFERENCES `Workout` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `WorkoutFeedback` ADD CONSTRAINT `fk_WorkoutFeedback_groupId` FOREIGN KEY (`groupId`) REFERENCES `FitnessGroup` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `FitnessGroup` ADD CONSTRAINT `fk_FitnessGroup_ownerId` FOREIGN KEY (`ownerId`) REFERENCES `User` (`id`) ON DELETE RESTRICT;
+
+ALTER TABLE `FitnessGroupMember` ADD CONSTRAINT `fk_FitnessGroupMember_groupId` FOREIGN KEY (`groupId`) REFERENCES `FitnessGroup` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `FitnessGroupMember` ADD CONSTRAINT `fk_FitnessGroupMember_accountId` FOREIGN KEY (`accountId`) REFERENCES `User` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `FitnessChallenge` ADD CONSTRAINT `fk_FitnessChallenge_groupId` FOREIGN KEY (`groupId`) REFERENCES `FitnessGroup` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `WorkoutCompletion` ADD CONSTRAINT `fk_WorkoutCompletion_workoutId` FOREIGN KEY (`workoutId`) REFERENCES `Workout` (`id`) ON DELETE CASCADE;
 

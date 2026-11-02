@@ -27,6 +27,7 @@ import { hashPassword, newToken, sessionKey, verifyPassword } from "./security";
 import { workoutTemplateRoutes } from "./workout-templates";
 import { planInclude, workoutRoutes } from "./workouts";
 import { exerciseMediaRoutes } from "./exercise-media";
+import { groupRoutes } from './groups';
 import { notificationRoutes, dispatchPush } from "./push";
 import {androidNotificationRoutes,dispatchAndroidPush} from './android-push';
 import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../shared/password';
@@ -218,6 +219,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   app.use('/api/notifications/android',androidNotificationRoutes());
   app.use("/api", exerciseMediaRoutes(db));
   app.use("/api", workoutRoutes(db,notify));
+  app.use('/api',groupRoutes(db));
   app.use("/api/workout-templates", workoutTemplateRoutes(db));
 
   app.post("/api/auth/logout", async (req, res) => {

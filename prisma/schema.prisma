@@ -20,6 +20,8 @@ model User {
   sessions Session[]
   enrollmentLink EnrollmentLink?
   enrollmentRequests EnrollmentRequest[]
+  fitnessGroups FitnessGroup[]
+  fitnessMemberships FitnessGroupMember[]
 }
 model Session {
   id String @id
@@ -288,6 +290,7 @@ model WorkoutExercise {
   groupId String?
   series Json @default("[]")
   studentLoads Json?
+  studentProgress Json?
   sets Int?
   repetitions String @default("")
   load Float?
@@ -309,9 +312,44 @@ model WorkoutFeedback {
   workout Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   requestId String
   comment String
+  photo String @default("")
+  groupId String?
+  group FitnessGroup? @relation(fields:[groupId], references:[id], onDelete:SetNull)
   createdAt DateTime @default(now())
   @@unique([workoutId, requestId])
   @@index([workoutId, createdAt])
+}
+
+model FitnessGroup {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields:[ownerId], references:[id], onDelete:Restrict)
+  name String
+  description String @default("")
+  inviteCode String @unique
+  members FitnessGroupMember[]
+  challenges FitnessChallenge[]
+  posts WorkoutFeedback[]
+  createdAt DateTime @default(now())
+}
+model FitnessGroupMember {
+  id String @id @default(cuid())
+  groupId String
+  group FitnessGroup @relation(fields:[groupId], references:[id], onDelete:Cascade)
+  accountId String
+  account User @relation(fields:[accountId], references:[id], onDelete:Cascade)
+  joinedAt DateTime @default(now())
+  @@unique([groupId,accountId])
+}
+model FitnessChallenge {
+  id String @id @default(cuid())
+  groupId String
+  group FitnessGroup @relation(fields:[groupId], references:[id], onDelete:Cascade)
+  title String
+  startsAt String
+  endsAt String
+  goal Int
+  createdAt DateTime @default(now())
 }
 
 model WorkoutCompletion {

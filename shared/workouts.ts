@@ -145,6 +145,7 @@ export type ExerciseData = z.infer<typeof exerciseSchema>;
 export type Exercise = ExerciseData & { id: string; favorite?: boolean };
 export type Prescription = z.infer<typeof prescriptionSchema> & {
   studentLoads?: { prescription: string; loads: (number | null)[] } | null;
+  studentProgress?: { prescription: string; date: string; completedSets: number[]; version: number } | null;
   exercise?: Exercise;
   alternativeExercise?: Exercise | null;
 };
@@ -165,11 +166,19 @@ export type Plan = PlanData & {
 
 export const workoutFeedbackSchema = z.object({
   requestId: z.string().trim().min(8).max(100),
-  comment: z.string().trim().min(1, "Escreva seu feedback").max(2000, "Use até 2000 caracteres"),
-});
-export type WorkoutFeedback = { id: string; comment: string; createdAt: string };
+  comment: z.string().trim().max(2000, "Use até 2000 caracteres").default(''),
+  photo: z.union([z.literal(''),z.string().max(350000).regex(/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/)]).default(''),
+  groupId: z.string().min(1).max(191).nullable().default(null),
+}).refine(d=>!!d.comment||!!d.photo,'Escreva um comentário ou selecione uma foto');
+export type WorkoutFeedback = { id: string; comment: string; photo?: string; groupId?: string | null; createdAt: string };
 
 export const studentLoadsSchema = z.object({
   revision: z.number().int().positive(),
   loads: z.array(z.number().finite().min(0).max(1000000).nullable()).min(1).max(50),
+}).strict();
+
+export const studentProgressSchema = z.object({
+  revision: z.number().int().positive(),
+  version: z.number().int().min(0),
+  completedSets: z.array(z.number().int().min(0).max(100)).min(1).max(50),
 }).strict();

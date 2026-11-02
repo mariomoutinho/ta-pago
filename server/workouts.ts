@@ -3,7 +3,10 @@ import { validateVideoOwner } from "./exercise-media";
 import { validExerciseGroups } from "../shared/workout-groups";
 import { Router } from "express";
 import { createHash } from "node:crypto";
-import { studentLoadsSchema } from "../shared/workouts";
+import { studentLoadsSchema, studentProgressSchema } from "../shared/workouts";
+import { prescribedSets } from '../shared/workout-progress';
+import { validateGroupPost } from './groups';
+import { validWorkoutJpeg } from '../shared/workout-photo';
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
@@ -14,7 +17,7 @@ export const planInclude = {
     where: { deletedAt: null },
     orderBy: { orderIndex: "asc" as const },
     include: {
-      feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, createdAt: true } },
+      feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, photo:true,groupId:true,createdAt: true } },
       completions: { orderBy: { createdAt: "desc" as const }, take: 30 },
       exercises: {
         where: { deletedAt: null },
@@ -27,6 +30,23 @@ export const planInclude = {
 export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>) {
   const router = Router();
   const loadPrescription = (item: { series: unknown; load: number | null }) => createHash('sha256').update(JSON.stringify([item.series,item.load])).digest('hex');
+  const progressPrescription=(item:{series:unknown;sets:number|null;exerciseId:string})=>createHash('sha256').update(JSON.stringify([item.series,item.sets,item.exerciseId])).digest('hex');
+  router.put('/me/workout-exercises/:id/progress',async(req,res)=>{
+    if(res.locals.user.role!=='student')throw new HttpError(403,'Acesso do aluno');
+    const data=studentProgressSchema.parse(req.body);
+    res.json(await db.$transaction(async tx=>{
+      const item=await tx.workoutExercise.findFirst({where:{id:String(req.params.id),deletedAt:null,workout:{deletedAt:null,plan:{status:'ativo',publishedAt:{not:null},student:{accountId:res.locals.user.id,linkStatus:'active'}}}},include:{workout:{include:{plan:true}}}});
+      if(!item)throw new HttpError(404,'Prescrição não encontrada');
+      if(item.workout.plan.revision!==data.revision)throw new HttpError(409,'Treino atualizado. Abra novamente.');
+      const prescription=progressPrescription(item),date=brazilToday();const stored=item.studentProgress as {date?:string;prescription?:string;version?:number}|null;
+      const old=stored?.date===date&&stored.prescription===prescription?stored:null;
+      if((old?.version??0)!==data.version)throw new HttpError(409,'Progresso atualizado em outra sessão. Reabra o treino.');
+      const sets=prescribedSets(item as any);
+      if(sets.length!==data.completedSets.length||sets.some((total,i)=>data.completedSets[i]>total))throw new HttpError(400,'Quantidade de séries inválida');
+      const value={prescription,date,completedSets:data.completedSets,version:data.version+1};
+      await tx.workoutExercise.update({where:{id:item.id},data:{studentProgress:value}});return value;
+    }));
+  });
   router.put('/me/workout-exercises/:id/loads', async (req,res) => {
     if(res.locals.user.role!=='student')throw new HttpError(403,'Acesso do aluno');
     const data=studentLoadsSchema.parse(req.body);
@@ -59,6 +79,8 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
     for(const plan of plans)for(const workout of plan.workouts)for(const item of workout.exercises){
       const saved=item.studentLoads as {prescription?:string}|null;
       if(saved?.prescription!==loadPrescription(item))item.studentLoads=null;
+      const progress=item.studentProgress as {date?:string;prescription?:string}|null;
+      if(progress?.date!==brazilToday()||progress?.prescription!==progressPrescription(item))item.studentProgress=null;
     }
     res.json(plans);
   });
@@ -66,6 +88,7 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
     if (res.locals.user.role !== "student")
       throw new HttpError(403, "Somente o aluno pode enviar feedback");
     const data = workoutFeedbackSchema.parse(req.body);
+    if(data.photo&&!validWorkoutJpeg(Buffer.from(data.photo.slice(23),'base64')))throw new HttpError(400,'Foto inválida');
     const result = await db.$transaction(async (tx) => {
       const workout = await tx.workout.findFirst({
         where: {
@@ -78,11 +101,12 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
         select:{id:true,plan:{select:{student:{select:{personalId:true}}}}},
       });
       if (!workout) throw new HttpError(404, "Treino indisponível para feedback");
+      if(data.groupId)await validateGroupPost(tx,data.groupId,res.locals.user.id,workout.plan.student.personalId);
       const existing=await tx.workoutFeedback.findUnique({where:{workoutId_requestId:{workoutId:workout.id,requestId:data.requestId}}});
       const feedback=await tx.workoutFeedback.upsert({
         where: { workoutId_requestId: { workoutId: workout.id, requestId: data.requestId } },
         create: { workoutId: workout.id, ...data }, update: {},
-        select: { id: true, comment: true, createdAt: true },
+        select: { id: true, comment: true, photo:true,groupId:true,createdAt: true },
       });
       return {feedback,owner:workout.plan.student.personalId,created:!existing};
     });

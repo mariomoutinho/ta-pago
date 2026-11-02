@@ -59,6 +59,7 @@ function StudentHome() {
               : "Conecte-se ao seu professor para receber seus treinos. Rotinas já publicadas continuam no seu histórico."}</Label>
           )}
           <Button onPress={() => router.push("/treinos" as Href)}>Ver meus treinos</Button>
+          <Button variant="secondary" onPress={()=>router.push('/grupos' as Href)}>Grupos e desafios</Button>
         </View>
       </Card>
       {data?.map(x => (

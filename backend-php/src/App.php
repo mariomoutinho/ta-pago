@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace TaPago;
 
 final class App {
-    use Auth, Students, Evaluations, Workouts, Enrollment, Media;
+    use Auth, Students, Evaluations, Workouts, Enrollment, Media, Groups;
     public int $status=200;
     public ?array $user=null;
     public array $deferredNotifications=[];
@@ -50,6 +50,8 @@ final class App {
             $this->pupil(); return array_map(function($s) { return array_merge(array_intersect_key($s,array_flip(['id','name','mainGoal','linkStatus','startDate'])),['personal'=>$this->teacher($s['personalId'])]); },$this->db->rows('Student','accountId=?',[$this->user['id']]));
         }
         if ($path==='/me/workout-plans' && $method==='GET') return $this->myPlans();
+        if (preg_match('~^/me/workout-exercises/([^/]+)/progress$~D',$path,$m) && $method==='PUT') return $this->studentProgress($m[1],$body);
+        if (str_starts_with($path,'/fitness-groups')) return $this->groupRoute($method,$path,$body);
         if (preg_match('~^/me/workout-exercises/([^/]+)/loads$~D',$path,$m) && $method==='PUT') return $this->studentLoads($m[1],$body);
         if (preg_match('~^/me/workouts/([^/]+)/feedbacks$~D',$path,$m) && $method==='POST') return $this->feedback($m[1],$body);
         if (preg_match('~^/me/workouts/([^/]+)/completion$~D',$path,$m) && $method==='POST') return $this->completeWorkout($m[1]);

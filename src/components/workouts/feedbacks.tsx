@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Pressable } from "react-native";
+import { Image, View, Pressable } from "react-native";
 import { api, message } from "@/features/personal/api";
 import { Button, Card, Field, Label, Notice } from "@/components/personal/ui";
 import { WorkoutScreen } from "./workout-screen";
@@ -50,6 +50,7 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
         {feedbacks.map(feedback => <Card key={feedback.id}>
           <Label size={12} muted>{new Date(feedback.createdAt).toLocaleString("pt-BR")}</Label>
           <Label>{feedback.comment}</Label>
+          {!!feedback.photo&&<Image source={{uri:feedback.photo}} accessibilityLabel="Foto do treino" style={{width:'100%',height:240}} resizeMode="contain"/>}
         </Card>)}
       </View>
     </WorkoutScreen>;

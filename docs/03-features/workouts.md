@@ -11,6 +11,12 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/student-progress.tsx",
+    "src/components/workouts/completion-dialog.tsx",
+    "shared/workout-progress.ts",
+    "shared/workout-photo.ts",
+    "src/features/personal/workout-photo.web.ts",
+    "backend-php/tests/training-groups-migration.php",
     "src/components/workouts/student-prescription.tsx",
     "src/components/workouts/rest-timer.tsx",
     "src/features/personal/rest-sound.web.ts",
@@ -84,7 +90,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.7.0",
+  "version": "12.8.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -106,15 +112,25 @@
 
 ## Cargas do aluno e intervalo
 
-O aluno com vínculo ativo pode usar **Editar cargas** nos exercícios de uma rotina ativa publicada. Há uma carga por linha de séries, inclusive em exercícios sem carga originalmente preenchida; prescrições antigas sem linhas usam uma carga geral. Aceita zero e decimais com vírgula ou ponto. Um campo vazio volta à carga prescrita. Os valores persistem no servidor em `WorkoutExercise.studentLoads`, separados de `load` e `series`, sem alterar séries, repetições ou prescrições do personal.
+O aluno com vínculo ativo edita a carga diretamente no campo do exercício; sair do campo salva automaticamente. Não há botão ou diálogo para editar/salvar carga. As gravações são serializadas, preservam a entrada durante o envio e mostram falha sem perder o texto para nova tentativa. Há uma carga por linha de séries, inclusive em exercícios sem carga originalmente preenchida; prescrições antigas sem linhas usam uma carga geral. Aceita zero e decimais com vírgula ou ponto. Um campo vazio volta à carga prescrita. Os valores persistem no servidor em `WorkoutExercise.studentLoads`, separados de `load` e `series`, sem alterar séries, repetições ou prescrições do personal.
 
 `PUT /me/workout-exercises/:id/loads` valida a conta vinculada, vínculo ativo, publicação, exclusão lógica e revisão do plano; aceita somente revisão e lista de cargas não negativas. A leitura descarta ajustes cuja assinatura da prescrição não corresponde mais à série/carga atualizada pelo professor. Planos arquivados ou vínculos encerrados permanecem somente para consulta. Aplicar a migração incremental `20261102_student_loads.sql` antes de atualizar os modelos e o runtime PHP; não executar o esquema completo na base existente.
 
-Na consulta do aluno, intervalos maiores que zero são botões. O toque inicia uma contagem regressiva compartilhada na tela do treino, pelo prazo real do relógio, e substitui um intervalo anterior. Ao zerar, apresenta **Intervalo concluído**, tenta emitir três sinais sonoros via Web Audio e vibra em dispositivos compatíveis. Cancelar ou sair da tela do treino encerra o cronômetro. Recolher exercícios não interrompe a contagem. O som é preparado no toque para respeitar as políticas de reprodução do navegador. O APK atual usa a mesma implementação web.
+Na consulta do aluno, intervalos maiores que zero são botões. Cada toque aceito registra uma série realizada e inicia uma contagem regressiva compartilhada na tela do treino, pelo prazo real do relógio, e substitui um intervalo anterior. Ao zerar, apresenta **Intervalo concluído**, tenta emitir três sinais sonoros via Web Audio e vibra em dispositivos compatíveis. Cancelar ou sair da tela do treino encerra o cronômetro. Recolher exercícios não interrompe a contagem. O som é preparado no toque para respeitar as políticas de reprodução do navegador. O APK atual usa a mesma implementação web.
 
 O treino precisa permanecer aberto; o aplicativo não agenda alarme nativo com a tela bloqueada ou o processo suspenso. Ao retomar uma aba suspensa, o relógio recalcula o tempo pelo prazo, sem acumular atraso por ticks. Som e vibração dependem do volume, permissões e capacidades do dispositivo. O fallback React Native oferece alerta visual e vibração; o sinal sonoro está implementado na web e na WebView do APK.
 
 A validação automatizada cobre autorização e persistência nos dois backends, preservação da prescrição, migração sobre dados sintéticos, recarga em sessão separada, contagem regressiva, solicitação do sinal sonoro e cancelamento. A audibilidade e vibração em aparelhos reais exigem conferência no dispositivo.
+
+## Séries, check e registro ao concluir
+
+Na visão do aluno, séries restantes e repetições aparecem separadas. O check fica no cabeçalho de cada exercício, inclusive em grupos combinados. Cada toque no intervalo desconta uma série; chegar a zero em todas as linhas marca o exercício. O check manual conclui todas as linhas ou desmarca, restaurando as séries restantes. Cancelar o cronômetro não desfaz a série já registrada.
+
+O progresso diário persiste em WorkoutExercise.studentProgress, separado da prescrição e das cargas. PUT /me/workout-exercises/:id/progress exige vínculo ativo, plano publicado ativo, revisão do plano e versão do progresso; não aceita quantidades superiores à prescrição nem valores negativos. Alterações concorrentes retornam conflito; recarregar traz o estado salvo. A data é a de São Paulo; um novo dia inicia outra contagem. Mudança na prescrição invalida o progresso associado.
+
+Quando todos os exercícios terminam, a tela registra a conclusão existente (idempotente por treino/dia), avisa o personal e pergunta **Deseja postar uma foto ou fazer um comentário?**. Falha ao registrar permite tentar novamente sem perder os checks. Foto/comentário é opcional e exige confirmação de envio. Desmarcar séries não apaga uma conclusão histórica já registrada.
+
+O destino inicial é privado entre aluno e personal. O aluno pode selecionar um grupo que aceitou participar; ver [grupos](groups.md). A web/APK aceita JPEG, PNG e WebP de até 15 MB na seleção e reduz para JPEG de até 350.000 caracteres em data URL, com dimensão máxima de 1280 px. A conversão pelo canvas remove metadados do arquivo original. O servidor valida formato JPEG e dimensão, e armazena a imagem no banco privado junto ao feedback. O fallback Expo nativo aceita JPEG de até cerca de 250 KB, sem redução. Fotos não recebem URL pública.
 
 ## Salvar e liberar para o aluno
 

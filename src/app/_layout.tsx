@@ -13,7 +13,7 @@ void SplashScreen.preventAutoHideAsync().catch(() => {});
 function Navigation() {
   const { user, loading, error, refresh } = useSession();
   const pathname=usePathname();
-  const publicForm = pathname.startsWith("/cadastro/") || pathname==='/ativar' || pathname==='/notificacao';
+  const publicForm = pathname.startsWith("/cadastro/") || pathname.startsWith('/grupo/') || pathname==='/ativar' || pathname==='/notificacao';
   useEffect(() => {
     if (!loading || publicForm) void SplashScreen.hideAsync();
   }, [loading, publicForm]);
@@ -42,6 +42,7 @@ function Navigation() {
         <Stack.Protected guard={!!user}>
           <Stack.Screen name="index" />
           <Stack.Screen name="explore" />
+          <Stack.Screen name="grupos" />
         </Stack.Protected>
         <Stack.Protected guard={user?.role === "personal"}>
           <Stack.Screen name="alunos/index" />
@@ -61,6 +62,7 @@ function Navigation() {
         <Stack.Screen name="cadastro/[token]" />
         <Stack.Screen name="ativar" />
         <Stack.Screen name="notificacao" />
+        <Stack.Screen name="grupo/[code]" />
       </Stack>
     </PersonalShell>
   );
