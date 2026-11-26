@@ -25,7 +25,7 @@ export const studentSchema = z
     sex: optionalText,
     startDate: dateSchema,
     status: z.enum(["ativo", "pausado", "inativo"]).default("ativo"),
-    mainGoal: text.min(3, "Informe o objetivo"),
+    mainGoal: optionalText,
     secondaryGoals: optionalText,
     experience: optionalText,
     weeklyFrequency: z.coerce.number().int().min(1).max(14).default(3),

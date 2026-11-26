@@ -13,7 +13,7 @@ export const studentGroups = [
   {
     title: "Acompanhamento",
     fields: [
-      ["mainGoal", "Objetivo principal *", "text"],
+      ["mainGoal", "Objetivo principal", "text"],
       ["secondaryGoals", "Objetivos secundários", "textarea"],
       ["experience", "Experiência anterior com musculação", "textarea"],
       ["weeklyFrequency", "Frequência semanal planejada *", "number"],

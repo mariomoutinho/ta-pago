@@ -112,10 +112,11 @@ export function StudentForm({
   return (
     <>
       <Notice>
-        Informações de saúde são opcionais e ficam restritas ao acompanhamento.
-        Datas no formato DD/MM/AAAA.
+        {student
+          ? "Informações de saúde são opcionais e ficam restritas ao acompanhamento. Datas no formato DD/MM/AAAA."
+          : "Preencha os dados pessoais. Datas no formato DD/MM/AAAA."}
       </Notice>
-      {studentGroups.map((g) => (
+      {(student ? studentGroups : studentGroups.slice(0, 1)).map((g) => (
         <Section title={g.title} key={g.title}>
           <Fields
             fields={g.fields.map(([key, label, type]) => ({

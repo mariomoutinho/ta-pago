@@ -4,7 +4,7 @@
   "title": "Acompanhamento de alunos",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-16",
+  "updated_at": "2026-11-26",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -12,12 +12,15 @@
   "indexable": true,
   "sources": [
     "src/components/personal/profile.tsx",
-    "server/app.ts"
+    "server/app.ts",
+    "src/components/personal/forms.tsx",
+    "src/features/personal/student-fields.ts",
+    "shared/validation.ts"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -42,6 +45,8 @@
 Implementação parcial no [módulo Personal](personal-integration.md): cadastro, vínculos, programas em texto, avaliações e registros manuais. Prescrição estruturada com vídeos, GPS e recursos sociais descritos abaixo permanecem planejados. Referência: RF-08 nos [requisitos funcionais](../01-requirements/functional-requirements.md).
 
 ## Objetivo
+
+O cadastro manual inicial apresenta somente a seção Dados pessoais, além de status e programa vigente. As seções Acompanhamento e Saúde e segurança ficam disponíveis na edição do aluno. O objetivo principal é opcional na validação compartilhada e no contrato PHP, permitindo salvar o cadastro inicial sem esses campos. Os dados existentes são preservados na edição.
 
 Permitir ao professor cadastrar alunos e acompanhar treinos concluídos, corridas, desafios e evolução.
 

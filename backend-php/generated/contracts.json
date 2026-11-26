@@ -361,8 +361,8 @@
         ]
       },
       "mainGoal": {
+        "default": "",
         "type": "string",
-        "minLength": 3,
         "maxLength": 10000
       },
       "secondaryGoals": {
@@ -456,8 +456,7 @@
     },
     "required": [
       "name",
-      "startDate",
-      "mainGoal"
+      "startDate"
     ]
   },
   "technicalSchema": {
