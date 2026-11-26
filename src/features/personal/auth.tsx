@@ -15,7 +15,7 @@ type Auth = {
   loading: boolean;
   error: string;
   refresh: () => Promise<void>;
-  authenticate: (action: "login" | "register", data: unknown) => Promise<void>;
+  authenticate: (action: "login" | "register", data: unknown, onAuthenticated?: () => Promise<void>) => Promise<void>;
   logout: () => Promise<void>;
 };
 const Context = createContext<Auth | null>(null);
@@ -37,13 +37,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void refresh();
   }, [refresh]);
-  async function authenticate(action: "login" | "register", data: unknown) {
+  async function authenticate(action: "login" | "register", data: unknown, onAuthenticated?: () => Promise<void>) {
     const result = await api<{ user: User; token?: string }>(
       `/auth/${action}`,
       "POST",
       data,
     );
     if (result.token) await saveSession(result.token);
+    // Preferências de preenchimento não impedem um acesso já validado pela API.
+    await onAuthenticated?.().catch(() => {});
     setUser(result.user);
     setError("");
   }

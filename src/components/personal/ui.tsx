@@ -143,14 +143,14 @@ export function Button({
     </Pressable>
   );
 }
-export function Field({ label, ...props }: TextInputProps & { label: string }) {
+export function Field({ label, trailingAction, ...props }: TextInputProps & { label: string; trailingAction?: ReactNode }) {
   const t = useTheme();
   return (
     <View style={{ gap: 7, marginBottom: 14, flexGrow: 1 }}>
       <Label size={12} muted>
         {label}
       </Label>
-      <TextInput
+      <View style={{ position: "relative" }}><TextInput
         accessibilityLabel={label}
         placeholderTextColor={t.textSecondary}
         {...props}
@@ -162,9 +162,12 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
             borderColor: t.border,
           },
           props.multiline && { minHeight: 88, textAlignVertical: "top" },
+          !!trailingAction && { paddingRight: 56 },
           props.style,
         ]}
       />
+      {!!trailingAction && <View style={{ position: "absolute", right: 4, top: 0, bottom: 0, justifyContent: "center" }}>{trailingAction}</View>}
+      </View>
     </View>
   );
 }

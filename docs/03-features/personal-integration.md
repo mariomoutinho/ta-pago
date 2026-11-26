@@ -4,13 +4,18 @@
   "title": "Módulo Personal integrado",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-02",
+  "updated_at": "2026-11-26",
   "language": "pt-BR",
   "tags": [
     "03-features"
   ],
   "indexable": true,
   "sources": [
+    "src/components/personal/password-field.tsx",
+    "src/components/personal/login-form.web.tsx",
+    "src/features/personal/remembered-login.ts",
+    "src/features/personal/remembered-login.native.ts",
+    "tests/personal/remembered-login.test.ts",
     "shared/password.ts",
     "tests/personal/password-policy.test.ts",
     "src/app/notificacao.tsx",
@@ -61,7 +66,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.13.0",
+  "version": "4.14.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -193,3 +198,13 @@ Valida??o: tr?s testes do worker cobrem abertura com app fechado, retorno a jane
 ## Confirma??o de recebimento no aparelho
 
 Ap?s solicitar showNotification, o worker tenta POST /notifications/receipt na mesma origem, com sess?o, inscri??o atual e booleano de sucesso da apresenta??o. A chamada tem timeout de tr?s segundos e falhas n?o impedem a notifica??o. O endpoint exige personal propriet?rio da inscri??o e grava lastReceivedAt e lastDisplaySucceeded no arquivo privado existente, sob a mesma trava. O despachante grava lastAcceptedAt ao obter aceite do provedor. Sem sess?o v?lida, a confirma??o pode faltar mesmo quando o aviso foi apresentado. Sucesso da API de apresenta??o n?o comprova que o usu?rio viu popup, ouviu som ou leu o aviso; as configura??es do Android continuam determinantes. Nenhum nome ou dado de sa?de ? inclu?do na confirma??o.
+
+## Acessos lembrados e visibilidade da senha
+
+A tela de login oferece Lembrar e-mail e senha, desmarcado por padrão. Após autenticação bem-sucedida, os últimos cinco e-mails autorizados pelo usuário ficam disponíveis para seleção, sem duplicar o mesmo e-mail. Esquecer e-mail remove a entrada dessa lista. Selecionar uma conta não faz login automático nem muda o perfil; as credenciais continuam sendo validadas pela API existente.
+
+Na web, o aplicativo grava somente e-mails em localStorage e solicita o salvamento da senha ao gerenciador do navegador por PasswordCredential/Credential Management quando disponível. O gerenciador controla confirmação, disponibilidade e preenchimento. Navegadores sem essa API continuam com os campos de autocomplete e formulário semântico; nenhuma senha é gravada pelo app em localStorage. Esquecer o e-mail no app não apaga senhas do gerenciador do navegador. A lista começa com os acessos lembrados a partir desta funcionalidade, sem enumerar históricos privados anteriores do navegador.
+
+No aplicativo nativo, a lista e as credenciais optadas são armazenadas com expo-secure-store, usando proteção vinculada ao dispositivo para a senha. Excluir uma entrada ou exceder cinco contas remove sua credencial nativa correspondente. Falhas de armazenamento não invalidam um login que a API já aprovou. Não houve alteração da expiração de sessões, dos cookies ou das permissões de professor/aluno.
+
+PasswordField reutiliza Field e os ícones Lucide com as cores do tema. O botão de olho fica dentro do campo, à direita, com alvo de toque de 44 px, rótulo Mostrar/Ocultar e estado acessível. A senha começa oculta, o valor é preservado ao alternar e o controle também aparece no cadastro de conta e na ativação de aluno.

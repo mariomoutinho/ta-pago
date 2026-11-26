@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {router,useLocalSearchParams} from 'expo-router';
 import {Brand,Page} from '@/components/personal/shell';
 import {Button,Card,Field,Label,Notice} from '@/components/personal/ui';
+import {PasswordField} from '@/components/personal/password-field';
 import {api,message} from '@/features/personal/api';
 import {useSession} from '@/features/personal/auth';
 import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../../shared/password';
@@ -27,8 +28,8 @@ export default function ActivateStudent(){
     <Label size={24} bold>Seu acesso ao Tá Pago</Label><Notice error>{error}</Notice>
     {info&&<><Label>Olá, {info.name}! Seu cadastro foi aprovado.</Label><Field label="E-mail de acesso" value={info.email} editable={false}/>
       <Label>{info.existingAccount?'Entre com a senha da sua conta para conectar seu acompanhamento.':'Defina sua senha para acessar seus treinos e seu acompanhamento.'}</Label>
-      <Field label={info.existingAccount?'Sua senha':'Crie sua senha'} value={password} onChangeText={setPassword} secureTextEntry autoComplete={info.existingAccount?'current-password':'new-password'}/>
-      {!info.existingAccount&&<><Label size={12} muted>Mínimo de 6 caracteres. Pode usar letras, números ou símbolos.</Label><Field label="Confirme sua senha" value={confirmation} onChangeText={setConfirmation} secureTextEntry autoComplete="new-password"/></>}
+      <PasswordField label={info.existingAccount?'Sua senha':'Crie sua senha'} value={password} onChangeText={setPassword} autoComplete={info.existingAccount?'current-password':'new-password'}/>
+      {!info.existingAccount&&<><Label size={12} muted>Mínimo de 6 caracteres. Pode usar letras, números ou símbolos.</Label><PasswordField label="Confirme sua senha" value={confirmation} onChangeText={setConfirmation} autoComplete="new-password"/></>}
       <Button disabled={busy} onPress={()=>void submit()}>{busy?'Aguarde…':info.existingAccount?'Entrar e conectar':'Ativar meu acesso'}</Button></>}
   </Card></View></Page>;
 }

@@ -1983,3 +1983,74 @@ test("catálogo cria pastas, clona, duplica, move e gerencia presets pela latera
   for(const action of ['Clonar','Duplicar','Trocar de pasta','Excluir'])await expect(page.getByRole('menuitem',{name:action+' treino Treino clonado',exact:true})).toBeVisible();
   await page.screenshot({path:'test-results/catalog-menu-mobile.png',fullPage:true});
 });
+
+test('login lembra acessos e alterna senha sem guardar senha no navegador do app',async({page})=>{
+  const headers={'X-Requested-With':'TaPago'},email='remember-login@example.test',password='SenhaSomenteTeste987!';
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:'Professor Acesso',email,password}});
+  await page.request.post(base+'/api/auth/logout',{headers,data:{}});
+  await page.addInitScript(()=>{
+    const memory=window as any;
+    memory.savedCredentials=[];
+    memory.selectedCredential=null;
+    Object.defineProperty(window,'PasswordCredential',{configurable:true,value:class {id:string;password:string;type='password';constructor(data:{id:string;password:string}){this.id=data.id;this.password=data.password;}}});
+    Object.defineProperty(navigator,'credentials',{configurable:true,value:{store:async(value:any)=>{memory.savedCredentials.push(value);return value;},get:async()=>memory.selectedCredential}});
+  });
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/entrar');
+  await expect(page.getByLabel('E-mail',{exact:true})).toHaveAttribute('autocomplete','username');
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveAttribute('autocomplete','current-password');
+  await page.getByLabel('E-mail',{exact:true}).fill(email);
+  await page.getByLabel('Senha',{exact:true}).fill(password);
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveAttribute('type','password');
+  await page.getByRole('button',{name:'Mostrar senha',exact:true}).click();
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveJSProperty('type','text');
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveValue(password);
+  await page.getByRole('button',{name:'Ocultar senha',exact:true}).click();
+  await page.getByRole('checkbox',{name:'Lembrar e-mail e senha',exact:true}).click();
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+  await expect(page).not.toHaveURL(/\/entrar$/);
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tapago.login.emails.v1')??'[]'))).toEqual([email]);
+  expect(await page.evaluate(()=>JSON.stringify(localStorage))).not.toContain(password);
+  expect(await page.evaluate(()=>(window as any).savedCredentials.length)).toBe(1);
+  await page.request.post(base+'/api/auth/logout',{headers,data:{}});
+  await page.goto(base+'/entrar');
+  await page.evaluate(({email,password})=>{(window as any).selectedCredential={id:email,password,type:'password'};},{email,password});
+  await page.getByRole('button',{name:'Usar acesso '+email,exact:true}).click();
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveValue(password);
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveAttribute('type','password');
+  await page.screenshot({path:'test-results/login-remember-eye-mobile.png',fullPage:true});
+  await page.getByRole('button',{name:'Esquecer e-mail '+email,exact:true}).click();
+  await expect(page.getByRole('button',{name:'Usar acesso '+email,exact:true})).toHaveCount(0);
+  await expect(page.getByLabel('Senha',{exact:true})).toHaveValue('');
+  await page.reload();
+  await expect(page.getByRole('button',{name:'Usar acesso '+email,exact:true})).toHaveCount(0);
+});
+
+test('login só lembra após sucesso e continua sem gerenciador de senhas',async({page})=>{
+  const headers={'X-Requested-With':'TaPago'},email='remember-fallback@example.test',password='SenhaSomenteTeste123!';
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:'Professor Sem API',email,password}});
+  await page.request.post(base+'/api/auth/logout',{headers,data:{}});
+  await page.addInitScript(()=>{
+    Object.defineProperty(window,'PasswordCredential',{configurable:true,value:undefined});
+    Object.defineProperty(navigator,'credentials',{configurable:true,value:undefined});
+  });
+  await page.goto(base+'/entrar');
+  await page.getByLabel('E-mail',{exact:true}).fill(email);
+  await page.getByLabel('Senha',{exact:true}).fill('SenhaIncorreta');
+  await page.getByRole('checkbox',{name:'Lembrar e-mail e senha',exact:true}).click();
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+  await expect(page.getByRole('alert')).toBeVisible();
+  expect(await page.evaluate(()=>localStorage.getItem('tapago.login.emails.v1'))).toBeNull();
+  await page.getByLabel('Senha',{exact:true}).fill(password);
+  await page.getByLabel('Senha',{exact:true}).press('Enter');
+  await expect(page).not.toHaveURL(/\/entrar$/);
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tapago.login.emails.v1')??'[]'))).toEqual([email]);
+  await page.request.post(base+'/api/auth/logout',{headers,data:{}});
+  await page.goto(base+'/entrar');
+  await page.getByRole('button',{name:'Usar acesso '+email,exact:true}).click();
+  await page.getByRole('checkbox',{name:'Lembrar e-mail e senha',exact:true}).click();
+  await page.getByLabel('Senha',{exact:true}).fill(password);
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+  await expect(page).not.toHaveURL(/\/entrar$/);
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('tapago.login.emails.v1')??'[]'))).toEqual([]);
+});
