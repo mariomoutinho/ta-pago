@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import {
-  Image,
   Pressable,
   ScrollView,
   View,
@@ -15,7 +14,6 @@ import AppTabs from "@/components/app-tabs";
 import { Button, Label, Notice, s } from "./ui";
 import { message } from "@/features/personal/api";
 import { router } from "expo-router";
-import { EnrollmentNotifications } from "./enrollment-notifications";
 import { Brand } from "./brand";
 import { ProfessionalLayout } from "../studio/professional-layout";
 import { Studio } from "@/constants/studio";

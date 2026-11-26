@@ -2,13 +2,12 @@ import { useState, type ReactNode } from "react";
 import { Platform, Pressable, Text, View, type ViewStyle } from "react-native";
 import { Fonts } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { Label } from "../personal/ui";
 
-export const studioWebProps = Platform.OS === "web" ? { className: "studio-interactive" } : {};
+export const studioWebProps = Platform.OS === "web" ? { dataSet: { studioInteractive: "true" } } : {};
 export function IconButton({ label, children, onPress, expanded }: { label: string; children: ReactNode; onPress: () => void; expanded?: boolean }) {
   const t = useTheme();
   const [focused, setFocused] = useState(false), [hovered, setHovered] = useState(false);
-  return <Pressable {...studioWebProps} accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ expanded }}
+  return <Pressable {...studioWebProps} aria-expanded={expanded} accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ expanded }}
     onPress={onPress} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)}
     style={({ pressed }) => ({ width: 44, height: 44, borderRadius: 10, borderWidth: 1, borderColor: focused ? t.accent : t.border, alignItems: "center", justifyContent: "center", backgroundColor: pressed || hovered ? t.backgroundSelected : t.background, opacity: pressed ? 0.8 : 1 })}>
     {children}

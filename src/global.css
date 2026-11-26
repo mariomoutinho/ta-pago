@@ -9,12 +9,12 @@
 }
 
 .workout-exercise-expansion { transition: grid-template-rows 160ms ease; }
-.studio-interactive { transition: background-color 180ms ease, border-color 180ms ease, opacity 180ms ease, box-shadow 180ms ease; }
-.studio-interactive:focus-visible { outline: 2px solid #ff3655; outline-offset: 3px; }
-.studio-card { transition: border-color 180ms ease, box-shadow 180ms ease; }
-.studio-card:hover { border-color: #ff36554d !important; box-shadow: 0 8px 32px #00000012; }
-.studio-sidebar.studio-dark { background-image: linear-gradient(180deg, transparent 65%, #ff365505); }
+[data-studio-interactive] { transition: background-color 180ms ease, border-color 180ms ease, opacity 180ms ease, box-shadow 180ms ease; }
+[data-studio-interactive]:focus-visible { outline: 2px solid #ff3655; outline-offset: 3px; }
+[data-studio-card] { transition: border-color 180ms ease, box-shadow 180ms ease; }
+[data-studio-card]:hover { border-color: #ff36554d !important; box-shadow: 0 8px 32px #00000012; }
+[data-studio-sidebar="dark"] { background-image: linear-gradient(180deg, transparent 65%, #ff365505); }
 @media (prefers-reduced-motion: reduce) {
-  .studio-interactive, .studio-card { transition: none !important; }
+  [data-studio-interactive], [data-studio-card] { transition: none !important; }
 }
 @media (prefers-reduced-motion: reduce) { .workout-exercise-expansion { transition: none; } }

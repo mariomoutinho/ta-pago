@@ -43,6 +43,7 @@ function SidebarItem({ item, collapsed, active, navigate }: { item: typeof route
   const Icon = item.icon;
   return <View style={{ position: "relative", zIndex: hovered || focused ? 20 : 1 }}>
     <Pressable {...studioWebProps} {...(Platform.OS === "web" ? { title: collapsed ? item.label : undefined } : {})}
+      {...(Platform.OS === "web" ? { "aria-current": active ? "page" : undefined } : {})}
       accessibilityRole="link" accessibilityLabel={item.label} accessibilityState={{ selected: active }} accessibilityHint={collapsed ? item.label : undefined}
       onPress={navigate} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
       style={({ pressed }) => ({ minHeight: 44, borderRadius: 9, paddingHorizontal: collapsed ? 12 : 14, flexDirection: "row", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", gap: 12, backgroundColor: active ? t.accentSoft : hovered || pressed ? t.backgroundElement : "transparent", borderWidth: 1, borderColor: focused ? t.accent : "transparent" })}>
@@ -56,7 +57,7 @@ function SidebarItem({ item, collapsed, active, navigate }: { item: typeof route
 
 function Sidebar({ collapsed, drawer, close, toggle, logout, pending }: { collapsed: boolean; drawer?: boolean; close: () => void; toggle: () => void; logout: () => void; pending: boolean }) {
   const t = useTheme(), path = usePathname(), { user } = useSession();
-  return <View {...(Platform.OS === "web" ? { className: t.canvas === StudioColors.dark.canvas ? "studio-sidebar studio-dark" : "studio-sidebar" } : {})} testID="professional-sidebar" style={{ width: drawer ? "100%" : collapsed ? Studio.collapsedSidebar : Studio.sidebar, flex: 1, backgroundColor: t.sidebar, borderRightWidth: 1, borderColor: t.border, paddingHorizontal: collapsed ? 12 : 16, paddingTop: 24, paddingBottom: 20 }}>
+  return <View {...(Platform.OS === "web" ? { dataSet: { studioSidebar: t.canvas === StudioColors.dark.canvas ? "dark" : "light" } } : {})} testID="professional-sidebar" style={{ width: drawer ? "100%" : collapsed ? Studio.collapsedSidebar : Studio.sidebar, flex: 1, backgroundColor: t.sidebar, borderRightWidth: 1, borderColor: t.border, paddingHorizontal: collapsed ? 12 : 16, paddingTop: 24, paddingBottom: 20 }}>
     <View style={{ height: 64, paddingHorizontal: collapsed ? 8 : 8, flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
       <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => { router.push("/"); close(); }}><Brand compact studio iconOnly={collapsed} /></Pressable>
       {drawer && <IconButton label="Fechar menu" onPress={close}><X size={18} color={t.textSecondary} strokeWidth={Studio.strokeWidth} /></IconButton>}

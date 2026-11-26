@@ -1484,8 +1484,12 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   await page.goto(base + "/alunos/" + student.id); await page.getByRole("button", { name: "Treinos", exact: true }).click(); await page.getByRole("button", { name: "Abrir rotina Rotina Gestão", exact: true }).click(); await page.getByRole("button", { name: "Sessão Gestão", exact: true }).click();
   await expect(page).toHaveURL(new RegExp("/alunos/" + student.id + "/treinos\\?rotina=" + created.id + "&treino=" + created.workouts[0].id));
   await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
+  await expect(page).toHaveURL(/[?&]treino=/);
+  const workoutUrl = page.url();
   await page.goBack(); await expect(page.getByText("Visibilidade para o aluno", { exact: true })).toBeVisible();
-  await page.goForward(); await page.reload();
+  await page.goForward(); await expect(page).toHaveURL(workoutUrl);
+  await expect(page.getByRole("button", { name: "Detalhes de Remada", exact: true })).toBeVisible();
+  await page.reload();
   await expect(page.getByRole("button", { name: "Detalhes de Remada", exact: true })).toBeVisible();
   const detail = (name: string) => page.getByRole("button", { name: "Detalhes de " + name, exact: true });
   const actions = (name: string) => page.getByRole("button", { name: "Ações de " + name, exact: true });
@@ -1519,8 +1523,9 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   await actions("Supino + Extensora + Remada").click(); await page.getByRole("button", { name: "Adicionar novo exercício ao grupo", exact: true }).last().click();
   await expect(page.locator('[aria-modal="true"]')).toHaveCount(0);
   await expect(page.getByLabel("Nome do plano *", { exact: true })).toBeHidden();
-  await page.getByRole("button", { name: "Expandir exercício Leg press", exact: true }).click(); await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
-  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click(); await page.getByLabel("Série/repetições 1", { exact: true }).fill("2/15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await page.getByRole("button", { name: "Expandir exercício Leg press", exact: true }).click();
+  await page.getByRole("button", { name: "Recolher exercício Leg press", exact: true }).locator("..").locator("..").getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click(); await page.getByLabel("Série/repetições 1", { exact: true }).and(page.locator("input:not([readonly])")).fill("2/15"); await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click(); await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(page.getByText("Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto.", { exact: true })).toBeVisible();
   saved = await getPlan(); expect(saved.workouts[0].exercises).toHaveLength(6);
   expect(saved.workouts[0].exercises.filter((item: { groupId: string }) => item.groupId === "circuito")).toHaveLength(4);
@@ -1762,24 +1767,25 @@ test("Ver modelo recolhe vídeos e permite expandir exercícios e blocos sem alt
   expect(saved.exercises.map((item: { exerciseId: string }) => item.exerciseId)).toEqual(exercises.map(exercise => exercise.id));
 });
 
-test("botão ao lado de Sair alterna o tema e mantém a escolha ao navegar e recarregar", async ({ page }) => {
+test("Studio preserva temas, navegação lateral e drawer responsivo", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: { name: "Personal Tema", email: "theme-toggle@example.com", role: "personal", password: "senha-ficticia-12345" } });
   await page.goto(base);
   const card = page.getByRole("button", { name: "Programas", exact: true });
-  await expect(card).toHaveCSS("background-color", "rgb(0, 0, 0)");
+  await expect(card).toHaveCSS("background-color", "rgb(20, 20, 23)");
   await page.getByRole("button", { name: "Ativar tema claro", exact: true }).click();
   await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await page.reload();
   await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
-  await page.getByRole("button", { name: "Treinos preparados", exact: true }).click();
+  await page.getByRole("link", { name: "Treinos preparados", exact: true }).click();
   await expect(page.getByRole("button", { name: "Ativar tema escuro", exact: true })).toBeVisible();
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 844 });
-    const theme = (await page.getByRole("button", { name: "Ativar tema escuro", exact: true }).boundingBox())!;
-    const exit = (await page.getByRole("button", { name: "Sair", exact: true }).boundingBox())!;
-    expect(theme.x + theme.width).toBeLessThanOrEqual(exit.x);
-    expect(Math.abs(theme.y - exit.y)).toBeLessThan(2);
+    await expect.poll(async () => {
+      const theme = (await page.getByRole("button", { name: "Ativar tema escuro", exact: true }).boundingBox())!;
+      const news = (await page.getByRole("button", { name: "Novidades", exact: true }).boundingBox())!;
+      return theme.x + theme.width <= news.x && Math.abs(theme.y - news.y) < 2;
+    }).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
   await page.getByRole("button", { name: "Ativar tema escuro", exact: true }).click();
@@ -1789,4 +1795,112 @@ test("botão ao lado de Sair alterna o tema e mantém a escolha ao navegar e rec
   await expect.poll(() => page.evaluate(() => document.documentElement.style.colorScheme)).toBe("dark");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: "test-results/theme-toggle-mobile-dark.png", fullPage: true });
+});
+
+test("Studio navega, recolhe menu com tooltip e preserva aluno e notificações", async ({ page }) => {
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Professor Studio", email: "studio-nav@example.test", password: "teste123" } });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(base + "/treinos-preparados");
+  await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "244px");
+  await expect(page.getByRole("img", { name: "Logo Tá Pago", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Treinos preparados", exact: true })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("button", { name: "Recolher menu lateral", exact: true }).click();
+  await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "76px");
+  await page.getByRole("link", { name: "Exercícios", exact: true }).focus();
+  await expect(page.getByText("Exercícios", { exact: true })).toBeVisible();
+  await page.screenshot({ path: "test-results/studio-sidebar-collapsed.png", animations: "disabled" });
+  await page.reload();
+  await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "76px");
+  await page.getByRole("button", { name: "Expandir menu lateral", exact: true }).click();
+  for (const [label, href] of [["Início", "/"], ["Alunos", "/alunos"], ["Programas", "/programas"], ["Exercícios", "/exercicios"], ["Avaliações", "/modelos"], ["Grupos e desafios", "/grupos"], ["Treinos preparados", "/treinos-preparados"]]) {
+    await page.getByRole("link", { name: label, exact: true }).click();
+    await expect(page).toHaveURL(base + href);
+    await expect(page.getByRole("link", { name: label, exact: true })).toHaveAttribute("aria-current", "page");
+  }
+  await page.getByRole("button", { name: "Novidades", exact: true }).click();
+  await expect(page.getByText("Tudo em dia", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Fechar", exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId("professional-sidebar")).toHaveCount(0);
+  await page.getByRole("button", { name: "Abrir menu", exact: true }).click();
+  await page.screenshot({ path: "test-results/studio-drawer-390.png", animations: "disabled" });
+  await page.getByRole("link", { name: "Alunos", exact: true }).click();
+  await expect(page).toHaveURL(base + "/alunos");
+  await expect(page.getByTestId("professional-sidebar")).toHaveCount(0);
+  await page.getByRole("button", { name: "Abrir menu", exact: true }).click();
+  await page.getByRole("button", { name: "Sair", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Entrar", exact: true })).toBeVisible();
+  const signedUp = await page.request.post(base + "/api/auth/register", { headers, data: { name: "Aluno Studio", email: "studio-student@example.test", role: "student", password: "teste123" } });
+  expect(signedUp.status()).toBe(201); await page.goto(base);
+  await expect(page.getByTestId("professional-sidebar")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Abrir menu", exact: true })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  page.on("console", entry => { if (entry.type() === "error") errors.push(entry.text()); });
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Professor Studio", email: "studio-models@example.test", password: "teste123" } });
+  const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Supino Studio", muscleGroup: "Peitoral", category: "Musculação" } })).json();
+  const template = await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Anterior", subtitle: "Adaptação", instructions: "Manter orientação", exercises: [{ exerciseId: exercise.id, sets: 3, repetitions: "12", load: 10 }] } });
+  expect(template.status()).toBe(201);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route("**/api/workout-templates", async route => { await held; await route.continue(); });
+  await page.goto(base + "/treinos-preparados");
+  await expect(page.getByRole("progressbar", { name: "Carregando treinos preparados", exact: true })).toBeVisible();
+  release();
+  await expect(page.getByText("1 modelo", { exact: true })).toBeVisible();
+  await page.unroute("**/api/workout-templates");
+  for (const theme of ["dark", "light"]) {
+    if (theme === "light") await page.getByRole("button", { name: "Ativar tema claro", exact: true }).click();
+    for (const width of [1440, 1280, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(page.getByRole("button", { name: "+ Criar treino preparado", exact: true })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Ver modelo", exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/studio-${theme}-${width}.png`, fullPage: true, animations: "disabled" });
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.getByRole("button", { name: "+ Criar treino preparado", exact: true })).toHaveCSS("transition-duration", "0s");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("inexistente");
+  await expect(page.getByText("Nenhum treino encontrado", { exact: true })).toBeVisible();
+  await expect(page.getByText("0 modelos", { exact: true })).toBeVisible();
+  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("ANTERIOR");
+  await page.getByRole("button", { name: "Ver modelo", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Detalhes de Supino Studio", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Recolher modelo", exact: true }).click();
+  await page.getByRole("button", { name: "Editar treino preparado Anterior", exact: true }).click();
+  await page.getByLabel("Nome do treino *", { exact: true }).fill("Anterior atualizado");
+  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
+  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
+  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("");
+  await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+  await page.getByLabel("Nome do treino *", { exact: true }).fill("Novo Studio");
+  await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
+  await page.getByRole("button", { name: "Expandir exercício Supino Studio", exact: true }).click();
+  await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click();
+  await page.getByLabel("Série/repetições 1", { exact: true }).fill("3/12");
+  await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
+  await expect(page.getByText("2 modelos", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Ações do treino Novo Studio", exact: true }).click();
+  await expect(page.getByRole("menu")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await page.getByRole("button", { name: "Ações do treino Novo Studio", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Excluir treino preparado Novo Studio", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar", exact: true }).click();
+  await expect(page.getByText("1 modelo", { exact: true })).toBeVisible();
+  await expect(page.getByText("Anterior atualizado", { exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
 });
