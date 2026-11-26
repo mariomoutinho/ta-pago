@@ -257,7 +257,7 @@ export function WorkoutPlans({
             style={{ minHeight: 52, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: t.accent, backgroundColor: t.background, borderRadius: 6 }}>
             <Label size={14} bold>+ Criar rotina</Label>
           </Pressable>}
-          {!studentView && <Button variant="secondary" onPress={() => { setInitialTemplatePicker(true); setEditing("new"); }}>Usar treino preparado</Button>}
+          {!studentView && <Button variant="secondary" onPress={() => { setInitialTemplatePicker(true); setEditing("new"); }}>Usar treino</Button>}
           {!studentView && <Button variant="secondary" onPress={() => setProgramPicker(true)}>Usar rotina de Programas</Button>}
           {section !== "Arquivadas" && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
             {["Todas", "Atuais", "Futuras", "Encerradas", ...(!studentView ? ["Rascunhos"] : [])].map(value =>

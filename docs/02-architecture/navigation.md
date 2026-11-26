@@ -46,7 +46,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.17.0",
+  "version": "4.18.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -133,3 +133,7 @@ A rota `/treinos-preparados` e seu item de navegação são exclusivos da conta 
 ## Fluxo de treinos em telas
 
 WorkoutScreen organiza as etapas com título e retorno, sem Modal ou backdrop. O Personal navega do perfil à página de treinos, à rotina e ao treino. As etapas do formulário de plano, biblioteca, prescrição, presets e destino de grupo ocupam o conteúdo da página. Durante a biblioteca/prescrição, a lista e os demais campos do plano ficam ocultos e montados para preservar o rascunho; as ações gerais de salvar reaparecem ao confirmar ou cancelar a etapa. As confirmações destrutivas e os menus rápidos de ações permanecem sobreposições pontuais. A nova rota está no grupo protegido de Personal; a autorização dos dados continua nos endpoints existentes.
+
+## Catálogo e presets na navegação profissional
+
+O item Catálogo de treinos substitui o nome Treinos preparados e mantém a rota `/treinos-preparados`. A nova rota `/presets` tem proteção de perfil profissional em `src/app/_layout.tsx`, usa o mesmo shell Studio e aparece no menu lateral, inclusive no drawer móvel. A navegação das contas de aluno permanece separada.

@@ -327,7 +327,7 @@ test.afterAll(async () => {
   rmSync(folder, { recursive: true, force: true });
 });
 for (const width of [390, 1280]) {
-  test(`edição na biblioteca de treino preparado mantém a posição em ${width}px`, async ({ page }) => {
+  test(`edição na biblioteca de treino mantém a posição em ${width}px`, async ({ page }) => {
     const headers = { "X-Requested-With": "TaPago" };
     await provisionBrowserPersonal(db, page.request, base, { headers, data: {
       name: "Personal Modal", email: `edit-modal-${width}@example.com`, role: "personal", password: "senha-ficticia-12345",
@@ -339,7 +339,7 @@ for (const width of [390, 1280]) {
     }
     await page.setViewportSize({ width, height: 900 });
     await page.goto(base + "/treinos-preparados");
-    await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+    await page.getByRole("button", { name: "+ Criar treino", exact: true }).click();
     await page.getByLabel("Nome do treino *", { exact: true }).fill("Modelo em edição");
     await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
     await page.getByLabel("Buscar exercícios...", { exact: true }).fill("modal");
@@ -954,7 +954,7 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
     .click();
   await expect(page).toHaveURL(base + "/alunos");
   await page.goto(base);
-  await page.getByRole("button", { name: "Treinos preparados", exact: true }).click();
+  await page.getByRole("button", { name: "Catálogo de treinos", exact: true }).click();
   await expect(page).toHaveURL(base + "/treinos-preparados");
   await expect(page.getByRole("link", { name: "Programas", exact: true })).toHaveCount(0);
   await page.getByRole("link", { name: "Ir para o início", exact: true }).click();
@@ -1140,7 +1140,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   } });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + "/treinos-preparados");
-  await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+  await page.getByRole("button", { name: "+ Criar treino", exact: true }).click();
   await page.getByLabel("Nome do treino *", { exact: true }).fill("Treino de força preparado");
   await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
   await page.getByRole("button", { name: "Expandir exercício Agachamento modelo", exact: true }).click();
@@ -1150,8 +1150,8 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   await page.getByLabel("Carga 1", { exact: true }).fill("20");
   await page.getByLabel("Intervalo 1", { exact: true }).fill("2");
   await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
-  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Treino salvo.", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByText("Treino de força preparado", { exact: true })).toBeVisible();
   const templates = await (await page.request.get(base + "/api/workout-templates")).json();
@@ -1163,7 +1163,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
   const studentId = (await created.json()).id;
   await page.goto(base + `/alunos/${studentId}`);
   await page.getByRole("button", { name: "Treinos", exact: true }).click();
-  await page.getByRole("button", { name: "Usar treino preparado", exact: true }).click();
+  await page.getByRole("button", { name: "Usar treino", exact: true }).click();
   await page.getByRole("button", { name: "Usar treino Treino de força preparado", exact: true }).click();
   await page.getByLabel("Nome do plano *", { exact: true }).fill("Plano individual do aluno");
   await page.getByLabel("Nome do treino *", { exact: true }).fill("Treino adaptado ao aluno");
@@ -1280,7 +1280,7 @@ test("editor compacto reordena, preserva formulários, integra ações e restaur
   for (const name of ["Primeiro", "Segundo", "Terceiro", "Alternativo"]) exercises.push(await (await page.request.post(base + "/api/exercises", { headers, data: { name, muscleGroup: "Pernas", category: "Força" } })).json());
   const template = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Modelo editor", exercises: exercises.slice(0, 3).map((ex, index) => ({ exerciseId: ex.id, sets: 3, repetitions: "12", load: index + 10, notes: "Preservar" })) } })).json();
   await page.goto(base + "/treinos-preparados");
-  await page.getByRole("button", { name: "Editar treino preparado Modelo editor", exact: true }).click();
+  await page.getByRole("button", { name: "Editar treino Modelo editor", exact: true }).click();
   const details = (name: string) => page.getByRole("button", { name: "Detalhes de " + name, exact: true });
   const actions = (name: string) => page.getByRole("button", { name: "Ações de " + name, exact: true });
   const handle = (index: number) => page.getByRole("button", { name: "Arrastar exercício " + template.exercises[index].clientId, exact: true });
@@ -1306,7 +1306,7 @@ test("editor compacto reordena, preserva formulários, integra ações e restaur
   let saved = (await (await page.request.get(base + "/api/workout-templates")).json())[0];
   expect(saved.exercises.map((item: { load: number }) => item.load)).toEqual([12, 10, 11]);
   await expect(details("Terceiro")).toHaveAttribute("aria-expanded", "false");
-  await page.reload(); await page.getByRole("button", { name: "Editar treino preparado Modelo editor", exact: true }).click();
+  await page.reload(); await page.getByRole("button", { name: "Editar treino Modelo editor", exact: true }).click();
   expect(await page.getByRole("button", { name: /^Detalhes de / }).allTextContents()).toEqual(["Terceiro", "Primeiro", "Segundo"]);
   await page.route("**/api/workout-templates/*/order", route => route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "Falha simulada" }) }));
   await handle(0).focus(); await page.keyboard.press("Alt+ArrowUp");
@@ -1339,8 +1339,8 @@ test("editor compacto reordena, preserva formulários, integra ações e restaur
   await page.getByRole("button", { name: "Expandir todos", exact: true }).click();
   await expect(page.getByRole("button", { name: "Confirmar séries", exact: true })).toHaveCount(2);
   await page.getByRole("button", { name: "Recolher todos", exact: true }).click();
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
-  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Treino salvo.", { exact: true })).toBeVisible();
   saved = (await (await page.request.get(base + "/api/workout-templates")).json())[0];
   expect(saved.exercises).toHaveLength(2); expect(saved.exercises[0].alternativeExerciseId).toBe(exercises[3].id);
   expect(saved.exercises[1].exerciseId).toBe(exercises[3].id); expect(saved.exercises[1].series[0].load).toBe(42);
@@ -1356,7 +1356,7 @@ test("handle reordena com mouse e toque prolongado sem expandir os cards", async
     const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Agachamento", muscleGroup: "Pernas", category: "Força" } })).json();
     const template = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Arrastar", exercises: [1, 2, 3].map(load => ({ exerciseId: exercise.id, load })) } })).json();
     await page.goto(base + "/treinos-preparados");
-    await page.getByRole("button", { name: "Editar treino preparado Arrastar", exact: true }).click();
+    await page.getByRole("button", { name: "Editar treino Arrastar", exact: true }).click();
     const handles = page.getByRole("button", { name: /^Arrastar exercício / });
     await handles.nth(2).scrollIntoViewIfNeeded();
     const from = (await handles.nth(2).boundingBox())!, to = (await handles.nth(0).boundingBox())!;
@@ -1448,13 +1448,13 @@ test("modelo permite combinar, separar e salvar seleções sem gravar grupos inc
   const exercise = await (await page.request.post(base + "/api/exercises", { headers, data: { name: "Exercício marcado", muscleGroup: "Pernas", category: "Força" } })).json();
   const created = await (await page.request.post(base + "/api/workout-templates", { headers, data: { name: "Modelo marcado", exercises: [1, 2, 3].map(load => ({ exerciseId: exercise.id, load })) } })).json();
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto(base + "/treinos-preparados");
-  const edit = () => page.getByRole("button", { name: "Editar treino preparado Modelo marcado", exact: true }).click();
+  const edit = () => page.getByRole("button", { name: "Editar treino Modelo marcado", exact: true }).click();
   await edit();
   await page.getByRole("checkbox", { name: "Selecionar todos os exercícios", exact: true }).check();
   await page.getByRole("button", { name: "Combinar selecionados", exact: true }).click();
   await expect(page.getByRole("button", { name: /^Detalhes de / })).toHaveCount(1);
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
-  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Treino salvo.", { exact: true })).toBeVisible();
   let saved = (await (await page.request.get(base + "/api/workout-templates")).json()).find((item: { id: string }) => item.id === created.id);
   expect(new Set(saved.exercises.map((item: { groupId: string }) => item.groupId)).size).toBe(1);
   expect(saved.exercises[0].groupId).toBeTruthy();
@@ -1466,9 +1466,9 @@ test("modelo permite combinar, separar e salvar seleções sem gravar grupos inc
   await checkboxes.nth(0).check(); await checkboxes.nth(2).check();
   await page.getByRole("button", { name: "Excluir selecionados", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
-  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Salvar treino preparado", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Treino salvo.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salvar treino", exact: true })).toHaveCount(0);
   saved = (await (await page.request.get(base + "/api/workout-templates")).json()).find((item: { id: string }) => item.id === created.id);
   expect(saved.exercises).toHaveLength(1); expect(saved.exercises[0].load).toBe(2); expect(saved.exercises[0].groupId).toBeNull();
 });
@@ -1663,7 +1663,7 @@ for (const destination of ["aluno", "preparado"] as const) {
       await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
     } else {
       await page.goto(base + "/treinos-preparados");
-      await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+      await page.getByRole("button", { name: "+ Criar treino", exact: true }).click();
       await page.getByLabel("Nome do treino *", { exact: true }).fill("Modelo direto");
       await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
     }
@@ -1682,8 +1682,8 @@ for (const destination of ["aluno", "preparado"] as const) {
     await page.getByRole("button", { name: "Usar preset 3/8", exact: true }).click();
     await expect(page.getByLabel("Série/repetições 1", { exact: true }).filter({ visible: true })).toHaveValue("3/8");
     await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
-    await page.getByRole("button", { name: destination === "aluno" ? "Salvar rascunho" : "Salvar treino preparado", exact: true }).click();
-    await expect(page.getByText(destination === "aluno" ? "Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto." : "Treino preparado salvo.", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: destination === "aluno" ? "Salvar rascunho" : "Salvar treino", exact: true }).click();
+    await expect(page.getByText(destination === "aluno" ? "Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto." : "Treino salvo.", { exact: true })).toBeVisible();
     const saved = (await (await page.request.get(endpoint)).json())[0];
     const exercises = destination === "aluno" ? saved.workouts[0].exercises : saved.exercises;
     expect(exercises[0].series[0]).toMatchObject({ sets: 3, repetitions: "8", type: "repetitions-load" });
@@ -1777,7 +1777,7 @@ test("Studio preserva temas, navegação lateral e drawer responsivo", async ({ 
   await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await page.reload();
   await expect(card).toHaveCSS("background-color", "rgb(255, 255, 255)");
-  await page.getByRole("link", { name: "Treinos preparados", exact: true }).click();
+  await page.getByRole("link", { name: "Catálogo de treinos", exact: true }).click();
   await expect(page.getByRole("button", { name: "Ativar tema escuro", exact: true })).toBeVisible();
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 844 });
@@ -1805,7 +1805,7 @@ test("Studio navega, recolhe menu com tooltip e preserva aluno e notificações"
   await page.goto(base + "/treinos-preparados");
   await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "244px");
   await expect(page.getByRole("img", { name: "Logo Tá Pago", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Treinos preparados", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("link", { name: "Catálogo de treinos", exact: true })).toHaveAttribute("aria-current", "page");
   await page.getByRole("button", { name: "Recolher menu lateral", exact: true }).click();
   await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "76px");
   await page.getByRole("link", { name: "Exercícios", exact: true }).focus();
@@ -1814,7 +1814,7 @@ test("Studio navega, recolhe menu com tooltip e preserva aluno e notificações"
   await page.reload();
   await expect(page.getByTestId("professional-sidebar")).toHaveCSS("width", "76px");
   await page.getByRole("button", { name: "Expandir menu lateral", exact: true }).click();
-  for (const [label, href] of [["Início", "/"], ["Alunos", "/alunos"], ["Programas", "/programas"], ["Exercícios", "/exercicios"], ["Avaliações", "/modelos"], ["Grupos e desafios", "/grupos"], ["Treinos preparados", "/treinos-preparados"]]) {
+  for (const [label, href] of [["Início", "/"], ["Alunos", "/alunos"], ["Programas", "/programas"], ["Exercícios", "/exercicios"], ["Avaliações", "/modelos"], ["Grupos e desafios", "/grupos"], ["Catálogo de treinos", "/treinos-preparados"]]) {
     await page.getByRole("link", { name: label, exact: true }).click();
     await expect(page).toHaveURL(base + href);
     await expect(page.getByRole("link", { name: label, exact: true })).toHaveAttribute("aria-current", "page");
@@ -1853,7 +1853,7 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   const held = new Promise<void>(resolve => { release = resolve; });
   await page.route("**/api/workout-templates", async route => { await held; await route.continue(); });
   await page.goto(base + "/treinos-preparados");
-  await expect(page.getByRole("progressbar", { name: "Carregando treinos preparados", exact: true })).toBeVisible();
+  await expect(page.getByRole("progressbar", { name: "Carregando treinos do catálogo", exact: true })).toBeVisible();
   release();
   await expect(page.getByText("1 modelo", { exact: true })).toBeVisible();
   await page.unroute("**/api/workout-templates");
@@ -1861,7 +1861,7 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
     if (theme === "light") await page.getByRole("button", { name: "Ativar tema claro", exact: true }).click();
     for (const width of [1440, 1280, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect(page.getByRole("button", { name: "+ Criar treino preparado", exact: true })).toBeVisible();
+      await expect(page.getByRole("button", { name: "+ Criar treino", exact: true })).toBeVisible();
       await expect(page.getByRole("button", { name: "Ver modelo", exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/studio-${theme}-${width}.png`, fullPage: true, animations: "disabled" });
@@ -1869,21 +1869,21 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   }
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.getByRole("button", { name: "+ Criar treino preparado", exact: true })).toHaveCSS("transition-duration", "0s");
+  await expect(page.getByRole("button", { name: "+ Criar treino", exact: true })).toHaveCSS("transition-duration", "0s");
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("inexistente");
+  await page.getByLabel("Buscar treinos do catálogo", { exact: true }).fill("inexistente");
   await expect(page.getByText("Nenhum treino encontrado", { exact: true })).toBeVisible();
   await expect(page.getByText("0 modelos", { exact: true })).toBeVisible();
-  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("ANTERIOR");
+  await page.getByLabel("Buscar treinos do catálogo", { exact: true }).fill("ANTERIOR");
   await page.getByRole("button", { name: "Ver modelo", exact: true }).click();
   await expect(page.getByRole("button", { name: "Detalhes de Supino Studio", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Recolher modelo", exact: true }).click();
-  await page.getByRole("button", { name: "Editar treino preparado Anterior", exact: true }).click();
+  await page.getByRole("button", { name: "Editar treino Anterior", exact: true }).click();
   await page.getByLabel("Nome do treino *", { exact: true }).fill("Anterior atualizado");
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
-  await expect(page.getByText("Treino preparado salvo.", { exact: true })).toBeVisible();
-  await page.getByLabel("Buscar treinos preparados", { exact: true }).fill("");
-  await page.getByRole("button", { name: "+ Criar treino preparado", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
+  await expect(page.getByText("Treino salvo.", { exact: true })).toBeVisible();
+  await page.getByLabel("Buscar treinos do catálogo", { exact: true }).fill("");
+  await page.getByRole("button", { name: "+ Criar treino", exact: true }).click();
   await page.getByLabel("Nome do treino *", { exact: true }).fill("Novo Studio");
   await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
   await page.getByRole("button", { name: "Expandir exercício Supino Studio", exact: true }).click();
@@ -1891,14 +1891,14 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   await page.getByRole("button", { name: "Adicionar sem preset", exact: true }).click();
   await page.getByLabel("Série/repetições 1", { exact: true }).fill("3/12");
   await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
-  await page.getByRole("button", { name: "Salvar treino preparado", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar treino", exact: true }).click();
   await expect(page.getByText("2 modelos", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Ações do treino Novo Studio", exact: true }).click();
   await expect(page.getByRole("menu")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("menu")).toHaveCount(0);
   await page.getByRole("button", { name: "Ações do treino Novo Studio", exact: true }).click();
-  await page.getByRole("menuitem", { name: "Excluir treino preparado Novo Studio", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Excluir treino Novo Studio", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByText("1 modelo", { exact: true })).toBeVisible();
   await expect(page.getByText("Anterior atualizado", { exact: true })).toBeVisible();
@@ -1910,10 +1910,10 @@ test("salva treino vazio e importa catálogo sem campo de equipamento", async ({
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Professor Catálogo",email:"catalog-ui@example.test",password:"teste123"}});
   await page.setViewportSize({width:390,height:844});
   await page.goto(base+'/treinos-preparados');
-  await page.getByRole('button',{name:'+ Criar treino preparado',exact:true}).click();
+  await page.getByRole('button',{name:'+ Criar treino',exact:true}).click();
   await page.getByLabel('Nome do treino *',{exact:true}).fill('Treino vazio para completar');
-  await page.getByRole('button',{name:'Salvar treino preparado',exact:true}).click();
-  await expect(page.getByText('Treino preparado salvo.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Salvar treino',exact:true}).click();
+  await expect(page.getByText('Treino salvo.',{exact:true})).toBeVisible();
   await page.reload();
   await expect(page.getByText('Treino vazio para completar',{exact:true})).toBeVisible();
   await page.goto(base+'/exercicios');
@@ -1926,4 +1926,60 @@ test("salva treino vazio e importa catálogo sem campo de equipamento", async ({
   await expect(page.getByRole('button',{name:'Expandir exercício Rosca Bayesian',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true}).click();
   await expect(page.getByText('Os exercícios da lista já estão na sua biblioteca.',{exact:true})).toBeVisible();
+});
+
+test("catálogo cria pastas, clona, duplica, move e gerencia presets pela lateral", async ({ page }) => {
+  const headers={"X-Requested-With":"TaPago"};
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:'Professor Pastas',email:'folders-browser@example.test',password:'teste123'}});
+  await page.setViewportSize({width:1280,height:900});
+  await page.goto(base+'/treinos-preparados');
+  await expect(page.getByRole('link',{name:'Catálogo de treinos',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'+ Criar pasta',exact:true}).click();
+  await page.getByLabel('Nome da pasta',{exact:true}).fill('Adaptação');
+  await page.getByRole('button',{name:'Salvar pasta',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Abrir pasta Adaptação',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'+ Criar treino',exact:true}).click();
+  await page.getByLabel('Nome do treino *',{exact:true}).fill('Treino da pasta');
+  await page.getByRole('button',{name:'Salvar treino',exact:true}).click();
+  await expect(page.getByText('Treino da pasta',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Ações do treino Treino da pasta',exact:true}).click();
+  for(const action of ['Clonar','Duplicar','Trocar de pasta','Excluir'])await expect(page.getByRole('menuitem',{name:action+' treino Treino da pasta',exact:true})).toBeVisible();
+  await page.getByRole('menuitem',{name:'Duplicar treino Treino da pasta',exact:true}).click();
+  await expect(page.getByText('Treino da pasta (cópia)',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Ações do treino Treino da pasta (cópia)',exact:true}).click();
+  await page.getByRole('menuitem',{name:'Trocar de pasta treino Treino da pasta (cópia)',exact:true}).click();
+  await page.getByRole('button',{name:'Mover para Sem pasta',exact:true}).click();
+  await expect(page.getByText('Treino da pasta (cópia)',{exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'Sem pasta',exact:true}).click();
+  await expect(page.getByText('Treino da pasta (cópia)',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Ações do treino Treino da pasta (cópia)',exact:true}).click();
+  await page.getByRole('menuitem',{name:'Clonar treino Treino da pasta (cópia)',exact:true}).click();
+  await page.getByLabel('Nome do treino *',{exact:true}).fill('Treino clonado');
+  await page.getByRole('button',{name:'Salvar treino',exact:true}).click();
+  await expect(page.getByText('Treino clonado',{exact:true})).toBeVisible();
+  await page.reload();
+  await page.getByRole('button',{name:'Sem pasta',exact:true}).click();
+  await expect(page.getByText('Treino clonado',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Presets',exact:true}).click();
+  await page.getByRole('button',{name:'+ Criar preset',exact:true}).click();
+  await page.getByLabel('Nome do preset',{exact:true}).fill('Meu preset');
+  await page.getByLabel('Série/repetições 1',{exact:true}).fill('3/12');
+  await page.getByRole('button',{name:'Salvar preset',exact:true}).click();
+  await expect(page.getByText('Preset salvo.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Editar preset Meu preset',exact:true}).click();
+  await page.getByLabel('Nome do preset',{exact:true}).fill('Meu preset atualizado');
+  await page.getByRole('button',{name:'Salvar preset',exact:true}).click();
+  await page.getByRole('button',{name:'Excluir preset Meu preset atualizado',exact:true}).click();
+  await page.getByRole('button',{name:'Confirmar',exact:true}).click();
+  await expect(page.getByText('Preset excluído.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:/^Personalizar preset /}).first().click();
+  await page.getByLabel('Nome do preset',{exact:true}).fill('Meu preset personalizado');
+  await page.getByRole('button',{name:'Salvar preset',exact:true}).click();
+  await expect(page.getByText('Meu preset personalizado',{exact:true})).toBeVisible();
+  await page.screenshot({path:'test-results/catalog-presets.png',fullPage:true});
+  await page.goto(base+'/treinos-preparados');
+  await page.setViewportSize({width:390,height:844});
+  await page.getByRole('button',{name:'Ações do treino Treino clonado',exact:true}).click();
+  for(const action of ['Clonar','Duplicar','Trocar de pasta','Excluir'])await expect(page.getByRole('menuitem',{name:action+' treino Treino clonado',exact:true})).toBeVisible();
+  await page.screenshot({path:'test-results/catalog-menu-mobile.png',fullPage:true});
 });

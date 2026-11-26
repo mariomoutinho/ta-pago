@@ -22,7 +22,7 @@ export function WorkoutTemplateCard({ name, subtitle, count, actions, children }
 
 export function WorkoutSkeleton() {
   const t = useTheme();
-  return <View accessibilityRole="progressbar" accessibilityLabel="Carregando treinos preparados" style={{ gap: 16 }}>
+  return <View accessibilityRole="progressbar" accessibilityLabel="Carregando treinos do catálogo" style={{ gap: 16 }}>
     {[0, 1, 2].map(index => <View key={index} style={{ borderWidth: 1, borderColor: t.border, borderRadius: 16, padding: 24, backgroundColor: t.background, flexDirection: "row", alignItems: "center", gap: 20 }}>
       <View style={{ width: 56, height: 56, borderRadius: 14, backgroundColor: t.backgroundElement }} />
       <View style={{ gap: 10, flex: 1 }}><View style={{ height: 16, width: "40%", borderRadius: 4, backgroundColor: t.backgroundElement }} /><View style={{ height: 12, width: "25%", borderRadius: 4, backgroundColor: t.backgroundElement }} /></View>

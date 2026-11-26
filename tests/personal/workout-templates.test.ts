@@ -189,3 +189,47 @@ it("importa 240 exercícios por professor sem duplicar nem sobrescrever dados pr
   expect(all.find((e:{name:string})=>e.name==='Rosca Bayesian').muscleGroup).toBe('Bíceps');
   expect((await other.get('/api/exercises')).body).toEqual(otherBefore);
 });
+
+it("organiza pastas, move com revisão, duplica e isola o catálogo por professor", async () => {
+  const endpoint='/api/workout-templates';
+  const folder=await personal.post(endpoint+'/folders').set(header).send({name:'Adaptação'});
+  expect(folder.status).toBe(201);
+  expect((await personal.post(endpoint+'/folders').set(header).send({name:'Adaptação'})).status).toBe(409);
+  expect((await student.get(endpoint+'/folders')).status).toBe(403);
+  expect((await request(app).get(endpoint+'/folders')).status).toBe(401);
+  expect((await other.get(endpoint+'/folders')).body).toEqual([]);
+  const source=await personal.post(endpoint).set(header).send({...payload(),folderId:folder.body.id});
+  expect(source.status).toBe(201);
+  expect((await other.post(endpoint).set(header).send({name:'Invasão',exercises:[],folderId:folder.body.id})).status).toBe(404);
+  const duplicate=await personal.post(endpoint+'/'+source.body.id+'/duplicate').set(header).send({});
+  expect(duplicate.status).toBe(201);
+  expect(duplicate.body.id).not.toBe(source.body.id);
+  expect(duplicate.body.folderId).toBe(folder.body.id);
+  expect(duplicate.body.exercises[0].clientId).not.toBe(source.body.exercises[0].clientId);
+  expect((await other.post(endpoint+'/'+source.body.id+'/duplicate').set(header).send({})).status).toBe(404);
+  expect((await student.post(endpoint+'/'+source.body.id+'/duplicate').set(header).send({})).status).toBe(403);
+  const move=await personal.put(endpoint+'/'+duplicate.body.id+'/folder').set(header).send({folderId:null,revision:1});
+  expect(move.status).toBe(200);expect(move.body.revision).toBe(2);
+  expect((await personal.put(endpoint+'/'+duplicate.body.id+'/folder').set(header).send({folderId:folder.body.id,revision:1})).status).toBe(409);
+  expect((await other.put(endpoint+'/folders/'+folder.body.id).set(header).send({name:'Alheia'})).status).toBe(404);
+  expect((await personal.put(endpoint+'/folders/'+folder.body.id).set(header).send({name:'Avançados'})).status).toBe(200);
+  expect((await personal.delete(endpoint+'/folders/'+folder.body.id).set(header)).status).toBe(200);
+  const list=(await personal.get(endpoint)).body;
+  expect(list.find((t:WorkoutTemplate)=>t.id===source.body.id).folderId).toBeNull();
+  expect(list.find((t:WorkoutTemplate)=>t.id===duplicate.body.id).folderId).toBeNull();
+});
+
+it("gerencia presets privados sem alterar cópias e nega acessos de terceiros", async () => {
+  const endpoint='/api/prescription-presets';
+  const created=await personal.post(endpoint).set(header).send({name:'Preset CRUD',series});
+  expect(created.status).toBe(201);
+  const url=endpoint+'/'+created.body.id;
+  expect((await other.put(url).set(header).send({name:'Alheio',series})).status).toBe(404);
+  expect((await student.put(url).set(header).send({name:'Alheio',series})).status).toBe(403);
+  expect((await personal.put(url).set(header).send({name:'Preset atualizado',series:[{...series[0],sets:4}]})).status).toBe(200);
+  expect((await personal.get(endpoint)).body.find((p:{id:string})=>p.id===created.body.id).series[0].sets).toBe(4);
+  expect((await other.delete(url).set(header)).status).toBe(404);
+  expect((await student.delete(url).set(header)).status).toBe(403);
+  expect((await personal.delete(url).set(header)).status).toBe(200);
+  expect((await personal.get(endpoint)).body.find((p:{id:string})=>p.id===created.body.id)).toBeUndefined();
+});

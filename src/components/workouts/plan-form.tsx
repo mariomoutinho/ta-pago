@@ -126,10 +126,10 @@ export function PlanForm({
         <Label>Este plano ainda não possui treinos.</Label>
       )}
       <Button disabled={pending || data.workouts.length >= 30} variant="secondary" onPress={() => setTemplatePicker(!templatePicker)}>
-        {templatePicker ? "Fechar treinos preparados" : "Usar treino preparado"}
+        {templatePicker ? "Fechar treinos do catálogo" : "Usar treino"}
       </Button>
       </View>
-      {templatePicker && !pending && <WorkoutScreen title="Escolher treino preparado" backLabel="Voltar ao plano" back={() => setTemplatePicker(false)}><Card>
+      {templatePicker && !pending && <WorkoutScreen title="Escolher treino" backLabel="Voltar ao plano" back={() => setTemplatePicker(false)}><Card>
         <PreparedWorkouts select={workout => {
           setData(current => ({ ...current, workouts: [...current.workouts, identifyWorkout(workout)] }));
           setOpen(data.workouts.length);

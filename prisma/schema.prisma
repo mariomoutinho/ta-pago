@@ -12,6 +12,7 @@ model User {
   role String @default("personal")
   prescriptionPresets PrescriptionPreset[]
   workoutTemplates WorkoutTemplate[]
+  workoutFolders WorkoutFolder[]
   exercises Exercise[]
   students Student[] @relation("PersonalStudents")
   profiles Student[] @relation("StudentAccount")
@@ -378,6 +379,8 @@ model WorkoutTemplate {
   id String @id @default(cuid())
   ownerId String
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  folderId String?
+  folder WorkoutFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
   name String
   subtitle String @default("")
   instructions String @default("")
@@ -386,4 +389,13 @@ model WorkoutTemplate {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([ownerId])
+}
+model WorkoutFolder {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name String
+  templates WorkoutTemplate[]
+  createdAt DateTime @default(now())
+  @@unique([ownerId,name])
 }

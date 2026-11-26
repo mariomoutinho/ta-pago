@@ -36,7 +36,7 @@ export function ProgramForm({ program, onSaved, cancel = () => {}, initialWorkou
         </View>
       </Card>)}
       <Button disabled={workouts.length >= 30} onPress={() => { setWorkouts([...workouts, { name: `Treino ${String.fromCharCode(65 + workouts.length)}`, subtitle: "", instructions: "", exercises: [] }]); setOpen(workouts.length); }}>+ Adicionar treino</Button>
-      <Button disabled={workouts.length >= 30} variant="secondary" onPress={() => setPicking(true)}>Usar treino preparado</Button>
+      <Button disabled={workouts.length >= 30} variant="secondary" onPress={() => setPicking(true)}>Usar treino</Button>
     </View>}
     {picking && <View style={{ gap: 10 }}><Button variant="secondary" onPress={() => setPicking(false)}>Voltar à rotina</Button><PreparedWorkouts select={workout => { setWorkouts([...workouts, identifyWorkout(workout)]); setOpen(workouts.length); setPicking(false); }} /></View>}
     {open !== null && workouts[open] && <View style={{ gap: 10 }}>

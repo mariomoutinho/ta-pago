@@ -13,8 +13,9 @@ export default function PersonalNavigation() {
           ["/alunos", "Alunos"],
           ["/programas", "Programas"],
           ["/exercicios", "Exercícios"],
-          ["/treinos-preparados", "Treinos preparados"],
+          ["/treinos-preparados", "Catálogo de treinos"],
           ["/modelos", "Avaliações"],
+          ["/presets", "Presets"],
           ["/grupos", "Grupos e desafios"],
         ]
       : [

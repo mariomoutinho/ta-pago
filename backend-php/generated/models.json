@@ -1958,6 +1958,12 @@
         "id": false,
         "updatedAt": false
       },
+      "folderId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
       "name": {
         "type": "String",
         "nullable": false,
@@ -2011,6 +2017,12 @@
         "target": "User",
         "reference": "id",
         "onDelete": "Cascade"
+      },
+      {
+        "field": "folderId",
+        "target": "WorkoutFolder",
+        "reference": "id",
+        "onDelete": "SetNull"
       }
     ],
     "unique": [],
@@ -2019,5 +2031,50 @@
         "ownerId"
       ]
     ]
+  },
+  "WorkoutFolder": {
+    "fields": {
+      "id": {
+        "type": "String",
+        "nullable": false,
+        "id": true,
+        "updatedAt": false,
+        "default": "cuid()"
+      },
+      "ownerId": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "name": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false
+      },
+      "createdAt": {
+        "type": "DateTime",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": "now()"
+      }
+    },
+    "relations": [
+      {
+        "field": "ownerId",
+        "target": "User",
+        "reference": "id",
+        "onDelete": "Cascade"
+      }
+    ],
+    "unique": [
+      [
+        "ownerId",
+        "name"
+      ]
+    ],
+    "indexes": []
   }
 }

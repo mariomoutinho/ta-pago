@@ -3,6 +3,33 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Workouts {
+    private function workoutFolders(string $method,?string $id,array $body): mixed {
+        $existing=$id?$this->own('WorkoutFolder',$id):null;
+        if($method==='GET'&&!$id)return $this->db->rows('WorkoutFolder','ownerId=?',[$this->user['id']],'name ASC');
+        if(($method==='POST'&&!$id)||($method==='PUT'&&$id)){
+            $data=$this->validation->parse('workoutFolderSchema',$body);
+            if(!$existing)$this->status=201;
+            return $existing?$this->db->update('WorkoutFolder',$id,$data):$this->db->create('WorkoutFolder',[...$data,'ownerId'=>$this->user['id']]);
+        }
+        if($method==='DELETE'&&$id){$this->db->delete('WorkoutFolder',$id);return ['ok'=>true];}
+        throw new HttpError(404,'Recurso não encontrado');
+    }
+    private function catalogAction(string $method,string $id,string $action,array $body): mixed {
+        $template=$this->own('WorkoutTemplate',$id);
+        if($method==='PUT'&&$action==='folder'){
+            $data=$this->validation->parse('workoutFolderMoveSchema',$body);
+            if($data['folderId'])$this->own('WorkoutFolder',$data['folderId']);
+            ensure($data['revision']===$template['revision'],'Treino atualizado em outra sessão',409);
+            return $this->db->update('WorkoutTemplate',$id,['folderId'=>$data['folderId'],'revision'=>$template['revision']+1]);
+        }
+        if($method==='POST'&&$action==='duplicate'){
+            unset($template['id'],$template['revision']);
+            $template['name']=mb_substr($template['name'],0,152).' (cópia)';
+            foreach($template['exercises'] as &$entry)unset($entry['id'],$entry['clientId']);unset($entry);
+            return $this->libraryRoute('POST','workout-templates',null,false,$template);
+        }
+        throw new HttpError(404,'Recurso não encontrado');
+    }
     private function importExerciseCatalog(): array {
         $catalog=json_decode(file_get_contents(__DIR__.'/../generated/exercise-catalog.json'),true,512,JSON_THROW_ON_ERROR);
         $names=[];
@@ -205,7 +232,7 @@ trait Workouts {
                 unset($w);
             } unset($r); return $rows;
         }
-        if ($method==='DELETE' && $id && in_array($table,['Program','WorkoutTemplate'],true)) {
+        if ($method==='DELETE' && $id && in_array($table,['Program','WorkoutTemplate','PrescriptionPreset'],true)) {
             if ($table==='Program') ensure(!$this->db->one('Student','programId=?',[$id]),'Remova a rotina dos alunos antes de excluí-la',409);
             $this->db->delete($table,$id); return ['ok'=>true];
         }
@@ -213,18 +240,19 @@ trait Workouts {
             $items=$this->ordered($existing['exercises'],$body,'clientId',$existing['revision']);
             $this->db->update($table,$id,['exercises'=>$items,'revision'=>$existing['revision']+1]); return ['revision'=>$existing['revision']+1];
         }
-        if (($method==='POST' && !$id)||($method==='PUT' && $id && !$order && $table!=='PrescriptionPreset')) {
+        if (($method==='POST' && !$id)||($method==='PUT' && $id && !$order)) {
             $d=$this->validation->parse($schema,$body);
             if ($table==='Exercise') $this->validateVideoOwner($d['videoUrl']);
             if ($table==='PrescriptionPreset') {
                 $this->series($d['series']);
-                foreach ($this->db->rows($table,'ownerId=?',[$this->user['id']]) as $p) if ($p['name']===$d['name'] && $p['series']===$d['series'] && $p['configuration']===($d['configuration']??null)) return $p;
+                if(!$existing)foreach ($this->db->rows($table,'ownerId=?',[$this->user['id']]) as $p) if ($p['name']===$d['name'] && $p['series']===$d['series'] && $p['configuration']===($d['configuration']??null)) return $p;
             }
             if ($table==='Program') {
                 if ($existing && (isset($d['revision'])||isset($d['workouts']))) ensure(($d['revision']??null)===$existing['revision'],'Rotina atualizada em outra sessão',409);
                 foreach ($d['workouts']??[] as $w) $this->prescriptions($w['exercises']);
             }
             if ($table==='WorkoutTemplate') {
+                if($d['folderId'])$this->own('WorkoutFolder',$d['folderId']);
                 if ($existing) ensure(($d['revision']??null)===$existing['revision'],'Treino atualizado em outra sessão',409);
                 foreach ($d['exercises'] as &$item) $item['clientId']=$item['clientId']??uid(); unset($item);
                 $this->prescriptions($d['exercises']);

@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import type { Db } from "./db";
 import { HttpError } from "./evaluations";
-import { workoutTemplateSchema } from "../shared/workouts";
+import { workoutTemplateSchema, workoutFolderSchema, workoutFolderMoveSchema, copyPreparedWorkout } from "../shared/workouts";
 
 export function workoutTemplateRoutes(db: Db) {
   const router = Router();
@@ -27,11 +27,44 @@ export function workoutTemplateRoutes(db: Db) {
       })),
     })));
   });
+  router.get("/folders", async (_req, res) => {
+    res.json(await db.workoutFolder.findMany({ where: { ownerId: res.locals.user.id }, orderBy: { name: "asc" } }));
+  });
+  router.post("/folders", async (req, res) => {
+    res.status(201).json(await db.workoutFolder.create({ data: { ...workoutFolderSchema.parse(req.body), ownerId: res.locals.user.id } }));
+  });
+  router.put("/folders/:id", async (req, res) => {
+    const result = await db.workoutFolder.updateMany({ where: { id: String(req.params.id), ownerId: res.locals.user.id }, data: workoutFolderSchema.parse(req.body) });
+    if (!result.count) throw new HttpError(404, "Pasta não encontrada");
+    res.json({ ok: true });
+  });
+  router.delete("/folders/:id", async (req, res) => {
+    const result = await db.workoutFolder.deleteMany({ where: { id: String(req.params.id), ownerId: res.locals.user.id } });
+    if (!result.count) throw new HttpError(404, "Pasta não encontrada");
+    res.json({ ok: true });
+  });
+  router.put("/:id/folder", async (req, res) => {
+    const { folderId, revision } = workoutFolderMoveSchema.parse(req.body);
+    res.json(await db.$transaction(async tx => {
+      const current = await tx.workoutTemplate.findFirst({ where: { id: String(req.params.id), ownerId: res.locals.user.id } });
+      if (!current) throw new HttpError(404, "Treino não encontrado");
+      if (folderId && !await tx.workoutFolder.findFirst({ where: { id: folderId, ownerId: res.locals.user.id } })) throw new HttpError(404, "Pasta não encontrada");
+      if (current.revision !== revision) throw new HttpError(409, "Treino atualizado em outra sessão. Reabra o catálogo.");
+      return tx.workoutTemplate.update({ where: { id: current.id, revision }, data: { folderId, revision: { increment: 1 } } });
+    }));
+  });
+  router.post("/:id/duplicate", async (req, res) => {
+    const template = await db.workoutTemplate.findFirst({ where: { id: String(req.params.id), ownerId: res.locals.user.id } });
+    if (!template) throw new HttpError(404, "Treino não encontrado");
+    const parsed = workoutTemplateSchema.parse(template);
+    res.status(201).json(await save({ ...copyPreparedWorkout(parsed), name: template.name.slice(0, 152) + " (cópia)", folderId: template.folderId }, res.locals.user.id));
+  });
   async function save(body: unknown, ownerId: string, id?: string) {
     const { revision, ...data } = workoutTemplateSchema.parse(body);
     return db.$transaction(async tx => {
       const existing = id ? await tx.workoutTemplate.findFirst({ where: { id, ownerId } }) : null;
       if (id && !existing) throw new HttpError(404, "Treino preparado não encontrado");
+      if (data.folderId && !await tx.workoutFolder.findFirst({ where: { id: data.folderId, ownerId } })) throw new HttpError(404, "Pasta não encontrada");
       if (existing && revision !== existing.revision)
         throw new HttpError(409, "Treino atualizado em outra sessão. Feche e abra novamente antes de editar.");
       data.exercises = data.exercises.map(item => ({ ...item, clientId: item.clientId ?? randomUUID() }));

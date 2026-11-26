@@ -92,6 +92,8 @@ final class App {
         if ($path==='/templates' && $method==='GET') return array_map(fn($t)=>$this->template($t['id']),$this->db->rows('EvaluationTemplate','ownerId IN (?,?)',['system',$this->user['id']],'name ASC, version DESC'));
         if ($path==='/templates' && $method==='POST') return $this->newTemplate($body);
         if ($path==='/exercises/catalog' && $method==='POST') return $this->importExerciseCatalog();
+        if (preg_match('~^/workout-templates/folders(?:/([^/]+))?$~D',$path,$m)) return $this->workoutFolders($method,$m[1]??null,$body);
+        if (preg_match('~^/workout-templates/([^/]+)/(folder|duplicate)$~D',$path,$m)) return $this->catalogAction($method,$m[1],$m[2],$body);
         if (preg_match('~^/exercises/([^/]+)/favorite$~D',$path,$m) && $method==='PUT') return $this->favoriteExercise($m[1],$body);
         if (preg_match('~^/(exercises|programs|workout-templates|prescription-presets)(?:/([^/]+))?(/order)?$~D',$path,$m)) return $this->libraryRoute($method,$m[1],$m[2]??null,($m[3]??'')!=='',$body);
         if (preg_match('~^/workout-plans/([^/]+)(?:/workouts/([^/]+)/order)?$~D',$path,$m) && $method==='PUT') {

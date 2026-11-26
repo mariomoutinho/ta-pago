@@ -325,6 +325,7 @@ CREATE TABLE `PrescriptionPreset` (
 CREATE TABLE `WorkoutTemplate` (
   `id` VARCHAR(191) NOT NULL PRIMARY KEY,
   `ownerId` VARCHAR(191) NOT NULL,
+  `folderId` VARCHAR(191) NULL,
   `name` LONGTEXT NOT NULL,
   `subtitle` LONGTEXT NOT NULL,
   `instructions` LONGTEXT NOT NULL,
@@ -333,6 +334,14 @@ CREATE TABLE `WorkoutTemplate` (
   `createdAt` VARCHAR(24) NOT NULL,
   `updatedAt` VARCHAR(24) NOT NULL,
   KEY `ix_WorkoutTemplate_0` (`ownerId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `WorkoutFolder` (
+  `id` VARCHAR(191) NOT NULL PRIMARY KEY,
+  `ownerId` VARCHAR(191) NOT NULL,
+  `name` VARCHAR(191) NOT NULL,
+  `createdAt` VARCHAR(24) NOT NULL,
+  UNIQUE KEY `uq_WorkoutFolder_0` (`ownerId`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `RateLimit` (`id` VARCHAR(64) PRIMARY KEY, `hits` INT NOT NULL, `expires` BIGINT NOT NULL) ENGINE=InnoDB;
@@ -408,3 +417,7 @@ ALTER TABLE `WorkoutCompletion` ADD CONSTRAINT `fk_WorkoutCompletion_workoutId` 
 ALTER TABLE `PrescriptionPreset` ADD CONSTRAINT `fk_PrescriptionPreset_ownerId` FOREIGN KEY (`ownerId`) REFERENCES `User` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `WorkoutTemplate` ADD CONSTRAINT `fk_WorkoutTemplate_ownerId` FOREIGN KEY (`ownerId`) REFERENCES `User` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `WorkoutTemplate` ADD CONSTRAINT `fk_WorkoutTemplate_folderId` FOREIGN KEY (`folderId`) REFERENCES `WorkoutFolder` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `WorkoutFolder` ADD CONSTRAINT `fk_WorkoutFolder_ownerId` FOREIGN KEY (`ownerId`) REFERENCES `User` (`id`) ON DELETE CASCADE;

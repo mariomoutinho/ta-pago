@@ -8,6 +8,7 @@ import Users from "lucide-react-native/icons/users";
 import CalendarDays from "lucide-react-native/icons/calendar-days";
 import Dumbbell from "lucide-react-native/icons/dumbbell";
 import Library from "lucide-react-native/icons/library";
+import SlidersHorizontal from "lucide-react-native/icons/sliders-horizontal";
 import ClipboardList from "lucide-react-native/icons/clipboard-list";
 import Trophy from "lucide-react-native/icons/trophy";
 import LogOut from "lucide-react-native/icons/log-out";
@@ -32,8 +33,9 @@ import { StudioIcon } from "./icons";
 const routes: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Início", icon: House }, { href: "/alunos", label: "Alunos", icon: Users },
   { href: "/programas", label: "Programas", icon: CalendarDays }, { href: "/exercicios", label: "Exercícios", icon: Dumbbell },
-  { href: "/treinos-preparados", label: "Treinos preparados", icon: Library }, { href: "/modelos", label: "Avaliações", icon: ClipboardList },
+  { href: "/treinos-preparados", label: "Catálogo de treinos", icon: Library }, { href: "/modelos", label: "Avaliações", icon: ClipboardList },
   { href: "/grupos", label: "Grupos e desafios", icon: Trophy },
+  { href: "/presets", label: "Presets", icon: SlidersHorizontal },
 ];
 const isActive = (path: string, href: string) => href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
 

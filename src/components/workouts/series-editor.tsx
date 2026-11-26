@@ -15,7 +15,7 @@ function parse(rows: Row[]) {
     return { type: row.type, sets: Number(parts[0]), repetitions: parts[1] ?? "", load: null, restSeconds: null, ...values };
   }));
 }
-export function SeriesEditor({ item, save, onDirty, draft = false, disabled = false, saveLabel, initialSavingPreset = false }: { item: Prescription; save: (series: SeriesRow[]) => Promise<void>; onDirty?: (dirty: boolean) => void; draft?: boolean; disabled?: boolean; saveLabel?: string; initialSavingPreset?: boolean }) {
+export function SeriesEditor({ item, save, onDirty, draft = false, disabled = false, saveLabel, initialSavingPreset = false, presetTools = true }: { item: Prescription; save: (series: SeriesRow[]) => Promise<void>; onDirty?: (dirty: boolean) => void; draft?: boolean; disabled?: boolean; saveLabel?: string; initialSavingPreset?: boolean; presetTools?: boolean }) {
   const t = useTheme();
   const [rows, setRows] = useState<Row[]>(() => display(initialSeries(item)));
   const [saving, setBusy] = useState(false);
@@ -59,8 +59,8 @@ export function SeriesEditor({ item, save, onDirty, draft = false, disabled = fa
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
         <Button disabled={busy || rows.length >= 50} onPress={() => { setChosenType(rows[rows.length - 1].type); setTypePicker("add"); }}>Adicionar série</Button>
         <Button disabled={busy || rows.length >= 50} variant="secondary" onPress={() => { const last = rows[rows.length - 1]; change([...rows, { ...last, values: { ...last.values } }]); }}>Replicar séries</Button>
-        <Button disabled={busy} variant="secondary" onPress={() => setPreset("load")}>Adicionar preset</Button>
-        <Button disabled={busy} variant="secondary" onPress={() => setPreset(preset === "save" ? null : "save")}>Salvar como preset</Button>
+        {presetTools && <Button disabled={busy} variant="secondary" onPress={() => setPreset("load")}>Adicionar preset</Button>}
+        {presetTools && <Button disabled={busy} variant="secondary" onPress={() => setPreset(preset === "save" ? null : "save")}>Salvar como preset</Button>}
       </View>
       {preset === "save" && <View style={{ gap: 6 }}>
         <Field label="Nome do preset" value={name} onChangeText={setName} maxLength={160} />

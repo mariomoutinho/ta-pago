@@ -208,7 +208,7 @@ export function PersonalDashboard() {
                 onPress={() => go("/programas")}
               />
               <Shortcut
-                title="Treinos preparados"
+                title="Catálogo de treinos"
                 caption="Modelos para reutilizar"
                 icon="≡"
                 onPress={() => go("/treinos-preparados")}

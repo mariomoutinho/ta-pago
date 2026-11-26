@@ -8,6 +8,7 @@ import { prescribedSets } from '../shared/workout-progress';
 import { validateGroupPost } from './groups';
 import { validWorkoutJpeg } from '../shared/workout-photo';
 import type { Db } from "./db";
+import { DbNull } from "@prisma/client/runtime/client";
 import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
 import { brazilToday } from "../shared/notifications";
@@ -147,6 +148,17 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
     if (duplicate) { res.json(duplicate); return; }
     const { configuration, ...fields } = data;
     res.status(201).json(await db.prescriptionPreset.create({ data: { ...fields, ...(configuration ? { configuration } : {}), ownerId } }));
+  });
+  router.put("/prescription-presets/:id", async (req, res) => {
+    const { configuration, ...data } = prescriptionPresetSchema.parse(req.body);
+    const result = await db.prescriptionPreset.updateMany({ where: { id: String(req.params.id), ownerId: res.locals.user.id }, data: { ...data, configuration: configuration ?? DbNull } });
+    if (!result.count) throw new HttpError(404, "Preset não encontrado");
+    res.json({ ok: true });
+  });
+  router.delete("/prescription-presets/:id", async (req, res) => {
+    const result = await db.prescriptionPreset.deleteMany({ where: { id: String(req.params.id), ownerId: res.locals.user.id } });
+    if (!result.count) throw new HttpError(404, "Preset não encontrado");
+    res.json({ ok: true });
   });
   router.get("/exercises", async (req, res) => {
     const query = (key: string) =>

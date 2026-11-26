@@ -11,6 +11,10 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/preset-library.tsx",
+    "src/app/presets.tsx",
+    "backend-php/migrations/20261126_workout_folders.sql",
+    "prisma/migrations/20261126210000_workout_folders/migration.sql",
     "shared/exercise-catalog.json",
     "backend-php/tests/catalog-contract.php",
     "src/components/workouts/student-progress.tsx",
@@ -98,7 +102,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.9.0",
+  "version": "12.10.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -347,3 +351,11 @@ Treinos preparados podem ser criados e editados sem exercícios, para preenchime
 A biblioteca oferece “Adicionar lista de 240 exercícios”, com 20 exercícios em cada um dos 12 grupos musculares da lista fornecida pelo responsável. A importação grava somente na biblioteca do professor autenticado, é transacional e não sobrescreve exercícios existentes com o mesmo nome, inclusive arquivados. Repetir a operação não duplica o catálogo. O campo Equipamento foi retirado do formulário de criação e edição; o dado continua preservado nos registros existentes e na lista importada.
 
 A prévia local usa banco e conta de demonstração separados da produção. Ela não sincroniza automaticamente os exercícios privados cadastrados no site.
+
+## Catálogo, pastas e presets
+
+A seção profissional foi renomeada para Catálogo de treinos, preservando a URL `/treinos-preparados` para compatibilidade. O menu de três pontos oferece Clonar (abre uma cópia para edição, salva como novo modelo), Duplicar (cria imediatamente uma cópia na mesma pasta), Trocar de pasta e Excluir com confirmação. A cópia recebe nova identidade de modelo e de itens; não altera prescrições já copiadas para alunos.
+
+Pastas de um nível pertencem ao professor, podem ser criadas no catálogo e filtram a listagem. Todos e Sem pasta permitem visualizar o conjunto completo ou os modelos fora de pastas. Trocar de pasta valida a propriedade e a revisão do treino. As APIs também permitem renomear pastas e excluí-las, mantendo os treinos em Sem pasta por chave estrangeira. Os registros anteriores permanecem sem pasta após a migração aditiva.
+
+A rota profissional `/presets` aparece na barra lateral e permite buscar, criar, editar e excluir presets privados. Os presets padrão são exibidos para personalização de uma cópia. O editor reutiliza SeriesEditor, preservando as configurações adicionais já salvas; editar ou excluir um preset não modifica prescrições existentes. As APIs de pastas, cópias e presets exigem conta profissional e restringem o acesso ao proprietário.

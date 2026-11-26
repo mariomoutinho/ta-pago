@@ -86,17 +86,21 @@ export const workoutSchema = z.object({
   exercises: z.array(prescriptionSchema).max(100).refine(validExerciseGroups, "Mantenha os exercícios combinados juntos, em blocos de pelo menos dois").default([]),
 });
 export const workoutTemplateSchema = workoutSchema.omit({ id: true }).extend({
+  folderId: z.string().min(1).max(191).nullable().default(null),
   exercises: z.array(prescriptionSchema.omit({ id: true })).max(100).refine(validExerciseGroups, "Bloco combinado inválido").default([]),
   revision: z.number().int().positive().optional(),
 });
-export type WorkoutTemplate = WorkoutData & { id: string; revision: number };
+export const workoutFolderSchema = z.object({ name });
+export const workoutFolderMoveSchema = z.object({ folderId: z.string().min(1).max(191).nullable(), revision: z.number().int().positive() });
+export type WorkoutFolder = { id: string; name: string };
+export type WorkoutTemplate = WorkoutData & { id: string; revision: number; folderId?: string | null };
 /** Copia somente a prescrição, sem IDs ou feedbacks do treino de origem. */
 export function copyPreparedWorkout(template: WorkoutData): WorkoutData {
   return {
     name: template.name,
     subtitle: template.subtitle,
     instructions: template.instructions,
-    exercises: template.exercises.map(({ id: _id, ...item }) => ({
+    exercises: template.exercises.map(({ id: _id, clientId: _clientId, ...item }) => ({
       ...item,
       series: item.series.map(row => ({ ...row })),
     })),
