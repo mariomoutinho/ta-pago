@@ -4,7 +4,7 @@
   "title": "Navegação",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-10-29",
+  "updated_at": "2026-11-26",
   "language": "pt-BR",
   "tags": [
     "02-architecture"
@@ -18,6 +18,8 @@
     "src/hooks/use-color-scheme.ts",
     "src/hooks/use-color-scheme.web.ts",
     "src/components/personal/shell.tsx",
+    "src/components/studio/professional-layout.tsx",
+    "src/constants/studio.ts",
     "src/app/programas.tsx",
     "src/components/workouts/program-form.tsx",
     "src/app/treinos-preparados.tsx",
@@ -44,7 +46,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.16.0",
+  "version": "4.17.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -60,6 +62,14 @@
 ---
 
 # Navegação
+
+## Layout profissional Studio
+
+`PersonalShell` direciona somente contas de personal para `ProfessionalLayout`. Esse componente compartilha sidebar, cabeçalho compacto, breadcrumbs, identificação da conta, notificações, alternância do tema existente e saída. O aluno mantém o cabeçalho anterior. A logo original é reutilizada pelo componente `Brand`, sem substituir a marca por um desenho ou logotipo novo.
+
+A sidebar contém Início, Alunos, Programas, Exercícios, Treinos preparados, Avaliações e Grupos e desafios. A rota ativa recebe faixa e superfície de destaque, além de `aria-current` na web. A largura é 244 px expandida e 76 px recolhida; tooltips aparecem em hover ou foco. A preferência de recolhimento é persistida no armazenamento local do navegador. Abaixo de 1000 px, a navegação passa a um drawer que fecha ao escolher uma rota ou acionar os controles de fechamento.
+
+Os tokens Studio ficam em `src/constants/studio.ts` e entram por um contexto de tema limitado à árvore profissional. O tema claro/escuro continua usando a preferência existente; as superfícies e controles dos alunos não recebem os tokens Studio. Os SVGs do Figma são arquivos locais de 20 × 20 px; os demais ícones usam imports individuais de Lucide. Transições web respeitam `prefers-reduced-motion`, sem animação contínua.
 
 ## Início do aluno
 

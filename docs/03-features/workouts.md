@@ -47,6 +47,10 @@
     "prisma/migrations/20261023180000_workout_editor/migration.sql",
     "server/workout-templates.ts",
     "src/components/workouts/prepared-workouts.tsx",
+    "src/components/studio/workout-template-card.tsx",
+    "src/components/studio/dropdown-menu.tsx",
+    "src/components/studio/page-header.tsx",
+    "src/components/studio/search-input.tsx",
     "src/app/treinos-preparados.tsx",
     "tests/personal/workout-templates.test.ts",
     "prisma/migrations/20261023160000_workout_templates/migration.sql",
@@ -92,7 +96,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.8.1",
+  "version": "12.8.2",
   "authority": "code",
   "audience": [
     "developer",
@@ -215,6 +219,8 @@ A biblioteca usa painel central com criação no topo, busca e filtros por grupo
 O cadastro oferece listas de grupos musculares e categorias com opções predefinidas e valores já cadastrados, mantendo entrada livre. Os filtros da biblioteca usam as mesmas opções. A política CSP permite imagens HTTP/HTTPS para miniaturas do YouTube e imagens cadastradas; frames continuam limitados ao player permitido.
 
 ## Treinos preparados do personal
+
+A listagem adota a composição Studio: título e ação de criação compacta, busca com ícone, seção Seus modelos com contagem dos resultados e cards com nome, subtítulo e quantidade de exercícios vindos da API. Ver modelo e Editar continuam acessíveis no card; Excluir fica no menu de ações e mantém a confirmação existente. O seletor de modelos nos planos preserva a cópia da prescrição e o bloqueio de exercícios indisponíveis. Carregamento usa skeleton estático, erro mantém nova tentativa e a busca sem resultados possui estado vazio. Os cards reorganizam ações verticalmente em telas estreitas. Não houve mudança de endpoint, banco ou regra de negócio.
 
 A seção **Treinos preparados** (`/treinos-preparados`) permite criar, buscar, visualizar, editar e excluir modelos privados sem selecionar aluno. O editor reutiliza a biblioteca de exercícios e a prescrição (séries, repetições, carga, intervalo e orientações). É preciso confirmar a prescrição aberta e adicionar ao menos um exercício ativo antes de salvar. Cancelar pede confirmação de descarte.
 
