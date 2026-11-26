@@ -1532,6 +1532,43 @@ test("telas do treino preservam navegação, gerenciam grupos e adicionam pela b
   await page.setViewportSize({ width: 390, height: 844 }); await page.screenshot({ path: "test-results/editor-final-mobile.png", fullPage: true });
 });
 
+test("datas do plano usam padrão brasileiro e salvam ISO com término opcional", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Datas", email: "plan-dates@example.test", password: "teste123" } });
+  const student = await (await page.request.post(base + "/api/students", { headers, data: { name: "Aluno Datas", startDate: "2026-11-26" } })).json();
+  const endpoint = base + "/api/students/" + student.id + "/workout-plans";
+  await page.goto(base + "/alunos/" + student.id + "/treinos");
+  await page.getByRole("button", { name: "Criar rotina", exact: true }).click();
+  const start = page.getByLabel("Data de início (DD/MM/AAAA) *", { exact: true });
+  const end = page.getByLabel("Data de término (DD/MM/AAAA)", { exact: true });
+  await expect(start).toHaveValue(/^\d{2}\/\d{2}\/\d{4}$/);
+  await expect(end).toHaveAttribute("placeholder", "__/__/____");
+  await page.getByLabel("Nome do plano *", { exact: true }).fill("Plano Datas");
+  await start.fill("28102026");
+  await expect(start).toHaveValue("28/10/2026");
+  await end.fill("31022027");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText(/Data inválida/)).toBeVisible();
+  await end.fill("27102026");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.getByText(/Término anterior ao início/)).toBeVisible();
+  await end.fill("28112026");
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.screenshot({ path: "data/plan-dates-390.png", animations: "disabled" });
+  const response = page.waitForResponse(r => r.url() === endpoint && r.request().method() === "POST");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  const saved = await (await response).json();
+  expect(saved.startsAt).toBe("2026-10-28"); expect(saved.endsAt).toBe("2026-11-28");
+  await page.goto(base + "/alunos/" + student.id + "/treinos?rotina=" + saved.id);
+  await page.getByRole("button", { name: "Opções desta rotina", exact: true }).click();
+  await page.getByRole("button", { name: "Editar plano", exact: true }).click();
+  await expect(start).toHaveValue("28/10/2026"); await expect(end).toHaveValue("28/11/2026");
+  await end.fill("");
+  const updated = page.waitForResponse(r => r.url().endsWith(`/workout-plans/${saved.id}`) && r.request().method() === "PUT");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  expect((await (await updated).json()).endsAt).toBeNull();
+});
+
 test("adicionar treino mostra somente a nova sessão e preserva a rotina", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
   await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Sessão", email: "single-workout@example.com", role: "personal", password: "senha-ficticia-12345" } });

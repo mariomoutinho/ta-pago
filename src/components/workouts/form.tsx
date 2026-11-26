@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { View } from "react-native";
-import { Button, Field, Notice, s } from "@/components/personal/ui";
+import { Button, Notice, s } from "@/components/personal/ui";
+import { FormattedField } from "@/components/personal/formatted-field";
 import { message } from "@/features/personal/api";
 
 export function SaveForm({
@@ -52,15 +53,16 @@ export function TextFields<T extends object>({
   change,
 }: {
   value: T;
-  fields: readonly (readonly [keyof T, string])[];
+  fields: readonly (readonly [keyof T, string, "date"?])[];
   change: (next: T) => void;
 }) {
   return (
     <>
-      {fields.map(([key, label]) => (
-        <Field
+      {fields.map(([key, label, format]) => (
+        <FormattedField
           key={String(key)}
           label={label}
+          format={format}
           value={String(value[key] ?? "")}
           multiline={/Orientações|Observações|Descrição/.test(label)}
           onChangeText={(text) => change({ ...value, [key]: text })}

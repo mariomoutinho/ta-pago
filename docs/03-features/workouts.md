@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-02",
+  "updated_at": "2026-11-26",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -73,6 +73,8 @@
     "prisma/migrations/20261020120000_workout_prescription/migration.sql",
     "src/components/workouts/plans.tsx",
     "src/components/workouts/plan-form.tsx",
+    "src/components/workouts/form.tsx",
+    "src/components/personal/formatted-field.tsx",
     "src/components/workouts/exercise-library.tsx",
     "tests/personal/workouts.test.ts",
     "tests/personal/browser/app.spec.ts",
@@ -90,7 +92,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.8.0",
+  "version": "12.8.1",
   "authority": "code",
   "audience": [
     "developer",
@@ -109,6 +111,10 @@
 ---
 
 # Treinos personalizados
+
+## Datas do plano
+
+Os campos Data de início e Data de término na criação e edição de planos exibem e aceitam o formato brasileiro DD/MM/AAAA, com máscara progressiva. Datas existentes em ISO são apresentadas em português; o envio à API continua em AAAA-MM-DD e o término vazio continua sem data. Datas impossíveis e término anterior ao início são rejeitados antes do salvamento.
 
 ## Cargas do aluno e intervalo
 

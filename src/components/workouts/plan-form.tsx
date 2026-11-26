@@ -93,8 +93,8 @@ export function PlanForm({
         fields={[
           ["title", "Nome do plano *"],
           ["objective", "Objetivo *"],
-          ["startsAt", "Data de início (AAAA-MM-DD) *"],
-          ["endsAt", "Data de término (AAAA-MM-DD)"],
+          ["startsAt", "Data de início (DD/MM/AAAA) *", "date"],
+          ["endsAt", "Data de término (DD/MM/AAAA)", "date"],
           ["instructions", "Orientações gerais"],
         ]}
       />
