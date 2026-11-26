@@ -89,6 +89,14 @@ O primeiro commit local é `3a70b4f` (`feat(ui): adiciona estrutura profissional
 
 ## Limites
 
-Não foi feita publicação nem validação em aparelho Android/iOS. A dependência nativa de SVG exige novo build para um binário que ainda não a contenha. O editor de prescrição recebe as cores profissionais e o novo shell; sua estrutura interna não foi redesenhada, pois a referência do Figma e a validação visual desta tarefa são a listagem de treinos preparados e o layout compartilhado.
+Na etapa inicial, a entrega permaneceu local. Não foi feita validação em aparelho Android/iOS. A dependência nativa de SVG exige novo build para um binário que ainda não a contenha. O editor de prescrição recebe as cores profissionais e o novo shell; sua estrutura interna não foi redesenhada, pois a referência do Figma e a validação visual desta tarefa são a listagem de treinos preparados e o layout compartilhado.
 
 As falhas de infraestrutura dos testes documentais/inventário no Windows e do teste de importação devem ser relatadas separadamente dos testes do layout. Não reescrever testes para esconder falhas nem alterar infraestrutura fora do escopo.
+
+## Publicação autorizada em 26/11/2026
+
+Após aprovar a prévia local, o responsável autorizou explicitamente push e deploy. Os três commits do Studio foram enviados à branch `feat/professional-studio-layout`, até `7d8e763`, sem merge ou alteração da branch principal.
+
+O build PHP/Web passou na validação do pacote e nos sete testes de empacotamento. A publicação em `https://tapago.coletivopindorama.com.br` atualizou somente arquivos visuais: cinco SVGs Studio, CSS, JavaScript e HTML. A marca original foi preservada. Backend, configuração privada e banco não foram alterados; a conta e os dados da demonstração local não foram publicados. O HTML anterior foi guardado localmente para rollback.
+
+O servidor apresentou uma breve demora para servir arquivos recém-substituídos. A verificação passou após aguardar a propagação, e o cache da hospedagem foi limpo. A conferência final, usando URLs públicas sem parâmetros de cache, confirmou por SHA-256 os oito arquivos do Studio. `/entrar`, `/treinos-preparados` e `/api/health` retornaram HTTP 200; a saúde retornou `status: ok`. O bundle publicado é `entry-48d059b9719d1416ebe16c6dc90e5cd6.js`. Essa conferência não representa um novo teste autenticado com dados reais em produção.
