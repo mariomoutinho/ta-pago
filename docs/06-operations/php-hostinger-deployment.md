@@ -4,7 +4,7 @@
   "title": "Hostinger Single — implantação PHP em tapago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-26",
   "language": "pt-BR",
   "tags": [
     "06-operations",
@@ -39,12 +39,14 @@
     "scripts/php/browser-test.mjs",
     "scripts/php/apache-test.mjs",
     ".github/workflows/php-validation.yml",
-    "app.config.ts"
+    "app.config.ts",
+    "src/components/personal/student-registration.tsx",
+    "backend-php/migrations/20261126_student_training_group.sql"
   ],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.6.2",
+  "version": "2.7.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -64,6 +66,14 @@
 ---
 
 # Hostinger Single — implantação PHP em tapago
+
+## Publicação de 26/11/2026 — cadastro simplificado
+
+A revisão `f2182f9` foi publicada em `tapago.coletivopindorama.com.br` por solicitação explícita do responsável. O pacote PHP/Web passou na validação de conteúdo e nos sete testes de empacotamento. Antes da substituição, um atualizador temporário autenticado conferiu os destinos fixos, copiou os arquivos substituíveis e a configuração para backup privado e exportou esquema e dados do banco para arquivo comprimido no mesmo backup. Nenhum backup ou credencial foi colocado na pasta pública ou no repositório.
+
+Foi aplicada a migração aditiva de `Student.trainingGroup`, ausente antes da atualização. O atualizador substituiu oito arquivos e conferiu os hashes dos 48 arquivos do pacote. A configuração e os dados existentes foram preservados. O atualizador removeu a si próprio; a listagem posterior do diretório público confirmou sua ausência. O site principal e o DNS não foram alterados.
+
+Após a publicação, `/`, `/entrar` e `/api/health` responderam HTTP 200; a saúde retornou `status: ok` e o HTML apontou para o bundle `entry-f2e0d89771471a555d841f86c53956b0.js`. Uma conferência de navegador do bundle público, com respostas de sessão e consultas simuladas, confirmou os campos, a bandeira do Brasil, o seletor com Presencial/Online/Criar novo grupo e a opção de acesso. Essa conferência não leu nem criou alunos reais e não representa teste de cadastro autenticado em produção. Os dez testes locais de contrato/API e os dois testes locais de navegador da alteração já haviam passado; a suíte PHP/MySQL local permaneceu impedida pela indisponibilidade do banco de teste.
 
 ## Destino existente e limites
 
