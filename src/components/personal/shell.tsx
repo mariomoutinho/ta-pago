@@ -16,38 +16,10 @@ import { Button, Label, Notice, s } from "./ui";
 import { message } from "@/features/personal/api";
 import { router } from "expo-router";
 import { EnrollmentNotifications } from "./enrollment-notifications";
-export function Brand({ compact = false }: { compact?: boolean }) {
-  return (
-    <View style={s.row}>
-      <View
-        style={{
-          width: compact ? 36 : 48,
-          height: compact ? 36 : 48,
-          backgroundColor: "#000",
-          borderRadius: 12,
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          source={require("../../../logotapago.png")}
-          accessibilityLabel="Logo Tá Pago"
-          style={{ width: compact ? 36 : 48, height: compact ? 36 : 48 }}
-          resizeMode="contain"
-        />
-      </View>
-      <View>
-        <Label size={compact ? 18 : 21} bold>
-          TÁ PAGO<Label size={10}> PERSONAL</Label>
-        </Label>
-        {!compact && (
-          <Label size={11} muted>
-            Presença. Evolução. Resultado.
-          </Label>
-        )}
-      </View>
-    </View>
-  );
-}
+import { Brand } from "./brand";
+import { ProfessionalLayout } from "../studio/professional-layout";
+import { Studio } from "@/constants/studio";
+export { Brand } from "./brand";
 export function PersonalShell({ children }: { children: ReactNode }) {
   const t = useTheme();
   const { scheme, toggleTheme } = useThemePreference();
@@ -60,6 +32,7 @@ export function PersonalShell({ children }: { children: ReactNode }) {
         {children}
       </View>
     );
+  if (user.role === "personal") return <ProfessionalLayout>{children}</ProfessionalLayout>;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>
       <View
@@ -73,7 +46,6 @@ export function PersonalShell({ children }: { children: ReactNode }) {
             <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => router.push("/")} style={{ flexShrink: 1 }}>
               <Brand compact={width < 700} />
             </Pressable>
-            {width < 700 && user.role === "personal" && <EnrollmentNotifications key={user.id} />}
           </View>
           {width >= 900 && <AppTabs />}
           <View style={[s.row, { marginLeft: "auto" }]}>
@@ -82,9 +54,7 @@ export function PersonalShell({ children }: { children: ReactNode }) {
                 {user.name}
               </Label>
               <Label size={10} muted>
-                {user.role === "personal"
-                  ? "Conta profissional"
-                  : "Conta do aluno"}
+                Conta do aluno
               </Label>
             </View>
             <Button variant="secondary" label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>
@@ -102,7 +72,6 @@ export function PersonalShell({ children }: { children: ReactNode }) {
             >
               Sair
             </Button>
-            {width >= 700 && user.role === "personal" && <EnrollmentNotifications key={user.id} />}
           </View>
         </View>
       </View>
@@ -123,15 +92,20 @@ export function Page({
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, [resetKey]);
   const { width } = useWindowDimensions();
+  const { user } = useSession();
+  const professional = user?.role === "personal";
+  const t = useTheme();
   return (
     <ScrollView
+      style={{ backgroundColor: t.canvas ?? t.backgroundElement }}
       ref={scrollRef}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
-        padding: width < 600 ? 18 : 32,
+        padding: width < 600 ? 20 : professional ? 48 : 32,
+        paddingTop: professional && width >= 1000 ? 56 : width < 600 ? 24 : 32,
         paddingBottom: 60,
         width: "100%",
-        maxWidth: 1240,
+        maxWidth: professional ? Studio.contentWidth : 1240,
         alignSelf: "center",
         flexGrow: 1,
       }}

@@ -7,8 +7,10 @@ import { pushState, enablePush, clearNotificationsDevice, shouldOfferPush, remem
 import { useTheme } from "@/hooks/use-theme";
 import type { NewsItem } from "../../../shared/notifications";
 import { Button, Dialog, Label, Notice, s } from "./ui";
+import { StudioIcon } from "../studio/icons";
+import { studioWebProps } from "../studio/controls";
 
-export function EnrollmentNotifications(){
+export function EnrollmentNotifications({studio=false}:{studio?:boolean}={}){
   const {user}=useSession(),t=useTheme();
   const params=useGlobalSearchParams<{novidades?:string}>();
   const [unread,setUnread]=useState(0),[open,setOpen]=useState(false),[offer,setOffer]=useState(false),[settings,setSettings]=useState(false);
@@ -38,9 +40,9 @@ export function EnrollmentNotifications(){
   async function togglePush(){setBusy(true);setError("");try{if(device?.enabled){await clearNotificationsDevice();setDevice(await pushState());}else setDevice(await enablePush());setOffer(false);}catch(error){setError(message(error));}finally{setBusy(false);}}
   async function markRead(ids:string[]){await api('/notifications/read','POST',{ids});setItems(current=>current.map(item=>ids.includes(item.id)?{...item,read:true}:item));refresh();}
   return <>
-    <Pressable accessibilityRole="button" accessibilityLabel={`Novidades${unread?`, ${unread} não lidas`:""}`} onPress={()=>{setOffer(false);setOpen(true);}}
-      style={({pressed})=>({minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center',borderRadius:10,backgroundColor:t.backgroundElement,opacity:pressed?0.7:1})}>
-      <Label size={20}>🔔</Label>
+    <Pressable {...(studio?studioWebProps:{})} accessibilityRole="button" accessibilityLabel={`Novidades${unread?`, ${unread} não lidas`:""}`} onPress={()=>{setOffer(false);setOpen(true);}}
+      style={({pressed})=>({minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center',borderRadius:10,backgroundColor:studio?t.background:t.backgroundElement,borderWidth:studio?1:0,borderColor:t.border,opacity:pressed?0.7:1})}>
+      {studio?<StudioIcon name="bell" />:<Label size={20}>🔔</Label>}
       {unread>0&&<View testID="news-unread-dot" accessibilityLabel="Há novidades não lidas" style={{position:'absolute',top:5,right:5,width:11,height:11,borderRadius:6,backgroundColor:'#ef3340',borderWidth:1,borderColor:t.background}}/>}
     </Pressable>
     {offer&&!open&&<Dialog title="Receber notificações?" onClose={()=>setOffer(false)}>
