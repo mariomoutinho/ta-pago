@@ -57,6 +57,7 @@ final class App {
         if (preg_match('~^/me/workouts/([^/]+)/completion$~D',$path,$m) && $method==='POST') return $this->completeWorkout($m[1]);
         if (preg_match('~^/(me/)?students(?:/([^/]+))?(.*)$~D',$path,$m)) return $this->studentRoute($method,($m[1]??'')!=='',$m[2]??null,$m[3]??'',$body);
         $this->personal();
+        if ($path==='/student-groups' && $method==='GET') return array_column($this->db->query('SELECT DISTINCT trainingGroup FROM Student WHERE personalId=? AND trainingGroup<>? ORDER BY trainingGroup',[$this->user['id'],''])->fetchAll(\PDO::FETCH_ASSOC),'trainingGroup');
         if($path==='/notifications/android/settings'&&$method==='GET')return ['configured'=>(new AndroidPush($this->db,$this->config))->configured()];
         if(preg_match('~^/notifications/android/(subscribe|unsubscribe|test)$~D',$path,$m)&&$method==='POST'){
             ensure(AndroidPush::installation($body['installation']??null),'Inscrição Android inválida');$push=new AndroidPush($this->db,$this->config);

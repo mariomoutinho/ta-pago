@@ -24,6 +24,7 @@ CREATE TABLE `Student` (
   `phone` LONGTEXT NOT NULL,
   `email` LONGTEXT NOT NULL,
   `sex` LONGTEXT NOT NULL,
+  `trainingGroup` LONGTEXT NOT NULL,
   `startDate` LONGTEXT NOT NULL,
   `status` LONGTEXT NOT NULL,
   `mainGoal` LONGTEXT NOT NULL,

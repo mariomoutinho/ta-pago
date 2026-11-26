@@ -44,6 +44,7 @@ model Student {
   phone String @default("")
   email String @default("")
   sex String @default("")
+  trainingGroup String @default("")
   startDate String
   status String @default("ativo")
   mainGoal String

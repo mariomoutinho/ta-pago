@@ -23,6 +23,7 @@ export const studentSchema = z
     phone: z.string().trim().max(40).default(""),
     email: z.union([z.email(), z.literal("")]).default(""),
     sex: optionalText,
+    trainingGroup: z.string().trim().max(120).default(""),
     startDate: dateSchema,
     status: z.enum(["ativo", "pausado", "inativo"]).default("ativo"),
     mainGoal: optionalText,
@@ -52,6 +53,11 @@ export const studentSchema = z
       message: "Nascimento não pode estar no futuro",
     },
   );
+export const studentCreateSchema = studentSchema.safeExtend({
+  sendAccess: z.boolean().default(false),
+}).refine((s) => !s.sendAccess || (!!s.email && /^\+[1-9]\d{7,14}$/.test(s.phone)), {
+  message: "Informe e-mail e WhatsApp com DDI para enviar o acesso.",
+});
 export const programSchema = z.object({
   name: text.min(3).max(160),
   description: optionalText,

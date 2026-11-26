@@ -207,7 +207,47 @@ test("favoritos da biblioteca persistem após recarga e combinam com a busca", a
   await expect(page.getByRole("button", { name: "Favoritar exercício Agachamento favorito", exact: true })).toHaveAttribute("aria-pressed", "false");
 });
 
-test("cadastro manual usa máscaras brasileiras e salva datas ISO sem alterar dados", async ({ page }) => {
+test("cadastro simplificado mostra somente os campos pedidos e prepara acesso no WhatsApp", async ({ page }) => {
+  await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: {
+    name: "Professor Cadastro", email: "simple-registration@example.test", password: "teste123",
+  } });
+  await page.goto(base + "/");
+  await page.getByRole("button", { name: "Adicionar aluno", exact: true }).click();
+  for (const text of ["Acompanhamento", "Saúde e segurança", "Objetivo principal", "Status", "Programa vigente", "Início do acompanhamento"]) {
+    await expect(page.getByRole("textbox", { name: new RegExp(text) })).toHaveCount(0);
+  }
+  await expect(page.getByRole("button", { name: "País / DDI", exact: true })).toContainText("Brasil +55");
+  await expect(page.getByRole("img", { name: "Bandeira do Brasil", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Número com DDI", { exact: true })).toHaveValue("");
+  await expect(page.getByText("+55", { exact: true })).toBeVisible();
+  for (const width of [390, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(page.getByRole("button", { name: "Salvar", exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: `data/student-registration-${width}.png`, animations: "disabled" });
+  }
+  await page.getByRole("button", { name: "Selecione grupo", exact: true }).click();
+  await page.getByRole("radio", { name: "Criar novo grupo", exact: true }).click();
+  await page.getByLabel("Nome do novo grupo", { exact: true }).fill("Turma especial");
+  await page.getByLabel("Nome completo", { exact: true }).fill("Aluno Cadastro");
+  await page.getByLabel("E-mail", { exact: true }).fill("simple-student@example.test");
+  await page.getByLabel("Número com DDI", { exact: true }).fill("+5511999990000");
+  await page.getByRole("button", { name: "Gênero", exact: true }).click();
+  await page.getByRole("radio", { name: "Prefiro não informar", exact: true }).click();
+  await page.getByRole("checkbox", { name: "Enviar informações de acesso ao aluno", exact: true }).click();
+  const response = page.waitForResponse((r) => r.url().endsWith("/api/students") && r.request().method() === "POST");
+  await page.getByRole("button", { name: "Salvar", exact: true }).click();
+  const created = await (await response).json();
+  await page.waitForURL(`**/alunos/${created.id}`);
+  expect(created.trainingGroup).toBe("Turma especial");
+  const drafts = await page.evaluate(() => (window as any).__whatsappDrafts as string[]);
+  expect(drafts).toHaveLength(1);
+  expect(drafts[0]).toContain("https://wa.me/5511999990000?");
+  expect(decodeURIComponent(drafts[0])).toContain(`/ativar?convite=${created.accessCode}`);
+  expect((await page.request.get(base + "/api/student-groups")).ok()).toBe(true);
+});
+
+test("cadastro manual salva data ISO e WhatsApp com DDI sem alterar dados", async ({ page }) => {
   await provisionBrowserPersonal(db, page.request, base, { headers: { "X-Requested-With": "TaPago" }, data: {
     name: "Personal Máscaras", email: "mask-personal@example.test", role: "personal", password: "senha-ficticia-12345",
   } });
@@ -215,36 +255,38 @@ test("cadastro manual usa máscaras brasileiras e salva datas ISO sem alterar da
   await page.goto(base + "/");
   await page.getByRole("button", { name: "Adicionar aluno", exact: true }).click();
   const birth = page.getByLabel("Data de nascimento", { exact: true });
-  const phone = page.getByLabel("Telefone", { exact: true });
+  const phone = page.getByLabel("Número com DDI", { exact: true });
   await expect(birth).toHaveAttribute("placeholder", "__/__/____");
-  await expect(phone).toHaveAttribute("placeholder", "(__) _ ____ ____");
-  await expect(page.getByLabel("Início do acompanhamento *", { exact: true })).toHaveValue(/^\d{2}\/\d{2}\/\d{4}$/);
-  await page.getByLabel("Nome completo *", { exact: true }).fill("Aluno Máscara");
-  await page.getByLabel("Objetivo principal *", { exact: true }).fill("Mobilidade");
+  await expect(phone).toHaveValue("");
+  await expect(page.getByLabel("Início do acompanhamento *", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Nome completo", { exact: true }).fill("Aluno Máscara");
+  await page.getByLabel("E-mail", { exact: true }).fill("mascara-manual@example.test");
+  await page.getByRole("button", { name: "Selecione grupo", exact: true }).click();
+  await page.getByRole("radio", { name: "Online", exact: true }).click();
   await birth.pressSequentially("25081990");
   await phone.pressSequentially("11912345678");
   await expect(birth).toHaveValue("25/08/1990");
-  await expect(phone).toHaveValue("(11) 9 1234 5678");
+  await expect(phone).toHaveValue("11912345678");
   await birth.press("End");
   await birth.press("Backspace");
   await expect(birth).toHaveValue("25/08/199");
   await birth.pressSequentially("0");
   await birth.fill("31022000");
-  await page.getByRole("button", { name: "Salvar aluno", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar", exact: true }).click();
   await expect(page.getByText("Data inválida", { exact: false })).toBeVisible();
   await birth.fill("25081990");
   const savedResponse = page.waitForResponse(response => response.url().endsWith("/api/students") && response.request().method() === "POST");
-  await page.getByRole("button", { name: "Salvar aluno", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar", exact: true }).click();
   const saved = await savedResponse;
   expect(saved.status()).toBe(201);
   expect(saved.request().postDataJSON().birthDate).toBe("1990-08-25");
-  expect(saved.request().postDataJSON().phone).toBe("(11) 9 1234 5678");
+  expect(saved.request().postDataJSON().phone).toBe("+5511912345678");
   const student = await saved.json();
   await page.waitForURL(`**/alunos/${student.id}`);
   await page.getByRole("tab", { name: "Opções", exact: true }).click();
   await page.getByRole("button", { name: "Editar cadastro", exact: true }).click();
   await expect(birth).toHaveValue("25/08/1990");
-  await expect(phone).toHaveValue("(11) 9 1234 5678");
+  await expect(page.getByLabel("Telefone", { exact: true })).toHaveValue("(11) 9 1234 5678");
 });
 
 test("cadastro público cria somente aluno e não oferece perfil de personal", async ({ page }) => {
@@ -418,12 +460,12 @@ test("cadastro, navegação, aluno persistente e layout móvel", async ({
     .getByRole("button", { name: "+ Adicionar aluno", exact: true })
     .click();
   await page
-    .getByLabel("Nome completo *", { exact: true })
+    .getByLabel("Nome completo", { exact: true })
     .fill("Aluno Browser");
-  await page
-    .getByLabel("Objetivo principal *", { exact: true })
-    .fill("Melhorar força");
-  await page.getByRole("button", { name: "Salvar aluno", exact: true }).click();
+  await page.getByLabel("E-mail", { exact: true }).fill("aluno-browser@example.test");
+  await page.getByRole("button", { name: "Selecione grupo", exact: true }).click();
+  await page.getByRole("radio", { name: "Presencial", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Aluno Browser" }),
   ).toBeVisible();
@@ -894,7 +936,7 @@ test("home organiza ações do personal, mostra dados reais e adapta larguras", 
     .getByRole("button", { name: "Adicionar aluno", exact: true })
     .click();
   await expect(
-    page.getByLabel("Nome completo *", { exact: true }),
+    page.getByLabel("Nome completo", { exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Fechar", exact: true }).click();
   await page

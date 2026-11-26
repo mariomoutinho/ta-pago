@@ -8,8 +8,8 @@ trait Auth {
         $invite=$this->db->one('Invitation','tokenHash=?',[hash('sha256',$code)],$this->writing);
         ensure($invite!==null&&!$invite['consumedAt']&&$invite['expiresAt']>now(),'Convite inválido ou expirado');
         $student=$this->db->required('Student','id=?',[$invite['studentId']],$this->writing);
-        $enrollment=$this->db->one('EnrollmentRequest',"studentId=? AND status='active'",[$student['id']]);
-        ensure($enrollment!==null&&!$student['accountId']&&$student['linkStatus']!=='ended'&&$student['email'],'Convite inválido ou expirado');
+        $enrollment=$this->db->one('EnrollmentRequest','studentId=?',[$student['id']]);
+        ensure(($enrollment===null||$enrollment['status']==='active')&&!$student['accountId']&&$student['linkStatus']!=='ended'&&$student['email'],'Convite inválido ou expirado');
         $existing=$this->db->one('User','email=?',[strtolower($student['email'])]);
         if($method==='GET')return ['name'=>$student['name'],'email'=>$student['email'],'existingAccount'=>$existing!==null];
         ensure($method==='POST','Recurso não encontrado',404);

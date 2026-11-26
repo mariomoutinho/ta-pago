@@ -135,6 +135,13 @@
         "updatedAt": false,
         "default": ""
       },
+      "trainingGroup": {
+        "type": "String",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": ""
+      },
       "startDate": {
         "type": "String",
         "nullable": false,

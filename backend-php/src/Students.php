@@ -47,7 +47,16 @@ trait Students {
                 $s['evaluations']=array_map(fn($e)=>array_intersect_key($e,array_flip(['id','date','status'])),array_slice($this->db->rows('Evaluation','studentId=?',[$s['id']],'date DESC, createdAt DESC'),0,1)); return $s;
             },$this->db->rows('Student',"personalId=? AND linkStatus<>'ended'",[$this->user['id']],'name ASC'));
             if ($method==='POST') {
-                $s=$this->db->create('Student',[...$this->studentData($body),'personalId'=>$this->user['id']]);
+                $sendAccess=$body['sendAccess']??false;
+                ensure(is_bool($sendAccess),'Opção de envio inválida');
+                $data=$this->studentData($body);
+                ensure(!$sendAccess || ($data['email'] && preg_match('/^\+[1-9]\d{7,14}$/D',$data['phone'])===1),'Informe e-mail e WhatsApp com DDI para enviar o acesso.');
+                $s=$this->db->create('Student',[...$data,'personalId'=>$this->user['id']]);
+                if ($sendAccess) {
+                    $code=bin2hex(random_bytes(32));
+                    $this->db->create('Invitation',['studentId'=>$s['id'],'tokenHash'=>hash('sha256',$code),'expiresAt'=>at(time()+172800)]);
+                    $s['accessCode']=$code;
+                }
                 $this->history($s['id'],'Cadastro criado'); $this->status=201; return $s;
             }
             throw new HttpError(404,'Recurso não encontrado');

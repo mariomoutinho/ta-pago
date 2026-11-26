@@ -9,6 +9,7 @@ import {
   recordSchema,
   recordSchemas,
   studentSchema,
+  studentCreateSchema,
   templateSchema,
 } from "../shared/validation";
 import type { Db } from "./db";
@@ -465,17 +466,30 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
       }),
     ),
   );
+  app.get("/api/student-groups", async (_req, res) => {
+    const rows = await db.student.findMany({
+      where: { personalId: identity(res).id, trainingGroup: { not: "" } },
+      select: { trainingGroup: true }, distinct: ["trainingGroup"],
+      orderBy: { trainingGroup: "asc" },
+    });
+    res.json(rows.map((row) => row.trainingGroup));
+  });
   app.post("/api/students", async (req, res) => {
-    const data = studentSchema.parse(req.body);
+    const { sendAccess, ...data } = studentCreateSchema.parse(req.body);
     await ownProgram(data.programId, identity(res).id);
+    const accessCode = sendAccess ? newToken() : undefined;
     res.status(201).json(
       await db.student.create({
         data: {
           ...data,
           personalId: identity(res).id,
           history: { create: { action: "Cadastro criado", detail: {} } },
+          ...(accessCode ? { invitations: { create: {
+            tokenHash: sessionKey(accessCode),
+            expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+          } } } : {}),
         },
-      }),
+      }).then((student) => ({ ...student, ...(accessCode ? { accessCode } : {}) })),
     );
   });
   app.use("/api/students/:id", async (req, res, next) => {

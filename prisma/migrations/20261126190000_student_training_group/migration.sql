@@ -1,0 +1,1 @@
+ALTER TABLE "Student" ADD COLUMN "trainingGroup" TEXT NOT NULL DEFAULT '';

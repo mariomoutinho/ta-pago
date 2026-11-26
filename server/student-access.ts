@@ -31,7 +31,7 @@ async function invitation(db:Pick<Db,'invitation'|'enrollmentRequest'>,code:stri
   if(!/^[a-f0-9]{64}$/.test(code))throw new HttpError(400,'Convite inválido ou expirado');
   const invite=await db.invitation.findUnique({where:{tokenHash:sessionKey(code)},include:{student:true}});
   if(!invite||invite.consumedAt||invite.expiresAt<=new Date()||invite.student.accountId||invite.student.linkStatus==='ended'||!invite.student.email)throw new HttpError(400,'Convite inválido ou expirado');
-  const enrollment=await db.enrollmentRequest.findFirst({where:{studentId:invite.studentId,status:'active'}});
-  if(!enrollment)throw new HttpError(400,'Convite inválido ou expirado');
+  const enrollment=await db.enrollmentRequest.findFirst({where:{studentId:invite.studentId}});
+  if(enrollment && enrollment.status!=='active')throw new HttpError(400,'Convite inválido ou expirado');
   return invite;
 }

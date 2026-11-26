@@ -18,6 +18,7 @@ import type {
 } from "@/features/personal/types";
 import { Button, Card, Choices, Field, Label, Notice, Section, s } from "./ui";
 import { FormattedField } from "./formatted-field";
+import { StudentRegistration } from "./student-registration";
 export function Fields({
   fields,
   values,
@@ -60,6 +61,15 @@ export function Fields({
   );
 }
 export function StudentForm({
+  student, programs, onSaved,
+}: {
+  student?: Student;
+  programs: Program[];
+  onSaved: (s: Student) => void;
+}) {
+  return student ? <StudentEditForm student={student} programs={programs} onSaved={onSaved} /> : <StudentRegistration onSaved={onSaved} />;
+}
+function StudentEditForm({
   student,
   programs,
   onSaved,

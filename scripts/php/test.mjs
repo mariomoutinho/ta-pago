@@ -52,6 +52,23 @@ try {
   await req(teacher,'POST','/students',{},403,{'X-Requested-With':''});
   await req(teacher,'GET','/students',undefined,403,{Origin:'https://evil.example'});
   await req(pupil,'GET','/students',undefined,403);
+  await req(teacher,'POST','/students',{name:'Cadastro sem contato',startDate:'2026-11-26',sendAccess:true},400);
+  const manualAccess=await req(teacher,'POST','/students',{
+    name:'Aluno Manual',email:'manual-access@example.test',phone:'+5511999990000',
+    trainingGroup:'Turma manual',startDate:'2026-11-26',sendAccess:true,
+  },201);
+  assert.equal(manualAccess.mainGoal,'');
+  assert.equal(manualAccess.trainingGroup,'Turma manual');
+  assert.match(manualAccess.accessCode,/^[a-f0-9]{64}$/);
+  assert.deepEqual(await req(teacher,'GET','/student-groups'),['Turma manual']);
+  assert.deepEqual(await req(other,'GET','/student-groups'),[]);
+  await req(other,'GET',`/students/${manualAccess.id}`,undefined,404);
+  const manualStudent=client();
+  assert.equal((await req(anon,'GET',`/public/student-access/${manualAccess.accessCode}`)).email,'manual-access@example.test');
+  await req(anon,'POST',`/public/student-access/${manualAccess.accessCode}`,{password:'manual123'},201);
+  await req(manualStudent,'POST','/auth/login',{email:'manual-access@example.test',password:'manual123'});
+  assert.equal((await req(manualStudent,'GET','/me/students'))[0].id,manualAccess.id);
+  await req(anon,'GET',`/public/student-access/${manualAccess.accessCode}`,undefined,400);
   const student=await req(teacher,'POST','/students',{name:'Aluno Sintético',startDate:'2026-10-01',mainGoal:'Mobilidade',weeklyFrequency:'3'},201);
   await req(other,'GET',`/students/${student.id}`,undefined,404);
   const invite=await req(teacher,'POST',`/students/${student.id}/invite`,{});

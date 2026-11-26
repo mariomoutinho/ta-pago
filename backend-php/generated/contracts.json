@@ -295,6 +295,179 @@
       "notes"
     ]
   },
+  "studentCreateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 160
+      },
+      "birthDate": {
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "phone": {
+        "default": "",
+        "type": "string",
+        "maxLength": 40
+      },
+      "email": {
+        "default": "",
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          {
+            "type": "string",
+            "const": ""
+          }
+        ]
+      },
+      "sex": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "trainingGroup": {
+        "default": "",
+        "type": "string",
+        "maxLength": 120
+      },
+      "startDate": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "status": {
+        "default": "ativo",
+        "type": "string",
+        "enum": [
+          "ativo",
+          "pausado",
+          "inativo"
+        ]
+      },
+      "mainGoal": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "secondaryGoals": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "experience": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "weeklyFrequency": {
+        "default": 3,
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 14,
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "x-coerce-number": true
+      },
+      "availability": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "notes": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "injuries": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "limitations": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "surgeries": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "conditions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "medications": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "restrictions": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "emergencyContact": {
+        "default": "",
+        "type": "string",
+        "maxLength": 10000
+      },
+      "nextEvaluationDate": {
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "programId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sendAccess": {
+        "default": false,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "name",
+      "startDate"
+    ]
+  },
   "studentSchema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
@@ -346,6 +519,11 @@
         "default": "",
         "type": "string",
         "maxLength": 10000
+      },
+      "trainingGroup": {
+        "default": "",
+        "type": "string",
+        "maxLength": 120
       },
       "startDate": {
         "type": "string",
