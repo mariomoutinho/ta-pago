@@ -46,7 +46,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "authority": "code",
   "audience": [
     "developer",
@@ -66,6 +66,12 @@
 ---
 
 # Hostinger Single — implantação PHP em tapago
+
+## Publicação de 26/11/2026 — datas brasileiras nos planos
+
+A correção `f81b0dd` foi publicada no mesmo subdomínio. Somente o novo bundle web e o HTML foram enviados: o bundle foi conferido por hash antes de trocar o HTML, e o HTML anterior foi guardado localmente para rollback. Não houve alteração no backend ou no banco. O bundle publicado é `entry-27e6c582e405744fb49a1229833cf0f7.js`; o HTML e o bundle foram conferidos por SHA-256 e `/api/health` retornou `status: ok`.
+
+Os seis testes de formatação local e o teste de navegador de criação/edição de plano passaram, incluindo datas inválidas, término anterior ao início e término opcional vazio. A conferência visual do bundle público, com sessão e consultas simuladas, confirmou Data de início e Data de término em DD/MM/AAAA. Essa conferência não acessou nem salvou alunos reais. As suítes documentais/de inventário continuaram com as falhas de infraestrutura já observadas neste ambiente Windows (permissões de links simbólicos e proveniência Git); validação documental, TypeScript e verificações dos manifestos passaram.
 
 ## Publicação de 26/11/2026 — cadastro simplificado
 
