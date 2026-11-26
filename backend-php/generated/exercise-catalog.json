@@ -1,0 +1,1442 @@
+[
+  {
+    "name": "Supino reto com barra",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Supino reto com halteres",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Supino reto no Smith",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Supino reto articulado",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Supino inclinado com barra",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Supino inclinado com halteres",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Supino inclinado no Smith",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Supino inclinado articulado",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Supino declinado com barra",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Supino declinado com halteres",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Supino declinado no Smith",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Crucifixo reto",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Crucifixo inclinado",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Crucifixo declinado",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Crucifixo na máquina (Peck Deck)",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Crossover na polia alta",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Crossover na polia média",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Crossover na polia baixa",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Supino com halteres e pegada neutra",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Supino unilateral",
+    "muscleGroup": "Peitoral",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Puxada frontal aberta pronada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Puxada frontal supinada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Puxada frontal com triângulo",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Puxada frontal com pegada neutra aberta",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Puxada unilateral",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Puxada articulada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Remada baixa com triângulo",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Remada baixa com barra aberta",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Remada baixa supinada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Remada baixa unilateral",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Remada curvada pronada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Remada curvada supinada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Remada curvada bilateral",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Remada unilateral (serrote)",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Remada cavalinho",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Remada articulada",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Remada com apoio peitoral",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Remada com apoio no banco inclinado",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Pulldown com braços estendidos",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Pullover",
+    "muscleGroup": "Dorsal",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Desenvolvimento sentado com halteres",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Desenvolvimento em pé com halteres",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Desenvolvimento militar",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Desenvolvimento no Smith",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Desenvolvimento na máquina",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Desenvolvimento Arnold",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Desenvolvimento unilateral",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Elevação lateral em pé",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Elevação lateral sentada",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Elevação lateral unilateral",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Elevação lateral na máquina",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Elevação lateral com cabo por trás do corpo",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Elevação frontal alternada",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Elevação frontal bilateral",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Elevação frontal com barra",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Elevação frontal com anilha",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Anilha"
+  },
+  {
+    "name": "Elevação frontal na polia baixa",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Crucifixo inverso na máquina",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Crucifixo inverso curvado",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Crucifixo inverso no crossover",
+    "muscleGroup": "Ombros",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca direta com barra reta",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Rosca direta com barra W",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Rosca direta bilateral com halteres",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca alternada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca alternada sentada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca martelo bilateral",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca martelo alternada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca martelo cruzada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca concentrada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Rosca Scott com barra W",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Rosca Scott unilateral",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Rosca Scott na máquina",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Rosca inclinada",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca martelo no banco inclinado",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca direta na polia baixa",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca unilateral na polia baixa",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca martelo com corda",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca bilateral na polia alta",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca Bayesian",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca Spider",
+    "muscleGroup": "Bíceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Tríceps pulley com barra reta",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps pulley com barra V",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps pulley com corda",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps pulley com pegada supinada",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps pulley unilateral",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps pulley unilateral supinado",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps francês bilateral",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Tríceps francês unilateral",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Tríceps francês com corda",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps francês com barra W",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Tríceps testa com barra reta",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Tríceps testa com barra W",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Tríceps testa com halteres",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Tríceps testa unilateral",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Tríceps testa na polia",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Tríceps coice",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Tríceps coice na polia",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Supino fechado",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Mergulho na máquina",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Extensão de tríceps na máquina",
+    "muscleGroup": "Tríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Agachamento livre",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Agachamento frontal",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Agachamento no Smith",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Agachamento Goblet",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Agachamento com halteres",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Agachamento Hack",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Agachamento pendular",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Agachamento no Belt Squat",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Leg press 45 graus",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Leg press horizontal",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Leg press vertical",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Leg press unilateral",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Cadeira extensora bilateral",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Cadeira extensora unilateral",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Agachamento búlgaro com ênfase em quadríceps",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Agachamento búlgaro no Smith",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Afundo estacionário",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Afundo estacionário no Smith",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Passada à frente",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Agachamento com calcanhares elevados",
+    "muscleGroup": "Quadríceps",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Mesa flexora bilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Mesa flexora unilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Cadeira flexora bilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Cadeira flexora unilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Flexora em pé unilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Flexão de joelho em pé",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Flexão de joelho deitado",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Flexão de joelho deitado com halter",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Stiff com barra",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Stiff com halteres",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Stiff no Smith",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Stiff unilateral",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Stiff unilateral na polia",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Stiff com base assimétrica (B-stance)",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Levantamento terra romeno com barra",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Levantamento terra romeno com halteres",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Levantamento terra romeno no Smith",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Levantamento terra romeno na polia",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Good Morning",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Good Morning no Smith",
+    "muscleGroup": "Posteriores de coxa",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Elevação pélvica com barra",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Elevação pélvica no Smith",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Elevação pélvica na máquina",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Elevação pélvica com halter",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Elevação pélvica unilateral",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Ponte de glúteos no solo",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Extensão de quadril na máquina",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Extensão de quadril na polia",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Extensão diagonal de quadril na polia",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Extensão de quadril em quatro apoios",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Caneleira"
+  },
+  {
+    "name": "Cadeira abdutora",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Abdução de quadril em pé",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Abdução de quadril em pé na máquina",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Abdução de quadril em decúbito lateral",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Caneleira"
+  },
+  {
+    "name": "Agachamento sumô com halter",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Agachamento sumô no Smith",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Agachamento búlgaro com ênfase em glúteos",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Afundo reverso",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Subida no banco (Step-up)",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Pull-through",
+    "muscleGroup": "Glúteos",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Panturrilha em pé na máquina",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha em pé unilateral na máquina",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha sentada na máquina",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha sentada unilateral na máquina",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha no leg press 45 graus",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha unilateral no leg press 45 graus",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha no leg press horizontal",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha unilateral no leg press horizontal",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha no leg press vertical",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha no Hack",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Panturrilha em pé no Smith",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Panturrilha unilateral no Smith",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Panturrilha em pé com halteres",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Panturrilha unilateral com halter",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Panturrilha sentada com halteres",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Panturrilha sentada unilateral com halter",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Panturrilha em pé com barra",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Panturrilha em pé na polia baixa",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Panturrilha unilateral na polia baixa",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Panturrilha Donkey",
+    "muscleGroup": "Panturrilhas",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Abdominal supra",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Abdominal supra com anilha",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Anilha"
+  },
+  {
+    "name": "Abdominal supra no banco declinado",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Banco"
+  },
+  {
+    "name": "Abdominal na máquina",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Abdominal ajoelhado na polia",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Abdominal em pé na polia",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Abdominal infra",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Abdominal reverso no banco",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Banco"
+  },
+  {
+    "name": "Elevação de pernas deitado",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Elevação de pernas na barra fixa",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Barra fixa"
+  },
+  {
+    "name": "Elevação de joelhos na cadeira romana",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Cadeira romana"
+  },
+  {
+    "name": "Abdominal bicicleta",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Abdominal canivete",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Abdominal oblíquo",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Rotação de tronco na polia alta (Woodchopper)",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rotação de tronco na polia baixa",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Flexão lateral de tronco",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Prancha frontal",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Prancha lateral",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Peso corporal"
+  },
+  {
+    "name": "Pallof Press",
+    "muscleGroup": "Abdômen",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Encolhimento frontal com barra",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Encolhimento bilateral com halteres",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Encolhimento unilateral com halter",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Encolhimento frontal no Smith",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Encolhimento posterior no Smith",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Encolhimento posterior com barra",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Encolhimento na máquina",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Encolhimento bilateral na polia baixa",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Encolhimento unilateral na polia baixa",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Encolhimento com Trap Bar",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Barra hexagonal"
+  },
+  {
+    "name": "Encolhimento com apoio no banco inclinado",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Remada alta com barra reta",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Remada alta com barra W",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Remada alta com halteres",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Remada alta na polia",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Remada alta no Smith",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Smith"
+  },
+  {
+    "name": "Face Pull",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Elevação em Y no banco inclinado",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Elevação em Y na polia",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Retração escapular com apoio peitoral",
+    "muscleGroup": "Trapézio",
+    "category": "Musculação",
+    "equipment": "Máquina"
+  },
+  {
+    "name": "Rosca inversa com barra reta",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Rosca inversa com barra W",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Rosca inversa com halteres",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Rosca inversa na polia",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca inversa unilateral",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Rosca Zottman",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Flexão de punho com barra",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Flexão de punho bilateral com halteres",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Flexão de punho unilateral",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Flexão de punho na polia",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Flexão de punho com barra atrás do corpo",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Extensão de punho com barra",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Barra"
+  },
+  {
+    "name": "Extensão de punho com halteres",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Extensão de punho unilateral",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Extensão de punho na polia",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Polia"
+  },
+  {
+    "name": "Pronação de antebraço",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Supinação de antebraço",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Desvio radial do punho",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halter"
+  },
+  {
+    "name": "Sustentação isométrica com halteres",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  },
+  {
+    "name": "Caminhada do fazendeiro (Farmer's Walk)",
+    "muscleGroup": "Antebraço",
+    "category": "Musculação",
+    "equipment": "Halteres"
+  }
+]

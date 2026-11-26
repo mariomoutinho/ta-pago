@@ -11,6 +11,7 @@ import type { Db } from "./db";
 import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
 import { brazilToday } from "../shared/notifications";
+import exerciseCatalog from "../shared/exercise-catalog.json";
 
 export const planInclude = {
   workouts: {
@@ -166,6 +167,24 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
         orderBy: { name: "asc" },
       }),
     );
+  });
+  router.post("/exercises/catalog", async (_req, res) => {
+    const ownerId = res.locals.user.id;
+    const added = await db.$transaction(async tx => {
+      const existing = await tx.exercise.findMany({ where: { ownerId }, select: { name: true } });
+      const names = new Set(existing.map(e => e.name.trim().toLowerCase()));
+      let count = 0;
+      for (const entry of exerciseCatalog) {
+        if (names.has(entry.name.toLowerCase())) continue;
+        const id = createHash("sha256").update(ownerId + ":exercise-catalog-v1:" + entry.name).digest("hex");
+        const found = await tx.exercise.findUnique({ where: { id } });
+        if (found) continue;
+        await tx.exercise.create({ data: { ...exerciseSchema.parse(entry), id, ownerId } });
+        count++;
+      }
+      return count;
+    });
+    res.json({ added });
   });
   router.post("/exercises", async (req, res) => {
     const data = exerciseSchema.parse(req.body);

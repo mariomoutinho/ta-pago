@@ -18,7 +18,7 @@ export function validateRelease(root) {
     const isPublic=relative.startsWith(publicPrefix);
     const local=isPublic?relative.slice(publicPrefix.length):relative;
     const allowed=isPublic ? local==='api/index.php' || local==='.htaccess' || local==='notifications-sw.js' || /^(?:index\.html|metadata\.json|manifest\.webmanifest|favicon\.ico)$/.test(local) || /^(?:assets|_expo)\/.+\.(?:js|css|png|jpe?g|gif|webp|svg|ico|ttf|otf|woff2?)$/.test(local)
-      : /^tapago-private\/(?:bootstrap\.php|src\/[A-Za-z]+\.php|generated\/(?:contracts|models|seed)\.json)$/.test(relative);
+      : /^tapago-private\/(?:bootstrap\.php|src\/[A-Za-z]+\.php|generated\/(?:contracts|models|seed|exercise-catalog)\.json)$/.test(relative);
     if(!allowed || /(?:^|\/)config\.php$|\.env(?:\.|$)|\.(?:sql|db|sqlite|key|pem|map|bak|zip)$/i.test(relative))throw new Error('Arquivo não autorizado: '+relative);
     const bytes=fs.readFileSync(full);
     if(createHash('sha256').update(bytes).digest('hex')!==expected.get(relative))throw new Error('Hash divergente: '+relative);

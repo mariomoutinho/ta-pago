@@ -3,6 +3,20 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Workouts {
+    private function importExerciseCatalog(): array {
+        $catalog=json_decode(file_get_contents(__DIR__.'/../generated/exercise-catalog.json'),true,512,JSON_THROW_ON_ERROR);
+        $names=[];
+        foreach($this->db->rows('Exercise','ownerId=?',[$this->user['id']]) as $entry) $names[mb_strtolower(trim($entry['name']))]=true;
+        $added=0;
+        foreach($catalog as $entry) {
+            if(isset($names[mb_strtolower($entry['name'])])) continue;
+            $id=hash('sha256',$this->user['id'].':exercise-catalog-v1:'.$entry['name']);
+            if($this->db->one('Exercise','id=?',[$id])) continue;
+            $this->db->create('Exercise',[...$this->validation->parse('exerciseSchema',$entry),'id'=>$id,'ownerId'=>$this->user['id']]);
+            $added++;
+        }
+        return ['added'=>$added];
+    }
     private function favoriteExercise(string $id,array $body): array {
         $exercise=$this->own('Exercise',$id);
         return $this->db->update('Exercise',$exercise['id'],$this->validation->parse('exerciseFavoriteSchema',$body));

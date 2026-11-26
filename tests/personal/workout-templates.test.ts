@@ -58,7 +58,7 @@ it("isola modelos por proprietário e nega acesso a alunos e anônimos", async (
 });
 it("rejeita exercícios alheios, arquivados, ausentes e prescrições inválidas", async () => {
   for (const data of [
-    { ...payload(), name: " " }, { ...payload(), exercises: [] },
+    { ...payload(), name: " " },
     ...[foreignId, archivedId, "inexistente"].map(exerciseId => ({ ...payload(), exercises: [{ exerciseId }] })),
     { ...payload(), exercises: [{ exerciseId, load: -1 }] },
   ]) expect((await personal.post("/api/workout-templates").set(header).send(data)).status).toBe(400);
@@ -162,4 +162,30 @@ it("persiste blocos combinados, impede fragmentar pela ordenação e preserva c�
   expect(copy.exercises[1].groupId).toBe("dupla");
   const invalid = { ...read, exercises: [read.exercises[1]] };
   expect((await personal.put("/api/workout-templates/" + read.id).set(header).send(invalid)).status).toBe(400);
+});
+
+it("salva modelo vazio, lista, reabre, adiciona e remove exercícios", async () => {
+  const created = await personal.post('/api/workout-templates').set(header).send({name:'Modelo para completar depois',exercises:[]});
+  expect(created.status).toBe(201);
+  expect((await personal.get('/api/workout-templates')).body.find((t: WorkoutTemplate)=>t.id===created.body.id).exercises).toEqual([]);
+  const filled=await personal.put('/api/workout-templates/'+created.body.id).set(header).send({...payload(),revision:created.body.revision});
+  expect(filled.status).toBe(200);
+  const emptied=await personal.put('/api/workout-templates/'+created.body.id).set(header).send({...payload(),exercises:[],revision:filled.body.revision});
+  expect(emptied.status).toBe(200);
+  expect(emptied.body.exercises).toEqual([]);
+});
+
+it("importa 240 exercícios por professor sem duplicar nem sobrescrever dados próprios", async () => {
+  const custom=await personal.post('/api/exercises').set(header).send({name:'Supino reto com barra',muscleGroup:'Peitoral',category:'Musculação',description:'Minha orientação',videoUrl:'https://example.com/video.mp4'});
+  expect(custom.status).toBe(201);
+  const otherBefore=(await other.get('/api/exercises')).body;
+  expect((await request(app).post('/api/exercises/catalog').set(header).send({})).status).toBe(401);
+  expect((await student.post('/api/exercises/catalog').set(header).send({})).status).toBe(403);
+  const imported=await personal.post('/api/exercises/catalog').set(header).send({});
+  expect(imported.status).toBe(200);expect(imported.body.added).toBe(239);
+  expect((await personal.post('/api/exercises/catalog').set(header).send({})).body.added).toBe(0);
+  const all=(await personal.get('/api/exercises')).body;
+  expect(all.find((e:{id:string})=>e.id===custom.body.id).description).toBe('Minha orientação');
+  expect(all.find((e:{name:string})=>e.name==='Rosca Bayesian').muscleGroup).toBe('Bíceps');
+  expect((await other.get('/api/exercises')).body).toEqual(otherBefore);
 });

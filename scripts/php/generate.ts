@@ -8,6 +8,7 @@ import * as groups from '../../shared/groups';
 import { programRoutineSchema } from '../../shared/programs';
 import { enrollmentSchema, policyVersion } from '../../shared/enrollment';
 import { initialQuestions, technicalCriteria } from '../../shared/questionnaire';
+import exerciseCatalog from '../../shared/exercise-catalog.json';
 
 mkdirSync('backend-php/generated', { recursive: true });
 const schemas = { ...validation, ...workouts, ...groups, programRoutineSchema, enrollmentSchema };
@@ -57,7 +58,7 @@ for (const [name, model] of Object.entries(models)) {
 tables.push('CREATE TABLE `RateLimit` (`id` VARCHAR(64) PRIMARY KEY, `hits` INT NOT NULL, `expires` BIGINT NOT NULL) ENGINE=InnoDB;');
 tables.push('CREATE TABLE `MigrationReceipt` (`id` VARCHAR(64) PRIMARY KEY, `createdAt` VARCHAR(24) NOT NULL) ENGINE=InnoDB;');
 writeFileSync('backend-php/schema.sql', '-- Gerado por scripts/php/generate.ts; MySQL 8 / MariaDB 10.4+.\n' + [...tables,...foreignKeys].join('\n\n') + '\n');
-for (const [file, value] of Object.entries({ contracts, models, seed: { initialQuestions, technicalCriteria, policyVersion } })) {
+for (const [file, value] of Object.entries({ contracts, models, 'exercise-catalog': exerciseCatalog, seed: { initialQuestions, technicalCriteria, policyVersion } })) {
   writeFileSync(`backend-php/generated/${file}.json`, JSON.stringify(value, null, 2) + '\n');
 }
 console.log(`${Object.keys(models).length} tabelas e ${Object.keys(contracts).length} contratos gerados; refinamentos de domínio são explícitos no PHP.`);

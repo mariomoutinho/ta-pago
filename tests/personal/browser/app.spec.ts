@@ -1904,3 +1904,26 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   await expect(page.getByText("Anterior atualizado", { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("salva treino vazio e importa catálogo sem campo de equipamento", async ({ page }) => {
+  const headers={"X-Requested-With":"TaPago"};
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Professor Catálogo",email:"catalog-ui@example.test",password:"teste123"}});
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/treinos-preparados');
+  await page.getByRole('button',{name:'+ Criar treino preparado',exact:true}).click();
+  await page.getByLabel('Nome do treino *',{exact:true}).fill('Treino vazio para completar');
+  await page.getByRole('button',{name:'Salvar treino preparado',exact:true}).click();
+  await expect(page.getByText('Treino preparado salvo.',{exact:true})).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('Treino vazio para completar',{exact:true})).toBeVisible();
+  await page.goto(base+'/exercicios');
+  await page.getByRole('button',{name:'+ Criar exercício',exact:true}).click();
+  await expect(page.getByLabel('Equipamento',{exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'Cancelar',exact:true}).click();
+  await page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true}).click();
+  await expect(page.getByText('240 exercícios adicionados à sua biblioteca.',{exact:true})).toBeVisible();
+  await page.getByLabel('Buscar exercícios...',{exact:true}).fill('Bayesian');
+  await expect(page.getByRole('button',{name:'Expandir exercício Rosca Bayesian',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true}).click();
+  await expect(page.getByText('Os exercícios da lista já estão na sua biblioteca.',{exact:true})).toBeVisible();
+});

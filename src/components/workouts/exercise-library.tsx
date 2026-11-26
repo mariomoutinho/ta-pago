@@ -26,7 +26,7 @@ import {
 } from "../../../shared/workouts";
 import { SaveForm, TextFields } from "./form";
 import { ExerciseDetails } from "./exercise-view";
-const muscleGroups = ["Peitoral", "Dorsal", "Bíceps", "Tríceps", "Inferiores", "Ombros", "Abdômen", "Antebraço"];
+const muscleGroups = ["Peitoral", "Dorsal", "Bíceps", "Tríceps", "Inferiores", "Quadríceps", "Posteriores de coxa", "Glúteos", "Panturrilhas", "Ombros", "Abdômen", "Trapézio", "Antebraço"];
 const categories = ["Musculação", "Aeróbico", "Funcional", "Alongamento", "Em casa", "Mobilidade", "Elástico", "MAT Pilates", "Laboral"];
 function OptionField({ label, value, options, change }: {
   label: string; value: string; options: string[]; change: (value: string) => void;
@@ -133,7 +133,6 @@ function ExerciseForm({
           options={[...new Set([...categories, ...exercises.map(e => e.category)])].filter(Boolean)}
           change={category => setData(current => ({ ...current, category }))} />
         <TextFields value={data} change={setData} fields={[
-            ["equipment", "Equipamento"],
             ["description", "Descrição / instruções"],
             ["imageUrl", "Imagem (URL http/https)"],
             ["notes", "Observações do exercício"],
@@ -181,6 +180,18 @@ export function ExerciseLibrary({
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("ativo");
   const [success, setSuccess] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState("");
+  const importCatalog = async () => {
+    if (importing) return;
+    setImporting(true); setImportError(""); setSuccess("");
+    try {
+      const result = await api<{ added: number }>("/exercises/catalog", "POST", {});
+      setSuccess(result.added ? `${result.added} exercícios adicionados à sua biblioteca.` : "Os exercícios da lista já estão na sua biblioteca.");
+      await reload();
+    } catch (error) { setImportError(message(error)); }
+    finally { setImporting(false); }
+  };
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const [savingFavorites, setSavingFavorites] = useState<string[]>([]);
@@ -218,6 +229,7 @@ export function ExerciseLibrary({
       <Notice>{success}</Notice>
       <Notice error>{error}</Notice>
       <Notice error>{favoriteError}</Notice>
+      <Notice error>{importError}</Notice>
       {loading && <Notice>Carregando exercícios…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       <View style={{ backgroundColor: t.background, borderColor: t.border, borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 }}>
@@ -235,6 +247,9 @@ export function ExerciseLibrary({
       ) : (
         <Button onPress={() => setEdit("new")}>+ Criar exercício</Button>
       )}
+      {!edit && <Button variant="secondary" disabled={importing || loading} onPress={() => void importCatalog()}>
+        {importing ? "Adicionando exercícios…" : "Adicionar lista de 240 exercícios"}
+      </Button>}
       <View style={{ flexDirection: "row", gap: 8 }}>
         <View style={{ flex: 1 }}><Button variant="secondary" onPress={() => setFilterPanel(filterPanel === "muscle" ? null : "muscle")}>Grupos musculares</Button></View>
         <View style={{ flex: 1 }}><Button variant="secondary" onPress={() => setFilterPanel(filterPanel === "category" ? null : "category")}>Categorias</Button></View>

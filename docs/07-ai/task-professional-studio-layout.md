@@ -9,6 +9,11 @@
   "tags": ["07-ai"],
   "indexable": false,
   "sources": [
+    "shared/exercise-catalog.json",
+    "shared/workouts.ts",
+    "server/workouts.ts",
+    "backend-php/src/Workouts.php",
+    "src/components/workouts/exercise-library.tsx",
     "src/components/personal/shell.tsx",
     "src/components/personal/brand.tsx",
     "src/components/personal/enrollment-notifications.tsx",
@@ -100,3 +105,13 @@ Após aprovar a prévia local, o responsável autorizou explicitamente push e de
 O build PHP/Web passou na validação do pacote e nos sete testes de empacotamento. A publicação em `https://tapago.coletivopindorama.com.br` atualizou somente arquivos visuais: cinco SVGs Studio, CSS, JavaScript e HTML. A marca original foi preservada. Backend, configuração privada e banco não foram alterados; a conta e os dados da demonstração local não foram publicados. O HTML anterior foi guardado localmente para rollback.
 
 O servidor apresentou uma breve demora para servir arquivos recém-substituídos. A verificação passou após aguardar a propagação, e o cache da hospedagem foi limpo. A conferência final, usando URLs públicas sem parâmetros de cache, confirmou por SHA-256 os oito arquivos do Studio. `/entrar`, `/treinos-preparados` e `/api/health` retornaram HTTP 200; a saúde retornou `status: ok`. O bundle publicado é `entry-48d059b9719d1416ebe16c6dc90e5cd6.js`. Essa conferência não representa um novo teste autenticado com dados reais em produção.
+
+## Ajustes posteriores — modelos vazios e catálogo
+
+O responsável pediu salvar treinos sem exercícios, remover Equipamento do formulário e adicionar a lista fornecida de 240 exercícios. A validação compartilhada e o contrato PHP agora aceitam modelos vazios. O campo foi retirado da criação e edição, preservando valores anteriores. A biblioteca oferece importação explícita por professor, com 20 exercícios por grupo em 12 grupos musculares, sem substituir registros de mesmo nome. O endpoint exige sessão profissional e usa transação; IDs determinísticos evitam duplicação do mesmo catálogo. A importação pode ser repetida e mantém registros arquivados. A ativação de planos continua exigindo exercícios.
+
+O catálogo fornecido foi transcrito para JSON UTF-8 e exportado para o pacote PHP pela geração de contratos. A lista positiva do pacote autoriza especificamente esse arquivo adicional. A demonstração local permanece isolada da conta de produção; não foram copiados exercícios privados entre ambientes.
+
+Validação local: 26 testes de API/modelos passaram, cobrindo criação e edição vazias, importação repetida, preservação de exercício personalizado e isolamento entre professores/alunos/anônimos. Um cenário Playwright passou em 390 px, cobrindo salvar/reabrir modelo vazio, ausência do campo Equipamento, importação e busca no catálogo. O contrato foi verificado separadamente com PHP 8.3: modelo vazio e 240 exercícios únicos em 12 grupos aprovados. TypeScript, sintaxe PHP e sete testes de pacote passaram. A suíte PHP/MySQL completa permanece impedida pela ausência do banco de testes na porta 33316. O PHP padrão do PATH é 8.0 e não é compatível; os checks PHP usam `data/php83/php.exe`.
+
+A prévia da porta 3003 foi reiniciada e o catálogo foi importado na conta sintética local, com 240 registros conferidos pela API. Validação documental e checks dos manifestos passaram; `docs:test` e `code:test` continuam com os impedimentos de permissões de links simbólicos/proveniência já documentados no Windows. A tentativa de obter autorização técnica de upload foi rejeitada pela revisão automática: a aprovação anterior foi considerada restrita ao layout Studio. Estes ajustes não foram publicados e aguardam nova autorização explícita do responsável.

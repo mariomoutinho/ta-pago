@@ -86,7 +86,7 @@ export const workoutSchema = z.object({
   exercises: z.array(prescriptionSchema).max(100).refine(validExerciseGroups, "Mantenha os exercícios combinados juntos, em blocos de pelo menos dois").default([]),
 });
 export const workoutTemplateSchema = workoutSchema.omit({ id: true }).extend({
-  exercises: z.array(prescriptionSchema.omit({ id: true })).min(1, "Adicione pelo menos um exercício").max(100).refine(validExerciseGroups, "Bloco combinado inválido"),
+  exercises: z.array(prescriptionSchema.omit({ id: true })).max(100).refine(validExerciseGroups, "Bloco combinado inválido").default([]),
   revision: z.number().int().positive().optional(),
 });
 export type WorkoutTemplate = WorkoutData & { id: string; revision: number };

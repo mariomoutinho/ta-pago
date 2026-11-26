@@ -11,6 +11,8 @@
   ],
   "indexable": true,
   "sources": [
+    "shared/exercise-catalog.json",
+    "backend-php/tests/catalog-contract.php",
     "src/components/workouts/student-progress.tsx",
     "src/components/workouts/completion-dialog.tsx",
     "shared/workout-progress.ts",
@@ -96,7 +98,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.8.2",
+  "version": "12.9.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -337,3 +339,11 @@ WorkoutScreen organiza as etapas com título e retorno, sem Modal ou backdrop. O
 O aluno vinculado pode marcar Concluir treino de hoje em um treino de plano ativo e publicado. WorkoutCompletion guarda uma conclus?o por treino e dia no fuso America/Sao_Paulo, com chave ?nica e v?nculo em cascata ao treino. Repetir a requisi??o devolve o mesmo registro; o controle fica marcado ap?s recarregar. N?o permite registrar por outro aluno, por personal ou em plano sem acesso. O servidor determina a data, sem aceitar data arbitr?ria do cliente.
 
 Ap?s confirmar a transa??o, a conclus?o aparece na central de novidades do personal e pode gerar Web Push gen?rico. O feedback continua separado e tamb?m gera novidade ao ser criado. A API de planos inclui as 30 conclus?es mais recentes por treino. As migra??es SQLite e MySQL adicionam somente a tabela e seus ?ndices; o ensaio PHP preserva os treinos existentes antes de verificar a conclus?o e a repeti??o no mesmo dia.
+
+## Modelos vazios e catálogo de exercícios
+
+Treinos preparados podem ser criados e editados sem exercícios, para preenchimento posterior. O nome continua obrigatório; a ativação de planos para alunos mantém a exigência de treinos com exercícios.
+
+A biblioteca oferece “Adicionar lista de 240 exercícios”, com 20 exercícios em cada um dos 12 grupos musculares da lista fornecida pelo responsável. A importação grava somente na biblioteca do professor autenticado, é transacional e não sobrescreve exercícios existentes com o mesmo nome, inclusive arquivados. Repetir a operação não duplica o catálogo. O campo Equipamento foi retirado do formulário de criação e edição; o dado continua preservado nos registros existentes e na lista importada.
+
+A prévia local usa banco e conta de demonstração separados da produção. Ela não sincroniza automaticamente os exercícios privados cadastrados no site.

@@ -2584,7 +2584,7 @@
         "maxLength": 10000
       },
       "exercises": {
-        "minItems": 1,
+        "default": [],
         "maxItems": 100,
         "type": "array",
         "items": {
@@ -2847,8 +2847,7 @@
       }
     },
     "required": [
-      "name",
-      "exercises"
+      "name"
     ]
   },
   "fitnessChallengeSchema": {

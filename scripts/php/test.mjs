@@ -10,6 +10,7 @@ const run = (args, env=process.env) => {
   if(p.status!==0) throw new Error(p.stdout+'\n'+p.stderr);
   return p.stdout.trim();
 };
+run(['backend-php/tests/catalog-contract.php']);
 const name='tapago_test_'+randomBytes(6).toString('hex');
 const config=run(['backend-php/tests/setup.php',name]);
 const env={...process.env,TAPAGO_CONFIG:config,TAPAGO_PRIVATE_DIR:path.resolve('backend-php')};
