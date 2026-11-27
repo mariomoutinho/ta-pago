@@ -1599,6 +1599,12 @@
   },
   "WorkoutFeedback": {
     "fields": {
+      "completionId": {
+        "type": "String",
+        "nullable": true,
+        "id": false,
+        "updatedAt": false
+      },
       "id": {
         "type": "String",
         "nullable": false,
@@ -1646,6 +1652,12 @@
       }
     },
     "relations": [
+      {
+        "field": "completionId",
+        "target": "WorkoutCompletion",
+        "reference": "id",
+        "onDelete": "SetNull"
+      },
       {
         "field": "workoutId",
         "target": "Workout",

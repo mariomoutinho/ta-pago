@@ -10,6 +10,89 @@ import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
+
+test('controle Focus registra séries, recupera descanso, conclui e entrega feedback ao professor', async ({ page, browser }) => {
+  const headers = { 'X-Requested-With': 'TaPago' }, teacher = await browser.newContext();
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => localStorage.setItem('tapago.theme', 'dark'));
+  try {
+    await provisionBrowserPersonal(db, teacher.request, base, { headers, data: { name: 'Professor Execução', email: 'execution-teacher@example.test', password: 'senha-ficticia-12345', role: 'personal' } });
+    const target = await (await teacher.request.post(base + '/api/students', { headers, data: { name: 'Aluno Execução', mainGoal: '', startDate: '2026-11-26' } })).json();
+    await page.request.post(base + '/api/auth/register', { headers, data: { name: 'Aluno Execução', email: 'execution-student@example.test', password: 'senha-ficticia-12345', role: 'student' } });
+    const invitation = await (await teacher.request.post(base + '/api/students/' + target.id + '/invite', { headers })).json();
+    expect((await page.request.post(base + '/api/me/claim', { headers, data: { code: invitation.code } })).status()).toBe(200);
+    const exercises = [];
+    for (const name of ['Supino execução', 'Remada execução']) exercises.push(await (await teacher.request.post(base + '/api/exercises', { headers, data: { name, muscleGroup: 'Peitoral', category: 'Musculação' } })).json());
+    const response = await teacher.request.post(base + '/api/students/' + target.id + '/workout-plans', { headers, data: { title: 'Programa Execução', objective: 'Força', difficulty: 'Iniciante', startsAt: '2026-11-26', status: 'ativo', workouts: [{ name: 'Treino execução', exercises: exercises.map((ex, i) => ({ exerciseId: ex.id, series: [{ sets: i ? 1 : 3, repetitions: '10', load: 20, restSeconds: i ? 90 : 60 }] })) }, { name: 'Treino sem descanso', exercises: [{ exerciseId: exercises[0].id, series: [{ sets: 2, repetitions: '10', restSeconds: 0 }] }] }] } });
+    expect(response.status(), await response.text()).toBe(201); const plan = await response.json(), workout = plan.workouts[0];
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(base); await page.getByRole('link', { name: 'Meus treinos', exact: true }).click();
+    await page.getByRole('link', { name: 'Abrir rotina Programa Execução', exact: true }).click();
+    await page.getByRole('button', { name: 'Treino execução', exact: true }).click();
+    const counter = (n: number) => page.getByRole('button', { name: `Registrar série de Supino execução: ${n} restantes`, exact: true });
+    await expect(counter(3)).toBeEnabled();
+    await page.screenshot({ path: 'data/student-execution-pending.png', animations: 'disabled' });
+    for (const width of [320, 768, 1280]) {
+      await page.setViewportSize({ width, height: 844 }); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+    await page.setViewportSize({ width: 390, height: 844 }); await page.getByRole('button', { name: 'Ativar tema claro', exact: true }).click();
+    await page.screenshot({ path: 'data/student-execution-light.png', animations: 'disabled' });
+    await page.getByRole('button', { name: 'Ativar tema escuro', exact: true }).click();
+    await page.clock.install(); await counter(3).dblclick();
+    await expect(page.getByRole('timer')).toHaveAttribute('aria-label', 'Descanso: 01:00');
+    await expect(counter(3)).toBeDisabled(); await expect(page.getByText('1 de 4 séries realizadas', { exact: true })).toBeVisible();
+    await page.screenshot({ path: 'data/student-execution-rest.png', animations: 'disabled' });
+    await page.reload(); await expect(counter(3)).toBeDisabled(); await expect(page.getByRole('timer')).toBeVisible();
+    await page.clock.fastForward(61000); await expect(counter(2)).toBeEnabled(); await expect(page.getByRole('timer')).toHaveCount(0);
+    await counter(2).click(); await expect(page.getByRole('timer')).toBeVisible();
+    await page.getByRole('button', { name: 'Expandir Supino execução', exact: true }).click();
+    await page.getByRole('button', { name: 'Desfazer última série de Supino execução', exact: true }).click();
+    await expect(counter(2)).toBeEnabled(); await expect(page.getByRole('timer')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Expandir Supino execução', exact: true })).toBeVisible();
+    await page.clock.fastForward(1000); await counter(2).click(); await expect(page.getByRole('timer')).toBeVisible();
+    await page.clock.fastForward(61000); await expect(counter(1)).toBeEnabled(); await counter(1).click();
+    await expect(page.getByRole('button', { name: 'Supino execução: concluído', exact: true })).toBeVisible();
+    await expect(page.getByRole('timer')).toHaveCount(0); await expect(page.getByText('3 de 4 séries realizadas', { exact: true })).toBeVisible();
+    await page.screenshot({ path: 'data/student-execution-partial.png', animations: 'disabled' });
+    await page.clock.fastForward(1000); await page.getByRole('button', { name: 'Registrar série de Remada execução: 1 restantes', exact: true }).click();
+    await expect(page.getByText('TÁ PAGO!', { exact: true })).toBeVisible();
+    const feedback = page.getByRole('textbox', { name: 'Feedback ao professor (opcional)', exact: true });
+    await feedback.fill('Concluí as séries com boa técnica.');
+    await expect(page.getByRole('button', { name: 'Enviar feedback', exact: true })).toBeEnabled();
+    await page.screenshot({ path: 'data/student-execution-complete.png', animations: 'disabled' });
+    await page.route('**/api/me/workouts/*/feedbacks', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Conexão interrompida' }) }));
+    await page.getByRole('button', { name: 'Enviar feedback', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Tentar novamente', exact: true })).toBeVisible(); await expect(feedback).toHaveValue('Concluí as séries com boa técnica.');
+    await page.unroute('**/api/me/workouts/*/feedbacks'); await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click();
+    await expect(page.getByText('Feedback enviado com sucesso.', { exact: true })).toBeVisible();
+    const completion = await db.workoutCompletion.findFirstOrThrow({ where: { workoutId: workout.id } });
+    expect(await db.workoutCompletion.count({ where: { workoutId: workout.id } })).toBe(1);
+    const saved = await db.workoutFeedback.findFirstOrThrow({ where: { workoutId: workout.id } }); expect(saved.completionId).toBe(completion.id);
+    expect((await page.request.post(base + '/api/me/workouts/' + workout.id + '/feedbacks', { headers, data: { requestId: saved.requestId, comment: saved.comment, completionId: completion.id } })).status()).toBe(201);
+    expect(await db.workoutFeedback.count({ where: { workoutId: workout.id } })).toBe(1);
+    expect((await page.request.post(base + '/api/me/workouts/' + workout.id + '/feedbacks', { headers, data: { requestId: 'foreign-completion-test', comment: 'Inválido', completionId: 'foreign-id' } })).status()).toBe(400);
+    await page.getByRole('button', { name: 'Voltar ao treino', exact: true }).click();
+    await page.getByRole('tab', { name: 'Início', exact: true }).click(); await expect(page.getByTestId('student-month-total')).toHaveText('1');
+    const teacherPage = await teacher.newPage(); await teacherPage.goto(base);
+    const dismiss = teacherPage.getByRole('button', { name: 'Agora não', exact: true }); await teacherPage.addLocatorHandler(dismiss, async locator => { await locator.click(); });
+    await teacherPage.getByRole('button', { name: /^Novidades/ }).click();
+    await teacherPage.getByText('Aluno Execução enviou um feedback sobre Treino execução.', { exact: true }).click();
+    await expect(teacherPage).toHaveURL(new RegExp('rotina=' + plan.id + '&treino=' + workout.id));
+    await teacherPage.getByRole('button', { name: 'Feedbacks (1)', exact: true }).click();
+    await expect(teacherPage.getByText(saved.comment, { exact: true })).toBeVisible(); await expect(teacherPage.getByText(/Sessão concluída em/)).toBeVisible();
+    await teacherPage.getByText(saved.comment, { exact: true }).scrollIntoViewIfNeeded();
+    await teacherPage.screenshot({ path: 'data/student-execution-teacher-feedback.png', animations: 'disabled' });
+    await page.goto(base + '/treinos?rotina=' + plan.id + '&treino=' + plan.workouts[1].id);
+    await expect(counter(2)).toBeEnabled(); await counter(2).click(); await expect(counter(1)).toBeEnabled(); await expect(page.getByRole('timer')).toHaveCount(0);
+    await page.clock.fastForward(1000); await counter(1).click(); await expect(page.getByText('TÁ PAGO!', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Agora não', exact: true })).toBeEnabled(); await page.getByRole('button', { name: 'Agora não', exact: true }).click();
+    await page.getByRole('tab', { name: 'Início', exact: true }).click(); await expect(page.getByTestId('student-month-total')).toHaveText('2');
+    expect(await db.workoutFeedback.count({ where: { workoutId: plan.workouts[1].id } })).toBe(0);
+    const month = completion.completedOn.slice(0, 7);
+    const calendar = await (await page.request.get(base + '/api/me/workout-calendar?month=' + month)).json(); expect(calendar.days).toHaveLength(1); expect(calendar.days[0].count).toBe(2);
+    expect(errors).toEqual([]);
+  } finally { await teacher.close(); }
+});
 test("lista Focus usa prescrições reais, navega por URL e adapta temas e tamanhos", async ({page,browser}) => {
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   page.on('console',entry=>{if(entry.type()==='error')errors.push(entry.text());});
@@ -170,7 +253,7 @@ let server: Server;
 let base: string;
 test.beforeEach(async({page},info)=>{
   await page.addInitScript(()=>{(window as any).__whatsappDrafts=[];window.open=(()=>({closed:false,opener:null,close(){this.closed=true;},location:{replace(url:string){(window as any).__whatsappDrafts.push(url);}}})) as any;});
-  if(!info.title.includes('convite inicial'))await page.addLocatorHandler(page.getByRole('button',{name:'Agora não',exact:true}),async locator=>{await locator.click();});
+    if(!info.title.includes('convite inicial')&&!info.title.includes('controle Focus'))await page.addLocatorHandler(page.getByRole('button',{name:'Agora não',exact:true}),async locator=>{await locator.click();});
 });
 
 test("convite inicial pede permissão por um toque e respeita a escolha ao recarregar",async({page})=>{
@@ -919,7 +1002,7 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(pupil.getByText("4 / 4", { exact: true })).toBeVisible();
   await expect(pupil.getByText("10", { exact: true })).toBeVisible();
   await expect(pupil.getByLabel("Carga 1 (kg)", { exact: true })).toHaveValue("60");
-  await expect(pupil.getByRole("button", { name: "Intervalo da série 1: 90 segundos", exact: true })).toBeVisible();
+  await expect(pupil.getByText('Descanso prescrito: 90 s', { exact: true })).toBeVisible();
   await expect(
     pupil.getByText("Controle o movimento", { exact: true }),
   ).toBeVisible();
@@ -1373,36 +1456,38 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
     await groupPage.getByRole('button',{name:'Aceitar e participar do grupo',exact:true}).click();
     await expect(groupPage.getByText('Desafio de novembro',{exact:true})).toBeVisible();
     await pupil.evaluate(() => { (window as any).__restTones=0; const original=AudioContext.prototype.createOscillator; AudioContext.prototype.createOscillator=function(){ (window as any).__restTones++; return original.call(this); }; });
-    const interval=pupil.getByRole('button', { name: 'Intervalo da série 1: 2 segundos', exact: true });
+    await pupil.clock.install();
+    const interval=pupil.getByRole('button', { name: 'Registrar série de Agachamento modelo: 3 restantes', exact: true });
     await interval.click();
-    await expect(pupil.getByText('2 / 3', { exact: true })).toBeVisible();
-    await expect(pupil.getByText('Intervalo concluído! Hora de continuar.', { exact: true })).toBeVisible();
+    await expect(pupil.getByRole('timer')).toBeVisible();
+    await pupil.clock.fastForward(2100);
+    await expect(pupil.getByRole('button', { name: 'Registrar série de Agachamento modelo: 2 restantes', exact: true })).toBeEnabled();
     expect(await pupil.evaluate(() => (window as any).__restTones)).toBe(3);
-    await pupil.getByRole('button', { name: 'Fechar intervalo', exact: true }).click();
-    await interval.click();
-    await expect(pupil.getByText('1 / 3', { exact: true })).toBeVisible();
-    await pupil.getByRole('button', { name: 'Cancelar intervalo', exact: true }).click();
-    await pupil.waitForTimeout(2200);
-    expect(await pupil.evaluate(() => (window as any).__restTones)).toBe(3);
+    await pupil.getByRole('button', { name: 'Registrar série de Agachamento modelo: 2 restantes', exact: true }).click();
+    await expect(pupil.getByRole('timer')).toBeVisible();
+    await pupil.clock.fastForward(2100);
+    await expect(pupil.getByRole('button', { name: 'Registrar série de Agachamento modelo: 1 restantes', exact: true })).toBeEnabled();
+    expect(await pupil.evaluate(() => (window as any).__restTones)).toBe(6);
     await pupil.reload();
     await pupil.getByRole('button', { name: 'Detalhes de Agachamento modelo', exact: true }).click();
     await expect(pupil.getByLabel('Carga 1 (kg)', { exact: true })).toHaveValue('12.5');
     await expect(pupil.getByText('1 / 3', { exact: true })).toBeVisible();
     expect(await pupil.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await pupil.screenshot({path:'test-results/student-progress-mobile.png',fullPage:true});
-    await pupil.getByRole('button', { name: 'Intervalo da série 1: 2 segundos', exact: true }).click();
-    await expect(pupil.getByRole('checkbox',{name:'Concluir exercício Agachamento modelo',exact:true})).toBeChecked();
-    await expect(pupil.getByText('Deseja postar uma foto ou fazer um comentário?',{exact:true})).toBeVisible();
-    await pupil.getByRole('button',{name:'Fazer um comentário',exact:true}).click();
-    await pupil.getByLabel('Comentário do treino',{exact:true}).fill('Concluído com constância!');
+    await pupil.getByRole('button', { name: 'Registrar série de Agachamento modelo: 1 restantes', exact: true }).click();
+    await expect(pupil.getByRole('button',{name:'Agachamento modelo: concluído',exact:true})).toBeDisabled();
+    await expect(pupil.getByText('Como foi seu treino hoje?',{exact:true})).toBeVisible();
+    await pupil.getByLabel('Feedback ao professor (opcional)',{exact:true}).fill('Concluído com constância!');
+    await pupil.getByRole('button',{name:'Adicionar foto ou compartilhar com grupo',exact:true}).click();
     const photoChooser=pupil.waitForEvent('filechooser');
     await pupil.getByRole('button',{name:'Adicionar foto',exact:true}).click();
     await (await photoChooser).setFiles('logotapago.png');
     await expect(pupil.getByRole('img',{name:'Foto selecionada',exact:true})).toBeVisible();
     await pupil.getByRole('radio',{name:'Compartilhar com: Grupo Constância',exact:true}).click();
     await pupil.screenshot({path:'test-results/student-completion-mobile.png',fullPage:true});
-    await pupil.getByRole('button',{name:'Enviar registro',exact:true}).click();
-    await expect(pupil.getByText('Deseja postar uma foto ou fazer um comentário?',{exact:true})).toHaveCount(0);
+    await pupil.getByRole('button',{name:'Enviar feedback',exact:true}).click();
+    await expect(pupil.getByText('Feedback enviado com sucesso.',{exact:true})).toBeVisible();
+    await pupil.getByRole('button',{name:'Voltar ao treino',exact:true}).click();
     const shared=await (await page.request.get(base+'/api/fitness-groups/'+group.id)).json();
     expect(shared.posts).toHaveLength(1);expect(shared.posts[0].photo).toMatch(/^data:image\/jpeg;base64,/);
     expect(shared.challenges[0].ranking[0].count).toBe(1);
@@ -1415,9 +1500,12 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
     expect((await (await page.request.get(base+'/api/fitness-groups/'+group.id)).json()).posts).toHaveLength(0);
     expect((await (await pupil.request.get(base+'/api/me/workout-plans')).json())[0].workouts[0].feedbacks[0].groupId).toBeNull();
     expect((await (await pupil.request.get(base+'/api/me/workout-plans')).json())[0].workouts[0].completions).toHaveLength(1);
-    await pupil.getByRole('checkbox',{name:'Concluir exercício Agachamento modelo',exact:true}).click();
-    await expect(pupil.getByText('3 / 3',{exact:true})).toBeVisible();
-    await pupil.getByRole('checkbox',{name:'Concluir exercício Agachamento modelo',exact:true}).click();
+    const details=pupil.getByRole('button',{name:'Detalhes de Agachamento modelo',exact:true});
+    if(await details.getAttribute('aria-expanded')!=='true')await details.click();
+    await pupil.getByRole('button',{name:'Desfazer última série de Agachamento modelo',exact:true}).click();
+    await expect(pupil.getByText('1 / 3',{exact:true})).toBeVisible();
+    await pupil.clock.fastForward(1000);
+    await pupil.getByRole('button',{name:'Registrar série de Agachamento modelo: 1 restantes',exact:true}).click();
     await expect(pupil.getByText('0 / 3',{exact:true})).toBeVisible();
     await expect(pupil.getByRole('button', { name: /Liberar rotina/ })).toHaveCount(0);
   } finally { await pupilContext.close(); }

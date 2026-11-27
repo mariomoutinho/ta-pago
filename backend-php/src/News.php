@@ -13,8 +13,8 @@ final class News {
             $items[]=['id'=>$row['id'],'kind'=>'enrollment','title'=>$form['name'].' enviou um cadastro.','createdAt'=>$row['createdAt'],'url'=>$row['status']==='active'&&$row['studentId']?'/alunos/'.$row['studentId']:'/alunos/cadastros'];
         }
         foreach(['WorkoutCompletion'=>'workout_completed','WorkoutFeedback'=>'feedback'] as $table=>$kind){
-            $rows=$this->db->query("SELECT n.id,n.createdAt,w.name AS workoutName,s.name AS studentName,s.id AS studentId FROM `$table` n JOIN Workout w ON w.id=n.workoutId JOIN WorkoutPlan p ON p.id=w.planId JOIN Student s ON s.id=p.studentId WHERE s.personalId=? AND n.createdAt>=? ORDER BY n.createdAt DESC LIMIT 100",[$owner,$since])->fetchAll(\PDO::FETCH_ASSOC);
-            foreach($rows as $row)$items[]=['id'=>($kind==='feedback'?'feedback:':'completion:').$row['id'],'kind'=>$kind,'title'=>$row['studentName'].($kind==='feedback'?' enviou um feedback sobre ':' concluiu ').$row['workoutName'].'.','createdAt'=>$row['createdAt'],'url'=>'/alunos/'.$row['studentId'].'/treinos'];
+            $rows=$this->db->query("SELECT n.id,n.createdAt,w.id AS workoutId,w.planId,w.name AS workoutName,s.name AS studentName,s.id AS studentId FROM `$table` n JOIN Workout w ON w.id=n.workoutId JOIN WorkoutPlan p ON p.id=w.planId JOIN Student s ON s.id=p.studentId WHERE s.personalId=? AND n.createdAt>=? ORDER BY n.createdAt DESC LIMIT 100",[$owner,$since])->fetchAll(\PDO::FETCH_ASSOC);
+            foreach($rows as $row)$items[]=['id'=>($kind==='feedback'?'feedback:':'completion:').$row['id'],'kind'=>$kind,'title'=>$row['studentName'].($kind==='feedback'?' enviou um feedback sobre ':' concluiu ').$row['workoutName'].'.','createdAt'=>$row['createdAt'],'url'=>'/alunos/'.$row['studentId'].'/treinos?rotina='.$row['planId'].'&treino='.$row['workoutId']];
         }
         usort($items,fn($a,$b)=>strcmp($b['createdAt'],$a['createdAt'])?:strcmp($a['id'],$b['id']));return array_slice($items,0,100);
     }

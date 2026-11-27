@@ -20,7 +20,7 @@ export const planInclude = {
     where: { deletedAt: null },
     orderBy: { orderIndex: "asc" as const },
     include: {
-      feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, photo:true,groupId:true,createdAt: true } },
+      feedbacks: { orderBy: { createdAt: "desc" as const }, select: { id: true, comment: true, photo:true,groupId:true,completionId:true,createdAt: true } },
       completions: { orderBy: { createdAt: "desc" as const }, take: 30 },
       exercises: {
         where: { deletedAt: null },
@@ -111,12 +111,13 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
         select:{id:true,plan:{select:{student:{select:{personalId:true}}}}},
       });
       if (!workout) throw new HttpError(404, "Treino indisponível para feedback");
+      if(data.completionId && !await tx.workoutCompletion.findFirst({where:{id:data.completionId,workoutId:workout.id}}))throw new HttpError(400,'Sessão de treino inválida');
       if(data.groupId)await validateGroupPost(tx,data.groupId,res.locals.user.id,workout.plan.student.personalId);
       const existing=await tx.workoutFeedback.findUnique({where:{workoutId_requestId:{workoutId:workout.id,requestId:data.requestId}}});
       const feedback=await tx.workoutFeedback.upsert({
         where: { workoutId_requestId: { workoutId: workout.id, requestId: data.requestId } },
         create: { workoutId: workout.id, ...data }, update: {},
-        select: { id: true, comment: true, photo:true,groupId:true,createdAt: true },
+        select: { id: true, comment: true, photo:true,groupId:true,completionId:true,createdAt: true },
       });
       return {feedback,owner:workout.plan.student.personalId,created:!existing};
     });

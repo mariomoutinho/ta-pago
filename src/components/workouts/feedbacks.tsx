@@ -49,6 +49,7 @@ export function WorkoutFeedbacks({ workout, canSend, reload }: {
         {!feedbacks.length && <Notice>Nenhum feedback registrado para este treino.</Notice>}
         {feedbacks.map(feedback => <Card key={feedback.id}>
           <Label size={12} muted>{new Date(feedback.createdAt).toLocaleString("pt-BR")}</Label>
+          {!!feedback.completionId&&<Label size={12} muted>Sessão concluída em {new Date(workout.completions?.find(c=>c.id===feedback.completionId)?.createdAt??feedback.createdAt).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})}</Label>}
           <Label>{feedback.comment}</Label>
           {!!feedback.photo&&<Image source={{uri:feedback.photo}} accessibilityLabel="Foto do treino" style={{width:'100%',height:240}} resizeMode="contain"/>}
         </Card>)}

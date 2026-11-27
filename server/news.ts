@@ -11,13 +11,13 @@ export async function newsEvents(db: Db, owner: string): Promise<Omit<NewsItem,"
   const since=new Date(Date.now()-Math.min(90,retentionDays())*86400000);
   const [enrollments,completions,feedbacks]=await Promise.all([
     db.enrollmentRequest.findMany({where:{personalId:owner,createdAt:{gte:since}},orderBy:{createdAt:"desc"},take:100}),
-    db.workoutCompletion.findMany({where:{createdAt:{gte:since},workout:{plan:{student:{personalId:owner}}}},include:{workout:{select:{name:true,plan:{select:{student:{select:{id:true,name:true}}}}}}},orderBy:{createdAt:"desc"},take:100}),
-    db.workoutFeedback.findMany({where:{createdAt:{gte:since},workout:{plan:{student:{personalId:owner}}}},include:{workout:{select:{name:true,plan:{select:{student:{select:{id:true,name:true}}}}}}},orderBy:{createdAt:"desc"},take:100}),
+    db.workoutCompletion.findMany({where:{createdAt:{gte:since},workout:{plan:{student:{personalId:owner}}}},include:{workout:{select:{id:true,name:true,planId:true,plan:{select:{student:{select:{id:true,name:true}}}}}}},orderBy:{createdAt:"desc"},take:100}),
+    db.workoutFeedback.findMany({where:{createdAt:{gte:since},workout:{plan:{student:{personalId:owner}}}},include:{workout:{select:{id:true,name:true,planId:true,plan:{select:{student:{select:{id:true,name:true}}}}}}},orderBy:{createdAt:"desc"},take:100}),
   ]);
   const items:Omit<NewsItem,"read">[]=enrollments.map(row=>({id:row.id,kind:"enrollment",title:`${unseal<{name:string}>(row.payload).name} enviou um cadastro.`,createdAt:row.createdAt.toISOString(),url:row.status==="active"&&row.studentId?`/alunos/${row.studentId}`:"/alunos/cadastros"}));
   for(const [rows,kind] of [[completions,"workout_completed"],[feedbacks,"feedback"]] as const) for(const row of rows){
     const student=row.workout.plan.student;
-    items.push({id:(kind==="feedback"?"feedback:":"completion:")+row.id,kind,title:student.name+(kind==="feedback"?" enviou um feedback sobre ":" concluiu ")+row.workout.name+".",createdAt:row.createdAt.toISOString(),url:`/alunos/${student.id}/treinos`});
+    items.push({id:(kind==="feedback"?"feedback:":"completion:")+row.id,kind,title:student.name+(kind==="feedback"?" enviou um feedback sobre ":" concluiu ")+row.workout.name+".",createdAt:row.createdAt.toISOString(),url:`/alunos/${student.id}/treinos?rotina=${row.workout.planId}&treino=${row.workout.id}`});
   }
   return items.sort((a,b)=>b.createdAt.localeCompare(a.createdAt)||a.id.localeCompare(b.id)).slice(0,100);
 }

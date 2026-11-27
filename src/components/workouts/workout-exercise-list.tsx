@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { Modal, Pressable, ScrollView, View } from "react-native";
+import { useEffect, useState, type ReactNode } from "react";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Button, Card, Confirm, Label, s } from "@/components/personal/ui";
 import { useTheme } from "@/hooks/use-theme";
 import type { Prescription } from "../../../shared/workouts";
@@ -11,7 +11,11 @@ import { SortableExercises } from "./sortable-exercises";
 export type WorkoutChange = "order" | "combine" | "separate" | "delete" | "duplicate" | "membership" | "edit";
 let sequence = 0;
 const nextOccurrenceKey = () => "local-" + Date.now() + "-" + ++sequence;
-export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false, completion }: {
+export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false, completion, finished, inline, studentActions, collapseKey }: {
+  collapseKey?: number;
+  finished?: (item: Prescription) => boolean;
+  inline?: (item: Prescription) => ReactNode;
+  studentActions?: (item: Prescription) => ReactNode;
   completion?: (item: Prescription) => ReactNode;
   unmountCollapsed?: boolean;
   items: Prescription[]; disabled?: boolean;
@@ -25,6 +29,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
   const t = useTheme();
   const blocks = exerciseBlocks(items), ids = blocks.map(block => block.id);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  useEffect(() => { if (collapseKey === 0) setExpanded(new Set()); }, [collapseKey]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [menu, setMenu] = useState<{ block?: string; item?: string } | null>(null);
   const [destination, setDestination] = useState<{ groupId?: string; itemKey?: string } | null>(null);
@@ -83,17 +88,19 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
       const block = blocks.find(block => block.id === key)!;
       const name = title(block), open = expanded.has(key), index = ids.indexOf(key);
       const keys = block.items.map(exerciseKey), checked = keys.every(key => selected.has(key));
-      return <Card style={{ padding: 10, marginBottom: 8, borderColor: keys.some(key => selected.has(key)) ? t.accent : t.border }}>
+      const done = !!finished && block.items.every(finished);
+      return <Card style={{ padding: 10, marginBottom: 8, borderRadius: 10, backgroundColor: done ? t.accent : t.background, borderColor: keys.some(key => selected.has(key)) ? t.accent : t.border }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
           {change && handle}
-          {completion&&<View>{block.items.map(item=><View key={exerciseKey(item)}>{completion(item)}</View>)}</View>}
           {change && <ExerciseCheckbox label={"Selecionar " + name} checked={checked} mixed={!checked && keys.some(key => selected.has(key))} disabled={disabled} toggle={() => toggleSelection(keys)} />}
           <Pressable accessibilityRole="button" accessibilityLabel={"Detalhes de " + name} aria-expanded={open} onPress={() => toggle(key)} style={{ flex: 1, minWidth: 0, minHeight: 44, justifyContent: "center" }}>
-            {block.items.map(item => <Label key={exerciseKey(item)} bold>{item.exercise?.name ?? "Exercício indisponível"}</Label>)}
+            {block.items.map(item => <Text key={exerciseKey(item)} style={{ color: done ? '#fff' : t.text, fontWeight: '700', fontSize: 14, lineHeight: 21 }}>{item.exercise?.name ?? "Exercício indisponível"}</Text>)}
           </Pressable>
+          {completion&&<View>{block.items.map(item=><View key={exerciseKey(item)}>{completion(item)}</View>)}</View>}
           {change && <Pressable accessibilityRole="button" accessibilityLabel={"Ações de " + name} disabled={disabled} onPress={() => block.groupId ? setMenu({ block: key }) : openItemMenu(keys[0])} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label size={22}>⋯</Label></Pressable>}
           <Pressable accessibilityRole="button" accessibilityLabel={(open ? "Recolher " : "Expandir ") + name} aria-expanded={open} onPress={() => toggle(key)} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label>{open ? "⌃" : "⌄"}</Label></Pressable>
         </View>
+        {inline && block.items.map(item => <View key={exerciseKey(item)}>{inline(item)}</View>)}
         <ExerciseExpansion open={open} unmountOnClose={unmountCollapsed}>
           {block.groupId ? <>
             <Label muted>Grupo combinado · prescrições individuais</Label>
@@ -106,6 +113,7 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
               </View>;
             }}</SortableExercises>
           </> : details(block.items[0], items.indexOf(block.items[0]))}
+          {studentActions && block.items.map(item => <View key={exerciseKey(item)}>{studentActions(item)}</View>)}
           {change && <View style={s.row}>
             <Button label={"Subir exercício " + (index + 1)} disabled={disabled || index === 0} variant="secondary" onPress={() => void reorder(index, index - 1).catch(() => {})}>↑</Button>
             <Button label={"Descer exercício " + (index + 1)} disabled={disabled || index === blocks.length - 1} variant="secondary" onPress={() => void reorder(index, index + 1).catch(() => {})}>↓</Button>

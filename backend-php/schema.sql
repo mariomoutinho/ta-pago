@@ -264,6 +264,7 @@ CREATE TABLE `WorkoutExercise` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `WorkoutFeedback` (
+  `completionId` VARCHAR(191) NULL,
   `id` VARCHAR(191) NOT NULL PRIMARY KEY,
   `workoutId` VARCHAR(191) NOT NULL,
   `requestId` VARCHAR(191) NOT NULL,
@@ -399,6 +400,8 @@ ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_workoutId` FORE
 ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_exerciseId` FOREIGN KEY (`exerciseId`) REFERENCES `Exercise` (`id`) ON DELETE RESTRICT;
 
 ALTER TABLE `WorkoutExercise` ADD CONSTRAINT `fk_WorkoutExercise_alternativeExerciseId` FOREIGN KEY (`alternativeExerciseId`) REFERENCES `Exercise` (`id`) ON DELETE RESTRICT;
+
+ALTER TABLE `WorkoutFeedback` ADD CONSTRAINT `fk_WorkoutFeedback_completionId` FOREIGN KEY (`completionId`) REFERENCES `WorkoutCompletion` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE `WorkoutFeedback` ADD CONSTRAINT `fk_WorkoutFeedback_workoutId` FOREIGN KEY (`workoutId`) REFERENCES `Workout` (`id`) ON DELETE CASCADE;
 

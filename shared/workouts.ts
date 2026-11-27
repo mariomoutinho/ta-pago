@@ -169,12 +169,13 @@ export type Plan = PlanData & {
 };
 
 export const workoutFeedbackSchema = z.object({
+  completionId: z.string().min(1).max(191).nullable().optional(),
   requestId: z.string().trim().min(8).max(100),
   comment: z.string().trim().max(2000, "Use até 2000 caracteres").default(''),
   photo: z.union([z.literal(''),z.string().max(350000).regex(/^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/)]).default(''),
   groupId: z.string().min(1).max(191).nullable().default(null),
 }).refine(d=>!!d.comment||!!d.photo,'Escreva um comentário ou selecione uma foto');
-export type WorkoutFeedback = { id: string; comment: string; photo?: string; groupId?: string | null; createdAt: string };
+export type WorkoutFeedback = { id: string; comment: string; photo?: string; groupId?: string | null; completionId?: string | null; createdAt: string };
 
 export const studentLoadsSchema = z.object({
   revision: z.number().int().positive(),

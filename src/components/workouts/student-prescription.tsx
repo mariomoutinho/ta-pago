@@ -6,9 +6,8 @@ import type { Prescription } from '../../../shared/workouts';
 import { PrescriptionView } from './exercise-view';
 import { initialSeries, seriesFields, seriesValue } from '../../../shared/series';
 
-export function StudentPrescription({ item, revision, editable, startRest, completedSets, progressBusy }: {
+export function StudentPrescription({ item, revision, editable, completedSets, progressBusy }: {
   item: Prescription; revision: number; editable: boolean; reload: () => Promise<void>;
-  startRest: (row: number, seconds: number, label: string) => void;
   completedSets: number[]; progressBusy: boolean;
 }) {
   const rows=initialSeries(item),initial=rows.map((row,i)=>String(item.studentLoads?.loads[i]??row.load??''));
@@ -37,9 +36,7 @@ export function StudentPrescription({ item, revision, editable, startRest, compl
           onChangeText={value=>{const next=latest.current.map((v,j)=>j===i?value:v);latest.current=next;setValues(next);setStatus('');}} />
         <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>
           {seriesFields(row.type??'repetitions-load').filter(f=>!['combined','load','restSeconds'].includes(f.key)).map(f=><View key={f.key}><Label size={12} bold>{f.label}</Label><Label>{seriesValue(row,f.key)||'—'}</Label></View>)}
-          {row.restSeconds!=null&&row.restSeconds>0&&<Button variant="secondary" disabled={!editable||progressBusy||left===0}
-            label={`Intervalo da série ${i+1}: ${row.restSeconds} segundos`}
-            onPress={()=>startRest(i,row.restSeconds!,`${item.exercise?.name??'Exercício'} · série ${i+1}`)}>Intervalo · {row.restSeconds} s ▶</Button>}
+          {row.restSeconds!=null&&<Label size={12} muted>Descanso prescrito: {row.restSeconds} s</Label>}
         </View>
       </View>;
     })}

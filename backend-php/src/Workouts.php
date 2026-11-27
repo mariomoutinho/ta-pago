@@ -106,7 +106,7 @@ trait Workouts {
                 if (($item['studentLoads']['prescription']??null)!==$this->loadPrescription($item)) $item['studentLoads']=null;
                 if (!$this->validProgress($item)) $item['studentProgress']=null;
             } unset($item);
-            $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','photo','groupId','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
+            $w['feedbacks']=array_map(fn($f)=>array_intersect_key($f,array_flip(['id','comment','photo','groupId','completionId','createdAt'])),$this->db->rows('WorkoutFeedback','workoutId=?',[$w['id']],'createdAt DESC'));
             $w['completions']=$this->db->rows('WorkoutCompletion','workoutId=?',[$w['id']],'createdAt DESC LIMIT 30');
             return $w;
         },$this->db->rows('Workout','planId=? AND deletedAt IS NULL',[$p['id']],'orderIndex ASC')); return $p;
@@ -146,9 +146,10 @@ trait Workouts {
         $p=$this->db->required('WorkoutPlan',"id=? AND publishedAt IS NOT NULL AND status='ativo'",[$w['planId']],true);
         $s=$this->student($p['studentId'],true); ensure($s['linkStatus']==='active','Vínculo encerrado',403);
         if ($data['groupId']) $this->postingGroup($data['groupId'],$s['personalId']);
+        if ($data['completionId']??null) ensure((bool)$this->db->one('WorkoutCompletion','id=? AND workoutId=?',[$data['completionId'],$id]),'Sessão de treino inválida');
         $f=$this->db->one('WorkoutFeedback','workoutId=? AND requestId=?',[$id,$data['requestId']]);
         if(!$f){$f=$this->db->create('WorkoutFeedback',[...$data,'workoutId'=>$id]);$this->deferredNotifications[]=$s['personalId'];}
-        $this->status=201; return array_intersect_key($f,array_flip(['id','comment','photo','groupId','createdAt']));
+        $this->status=201; return array_intersect_key($f,array_flip(['id','comment','photo','groupId','completionId','createdAt']));
     }
     private function progressPrescription(array $item): string {
         return hash('sha256',json_encode([$item['series'],$item['sets'],$item['exerciseId']],JSON_THROW_ON_ERROR));

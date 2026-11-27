@@ -11,6 +11,17 @@
   ],
   "indexable": true,
   "sources": [
+    "shared/workout-execution.ts",
+    "src/features/personal/rest-sound.ts",
+    "scripts/generate-rest-sound.mjs",
+    "src/components/workouts/set-counter.tsx",
+    "src/components/workouts/student-progress.tsx",
+    "src/components/workouts/rest-timer.tsx",
+    "src/components/workouts/completion-dialog.tsx",
+    "src/features/personal/workout-session-storage.ts",
+    "src/features/personal/workout-session-storage.native.ts",
+    "prisma/migrations/20261126190000_feedback_completion/migration.sql",
+    "backend-php/migrations/20261126_feedback_completion.sql",
     "src/app/treinos.tsx",
     "src/components/student/program-list.tsx",
     "src/components/student/list-styles.ts",
@@ -81,7 +92,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.17.0",
+  "version": "4.18.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -250,3 +261,13 @@ As linhas são clicáveis integralmente, respondem ao Enter na web, têm hover e
 O carregamento usa skeletons estáticos com a estrutura da lista, a ausência de prescrições usa a mensagem Você ainda não possui treinos prescritos. e falhas oferecem Tentar novamente. Os estilos estão centralizados em student/list-styles.ts. O shell Page aceita contentStyle opcional para aplicar os espaçamentos Focus sem alterar seus padrões anteriores.
 
 A rota mantém seleção nos parâmetros rotina e treino, pelo contrato WorkoutRoute já existente. Isso permite recarga e retorno pelo navegador, sem duplicar PlanDetails ou WorkoutWindow e sem introduzir outra execução de exercícios. IDs dos parâmetros são resolvidos somente nos planos devolvidos pela API autorizada; um ID de outra conta não carrega sua prescrição. Esta mudança não altera banco, endpoints, contratos de dados ou autorização.
+
+## Execução por séries no Focus
+
+Observado no código local: a execução substitui o checkbox por SetCounter, um botão de 48 px com séries restantes. Cada toque confirma uma única série na API existente de progresso, com revisão da prescrição e versão de execução. O progresso geral considera séries, inclusive durante o descanso. O contador principal mantém o número anterior até o prazo terminar; a última série mostra check e vermelho imediatamente, sem novo descanso. A ação Desfazer última série fica nos detalhes e cancela o descanso correspondente após confirmação do servidor.
+
+O descanso usa o intervalo de cada linha prescrita e timestamps absolutos. O painel fica dentro do exercício, com MM:SS e barra; ao terminar, recolhe os detalhes, libera o contador e anuncia a próxima série. O progresso diário continua no backend, separado da prescrição. Somente o prazo de descanso fica no armazenamento local, por conta: localStorage na web e SecureStore no Expo nativo. A recuperação verifica data em America/Sao_Paulo, revisão e versão. Um descanso ativo bloqueia novos registros, inclusive ao abrir outro treino na mesma sessão do aplicativo. Não há fila offline: falhas não avançam as séries e apresentam recuperação explícita.
+
+A conclusão automática reutiliza WorkoutCompletion e sua unicidade por treino/dia, atualizando calendário e acompanhamento. O diálogo TÁ PAGO! apresenta exercícios e séries realizados, uma animação de 180 ms condicionada à preferência de movimento reduzido e feedback opcional. O envio tem lock, requestId estável, erro com texto preservado e nova tentativa. Foto e compartilhamento com grupo continuam opcionais e explícitos. A coluna aditiva WorkoutFeedback.completionId relaciona o feedback pós-treino à conclusão; feedbacks antigos permanecem sem vínculo. Express e PHP validam que a conclusão pertence ao treino autorizado. As novidades mantêm estado de leitura e agora abrem a rotina/treino correspondentes; o profissional consulta o conteúdo e a data da sessão no fluxo existente de feedbacks.
+
+Limites observados: a sessão atual é diária por treino, conforme o modelo existente; outra data reinicia os contadores. Não há promessa de repetir o mesmo treino em várias sessões independentes no mesmo dia. Timestamps recuperam a contagem após suspensão, mas navegadores e sistemas móveis podem suspender áudio/JavaScript. O áudio web exige uma interação e não pode ser garantido após recarga ou com tela bloqueada; vibração depende do dispositivo. O adaptador nativo usa expo-audio 57 e um WAV sintetizado no repositório, respeitando modo silencioso e sem solicitar microfone ou habilitar reprodução em segundo plano. Isso exige build nativo atualizado e validação em aparelho físico. Não foi introduzida notificação agendada nem execução garantida em segundo plano. A duração total da sessão não é exibida porque o backend não registra seu início.

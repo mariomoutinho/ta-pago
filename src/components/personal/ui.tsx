@@ -272,15 +272,17 @@ export function Dialog({
   title,
   children,
   onClose,
+  animationType = 'fade',
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  animationType?: 'none' | 'fade';
 }) {
   const t = useTheme();
   const { height } = useWindowDimensions();
   return (
-    <Modal transparent visible animationType="fade" onRequestClose={onClose}>
+    <Modal transparent visible animationType={animationType} onRequestClose={onClose}>
       <KeyboardAvoidingView
         style={s.overlay}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
