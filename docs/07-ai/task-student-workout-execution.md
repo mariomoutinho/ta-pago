@@ -12,7 +12,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": ["developer", "ai_agent", "reviewer"],
   "sensitivity": "internal",
@@ -111,4 +111,6 @@ Sem funcionamento offline novo: falha na API mantém a série anterior e oferece
 
 O relógio é recalculado na retomada; som com navegador suspenso, tela bloqueada, modo silencioso ou após recarga não é garantido. Vibração depende da plataforma. O som web foi verificado no teste de navegador; reprodução nativa depende de novo binário com expo-audio e ainda exige teste em aparelho físico. Não foi habilitado microfone, serviço em segundo plano ou notificação local agendada. Duração total foi omitida porque o início da sessão não está disponível no backend.
 
-Migração aplicada apenas ao banco SQLite sintético da prévia local. A migração MySQL será necessária em eventual publicação autorizada. Sem push, merge, deploy ou CI remota nesta tarefa. Prévia atualizada em http://127.0.0.1:3003/treinos, com dois exercícios sintéticos adicionados somente ao treino de demonstração. Login e consulta de prescrições verificados localmente com status 200; a sessão de verificação foi encerrada. Nenhum dado do site foi copiado. Commits serão registrados após a revisão final.
+Migração aplicada apenas ao banco SQLite sintético da prévia local. A migração MySQL será necessária em eventual publicação autorizada. Sem push, merge, deploy ou CI remota nesta tarefa. Prévia atualizada em http://127.0.0.1:3003/treinos, com dois exercícios sintéticos adicionados somente ao treino de demonstração. Login e consulta de prescrições verificados localmente com status 200; a sessão de verificação foi encerrada. Nenhum dado do site foi copiado.
+
+Implementação salva no commit local 07d93f4, na branch feat/student-workout-execution. Esta revisão documental registra a entrega e as evidências posteriores, sem modificar fontes indexáveis nem exigir regeneração dos manifestos. O estado preexistente de Gradle e os arquivos pessoais continuam fora dos commits. As pendências de PHP/MySQL e aparelho físico permanecem explícitas; não se afirma validação desses ambientes nem publicação.
