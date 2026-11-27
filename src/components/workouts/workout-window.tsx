@@ -15,6 +15,7 @@ import { useStudentProgress } from './student-progress';
 import { useSession } from '@/features/personal/auth';
 import { brazilToday } from '../../../shared/notifications';
 import { WorkoutFeedbacks } from './feedbacks';
+import { ProfessionalExerciseSummary } from './professional-exercise-summary';
 
 export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExercises, addToGroup, student }: {
   student?: { revision: number; editable: boolean; reload: () => Promise<void> };
@@ -55,7 +56,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
       <View style={editing ? { display: "none" } : undefined}><WorkoutExerciseList collapseKey={student ? rest.timer?.deadline ?? 0 : undefined} finished={student ? progress.finished : undefined} inline={progress.inline} studentActions={progress.undo} completion={progress.completion} items={current.exercises} disabled={busy || hasDirty || !!editing} change={saveExercises ? change : undefined} editItem={saveExercises ? setEditing : undefined} addToGroup={addToGroup} normalActions={(edit || add) && <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {edit && <Button disabled={busy || hasDirty || !!editing} variant="secondary" onPress={edit}>Editar e reordenar</Button>}
         {add && <Button disabled={busy || hasDirty || !!editing} onPress={add}>Adicionar exercício</Button>}
-      </View>} details={(item, index) => saveSeries ? <>
+      </View>} summary={!student ? item => <ProfessionalExerciseSummary item={item} workoutId={current.id ?? current.name} disabled={busy || hasDirty || !!editing} /> : undefined} details={(item, index) => saveSeries ? <>
         {item.exercise && <ExerciseDetails exercise={item.exercise} compact />}
         {!!item.notes && <Notice>{item.notes}</Notice>}
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}

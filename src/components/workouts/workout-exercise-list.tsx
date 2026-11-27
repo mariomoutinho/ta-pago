@@ -11,7 +11,8 @@ import { SortableExercises } from "./sortable-exercises";
 export type WorkoutChange = "order" | "combine" | "separate" | "delete" | "duplicate" | "membership" | "edit";
 let sequence = 0;
 const nextOccurrenceKey = () => "local-" + Date.now() + "-" + ++sequence;
-export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false, completion, finished, inline, studentActions, collapseKey }: {
+export function WorkoutExerciseList({ items, disabled = false, change, itemMenu, editItem, addToGroup, normalActions, details, unmountCollapsed = false, completion, finished, inline, summary, studentActions, collapseKey }: {
+  summary?: (item: Prescription) => ReactNode;
   collapseKey?: number;
   finished?: (item: Prescription) => boolean;
   inline?: (item: Prescription) => ReactNode;
@@ -100,6 +101,10 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
           {change && <Pressable accessibilityRole="button" accessibilityLabel={"Ações de " + name} disabled={disabled} onPress={() => block.groupId ? setMenu({ block: key }) : openItemMenu(keys[0])} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label size={22}>⋯</Label></Pressable>}
           <Pressable accessibilityRole="button" accessibilityLabel={(open ? "Recolher " : "Expandir ") + name} aria-expanded={open} onPress={() => toggle(key)} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label>{open ? "⌃" : "⌄"}</Label></Pressable>
         </View>
+        {summary && block.items.map(item => <View key={exerciseKey(item)}>
+          {block.groupId && <Label size={12} bold>{item.exercise?.name}</Label>}
+          {summary(item)}
+        </View>)}
         {inline && block.items.map(item => <View key={exerciseKey(item)}>{inline(item)}</View>)}
         <ExerciseExpansion open={open} unmountOnClose={unmountCollapsed}>
           {block.groupId ? <>

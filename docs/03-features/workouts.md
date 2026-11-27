@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/professional-exercise-summary.tsx",
     "src/components/workouts/preset-library.tsx",
     "src/app/presets.tsx",
     "backend-php/migrations/20261126_workout_folders.sql",
@@ -102,7 +103,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.1",
+  "version": "12.10.2",
   "authority": "code",
   "audience": [
     "developer",
@@ -361,3 +362,9 @@ Pastas de um nível pertencem ao professor, podem ser criadas no catálogo e fil
 A rota profissional `/presets` aparece na barra lateral e permite buscar, criar, editar e excluir presets privados. Os presets padrão são exibidos para personalização de uma cópia. O editor reutiliza SeriesEditor, preservando as configurações adicionais já salvas; editar ou excluir um preset não modifica prescrições existentes. As APIs de pastas, cópias e presets exigem conta profissional e restringem o acesso ao proprietário.
 
 Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.
+
+## Séries e descanso no cartão recolhido
+
+Na leitura profissional de um treino, cada exercício mostra o total de séries prescritas e botões com os intervalos de descanso, mesmo recolhido. Ao iniciar um intervalo, a contagem regressiva e a barra de tempo aparecem no próprio cartão; expandir ou recolher mantém o cronômetro. Em combinados, o resumo identifica cada exercício e seus intervalos individuais. Séries com intervalos distintos oferecem cada duração prescrita, sem escolher um valor global.
+
+O cronômetro profissional pode ser cancelado e recupera o prazo após recarga na mesma conta, treino, exercício e prescrição, durante o mesmo dia. Seu armazenamento é separado da execução do aluno e não registra séries, conclusões ou feedbacks em nome dele. Na visão do aluno, o contador de séries restantes e o descanso automático continuam visíveis no cartão recolhido.

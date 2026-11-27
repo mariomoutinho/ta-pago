@@ -2146,6 +2146,45 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   expect(errors).toEqual([]);
 });
 
+test('professor vê séries e cronômetro com exercício recolhido sem alterar progresso do aluno', async ({ page }) => {
+  const headers = { 'X-Requested-With': 'TaPago' };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: 'Professor Descanso', email: 'professional-rest@example.test', password: 'teste123' } });
+  const student = await (await page.request.post(base + '/api/students', { headers, data: { name: 'Aluno Descanso', startDate: '2026-11-27' } })).json();
+  const exercise = await (await page.request.post(base + '/api/exercises', { headers, data: { name: 'Supino cronômetro', muscleGroup: 'Peitoral', category: 'Musculação' } })).json();
+  const response = await page.request.post(base + `/api/students/${student.id}/workout-plans`, { headers, data: { title: 'Rotina descanso', objective: 'Força', difficulty: 'Iniciante', startsAt: '2026-11-27', status: 'ativo', workouts: [{ name: 'Treino descanso', exercises: [{ exerciseId: exercise.id, series: [{ sets: 3, repetitions: '10', restSeconds: 60 }] }] }] } });
+  expect(response.status(), await response.text()).toBe(201);
+  const plan = await response.json(), workout = plan.workouts[0];
+  await page.addInitScript(() => localStorage.setItem('tapago.theme', 'dark'));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.install();
+  await page.goto(base + `/alunos/${student.id}/treinos?rotina=${plan.id}&treino=${workout.id}`);
+  const expand = page.getByRole('button', { name: 'Expandir Supino cronômetro', exact: true });
+  await expect(expand).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByText('3 séries', { exact: true })).toBeVisible();
+  const start = page.getByRole('button', { name: 'Iniciar descanso de 01:00 para Supino cronômetro', exact: true });
+  await start.click();
+  await expect(page.getByRole('timer')).toHaveAttribute('aria-label', 'Descanso: 01:00');
+  await expect(expand).toHaveAttribute('aria-expanded', 'false');
+  await page.clock.fastForward(10000);
+  await expect(page.getByRole('timer')).toHaveAttribute('aria-label', 'Descanso: 00:50');
+  await page.screenshot({ path: 'data/professional-collapsed-rest.png' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expand.click();
+  await page.getByRole('button', { name: 'Recolher Supino cronômetro', exact: true }).click();
+  await expect(page.getByRole('timer')).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('timer')).toHaveAttribute('aria-label', 'Descanso: 00:50');
+  await page.clock.fastForward(51000);
+  await expect(page.getByRole('timer')).toHaveCount(0);
+  await expect(start).toBeEnabled();
+  await start.click();
+  await page.getByRole('button', { name: 'Cancelar descanso de Supino cronômetro', exact: true }).click();
+  await expect(page.getByRole('timer')).toHaveCount(0);
+  const saved = await db.workoutExercise.findUniqueOrThrow({ where: { id: workout.exercises[0].id } });
+  expect(saved.studentProgress).toBeNull();
+  expect(await db.workoutCompletion.count({ where: { workoutId: workout.id } })).toBe(0);
+});
+
 test("retorno às rotinas fica ao lado de Treinos no perfil profissional", async ({ page }) => {
   const headers = { "X-Requested-With": "TaPago" };
   await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Professor Navegação", email: "routine-navigation@example.test", password: "teste123" } });
