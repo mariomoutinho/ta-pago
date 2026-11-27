@@ -10,6 +10,100 @@ import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
+test("lista Focus usa prescrições reais, navega por URL e adapta temas e tamanhos", async ({page,browser}) => {
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  page.on('console',entry=>{if(entry.type()==='error')errors.push(entry.text());});
+  await page.addInitScript(()=>localStorage.setItem('tapago.theme','dark'));
+  const headers={'X-Requested-With':'TaPago'},teacher=await browser.newContext();
+  try {
+    await provisionBrowserPersonal(db,teacher.request,base,{headers,data:{name:'Professor Lista',email:'program-list-teacher@example.test',password:'senha-ficticia-12345',role:'personal'}});
+    const target=(await (await teacher.request.post(base+'/api/students',{headers,data:{name:'Aluno Lista',mainGoal:'Condicionamento',startDate:'2026-11-23'}})).json());
+    const registered=await page.request.post(base+'/api/auth/register',{headers,data:{name:'Aluno Lista',email:'program-list-student@example.test',password:'senha-ficticia-12345',role:'student'}});expect(registered.status()).toBe(201);
+    const invitation=await (await teacher.request.post(base+'/api/students/'+target.id+'/invite',{headers})).json();
+    expect((await page.request.post(base+'/api/me/claim',{headers,data:{code:invitation.code}})).status()).toBe(200);
+    const exercise=await (await teacher.request.post(base+'/api/exercises',{headers,data:{name:'Exercício da lista',muscleGroup:'Peitoral',category:'Musculação'}})).json();
+    const create=async(studentId:string,title:string,startsAt:string,endsAt:string|null,objective:string,status='ativo')=>{
+      const response=await teacher.request.post(base+'/api/students/'+studentId+'/workout-plans',{headers,data:{title,startsAt,endsAt,objective,difficulty:'Iniciante',status,workouts:[{name:'Rotina prescrita',exercises:[{exerciseId:exercise.id,sets:3,repetitions:'10'}]}]}});
+      expect(response.status(),await response.text()).toBe(201);return response.json();
+    };
+    const first=await create(target.id,'Adaptação neuromuscular','2026-11-23','2026-12-27','Condicionamento físico');
+    const second=await create(target.id,'Hipertrofia muscular','2026-12-28','2027-01-31','Ganho de massa muscular');
+    const optional=await create(target.id,'Manutenção da força','2026-11-01',null,'Objetivo antigo');
+    await db.workoutPlan.update({where:{id:optional.id},data:{objective:'',status:'arquivado'}});
+    await create(target.id,'Rascunho privado','2026-11-23',null,'Não publicado','rascunho');
+    const outsider=await (await teacher.request.post(base+'/api/students',{headers,data:{name:'Outro Aluno',mainGoal:'',startDate:'2026-11-23'}})).json();
+    const foreign=await create(outsider.id,'Plano de outra conta','2026-11-23',null,'Privado');
+    await page.setViewportSize({width:390,height:844});await page.goto(base);
+    await page.getByRole('link',{name:'Meus treinos',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Meus treinos',exact:true})).toBeVisible();
+    const list=page.getByTestId('student-program-list').filter({visible:true});
+    await expect(list.getByRole('link')).toHaveCount(3);
+    await expect(list.getByText('23/11/2026 — 27/12/2026',{exact:true})).toBeVisible();
+    await expect(list.getByText('Condicionamento físico',{exact:true})).toBeVisible();
+    await expect(list.getByText('01/11/2026 — Sem término',{exact:true})).toBeVisible();
+    await expect(list.getByText(/Rascunho privado|Plano de outra conta|Objetivo antigo|Invalid Date|undefined|null/)).toHaveCount(0);
+    await expect(page.getByRole('tab',{name:'Treinos',exact:true})).toHaveAttribute('aria-selected','true');
+    await expect(page.getByText('Rotinas liberadas pelo seu professor.',{exact:true})).toHaveCount(0);
+    await expect(page.getByRole('button',{name:'Ver treino',exact:true})).toHaveCount(0);
+    for(const [label,width,height] of [['mobile',390,844],['tablet',768,1024],['desktop',1280,900]] as const){
+      await page.setViewportSize({width,height});await page.mouse.move(0,0);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      const bounds=await list.boundingBox();expect(bounds!.width).toBeLessThanOrEqual(432);
+      await page.screenshot({path:'data/student-workouts-'+label+'-dark.png',animations:'disabled'});
+    }
+    await page.getByRole('button',{name:'Ativar tema claro',exact:true}).click();
+    await expect(page.getByRole('button',{name:'Notificações',exact:true})).toHaveCSS('background-color','rgb(255, 255, 255)');
+    await page.setViewportSize({width:390,height:844});await page.mouse.move(0,0);
+    await page.screenshot({path:'data/student-workouts-mobile-light.png',animations:'disabled'});
+    const row=page.getByRole('link',{name:'Abrir rotina '+first.title,exact:true});
+    await row.focus();await expect(row).toBeFocused();await row.press('Enter');
+    await expect(page).toHaveURL(base+'/treinos?rotina='+first.id);
+    await expect(page.getByRole('button',{name:'Rotina prescrita',exact:true})).toBeVisible();
+    await page.reload();await expect(page.getByRole('button',{name:'Rotina prescrita',exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'Rotina prescrita',exact:true}).click();
+    await expect(page).toHaveURL(new RegExp('treino='+first.workouts[0].id));
+    await expect(page.getByRole('button',{name:'Voltar aos treinos',exact:true})).toBeVisible();
+    await page.goBack();await expect(page.getByRole('button',{name:'Rotina prescrita',exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'‹ Todas as rotinas',exact:true}).click();
+    await expect(page).toHaveURL(base+'/treinos');
+    const right=page.getByRole('link',{name:'Abrir rotina '+second.title,exact:true});const rect=await right.boundingBox();await right.click({position:{x:rect!.width-6,y:rect!.height/2}});
+    await expect(page).toHaveURL(base+'/treinos?rotina='+second.id);
+    await page.goto(base+'/treinos?rotina='+foreign.id);await expect(page.getByText('Plano de outra conta',{exact:true})).toHaveCount(0);
+    await expect(page.getByTestId('student-program-list').filter({visible:true}).getByRole('link')).toHaveCount(3);
+    const longTitle='Preparação física com fortalecimento integrado e retorno progressivo às atividades habituais';
+    await create(target.id,longTitle,'2026-11-24',null,'Desenvolvimento da resistência e do controle corporal em atividades com diferentes níveis de intensidade e duração');
+    await page.goto(base+'/treinos');await page.setViewportSize({width:320,height:740});
+    const longRow=page.getByRole('link',{name:'Abrir rotina '+longTitle,exact:true});await expect(longRow).toBeVisible();
+    expect((await longRow.boundingBox())!.height).toBeGreaterThan(96);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.emulateMedia({reducedMotion:'reduce'});await expect(longRow).toHaveCSS('transition-property','none');
+    await page.screenshot({path:'data/student-workouts-mobile-320-long.png',animations:'disabled'});
+    const last=page.getByTestId('student-program-list').filter({visible:true}).getByRole('link').last();await last.scrollIntoViewIfNeeded();
+    const lastBounds=await last.boundingBox(),navigation=await page.getByRole('tablist').boundingBox();expect(lastBounds!.y+lastBounds!.height).toBeLessThanOrEqual(navigation!.y);
+    await page.getByRole('button',{name:'Voltar ao meu início',exact:true}).click();await expect(page).toHaveURL(base+'/');
+    await expect(page.getByRole('heading',{name:'Olá, atleta!'})).toBeVisible();expect(errors).toEqual([]);
+  } finally {await teacher.close();}
+});
+
+test("lista Focus apresenta skeleton, estado vazio e nova tentativa após erro", async ({page}) => {
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  const headers={'X-Requested-With':'TaPago'};
+  expect((await page.request.post(base+'/api/auth/register',{headers,data:{name:'Aluno Sem Prescrição',email:'program-list-empty@example.test',password:'senha-ficticia-12345',role:'student'}})).status()).toBe(201);
+  let release!:()=>void;const waiting=new Promise<void>(resolve=>{release=resolve;});
+  await page.route('**/api/me/workout-plans',async route=>{await waiting;await route.continue();});
+  await page.setViewportSize({width:390,height:844});await page.goto(base+'/treinos');
+  await expect(page.getByRole('progressbar',{name:'Carregando treinos'})).toBeVisible();
+  await page.screenshot({path:'data/student-workouts-loading.png',animations:'disabled'});release();
+  await expect(page.getByText('Você ainda não possui treinos prescritos.',{exact:true})).toBeVisible();
+  await page.screenshot({path:'data/student-workouts-empty.png',animations:'disabled'});
+  await page.unroute('**/api/me/workout-plans');
+  await page.route('**/api/me/workout-plans',route=>route.fulfill({status:503,json:{error:'Falha sintética'}}));
+  await page.reload();await expect(page.getByRole('alert')).toHaveText('Não foi possível carregar os treinos.');
+  await page.screenshot({path:'data/student-workouts-error.png',animations:'disabled'});
+  await page.unroute('**/api/me/workout-plans');await page.getByRole('button',{name:'Tentar novamente',exact:true}).click();
+  await expect(page.getByText('Você ainda não possui treinos prescritos.',{exact:true})).toBeVisible();
+  expect(errors).toEqual([]);
+});
 test("Focus do aluno mostra calendário, temas, perfil e estados de carregamento", async ({page}) => {
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.clock.setFixedTime(new Date('2026-11-26T15:00:00Z'));
@@ -482,7 +576,7 @@ test("início do aluno conecta professor e mostra somente treinos liberados no c
     await page.screenshot({ path: "test-results/student-home-mobile.png", fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.getByRole("button", { name: "Ver meus treinos", exact: true }).click();
-    await page.getByRole("button", { name: "Abrir rotina Rotina do portal", exact: true }).click();
+    await page.getByRole("link", { name: "Abrir rotina Rotina do portal", exact: true }).click();
     await expect(page.getByRole("button", { name: "Treino do portal", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "+ Adicionar treino", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "Voltar ao meu início", exact: true }).click();
@@ -804,13 +898,12 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
     route.fulfill({ contentType: "text/html", body: "Player de teste" }),
   );
   await pupil.goto(base + "/treinos");
-  await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
+  await pupil.getByRole("link", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await pupil.getByRole("button", { name: "Terminei: enviar feedback", exact: true }).click();
   await pupil.getByLabel("Seu feedback", { exact: true }).fill("Treino concluído. A última série foi desafiadora.");
   await pupil.getByRole("button", { name: "Registrar feedback", exact: true }).click();
   await expect(pupil.getByText("Feedback registrado e disponível para o personal.", { exact: true })).toBeVisible();
   await pupil.reload();
-  await pupil.getByRole("button", { name: "Abrir rotina Adaptação funcional", exact: true }).click();
   await pupil.getByRole("button", { name: "Feedbacks (1)", exact: true }).click();
   await expect(pupil.getByText("Treino concluído. A última série foi desafiadora.", { exact: true })).toBeVisible();
   await pupil.getByRole("button", { name: "Voltar aos treinos", exact: true }).click();
@@ -823,11 +916,10 @@ test("prescrição completa no mobile e leitura do aluno em conta própria", asy
   await expect(
     pupil.getByTitle("Vídeo: Supino de teste", { exact: true }),
   ).toBeVisible();
-  await expect(pupil.getByText("4/10", { exact: true })).toBeVisible();
-  await expect(pupil.getByText("60", { exact: true })).toBeVisible();
-  await expect(
-    pupil.getByText("90", { exact: true }),
-  ).toBeVisible();
+  await expect(pupil.getByText("4 / 4", { exact: true })).toBeVisible();
+  await expect(pupil.getByText("10", { exact: true })).toBeVisible();
+  await expect(pupil.getByLabel("Carga 1 (kg)", { exact: true })).toHaveValue("60");
+  await expect(pupil.getByRole("button", { name: "Intervalo da série 1: 90 segundos", exact: true })).toBeVisible();
   await expect(
     pupil.getByText("Controle o movimento", { exact: true }),
   ).toBeVisible();
@@ -1250,7 +1342,7 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
     await page.getByRole('button', { name: 'Confirmar', exact: true }).click();
     await expect(page.getByText('Rotina liberada para o aluno.', { exact: true })).toBeVisible();
     await pupil.goto(base + '/treinos');
-    await pupil.getByRole('button', { name: 'Abrir rotina Plano individual do aluno', exact: true }).click();
+    await pupil.getByRole('link', { name: 'Abrir rotina Plano individual do aluno', exact: true }).click();
     await expect(pupil.getByRole('button', { name: 'Treino adaptado ao aluno', exact: true })).toBeVisible();
     expect((await (await pupil.request.get(base + '/api/me/workout-plans')).json())[0].publishedAt).toBeTruthy();
     await pupil.getByRole('button', { name: 'Treino adaptado ao aluno', exact: true }).click();
@@ -1293,8 +1385,6 @@ test("personal prepara treino sem aluno e copia para o perfil sem alterar o mode
     await pupil.waitForTimeout(2200);
     expect(await pupil.evaluate(() => (window as any).__restTones)).toBe(3);
     await pupil.reload();
-    await pupil.getByRole('button', { name: 'Abrir rotina Plano individual do aluno', exact: true }).click();
-    await pupil.getByRole('button', { name: 'Treino adaptado ao aluno', exact: true }).click();
     await pupil.getByRole('button', { name: 'Detalhes de Agachamento modelo', exact: true }).click();
     await expect(pupil.getByLabel('Carga 1 (kg)', { exact: true })).toHaveValue('12.5');
     await expect(pupil.getByText('1 / 3', { exact: true })).toBeVisible();

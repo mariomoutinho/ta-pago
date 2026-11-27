@@ -11,6 +11,11 @@
   ],
   "indexable": true,
   "sources": [
+    "src/app/treinos.tsx",
+    "src/components/student/program-list.tsx",
+    "src/components/student/list-styles.ts",
+    "src/components/student/page-header.tsx",
+    "src/components/workouts/plans.tsx",
     "src/components/student/home.tsx",
     "src/components/student/layout.tsx",
     "src/components/student/profile.tsx",
@@ -76,7 +81,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.16.0",
+  "version": "4.17.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -235,3 +240,13 @@ Observado: a área do aluno tem cabeçalho com a logo local, identificação ALU
 GET /api/me/workout-calendar?month=AAAA-MM existe no Express e no PHP. Exige aluno autenticado e agrega somente conclusões ligadas ao próprio accountId, por data completa dentro do mês. Retorna month, days com date/count e total. Não há limite de 30 registros por rotina nessa consulta, nem alteração do banco. O histórico continua incluindo planos arquivados e rotinas removidas logicamente. O resumo conta treinos, portanto dois treinos no mesmo dia somam dois no total e uma célula treinada.
 
 A data de hoje segue America/Sao_Paulo. A grade inicia no domingo, considera anos bissextos, permite navegar entre meses e diferencia conclusão, dia sem registro, futuro e hoje. Carregamento e falha não aparecem como zero; a consulta é renovada ao voltar para o início, descarta respostas anteriores e permite tentar novamente. O calendário é de leitura e não cria conclusões. O conteúdo fica limitado em largura em desktop e se adapta a 320 px; o tema claro é derivado dos tokens existentes. A referência visual foi a imagem do responsável, mediante autorização após o limite de consultas do Figma impedir o contexto detalhado.
+
+## Lista compacta de Meus treinos do aluno
+
+Observado: /treinos reutiliza o cabeçalho e a navegação Focus e apresenta somente o título com retorno ao início e a lista de prescrições autorizadas. WorkoutPlans mantém a consulta GET /me/workout-plans e a abertura existentes; na perspectiva do aluno, a entrada usa WorkoutProgramList, com ícone padrão de halteres, título, intervalo brasileiro, objetivo quando informado e chevron. Planos arquivados publicados permanecem acessíveis na mesma lista. Não há regras de iconografia por nome nem dados estáticos na implementação.
+
+As linhas são clicáveis integralmente, respondem ao Enter na web, têm hover e foco e reaproveitam a transição de 180 ms com redução de movimento do projeto. Nomes e objetivos podem quebrar linhas; as datas permanecem em uma linha. Término ausente aparece como Sem término; objetivo ausente não cria texto substituto. A validação de data existente impede exibição de Invalid Date.
+
+O carregamento usa skeletons estáticos com a estrutura da lista, a ausência de prescrições usa a mensagem Você ainda não possui treinos prescritos. e falhas oferecem Tentar novamente. Os estilos estão centralizados em student/list-styles.ts. O shell Page aceita contentStyle opcional para aplicar os espaçamentos Focus sem alterar seus padrões anteriores.
+
+A rota mantém seleção nos parâmetros rotina e treino, pelo contrato WorkoutRoute já existente. Isso permite recarga e retorno pelo navegador, sem duplicar PlanDetails ou WorkoutWindow e sem introduzir outra execução de exercícios. IDs dos parâmetros são resolvidos somente nos planos devolvidos pela API autorizada; um ID de outra conta não carrega sua prescrição. Esta mudança não altera banco, endpoints, contratos de dados ou autorização.

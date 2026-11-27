@@ -17,6 +17,7 @@ import type { Program } from "@/features/personal/types";
 import { PlanForm } from "./plan-form";
 import { WorkoutWindow } from "./workout-window";
 import { WorkoutScreen } from "./workout-screen";
+import { WorkoutProgramList } from "@/components/student/program-list";
 export type WorkoutRoute = { planId?: string; workoutId?: string; selectPlan: (id?: string) => void; selectWorkout: (id?: string) => void };
 function PlanDetails({ plan, edit, archive, add, studentView, reload, editWorkout, route }: {
   route?: WorkoutRoute;
@@ -165,6 +166,7 @@ export function WorkoutPlans({
   const [discard, setDiscard] = useState(false);
   const [childScreen, setChildScreen] = useState(false);
   const [success, setSuccess] = useState("");
+  const [studentReloading, setStudentReloading] = useState(false);
   const plans =
     data?.filter((p) => !studentId || p.studentId === studentId) ?? [];
   const selectedPlan = plans.find(p => p.id === selected);
@@ -177,6 +179,11 @@ export function WorkoutPlans({
     if (filter === "Encerradas") return p.status === "ativo" && !!p.endsAt && p.endsAt < today();
     return true;
   });
+  if (studentView && !selectedPlan) return <WorkoutProgramList plans={plans} loading={loading || studentReloading} error={error}
+    open={id => setSelected(id)} retry={() => {
+      setStudentReloading(true);
+      void reload().finally(() => setStudentReloading(false));
+    }} />;
   if (editing && studentId) return <>
         <WorkoutScreen
           hideHeader={childScreen}
