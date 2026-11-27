@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Image, Pressable, View } from "react-native";
+import X from 'lucide-react-native/icons/x';
 import { exerciseVideoThumbnail } from "@/features/personal/exercise-video";
 import { useTheme } from "@/hooks/use-theme";
 import { useResource } from "@/features/personal/use-resource";
@@ -28,6 +29,14 @@ import { SaveForm, TextFields } from "./form";
 import { ExerciseDetails } from "./exercise-view";
 const muscleGroups = ["Peitoral", "Dorsal", "Bíceps", "Tríceps", "Inferiores", "Quadríceps", "Posteriores de coxa", "Glúteos", "Panturrilhas", "Ombros", "Abdômen", "Trapézio", "Antebraço"];
 const categories = ["Musculação", "Aeróbico", "Funcional", "Alongamento", "Em casa", "Mobilidade", "Elástico", "MAT Pilates", "Laboral"];
+function FilterChip({ label, remove }: { label: string; remove: () => void }) {
+  const t = useTheme();
+  return <Pressable accessibilityRole="button" accessibilityLabel={`Remover filtro ${label}`} onPress={remove}
+    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 8, maxWidth: '100%', minHeight: 44, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderRadius: 8, borderColor: t.accent, backgroundColor: t.accentSoft, opacity: pressed ? 0.7 : 1 })}>
+    <View style={{ flexShrink: 1 }}><Label size={12} bold>{label}</Label></View>
+    <X size={16} strokeWidth={1.75} color={t.accent} />
+  </Pressable>;
+}
 function OptionField({ label, value, options, change }: {
   label: string; value: string; options: string[]; change: (value: string) => void;
 }) {
@@ -246,6 +255,13 @@ export function ExerciseLibrary({
         onChangeText={setSearch}
       />
       </View>
+      {!!(search || muscle || category || onlyFavorites || status !== 'ativo') && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {!!muscle && <FilterChip label={muscle} remove={() => setMuscle('')} />}
+        {!!category && <FilterChip label={category} remove={() => setCategory('')} />}
+        {!!search && <FilterChip label={`Busca: ${search}`} remove={() => setSearch('')} />}
+        {onlyFavorites && <FilterChip label="Favoritos" remove={() => setOnlyFavorites(false)} />}
+        {status !== 'ativo' && <FilterChip label="Arquivados" remove={() => setStatus('ativo')} />}
+      </View>}
       {filterPanel && <View style={{ backgroundColor: t.backgroundElement, padding: 12, borderRadius: 8 }}>
         <Field label={filterPanel === "muscle" ? "Filtrar grupo muscular" : "Filtrar categoria"}
           value={filterPanel === "muscle" ? muscle : category}

@@ -2250,6 +2250,19 @@ test("salva treino vazio e disponibiliza catálogo automaticamente sem campo de 
   await page.reload();
   await page.getByLabel('Buscar exercícios...',{exact:true}).fill('Bayesian');
   await expect(page.getByRole('button',{name:'Expandir exercício Rosca Bayesian',exact:true})).toHaveCount(1);
+  await page.getByRole('button', { name: 'Grupos musculares', exact: true }).click();
+  await page.getByRole('button', { name: 'Bíceps', exact: true }).click();
+  await page.getByRole('button', { name: 'Categorias', exact: true }).click();
+  await page.getByRole('button', { name: 'Musculação', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Remover filtro Bíceps', exact: true })).toBeVisible();
+  await page.screenshot({ path: 'data/exercise-filter-chips.png' });
+  await page.getByRole('button', { name: 'Remover filtro Bíceps', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Remover filtro Musculação', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Buscar exercícios...', { exact: true })).toHaveValue('Bayesian');
+  await page.getByRole('button', { name: 'Remover filtro Musculação', exact: true }).click();
+  await page.getByRole('button', { name: 'Remover filtro Busca: Bayesian', exact: true }).click();
+  await expect(page.getByLabel('Buscar exercícios...', { exact: true })).toHaveValue('');
+  await expect(page.getByRole('button', { name: /^Remover filtro / })).toHaveCount(0);
 });
 
 test("catálogo cria pastas, clona, duplica, move e gerencia presets pela lateral", async ({ page }) => {

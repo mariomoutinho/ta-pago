@@ -104,7 +104,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.4",
+  "version": "12.10.5",
   "authority": "code",
   "audience": [
     "developer",
@@ -353,6 +353,8 @@ Treinos preparados podem ser criados e editados sem exercícios, para preenchime
 A biblioteca disponibiliza automaticamente 240 exercícios ao consultar a lista, com 20 exercícios em cada um dos 12 grupos musculares, sem botão de importação. O preenchimento grava somente na biblioteca do professor autenticado, é transacional e preserva exercícios existentes com o mesmo nome, inclusive arquivados. Consultas posteriores não duplicam o catálogo. O endpoint anterior de importação permanece compatível. O campo Equipamento foi retirado do formulário de criação e edição; o dado continua preservado nos registros existentes e no catálogo.
 
 A prévia local usa banco e conta de demonstração separados da produção. Ela não sincroniza automaticamente os exercícios privados cadastrados no site.
+
+Filtros ativos da biblioteca aparecem como etiquetas com nome e ícone de remoção: grupo muscular, categoria, busca, favoritos e arquivados. Remover uma etiqueta limpa somente aquele filtro, preservando os demais. Limpar filtros continua disponível para restaurar toda a listagem padrão.
 
 ## Catálogo, pastas e presets
 
