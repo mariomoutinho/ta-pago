@@ -1908,6 +1908,7 @@ for (const destination of ["aluno", "preparado"] as const) {
       await page.getByLabel("Nome do treino *", { exact: true }).fill("Modelo direto");
       await page.getByRole("button", { name: "+ Adicionar exercício", exact: true }).click();
     }
+    await page.getByLabel('Buscar exercícios...', { exact: true }).fill('Exercício direto');
     await expect(page.getByRole("button", { name: "Expandir exercício Exercício direto", exact: true })).toHaveAttribute("aria-expanded", "false");
     await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
     await expect(page.getByText("Escolha um preset", { exact: true })).toBeVisible();
@@ -1916,6 +1917,7 @@ for (const destination of ["aluno", "preparado"] as const) {
     for (const name of ["1/8 mobilidade", "2x15", "3/8", "3x8-12", "3x8-60", "Meu preset particular"]) {
       await expect(page.getByRole("button", { name: `Usar preset ${name}`, exact: true })).toBeVisible();
     }
+    expect(await page.getByRole('button', { name: /^Usar preset / }).evaluateAll(buttons => buttons[0].getAttribute('aria-label'))).toBe('Usar preset Meu preset particular');
     await page.getByLabel("Pesquise por nome", { exact: true }).fill("3/8");
     await page.getByRole("button", { name: "Ver preset", exact: true }).click();
     await expect(page.getByText(/Série\/rep: 3\/8/)).toBeVisible();

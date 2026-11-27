@@ -103,7 +103,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.2",
+  "version": "12.10.3",
   "authority": "code",
   "audience": [
     "developer",
@@ -360,6 +360,8 @@ A seção profissional foi renomeada para Catálogo de treinos, preservando a UR
 Pastas de um nível pertencem ao professor, podem ser criadas no catálogo e filtram a listagem. Todos e Sem pasta permitem visualizar o conjunto completo ou os modelos fora de pastas. Trocar de pasta valida a propriedade e a revisão do treino. As APIs também permitem renomear pastas e excluí-las, mantendo os treinos em Sem pasta por chave estrangeira. Os registros anteriores permanecem sem pasta após a migração aditiva.
 
 A rota profissional `/presets` aparece na barra lateral e permite buscar, criar, editar e excluir presets privados. Os presets padrão são exibidos para personalização de uma cópia. O editor reutiliza SeriesEditor, preservando as configurações adicionais já salvas; editar ou excluir um preset não modifica prescrições existentes. As APIs de pastas, cópias e presets exigem conta profissional e restringem o acesso ao proprietário.
+
+Seus presets aparecem acima dos presets padrão, tanto na biblioteca quanto no seletor usado para aplicar um preset ao treino. A busca mantém essa prioridade entre as seções.
 
 Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.
 

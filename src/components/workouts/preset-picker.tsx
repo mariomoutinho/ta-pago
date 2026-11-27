@@ -11,8 +11,8 @@ export function PresetPicker({ select, create, skip, showHeading = true }: { sel
   const [preview, setPreview] = useState<string | null>(null);
   const matches = (p: PrescriptionPreset) => p.name.toLocaleLowerCase("pt-BR").includes(query.toLocaleLowerCase("pt-BR"));
   const sections = [
-    { title: "Presets padrão", items: defaultPrescriptionPresets().filter(matches) },
     { title: "Seus presets", items: (presets.data ?? []).filter(matches) },
+    { title: "Presets padrão", items: defaultPrescriptionPresets().filter(matches) },
   ];
   return <View style={{ gap: 10 }}>
     {showHeading && <Label size={20} bold>Escolha um preset</Label>}
