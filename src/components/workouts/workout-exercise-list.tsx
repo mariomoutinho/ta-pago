@@ -8,6 +8,8 @@ import { WorkoutScreen } from "./workout-screen";
 import { ExerciseCheckbox } from "./exercise-checkbox";
 import { ExerciseExpansion } from "./exercise-expansion";
 import { SortableExercises } from "./sortable-exercises";
+import ChevronDown from 'lucide-react-native/icons/chevron-down';
+import { studioWebProps } from '@/components/studio/controls';
 export type WorkoutChange = "order" | "combine" | "separate" | "delete" | "duplicate" | "membership" | "edit";
 let sequence = 0;
 const nextOccurrenceKey = () => "local-" + Date.now() + "-" + ++sequence;
@@ -99,7 +101,12 @@ export function WorkoutExerciseList({ items, disabled = false, change, itemMenu,
           </Pressable>
           {completion&&<View>{block.items.map(item=><View key={exerciseKey(item)}>{completion(item)}</View>)}</View>}
           {change && <Pressable accessibilityRole="button" accessibilityLabel={"Ações de " + name} disabled={disabled} onPress={() => block.groupId ? setMenu({ block: key }) : openItemMenu(keys[0])} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label size={22}>⋯</Label></Pressable>}
-          <Pressable accessibilityRole="button" accessibilityLabel={(open ? "Recolher " : "Expandir ") + name} aria-expanded={open} onPress={() => toggle(key)} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><Label>{open ? "⌃" : "⌄"}</Label></Pressable>
+          <Pressable {...studioWebProps} accessibilityRole="button" accessibilityLabel={(open ? "Recolher " : "Expandir ") + name} accessibilityState={{ expanded: open }} aria-expanded={open} onPress={() => toggle(key)}
+            style={({ pressed }) => ({ width: 44, height: 44, flexShrink: 0, borderRadius: 10, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.65 : 1 })}>
+            <View style={{ width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: done ? '#ffffff22' : open ? t.accentSoft : t.backgroundElement }}>
+              <ChevronDown size={20} strokeWidth={1.75} color={done ? '#FFFFFF' : open ? t.accent : t.textSecondary} style={{ transform: [{ rotate: open ? '180deg' : '0deg' }] }} />
+            </View>
+          </Pressable>
         </View>
         {summary && block.items.map(item => <View key={exerciseKey(item)}>
           {block.groupId && <Label size={12} bold>{item.exercise?.name}</Label>}

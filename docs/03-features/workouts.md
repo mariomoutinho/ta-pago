@@ -104,7 +104,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.5",
+  "version": "12.10.6",
   "authority": "code",
   "audience": [
     "developer",
@@ -371,6 +371,8 @@ O formulário de prescrição segue o visual Studio: cabeçalho com ícone e ori
 Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.
 
 ## Séries e descanso no cartão recolhido
+
+O comando de expandir/recolher usa o ícone ChevronDown do Lucide em uma superfície arredondada discreta, com rotação conforme o estado, destaque do tema ao abrir e contraste branco em exercícios concluídos. A área de toque mantém 44 px e os rótulos acessíveis de expandir/recolher.
 
 Na leitura profissional de um treino, cada exercício mostra o total de séries prescritas e botões com os intervalos de descanso, mesmo recolhido. Ao iniciar um intervalo, a contagem regressiva e a barra de tempo aparecem no próprio cartão; expandir ou recolher mantém o cronômetro. Em combinados, o resumo identifica cada exercício e seus intervalos individuais. Séries com intervalos distintos oferecem cada duração prescrita, sem escolher um valor global.
 
