@@ -43,6 +43,50 @@ it('pagina resultados e rejeita filtros inválidos',async()=>{
   expect((await admin.get('/api/admin/profiles?page=0')).status).toBe(400);
   expect((await admin.get('/api/admin/profiles?role=admin')).status).toBe(400);
 });
+it('cria professor autorizado sem conceder administração e rejeita privilégios forjados',async()=>{
+  const data={name:'Novo Professor',email:'new-teacher@example.test',password:'senha nova 123',isAdmin:true};
+  expect((await teacher.post('/api/admin/teachers').set(header).send(data)).status).toBe(403);
+  expect((await student.post('/api/admin/teachers').set(header).send(data)).status).toBe(403);
+  const created=await admin.post('/api/admin/teachers').set(header).send(data);
+  expect(created.status).toBe(201);expect(JSON.stringify(created.body)).not.toMatch(/Hash|password/);
+  expect((await admin.post('/api/admin/teachers').set(header).send(data)).status).toBe(409);
+  const login=await request(app).post('/api/auth/login').set(header).send({email:data.email,password:data.password});
+  expect(login.status).toBe(200);expect(login.body.user.isAdmin).toBe(false);
+  const forged=await request(app).post('/api/auth/register').set(header).send({name:'Aluno',email:'forged-flag@example.test',password:'123456',role:'student',professionalAuthorized:true});
+  expect(forged.status).toBe(201);expect((await db.user.findUniqueOrThrow({where:{id:forged.body.user.id}})).professionalAuthorized).toBe(false);
+});
+it('redefine senha exatamente como digitada e invalida sessões anteriores',async()=>{
+  const pupil=request.agent(app);
+  const created=await pupil.post('/api/auth/register').set(header).send({name:'Senha Teste',email:'reset@example.test',password:'original123',role:'student'});
+  const path='/api/admin/profiles/account:'+created.body.user.id+'/password';
+  expect((await teacher.put(path).set(header).send({password:'abcdef'})).status).toBe(403);
+  expect((await admin.put(path).set(header).send({password:'123'})).status).toBe(400);
+  const password='  Unicode ç  ';
+  expect((await admin.put(path).set(header).send({password})).status).toBe(200);
+  expect((await pupil.get('/api/auth/status')).body.user).toBeNull();
+  expect((await pupil.post('/api/auth/login').set(header).send({email:'reset@example.test',password:'original123'})).status).toBe(401);
+  expect((await pupil.post('/api/auth/login').set(header).send({email:'reset@example.test',password})).status).toBe(200);
+});
+it('exclui aluno com históricos e sessões, preserva terceiros e exige confirmação',async()=>{
+  const pupil=request.agent(app);
+  const registered=await pupil.post('/api/auth/register').set(header).send({name:'Excluir Teste',email:'delete@example.test',password:'123456',role:'student'});
+  const id=registered.body.user.id;
+  const profile=await db.student.create({data:{accountId:id,personalId:teacherId,name:'Ficha Exclusão',startDate:'2026-11-27',mainGoal:''}});
+  const plan=await db.workoutPlan.create({data:{studentId:profile.id,title:'Histórico',startsAt:'2026-11-27',objective:'',difficulty:'Iniciante'}});
+  const workout=await db.workout.create({data:{planId:plan.id,name:'Treino',orderIndex:0}});
+  await db.workoutCompletion.create({data:{workoutId:workout.id,completedOn:'2026-11-27'}});
+  const endpoint='/api/admin/profiles/account:'+id;
+  expect((await teacher.delete(endpoint).set(header).send({confirm:true})).status).toBe(403);
+  expect((await admin.delete(endpoint).set(header).send({})).status).toBe(400);
+  expect((await admin.delete('/api/admin/profiles/account:'+teacherId).set(header).send({confirm:true})).status).toBe(403);
+  expect((await admin.delete(endpoint).set(header).send({confirm:true})).status).toBe(200);
+  expect(await db.user.findUnique({where:{id}})).toBeNull();expect(await db.workoutCompletion.count({where:{workoutId:workout.id}})).toBe(0);
+  expect((await pupil.get('/api/auth/status')).body.user).toBeNull();
+  expect(await db.user.findUnique({where:{id:teacherId}})).not.toBeNull();
+  const standalone=await db.student.create({data:{personalId:teacherId,name:'Sem conta',startDate:'2026-11-27',mainGoal:''}});
+  expect((await admin.put('/api/admin/profiles/student:'+standalone.id+'/password').set(header).send({password:'123456'})).status).toBe(409);
+  expect((await admin.delete('/api/admin/profiles/student:'+standalone.id).set(header).send({confirm:true})).status).toBe(200);
+});
 it('revoga acesso administrativo na sessão existente',async()=>{
   revokeFixtureAdmin(adminId);expect((await admin.get('/api/admin/profiles')).status).toBe(403);
   expect((await admin.get('/api/auth/status')).body.user.isAdmin).toBe(false);

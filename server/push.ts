@@ -55,7 +55,7 @@ export async function dispatchPush(db: Db, owner?: string, transport?: (endpoint
       if (!fs.existsSync(file)) return;
       const state: Subscription = JSON.parse(fs.readFileSync(file, "utf8"));
       if ((owner && state.owner !== owner) || state.retryAt > Date.now()) return;
-      const authorized = authorizedIds.includes(state.owner);
+      const authorized = authorizedIds.includes(state.owner) || !!await db.user.findFirst({ where: { id: state.owner, role: 'personal', professionalAuthorized: true }, select: { id: true } });
       if (!authorized && !transport) { fs.unlinkSync(file); return; }
       const since=Math.max(Date.parse(state.since),Date.now()-86400000);
       const rows = (await newsEvents(db,state.owner)).filter(item=>Date.parse(item.createdAt)>=since);

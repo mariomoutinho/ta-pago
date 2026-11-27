@@ -71,7 +71,7 @@ export async function dispatchAndroidPush(db:Db,owner?:string,transport?:Transpo
   await locked(file,async()=>{
    if(!fs.existsSync(file))return;const state:State=JSON.parse(fs.readFileSync(file,'utf8'));
    if((owner&&state.owner!==owner)||state.retryAt>Date.now())return;
-   if(!authorizedIds.includes(state.owner)){fs.unlinkSync(file);return;}
+   if(!authorizedIds.includes(state.owner)&&!await db.user.findFirst({where:{id:state.owner,role:'personal',professionalAuthorized:true},select:{id:true}})){fs.unlinkSync(file);return;}
    const since=Math.max(Date.parse(state.since),Date.now()-86400000);
    const events=(await newsEvents(db,state.owner)).filter(event=>Date.parse(event.createdAt)>=since);
    state.sent=state.sent.filter(id=>events.some(event=>event.id===id));

@@ -27,6 +27,13 @@
         "updatedAt": false,
         "default": "personal"
       },
+      "professionalAuthorized": {
+        "type": "Boolean",
+        "nullable": false,
+        "id": false,
+        "updatedAt": false,
+        "default": false
+      },
       "passwordHash": {
         "type": "String",
         "nullable": false,

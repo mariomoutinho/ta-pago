@@ -33,6 +33,8 @@
     "src/constants/focus.ts",
     "shared/student-calendar.ts",
     "server/admin.ts",
+    "src/components/personal/admin-account-dialog.tsx",
+    "backend-php/migrations/20261127_admin_teacher_access.sql",
     "backend-php/src/Admin.php",
     "src/app/administracao.tsx",
     "shared/admin.ts",
@@ -92,7 +94,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.18.1",
+  "version": "4.19.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -137,7 +139,9 @@ O cadastro público cria somente contas de aluno. A interface não oferece o per
 
 Contas existentes de personal precisam constar em uma lista de IDs autorizados no servidor: `authorizedPersonalIds` no config.php privado do PHP, ou `PERSONAL_AUTHORIZED_IDS` no Express, com IDs separados por vírgula. Lista ausente ou vazia bloqueia todos os personals. Login e cada leitura de sessão verificam essa política, inclusive para tokens nativos e sessões anteriores à restrição. Contas, alunos e treinos não são excluídos nem convertidos ao restringir o acesso.
 
-A instalação atual mantém um único ID autorizado, definido pelo responsável e conferido na conta existente. A identidade real permanece somente na configuração privada, fora do repositório e do catálogo. Não existe painel de aprovação nesta entrega: novas autorizações exigem decisão do responsável e atualização restrita da lista no servidor. Se uma conta de aluno precisar atuar como personal, a mudança de papel também deve ocorrer por operação administrativa autorizada, nunca pelo cadastro público. No Express, reiniciar o servidor após alterar a variável.
+A autorização profissional aceita os IDs configurados no servidor e contas de professor criadas pelo administrador com User.professionalAuthorized. Somente POST /admin/teachers atribui essa autorização no aplicativo; campos forjados no cadastro público não são aceitos. Criar professor exige nome, e-mail único e senha com pelo menos seis caracteres e não concede administração. Os IDs administrativos continuam exclusivamente na configuração privada, fora do repositório e do catálogo. As notificações Web Push e Android também reconhecem os professores autorizados pelo administrador. Não há promoção automática de contas de aluno.
+
+Administração permite redefinir senhas de contas com login, preservando espaços e Unicode, e invalida todas as sessões da conta após a gravação. Cadastros sem login não oferecem essa ação. Excluir aluno exige confirmação explícita: para uma conta de aluno, remove todos os perfis vinculados e seus treinos, conclusões, avaliações e históricos, além das sessões e da conta; para uma ficha sem login, remove apenas a ficha e seus históricos. A operação é transacional e não permite excluir professores ou administradores. A interface mostra o alcance e a irreversibilidade antes de confirmar. Senhas e hashes não são retornados na listagem.
 
 Validação: cinco testes de política com SQLite real cobrem cadastro forjado, cadastro de aluno, personal autorizado, outra conta com o mesmo nome e revogação de sessões/cookies/tokens existentes. A suíte PHP verifica os mesmos bloqueios e preserva as operações de alunos e treinos. As fixtures de personal passaram a ser provisionadas diretamente no banco sintético; não usam mais cadastro público de personal. Dois testes de navegador verificam cadastro de aluno sem opção personal e edição da biblioteca por um personal autorizado.
 

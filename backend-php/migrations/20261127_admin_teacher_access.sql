@@ -1,0 +1,1 @@
+ALTER TABLE `User` ADD COLUMN `professionalAuthorized` TINYINT(1) NOT NULL DEFAULT 0;

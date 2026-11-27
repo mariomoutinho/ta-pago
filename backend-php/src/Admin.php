@@ -2,6 +2,48 @@
 declare(strict_types=1);
 namespace TaPago;
 trait Admin {
+    private function requireAdmin(): void {
+        ensure(($this->user['role']??'')==='personal'&&in_array($this->user['id'],$this->config['authorizedAdminIds']??[],true),'Acesso exclusivo do administrador',403);
+    }
+    private function adminAction(string $method,string $path,array $body): array {
+        $this->requireAdmin();
+        if($method==='POST'&&$path==='/admin/teachers') {
+            $data=$this->validation->parse('adminTeacherSchema',$body);
+            $data['password']=$body['password'];
+            ensure(is_string($data['password']??null)&&mb_strlen($data['password'])>=6,'Use pelo menos 6 caracteres na senha.');
+            $email=strtolower($data['email']);
+            ensure(!$this->db->one('User','email=?',[$email]),'E-mail já cadastrado',409);
+            $user=$this->db->create('User',['name'=>trim($data['name']),'email'=>$email,'role'=>'personal','professionalAuthorized'=>true,'passwordHash'=>passwordHash($data['password'])]);
+            $this->status=201;return $this->adminUser($user);
+        }
+        if(preg_match('~^/admin/profiles/(account|student):([^/]+)(/password)?$~D',$path,$m)) {
+            $account=$m[1]==='account';$id=rawurldecode($m[2]);
+            if($method==='PUT'&&($m[3]??'')==='/password') {
+                ensure($account,'Este cadastro ainda não possui conta com login.',409);
+                $data=$this->validation->parse('adminPasswordSchema',$body);
+                $data['password']=$body['password'];
+                ensure(is_string($data['password']??null)&&mb_strlen($data['password'])>=6,'Use pelo menos 6 caracteres na senha.');
+                $user=$this->db->required('User','id=?',[$id],true);
+                $this->db->update('User',$id,['passwordHash'=>passwordHash($data['password'])]);
+                $this->db->query('DELETE FROM Session WHERE userId=?',[$id]);return ['ok'=>true];
+            }
+            if($method==='DELETE'&&empty($m[3])) {
+                $this->validation->parse('adminDeleteSchema',$body);
+                if($account) {
+                    $user=$this->db->required('User','id=?',[$id],true);
+                    ensure($user['role']==='student','Somente alunos podem ser excluídos por esta ação.',403);
+                    $this->db->query('DELETE FROM Student WHERE accountId=?',[$id]);
+                    $this->db->delete('User',$id);
+                } else {
+                    $student=$this->db->required('Student','id=?',[$id],true);
+                    ensure(!$student['accountId'],'O aluno já possui login. Atualize a lista e exclua pela conta.',409);
+                    $this->db->delete('Student',$id);
+                }
+                return ['ok'=>true];
+            }
+        }
+        throw new HttpError(404,'Recurso não encontrado');
+    }
     private function adminProfiles(): array {
         ensure(($this->user['role']??'')==='personal'&&in_array($this->user['id'],$this->config['authorizedAdminIds']??[],true),'Acesso exclusivo do administrador',403);
         $q=$_GET['q']??'';$role=$_GET['role']??'all';

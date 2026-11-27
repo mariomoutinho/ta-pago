@@ -4,15 +4,15 @@
   "title": "Consulta administrativa de alunos e professores",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-26",
+  "updated_at": "2026-11-27",
   "language": "pt-BR",
   "tags": ["07-ai"],
   "indexable": false,
-  "sources": ["server/admin.ts", "server/app.ts", "backend-php/src/Admin.php", "backend-php/src/Auth.php", "backend-php/config.example.php", "src/app/administracao.tsx", "src/app/_layout.tsx", "src/components/studio/professional-layout.tsx", "tests/personal/admin.test.ts", "tests/personal/browser/app.spec.ts"],
+  "sources": ["server/admin.ts", "server/app.ts", "backend-php/src/Admin.php", "backend-php/src/Auth.php", "backend-php/config.example.php", "src/app/administracao.tsx", "src/components/personal/admin-account-dialog.tsx", "shared/admin.ts", "prisma/schema.prisma", "backend-php/migrations/20261127_admin_teacher_access.sql", "scripts/php/test.mjs", "tsconfig.server.json", "src/app/_layout.tsx", "src/components/studio/professional-layout.tsx", "tests/personal/admin.test.ts", "tests/personal/browser/app.spec.ts"],
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "authority": "code",
   "audience": ["developer", "ai_agent", "reviewer"],
   "sensitivity": "internal",
@@ -41,9 +41,19 @@ Quatro testes de API passaram, cobrindo acesso anônimo/professor/aluno, promoç
 
 docs:validate, code:inventory, code:check e knowledge:build passaram. docs:test teve 31 sucessos e duas falhas de criação de links simbólicos por EPERM no Windows. code:test teve 17 sucessos e três falhas: duas de links simbólicos e uma de proveniência Git. São limitações já observadas no ambiente, sem alteração dos extratores nesta tarefa.
 
-A listagem em memória usa somente campos administrativos e páginas de 25 itens. Não há edição ou redefinição pública de senha nessa tela. A consulta inicial a crons foi rejeitada pela revisão automática, e nenhum comando privado existente foi consultado.
+A listagem em memória usa somente campos administrativos e páginas de 25 itens. Na entrega inicial, não havia edição de contas nessa tela. A consulta inicial a crons foi rejeitada pela revisão automática, e nenhum comando privado existente foi consultado.
 
 ## Publicação e operação autorizadas
+
+### Ações administrativas — 27/11/2026
+
+Pedido adicional: redefinir senhas, excluir alunos e adicionar professores pela administração, com push e publicação das mudanças recentes. A tela oferece os três fluxos. A exclusão exige confirmação e remove a conta de aluno e suas fichas vinculadas, com histórico dependente; a ficha sem login é excluída individualmente. A API impede excluir professores e exige a capacidade administrativa em todas as ações. A redefinição preserva a senha exata, inclusive espaços e Unicode, e invalida todas as sessões da conta.
+
+O professor criado recebe autorização profissional persistida em User.professionalAuthorized, sem capacidade administrativa. Cadastro público não pode atribuir essa autorização. As listas privadas anteriores continuam válidas. A migração é aditiva, com falso como valor inicial; os runtimes Express/PHP e os despachantes de notificações reconhecem ambas as formas de autorização.
+
+Validação local: 16 testes de API nos arquivos admin/push/android-push e três cenários de navegador passaram; o PHP/MySQL isolado passou 226 verificações HTTP e os ensaios de migração. Build web, pacote PHP, sintaxe PHP, typecheck e personal:typecheck passaram. A biblioteca de tipos do servidor inclui ES2023 e DOM para as referências existentes de findLastIndex e Credential. Os verificadores documentais e de código mantiveram as cinco falhas preexistentes de symlink/proveniência no Windows, sem alteração dos extratores.
+
+### Publicação inicial — 26/11/2026
 
 O responsável autorizou explicitamente publicar o pacote atual e executar uma tarefa temporária restrita à habilitação administrativa e à redefinição de senha de uma conta de aluno. Em 26/11/2026, no horário de Brasília, a revisão 03a21c1 foi publicada em https://tapago.coletivopindorama.com.br. O pacote inclui os ajustes anteriores de catálogo, pastas, presets, exercícios, login e administração.
 

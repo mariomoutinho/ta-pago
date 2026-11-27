@@ -2965,6 +2965,55 @@
       "name"
     ]
   },
+  "adminDeleteSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "confirm": {
+        "type": "boolean",
+        "const": true
+      }
+    },
+    "required": [
+      "confirm"
+    ]
+  },
+  "adminPasswordSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "password": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "password"
+    ]
+  },
+  "adminTeacherSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "password": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 120
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+      }
+    },
+    "required": [
+      "password",
+      "name",
+      "email"
+    ]
+  },
   "programRoutineSchema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",

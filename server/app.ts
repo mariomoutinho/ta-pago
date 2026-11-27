@@ -35,7 +35,7 @@ import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../shared/password';
 import { studentAccessRoutes } from "./student-access";
 import { adminRoutes } from "./admin";
 
-type Identity = { id: string; name: string; email: string; role: string };
+type Identity = { id: string; name: string; email: string; role: string; professionalAuthorized?: boolean };
 const identity = (res: express.Response) => res.locals.user as Identity;
 const studentInclude = {
   program: true,
@@ -53,7 +53,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   const authorizedPersonalIds = options.authorizedPersonalIds ??
     (process.env.PERSONAL_AUTHORIZED_IDS ?? "").split(",").map((id) => id.trim()).filter(Boolean);
   const authorizedAccount = (user: Identity) =>
-    user.role !== "personal" || authorizedPersonalIds.includes(user.id);
+    user.role !== "personal" || authorizedPersonalIds.includes(user.id) || user.professionalAuthorized === true;
   const app = express();
   app.disable("x-powered-by");
   app.use((_req, res, next) => {

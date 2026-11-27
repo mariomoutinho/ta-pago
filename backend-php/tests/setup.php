@@ -12,6 +12,7 @@ $config=['environment'=>'test','origin'=>'http://127.0.0.1:33317','basePath'=>''
     'enrollmentKey'=>str_repeat('ab',32),'retentionDays'=>90,'registrationEnabled'=>true,
     'mediaDirectory'=>dirname(__DIR__,2).'/data/'.$name.'-media',
     'pushDirectory'=>dirname(__DIR__,2).'/data/'.$name.'-push','pushTestStatus'=>201,'fcmTestStatus'=>200,
+    'authorizedAdminIds'=>['test-teacher-a'],
     'authorizedPersonalIds'=>['test-legacy','test-teacher-a','test-teacher-b']];
 $file=dirname(__DIR__,2).'/data/'.$name.'.php';
 if (!is_dir(dirname($file))) mkdir(dirname($file),0700,true);

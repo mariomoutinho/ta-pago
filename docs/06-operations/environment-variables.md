@@ -4,7 +4,7 @@
   "title": "Variáveis de ambiente",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-01",
+  "updated_at": "2026-11-27",
   "language": "pt-BR",
   "tags": [
     "06-operations"
@@ -26,7 +26,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -49,7 +49,7 @@ Consulte .env.example e [módulo Personal](../03-features/personal-integration.m
 
 ## Inventário atual
 
-`PERSONAL_AUTHORIZED_IDS` é a lista de IDs de contas existentes autorizadas a atuar como personal no Express, separados por vírgula, definida exclusivamente pelo responsável no servidor. Ausência ou valor vazio bloqueia personals, inclusive sessões existentes. Reiniciar o processo após atualizar. O cadastro público aceita somente aluno. Na hospedagem PHP, a configuração correspondente é `authorizedPersonalIds`, um array de IDs no config.php privado, preservando as demais chaves. Não colocar identidades reais, essa lista ou dados de aprovação em variáveis EXPO_PUBLIC, documentos indexáveis ou no cliente. Esta configuração não cria nem promove contas automaticamente.
+`PERSONAL_AUTHORIZED_IDS` é a lista de IDs de contas existentes autorizadas a atuar como personal no Express, separados por vírgula, definida exclusivamente pelo responsável no servidor. Reiniciar o processo após atualizar. O administrador também pode criar professores com a autorização persistida em User.professionalAuthorized; a lista vazia não bloqueia essas contas. O cadastro público aceita somente aluno. Na hospedagem PHP, a configuração correspondente é `authorizedPersonalIds`, um array de IDs no config.php privado, preservando as demais chaves. Não colocar identidades reais, essa lista ou dados de aprovação em variáveis EXPO_PUBLIC, documentos indexáveis ou no cliente. Esta configuração não cria nem promove contas automaticamente. A capacidade administrativa permanece exclusivamente na lista privada de administradores.
 
 Nenhuma variável de ambiente de negócio é exigida pelo aplicativo. `process.env.EXPO_OS` aparece no componente de links como seleção de plataforma fornecida pelo Expo. O RAG usa credenciais locais de ferramentas Node, separadas do aplicativo e mantidas fora do Git. Sua disponibilidade é verificada por `knowledge:api:health`.
 

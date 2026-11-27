@@ -4,6 +4,7 @@ CREATE TABLE `User` (
   `name` LONGTEXT NOT NULL,
   `email` VARCHAR(254) NOT NULL,
   `role` LONGTEXT NOT NULL,
+  `professionalAuthorized` TINYINT(1) NOT NULL,
   `passwordHash` LONGTEXT NOT NULL,
   UNIQUE KEY `uq_User_0` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

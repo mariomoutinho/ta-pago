@@ -106,7 +106,7 @@ final class AndroidPush {
             try{
                 if(!is_file($file))continue;$state=json_decode(file_get_contents($file),true,32,JSON_THROW_ON_ERROR);
                 if(($owner!==null&&$state['owner']!==$owner)||$state['retryAt']>time())continue;
-                if(!in_array($state['owner'],$this->config['authorizedPersonalIds']??[],true)){unlink($file);continue;}
+                if(!in_array($state['owner'],$this->config['authorizedPersonalIds']??[],true)&&!$this->db->one('User',"id=? AND role='personal' AND professionalAuthorized=1",[$state['owner']])){unlink($file);continue;}
                 $events=array_values(array_filter((new News($this->db,$this->config))->events($state['owner']),fn($event)=>$event['createdAt']>=$state['since']&&$event['createdAt']>=at(time()-86400)));
                 $state['sent']=array_values(array_intersect($state['sent'],array_column($events,'id')));
                 $pending=array_reverse(array_values(array_filter($events,fn($event)=>!in_array($event['id'],$state['sent'],true))));

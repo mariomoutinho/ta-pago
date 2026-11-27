@@ -23,7 +23,7 @@ trait Auth {
         $this->status=201;return ['ok'=>true];
     }
     private function authorizedAccount(array $user): bool {
-        return $user['role']!=='personal' || in_array($user['id'],$this->config['authorizedPersonalIds']??[],true);
+        return $user['role']!=='personal' || in_array($user['id'],$this->config['authorizedPersonalIds']??[],true) || ($user['professionalAuthorized']??false)===true;
     }
     private function adminUser(array $user): array {
         return [...array_intersect_key($user,array_flip(['id','name','email','role'])),'isAdmin'=>$user['role']==='personal'&&in_array($user['id'],$this->config['authorizedAdminIds']??[],true)];

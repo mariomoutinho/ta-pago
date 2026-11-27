@@ -10,6 +10,7 @@ model User {
   name String
   email String @unique
   role String @default("personal")
+  professionalAuthorized Boolean @default(false)
   prescriptionPresets PrescriptionPreset[]
   workoutTemplates WorkoutTemplate[]
   workoutFolders WorkoutFolder[]

@@ -4,7 +4,7 @@
   "title": "Hostinger Single — implantação PHP em tapago",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-26",
+  "updated_at": "2026-11-27",
   "language": "pt-BR",
   "tags": [
     "06-operations",
@@ -16,6 +16,9 @@
     "src/app/notificacao.tsx",
     "tests/personal/notification-worker.test.ts",
     "backend-php/src/Auth.php",
+    "backend-php/src/Admin.php",
+    "backend-php/migrations/20261127_admin_teacher_access.sql",
+    "backend-php/migrations/20261126_feedback_completion.sql",
     "backend-php/src/Enrollment.php",
     "backend-php/src/App.php",
     "backend-php/src/News.php",
@@ -46,7 +49,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "authority": "code",
   "audience": [
     "developer",
@@ -171,6 +174,18 @@ Executar somente depois da validação e da decisão de publicar. **Esta tarefa 
 O .htaccess define RewriteBase /, DirectoryIndex index.html index.php, API antes do fallback SPA, 404 para assets inexistentes, bloqueio de arquivos privados e cabeçalhos de segurança. O arquivo original de produção não foi recuperado pelo conector; as duas diretivas corrigidas foram informadas pelo responsável. O pacote foi testado com Apache local; a verificação final em LiteSpeed/HTTPS permanece etapa de publicação.
 
 ## Rollback sem perda de dados
+
+### Publicação administrativa e treinos — 27/11/2026
+
+O responsável autorizou publicar as mudanças recentes na branch feat/student-workout-execution. O pacote inclui as ações de administração (criar professores, redefinir senhas e excluir alunos), a execução e listagem de treinos do aluno e os ajustes anteriores de biblioteca e prescrição.
+
+A rotina temporária exclusiva de CLI verificou os destinos fixos público/privado e os hashes da base antes de aplicar. Criou backup privado dos arquivos, da configuração e um snapshot consistente comprimido do banco, validado por descompressão. Acrescentou User.professionalAuthorized com falso por padrão e WorkoutFeedback.completionId com FK para WorkoutCompletion e ON DELETE SET NULL. Não executou schema.sql e não alterou os registros de contas existentes.
+
+Foram conferidos os 55 arquivos do pacote no servidor, com 11 arquivos substituídos. A configuração privada foi preservada. Assets anteriores e os diretórios de armazenamento existentes foram mantidos. O arquivo temporário removeu a si mesmo e a listagem posterior confirmou sua ausência; as duas tarefas temporárias receberam confirmação de exclusão pelo conector. O cache do subdomínio recebeu solicitação de limpeza. Nenhum cron preexistente foi consultado ou alterado.
+
+A conferência HTTPS validou os hashes do HTML, JavaScript ativo, CSS, manifesto e worker. A saúde respondeu 200/status ok; consulta administrativa e as três novas ações responderam 401 sem sessão usando os cabeçalhos válidos do aplicativo. Os fluxos autenticados foram testados com dados sintéticos locais; não foram criados professores reais, excluídos alunos reais nem redefinidas senhas reais para validar o deploy.
+
+O backup desta entrega está em deploy-backups/recent-admin-admin-actions-20261127-20261127-171602-870db349, dentro da pasta privada. Em rollback, restaurar os arquivos anteriores e preservar config.php, armazenamento e as colunas aditivas. Não restaurar o snapshot de dados automaticamente, pois isso perderia gravações posteriores. O banco não deve ser recriado.
 
 Se a nova versão falhar, manter a manutenção, restaurar arquivos públicos/privados do backup nos mesmos destinos e preservar config.php. Conferir /api/health, login e navegação antes de reabrir. Esta atualização não muda o esquema: rollback dos arquivos utiliza o banco atual. Não restaurar SQL antigo automaticamente: isso descartaria gravações posteriores ao backup. Restauração de dados exige decisão e procedimento próprios.
 
