@@ -4,7 +4,7 @@
   "title": "Treinos personalizados",
   "status": "current",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-26",
+  "updated_at": "2026-11-27",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -102,7 +102,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.0",
+  "version": "12.10.1",
   "authority": "code",
   "audience": [
     "developer",
@@ -348,7 +348,7 @@ Ap?s confirmar a transa??o, a conclus?o aparece na central de novidades do perso
 
 Treinos preparados podem ser criados e editados sem exercícios, para preenchimento posterior. O nome continua obrigatório; a ativação de planos para alunos mantém a exigência de treinos com exercícios.
 
-A biblioteca oferece “Adicionar lista de 240 exercícios”, com 20 exercícios em cada um dos 12 grupos musculares da lista fornecida pelo responsável. A importação grava somente na biblioteca do professor autenticado, é transacional e não sobrescreve exercícios existentes com o mesmo nome, inclusive arquivados. Repetir a operação não duplica o catálogo. O campo Equipamento foi retirado do formulário de criação e edição; o dado continua preservado nos registros existentes e na lista importada.
+A biblioteca disponibiliza automaticamente 240 exercícios ao consultar a lista, com 20 exercícios em cada um dos 12 grupos musculares, sem botão de importação. O preenchimento grava somente na biblioteca do professor autenticado, é transacional e preserva exercícios existentes com o mesmo nome, inclusive arquivados. Consultas posteriores não duplicam o catálogo. O endpoint anterior de importação permanece compatível. O campo Equipamento foi retirado do formulário de criação e edição; o dado continua preservado nos registros existentes e no catálogo.
 
 A prévia local usa banco e conta de demonstração separados da produção. Ela não sincroniza automaticamente os exercícios privados cadastrados no site.
 
@@ -359,3 +359,5 @@ A seção profissional foi renomeada para Catálogo de treinos, preservando a UR
 Pastas de um nível pertencem ao professor, podem ser criadas no catálogo e filtram a listagem. Todos e Sem pasta permitem visualizar o conjunto completo ou os modelos fora de pastas. Trocar de pasta valida a propriedade e a revisão do treino. As APIs também permitem renomear pastas e excluí-las, mantendo os treinos em Sem pasta por chave estrangeira. Os registros anteriores permanecem sem pasta após a migração aditiva.
 
 A rota profissional `/presets` aparece na barra lateral e permite buscar, criar, editar e excluir presets privados. Os presets padrão são exibidos para personalização de uma cópia. O editor reutiliza SeriesEditor, preservando as configurações adicionais já salvas; editar ou excluir um preset não modifica prescrições existentes. As APIs de pastas, cópias e presets exigem conta profissional e restringem o acesso ao proprietário.
+
+Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.

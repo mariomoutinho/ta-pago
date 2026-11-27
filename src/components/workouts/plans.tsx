@@ -136,11 +136,13 @@ function PlanCard({ plan, onOpen, onActions, onPublish }: {
 export function WorkoutPlans({
   studentId,
   studentView = false,
+  hideRoutineBack = false,
   route,
 }: {
   route?: WorkoutRoute;
   studentId?: string;
   studentView?: boolean;
+  hideRoutineBack?: boolean;
 }) {
   const { data, loading, error, reload } = useResource<Plan[]>(
     studentView ? "/me/workout-plans" : `/students/${studentId}/workout-plans`,
@@ -234,7 +236,7 @@ export function WorkoutPlans({
       {loading && <Notice>Carregando rotinas…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       {selectedPlan ? <>
-        {!route?.workoutId && <View style={{ alignSelf: "flex-start" }}><Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button></View>}
+        {!hideRoutineBack && !route?.workoutId && <View style={{ alignSelf: "flex-start" }}><Button variant="secondary" onPress={() => setSelected(null)}>‹ Todas as rotinas</Button></View>}
         <PlanDetails key={selectedPlan.id} route={route} plan={selectedPlan} studentView={studentView} reload={reload}
           editWorkout={studentView ? undefined : (index, picker, groupId) => {
             setInitialGroup(groupId);

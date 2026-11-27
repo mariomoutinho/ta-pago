@@ -181,13 +181,20 @@ it("importa 240 exercícios por professor sem duplicar nem sobrescrever dados pr
   const otherBefore=(await other.get('/api/exercises')).body;
   expect((await request(app).post('/api/exercises/catalog').set(header).send({})).status).toBe(401);
   expect((await student.post('/api/exercises/catalog').set(header).send({})).status).toBe(403);
-  const imported=await personal.post('/api/exercises/catalog').set(header).send({});
-  expect(imported.status).toBe(200);expect(imported.body.added).toBe(239);
+  const imported=await personal.get('/api/exercises');
+  expect(imported.status).toBe(200);
+  expect(imported.body.filter((e:any)=>e.name==='Rosca Bayesian')).toHaveLength(1);
+  expect((await student.get('/api/exercises')).status).toBe(403);
+  expect((await request(app).get('/api/exercises')).status).toBe(401);
   expect((await personal.post('/api/exercises/catalog').set(header).send({})).body.added).toBe(0);
   const all=(await personal.get('/api/exercises')).body;
   expect(all.find((e:{id:string})=>e.id===custom.body.id).description).toBe('Minha orientação');
   expect(all.find((e:{name:string})=>e.name==='Rosca Bayesian').muscleGroup).toBe('Bíceps');
   expect((await other.get('/api/exercises')).body).toEqual(otherBefore);
+  const bayesian=all.find((e:any)=>e.name==='Rosca Bayesian');
+  await personal.put('/api/exercises/'+bayesian.id).set(header).send({...bayesian,status:'arquivado',description:'Ajuste preservado'});
+  const again=(await personal.get('/api/exercises')).body.filter((e:any)=>e.name==='Rosca Bayesian');
+  expect(again).toHaveLength(1);expect(again[0].status).toBe('arquivado');expect(again[0].description).toBe('Ajuste preservado');
 });
 
 it("organiza pastas, move com revisão, duplica e isola o catálogo por professor", async () => {

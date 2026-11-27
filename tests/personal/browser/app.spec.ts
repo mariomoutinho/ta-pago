@@ -2146,7 +2146,37 @@ test("Studio mantém modelos reais, busca, CRUD e layouts claro e escuro", async
   expect(errors).toEqual([]);
 });
 
-test("salva treino vazio e importa catálogo sem campo de equipamento", async ({ page }) => {
+test("retorno às rotinas fica ao lado de Treinos no perfil profissional", async ({ page }) => {
+  const headers = { "X-Requested-With": "TaPago" };
+  await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Professor Navegação", email: "routine-navigation@example.test", password: "teste123" } });
+  const student = await (await page.request.post(base + '/api/students', { headers, data: { name: 'Aluno Navegação', startDate: '2026-11-27' } })).json();
+  const response = await page.request.post(base + `/api/students/${student.id}/workout-plans`, { headers, data: { title: 'Rotina navegação', objective: 'Adaptação', difficulty: 'Iniciante', startsAt: '2026-11-27', status: 'rascunho', workouts: [{ name: 'Treino A', exercises: [] }] } });
+  expect(response.status(), await response.text()).toBe(201);
+  const plan = await response.json();
+  expect(plan.id).toBeTruthy();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(base + `/alunos/${student.id}/treinos?rotina=${plan.id}`);
+  const back = page.getByRole('button', { name: '‹ Todas as rotinas', exact: true });
+  const workouts = page.getByRole('button', { name: 'Treinos', exact: true });
+  await expect(back).toBeVisible();
+  expect(await back.evaluate(el => el.parentElement === [...document.querySelectorAll('[role="button"]')].find(button => button.textContent === 'Treinos')?.parentElement)).toBe(true);
+  const backBox = await back.boundingBox();
+  const workoutsBox = await workouts.boundingBox();
+  expect(backBox!.y).toBe(workoutsBox!.y);
+  expect(backBox!.x).toBeGreaterThan(workoutsBox!.x);
+  await page.screenshot({ path: 'data/routine-navigation-desktop.png' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(back).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect.poll(async () => (await back.boundingBox())!.y - (await workouts.boundingBox())!.y).toBe(0);
+  await page.screenshot({ path: 'data/routine-navigation-mobile.png' });
+  await back.click();
+  await expect(page).toHaveURL(base + `/alunos/${student.id}/treinos`);
+  await expect(back).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Abrir rotina Rotina navegação', exact: true })).toBeVisible();
+});
+
+test("salva treino vazio e disponibiliza catálogo automaticamente sem campo de equipamento", async ({ page }) => {
   const headers={"X-Requested-With":"TaPago"};
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Professor Catálogo",email:"catalog-ui@example.test",password:"teste123"}});
   await page.setViewportSize({width:390,height:844});
@@ -2161,12 +2191,12 @@ test("salva treino vazio e importa catálogo sem campo de equipamento", async ({
   await page.getByRole('button',{name:'+ Criar exercício',exact:true}).click();
   await expect(page.getByLabel('Equipamento',{exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Cancelar',exact:true}).click();
-  await page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true}).click();
-  await expect(page.getByText('240 exercícios adicionados à sua biblioteca.',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true})).toHaveCount(0);
   await page.getByLabel('Buscar exercícios...',{exact:true}).fill('Bayesian');
   await expect(page.getByRole('button',{name:'Expandir exercício Rosca Bayesian',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Adicionar lista de 240 exercícios',exact:true}).click();
-  await expect(page.getByText('Os exercícios da lista já estão na sua biblioteca.',{exact:true})).toBeVisible();
+  await page.reload();
+  await page.getByLabel('Buscar exercícios...',{exact:true}).fill('Bayesian');
+  await expect(page.getByRole('button',{name:'Expandir exercício Rosca Bayesian',exact:true})).toHaveCount(1);
 });
 
 test("catálogo cria pastas, clona, duplica, move e gerencia presets pela lateral", async ({ page }) => {

@@ -180,18 +180,6 @@ export function ExerciseLibrary({
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("ativo");
   const [success, setSuccess] = useState("");
-  const [importing, setImporting] = useState(false);
-  const [importError, setImportError] = useState("");
-  const importCatalog = async () => {
-    if (importing) return;
-    setImporting(true); setImportError(""); setSuccess("");
-    try {
-      const result = await api<{ added: number }>("/exercises/catalog", "POST", {});
-      setSuccess(result.added ? `${result.added} exercícios adicionados à sua biblioteca.` : "Os exercícios da lista já estão na sua biblioteca.");
-      await reload();
-    } catch (error) { setImportError(message(error)); }
-    finally { setImporting(false); }
-  };
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   const [savingFavorites, setSavingFavorites] = useState<string[]>([]);
@@ -229,7 +217,6 @@ export function ExerciseLibrary({
       <Notice>{success}</Notice>
       <Notice error>{error}</Notice>
       <Notice error>{favoriteError}</Notice>
-      <Notice error>{importError}</Notice>
       {loading && <Notice>Carregando exercícios…</Notice>}
       {error && <Button onPress={() => void reload()}>Tentar novamente</Button>}
       <View style={{ backgroundColor: t.background, borderColor: t.border, borderWidth: 1, borderRadius: 12, padding: 16, gap: 12 }}>
@@ -247,9 +234,6 @@ export function ExerciseLibrary({
       ) : (
         <Button onPress={() => setEdit("new")}>+ Criar exercício</Button>
       )}
-      {!edit && <Button variant="secondary" disabled={importing || loading} onPress={() => void importCatalog()}>
-        {importing ? "Adicionando exercícios…" : "Adicionar lista de 240 exercícios"}
-      </Button>}
       <View style={{ flexDirection: "row", gap: 8 }}>
         <View style={{ flex: 1 }}><Button variant="secondary" onPress={() => setFilterPanel(filterPanel === "muscle" ? null : "muscle")}>Grupos musculares</Button></View>
         <View style={{ flex: 1 }}><Button variant="secondary" onPress={() => setFilterPanel(filterPanel === "category" ? null : "category")}>Categorias</Button></View>

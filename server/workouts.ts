@@ -169,7 +169,24 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
     if (!result.count) throw new HttpError(404, "Preset não encontrado");
     res.json({ ok: true });
   });
+  const ensureExerciseCatalog = async (ownerId: string) => {
+    return await db.$transaction(async tx => {
+      const existing = await tx.exercise.findMany({ where: { ownerId }, select: { name: true } });
+      const names = new Set(existing.map(e => e.name.trim().toLowerCase()));
+      let count = 0;
+      for (const entry of exerciseCatalog) {
+        if (names.has(entry.name.toLowerCase())) continue;
+        const id = createHash("sha256").update(ownerId + ":exercise-catalog-v1:" + entry.name).digest("hex");
+        const found = await tx.exercise.findUnique({ where: { id } });
+        if (found) continue;
+        await tx.exercise.upsert({ where: { id }, create: { ...exerciseSchema.parse(entry), id, ownerId }, update: {} });
+        count++;
+      }
+      return count;
+    });
+  };
   router.get("/exercises", async (req, res) => {
+    await ensureExerciseCatalog(res.locals.user.id);
     const query = (key: string) =>
       typeof req.query[key] === "string"
         ? String(req.query[key]).slice(0, 160)
@@ -190,22 +207,7 @@ export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>)
     );
   });
   router.post("/exercises/catalog", async (_req, res) => {
-    const ownerId = res.locals.user.id;
-    const added = await db.$transaction(async tx => {
-      const existing = await tx.exercise.findMany({ where: { ownerId }, select: { name: true } });
-      const names = new Set(existing.map(e => e.name.trim().toLowerCase()));
-      let count = 0;
-      for (const entry of exerciseCatalog) {
-        if (names.has(entry.name.toLowerCase())) continue;
-        const id = createHash("sha256").update(ownerId + ":exercise-catalog-v1:" + entry.name).digest("hex");
-        const found = await tx.exercise.findUnique({ where: { id } });
-        if (found) continue;
-        await tx.exercise.create({ data: { ...exerciseSchema.parse(entry), id, ownerId } });
-        count++;
-      }
-      return count;
-    });
-    res.json({ added });
+    res.json({ added: await ensureExerciseCatalog(res.locals.user.id) });
   });
   router.post("/exercises", async (req, res) => {
     const data = exerciseSchema.parse(req.body);

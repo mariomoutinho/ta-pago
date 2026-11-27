@@ -40,6 +40,7 @@ trait Workouts {
         throw new HttpError(404,'Recurso não encontrado');
     }
     private function importExerciseCatalog(): array {
+        $this->db->query('SELECT id FROM User WHERE id=? FOR UPDATE',[$this->user['id']]);
         $catalog=json_decode(file_get_contents(__DIR__.'/../generated/exercise-catalog.json'),true,512,JSON_THROW_ON_ERROR);
         $names=[];
         foreach($this->db->rows('Exercise','ownerId=?',[$this->user['id']]) as $entry) $names[mb_strtolower(trim($entry['name']))]=true;
@@ -234,6 +235,7 @@ trait Workouts {
         };
         $existing=$id?$this->own($table,$id):null;
         if ($method==='GET' && !$id) {
+            if ($table==='Exercise') $this->importExerciseCatalog();
             $rows=$this->db->rows($table,'ownerId=?',[$this->user['id']],$table==='Exercise'?'name ASC':'createdAt DESC');
             if ($table==='Exercise') $rows=array_values(array_filter($rows,fn($e)=>(($_GET['favorite']??'')!=='true' || $e['favorite']) && (!isset($_GET['q']) || mb_stripos($e['name'],substr((string)$_GET['q'],0,160))!==false) && (!isset($_GET['category']) || $e['category']===$_GET['category']) && (!isset($_GET['muscleGroup']) || $e['muscleGroup']===$_GET['muscleGroup'])));
             foreach ($rows as &$r) {

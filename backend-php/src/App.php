@@ -22,7 +22,7 @@ final class App {
         if (in_array($path,['/auth/login','/auth/register','/me/claim'],true)) $this->rate('auth');
         if (str_starts_with($path,'/public/enrollment/')) $this->rate('enrollment',30);
         if (str_starts_with($path,'/public/student-access/')) $this->rate('student-access');
-        $this->writing=!in_array($method,['GET','HEAD'],true);
+        $this->writing=!in_array($method,['GET','HEAD'],true) || ($method==='GET' && $path==='/exercises');
         if ($this->writing) $this->db->pdo->beginTransaction();
         try {
             $result=$this->dispatch($method,$path,$body);

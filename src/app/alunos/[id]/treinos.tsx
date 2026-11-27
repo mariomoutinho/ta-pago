@@ -20,11 +20,14 @@ export default function StudentWorkouts() {
     <View style={{ gap: 18, width: "100%", maxWidth: 960, alignSelf: "center" }}>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         <Button variant="secondary" onPress={() => router.push(`/alunos/${id}` as Href)}>Perfil do aluno</Button>
-        <Button variant="secondary" onPress={() => navigate()}>Treinos</Button>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <Button variant="secondary" onPress={() => navigate()}>Treinos</Button>
+          {!!rotina && <Button variant="secondary" onPress={() => navigate()}>‹ Todas as rotinas</Button>}
+        </View>
       </View>
       {treino && student ? <Label muted>{student.name}</Label> : <Heading title={student ? `Treinos de ${student.name}` : "Treinos do aluno"} />}
       <Notice error>{error}</Notice>
-      {student && <WorkoutPlans studentId={id} route={{ planId: rotina, workoutId: treino,
+      {student && <WorkoutPlans studentId={id} hideRoutineBack route={{ planId: rotina, workoutId: treino,
         selectPlan: planId => navigate(planId), selectWorkout: workoutId => navigate(rotina, workoutId) }} />}
     </View>
   </Page>;
