@@ -12,7 +12,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": ["developer", "ai_agent", "reviewer"],
   "sensitivity": "internal",
@@ -53,4 +53,12 @@ docs:validate aprovou 57 documentos; code:inventory, code:check, knowledge:build
 
 As imagens de inspeção usam uma conta sintética e respostas de calendário com os mesmos dias da referência; o aplicativo usa a API real. A lista de publicações usa os planos já disponíveis, sem implementar uma central de notificações de aluno. Nenhuma conta real, senha ou banco de produção foi copiado para a prévia.
 
-A prévia local na porta 3003 foi reiniciada e uma conta sintética de aluno foi vinculada ao professor de demonstração. O login e a consulta real do banco de prévia responderam 200, com 11 conclusões sintéticas no mês de referência; a sessão de verificação foi encerrada. A publicação desta tela foi solicitada ao responsável e permanece pendente de confirmação, sem alterar o site nesta etapa.
+A prévia local na porta 3003 foi reiniciada e uma conta sintética de aluno foi vinculada ao professor de demonstração. O login e a consulta real do banco de prévia responderam 200, com 11 conclusões sintéticas no mês de referência; a sessão de verificação foi encerrada.
+
+## Publicação autorizada
+
+O responsável autorizou expressamente publicar esta tela e a consulta mensal. A revisão 5fcd616 foi enviada ao GitHub e publicada em https://tapago.coletivopindorama.com.br em 26/11/2026, no horário de Brasília. A rotina CLI temporária substituiu somente App.php, Workouts.php, o bundle web e index.html, com backup privado e verificação dos quatro hashes. O HTML foi trocado somente depois da verificação do novo backend. A configuração privada teve seu hash preservado; não houve migração nem alteração de perfis, treinos ou senhas.
+
+A rotina verificou a consulta mensal no MySQL real com um identificador sintético sem conta e confirmou a resposta vazia, além do bloqueio 403 para o papel de professor. A tarefa temporária concluiu com sucesso e sua exclusão foi aceita pela Hostinger. O executor removeu a si mesmo; a listagem posterior da raiz confirmou sua ausência. O cache da hospedagem/CDN foi limpo.
+
+A verificação HTTP confirmou os hashes do HTML e bundle, login autenticado de aluno e resposta mensal com contrato e agregação válidos. Mês inválido foi rejeitado com 400, acesso anônimo com 401 e a sessão usada para verificar o aluno foi encerrada. A saúde respondeu 200 e status ok. Os identificadores, dados pessoais e credenciais dessa verificação não foram incluídos nas fontes, no relatório ou nos manifestos. A interface publicada corresponde ao mesmo bundle inspecionado e testado localmente; não houve automação de navegador na conta real.
