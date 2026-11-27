@@ -85,14 +85,14 @@ export function WorkoutEditor({ workout, change, pending, initialPicker = false,
       </>;
     }} />
     </View>
-    {edit && <WorkoutScreen title={edit.key ? "Editar prescrição" : "Prescrever exercício"} backLabel="Voltar ao treino" back={() => { setEdit(null); pending(false); }}><Card><PrescriptionForm choosePreset={!edit.key} item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
+    {edit && <WorkoutScreen prescription title={edit.key ? "Editar prescrição" : "Prescrever exercício"} backLabel="Voltar ao treino" back={() => { setEdit(null); pending(false); }}><PrescriptionForm choosePreset={!edit.key} item={edit.item} cancel={() => { setEdit(null); pending(false); }} done={item => {
       if (edit.key) update(edit.key, item);
       else {
         const identified = identifyWorkout({ ...workout, exercises: [item] }).exercises[0];
         change({ ...workout, exercises: pickerGroup ? insertExerciseInGroup(workout.exercises, identified, pickerGroup) : [...workout.exercises, identified] });
       }
       setEdit(null); pending(false);
-    }} /></Card></WorkoutScreen>}
+    }} /></WorkoutScreen>}
     {picker ? <WorkoutScreen title={picker === "add" || picker === "group" ? "Adicionar exercício" : picker === "replace" ? "Trocar exercício" : "Adicionar exercício alternativo"} backLabel="Voltar ao treino" back={closeOperation}><View style={{ gap: 12 }}>
       <Button variant="secondary" onPress={closeOperation}>Fechar biblioteca</Button>
       <ExerciseLibrary select={exercise => {

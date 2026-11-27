@@ -1851,6 +1851,7 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
   await page.goto(base + "/alunos/" + student.id + "/treinos?rotina=" + original.id);
   await page.getByRole("button", { name: "Treino tipos", exact: true }).click();
   await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+  await page.getByLabel('Buscar exercícios...', { exact: true }).fill('Alongamento teste');
   await page.getByRole("button", { name: "Expandir exercício Alongamento teste", exact: true }).click();
   await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
   await expect(page.getByText("Escolha um preset", { exact: true })).toBeVisible();
@@ -1876,6 +1877,7 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
     { type: "running", sets: 1, repetitions: "", load: null, restSeconds: null, durationSeconds: 600, distance: 2.5, speed: 15 },
   ]);
   await page.getByRole("button", { name: "Adicionar exercício", exact: true }).click();
+  await page.getByLabel('Buscar exercícios...', { exact: true }).fill('Alongamento teste');
   await page.getByRole("button", { name: "Expandir exercício Alongamento teste", exact: true }).click();
   await page.getByRole("button", { name: "+ Adicionar ao treino", exact: true }).click();
   await page.getByLabel("Pesquise por nome", { exact: true }).fill("Mobilidade e corrida");
@@ -1890,6 +1892,7 @@ test("presets e séries por tipo preservam alongamento e campos configuráveis",
 
 for (const destination of ["aluno", "preparado"] as const) {
   test(`botão direto abre presets padrão e privados no treino ${destination}`, async ({ page }) => {
+    if (destination === 'preparado') await page.addInitScript(() => localStorage.setItem('tapago.theme', 'dark'));
     const headers = { "X-Requested-With": "TaPago" };
     await provisionBrowserPersonal(db, page.request, base, { headers, data: { name: "Personal Direto", email: `direct-${destination}@example.com`, role: "personal", password: "senha-ficticia-12345" } });
     await page.request.post(base + "/api/exercises", { headers, data: { name: "Exercício direto", muscleGroup: "Peitoral", category: "Musculação" } });
@@ -1924,12 +1927,21 @@ for (const destination of ["aluno", "preparado"] as const) {
     await page.screenshot({ path: `test-results/direct-presets-${destination}.png`, fullPage: true });
     await page.getByRole("button", { name: "Usar preset 3/8", exact: true }).click();
     await expect(page.getByLabel("Série/repetições 1", { exact: true }).filter({ visible: true })).toHaveValue("3/8");
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await expect(page.getByRole('button', { name: 'Confirmar prescrição', exact: true })).toBeVisible();
+      await page.screenshot({ path: `data/prescription-redesign-${destination}-${width}.png`, fullPage: true });
+    }
+    await page.getByRole('button', { name: 'Opções adicionais', exact: true }).click();
+    await page.getByLabel('Observações da prescrição', { exact: true }).fill('Manter controle do movimento.');
     await page.getByRole("button", { name: "Confirmar prescrição", exact: true }).click();
     await page.getByRole("button", { name: destination === "aluno" ? "Salvar rascunho" : "Salvar treino", exact: true }).click();
     await expect(page.getByText(destination === "aluno" ? "Rascunho salvo. O aluno ainda não vê os treinos. Toque em Liberar para o aluno quando estiver pronto." : "Treino salvo.", { exact: true })).toBeVisible();
     const saved = (await (await page.request.get(endpoint)).json())[0];
     const exercises = destination === "aluno" ? saved.workouts[0].exercises : saved.exercises;
     expect(exercises[0].series[0]).toMatchObject({ sets: 3, repetitions: "8", type: "repetitions-load" });
+    expect(exercises[0].notes).toBe('Manter controle do movimento.');
     expect((await (await page.request.get(base + "/api/prescription-presets")).json())).toHaveLength(1);
   });
 }

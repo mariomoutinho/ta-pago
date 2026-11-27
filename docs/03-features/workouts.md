@@ -11,6 +11,7 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/workouts/prescription-action.tsx",
     "src/components/workouts/professional-exercise-summary.tsx",
     "src/components/workouts/preset-library.tsx",
     "src/app/presets.tsx",
@@ -103,7 +104,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.3",
+  "version": "12.10.4",
   "authority": "code",
   "audience": [
     "developer",
@@ -362,6 +363,8 @@ Pastas de um nível pertencem ao professor, podem ser criadas no catálogo e fil
 A rota profissional `/presets` aparece na barra lateral e permite buscar, criar, editar e excluir presets privados. Os presets padrão são exibidos para personalização de uma cópia. O editor reutiliza SeriesEditor, preservando as configurações adicionais já salvas; editar ou excluir um preset não modifica prescrições existentes. As APIs de pastas, cópias e presets exigem conta profissional e restringem o acesso ao proprietário.
 
 Seus presets aparecem acima dos presets padrão, tanto na biblioteca quanto no seletor usado para aplicar um preset ao treino. A busca mantém essa prioridade entre as seções.
+
+O formulário de prescrição segue o visual Studio: cabeçalho com ícone e orientação, cartão com nome e categoria/grupo muscular reais, campos maiores, ações auxiliares com ícones e confirmação principal separada por divisória. Opções adicionais e Cancelar dividem a linha em telas largas e se reorganizam no celular. A mudança vale para adicionar e editar exercícios de alunos e modelos preparados; os tipos de série, presets, validações e gravação continuam no editor existente. A exclusão de linha aparece quando há mais de uma série, preservando a exigência mínima de uma linha.
 
 Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.
 

@@ -46,7 +46,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
     } catch (e) { setOptimistic(null); setError(message(e)); throw e; }
     finally { setOptimistic(null); lock.current = false; setBusy(false); }
   }
-  return <WorkoutScreen title={editing ? "Editar prescrição" : current.name} backLabel={editing ? "Voltar ao treino" : "Voltar aos treinos"} back={() => { if (!busy) { if (editing) setEditing(null); else close(); } }}>
+  return <WorkoutScreen prescription={!!editing} title={editing ? "Editar prescrição" : current.name} backLabel={editing ? "Voltar ao treino" : "Voltar aos treinos"} back={() => { if (!busy) { if (editing) setEditing(null); else close(); } }}>
     <View style={{ gap: 12 }}>
       {!!current.subtitle && <Label bold>{current.subtitle}</Label>}
       {!!current.instructions && <Notice>{current.instructions}</Notice>}
@@ -62,7 +62,7 @@ export function WorkoutWindow({ workout, close, edit, add, saveSeries, saveExerc
         {item.alternativeExercise && <Notice>{"Alternativa: " + item.alternativeExercise.name}</Notice>}
         <SeriesEditor item={item} disabled={busy || !!editing} onDirty={value => { const key = exerciseKey(item); if (value) dirty.current.add(key); else dirty.current.delete(key); setHasDirty(dirty.current.size > 0); }} save={rows => saveSeries(index, rows)} />
       </> : student ? <StudentPrescription item={item} {...student} completedSets={progress.counts(item)} progressBusy={progress.busy}  /> : <PrescriptionView item={item} />} /></View>
-      {editing && <Card><PrescriptionForm item={current.exercises.find(item => exerciseKey(item) === editing)!} cancel={() => setEditing(null)} done={async item => { await change(current.exercises.map(previous => exerciseKey(previous) === editing ? item : previous), "edit"); setEditing(null); }} /></Card>}
+      {editing && <PrescriptionForm item={current.exercises.find(item => exerciseKey(item) === editing)!} cancel={() => setEditing(null)} done={async item => { await change(current.exercises.map(previous => exerciseKey(previous) === editing ? item : previous), "edit"); setEditing(null); }} />}
       {progress.dialog}
       {!student && <WorkoutFeedbacks workout={current} canSend={false} reload={async()=>{}} />}
     </View>
