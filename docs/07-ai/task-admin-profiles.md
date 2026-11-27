@@ -12,7 +12,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": ["developer", "ai_agent", "reviewer"],
   "sensitivity": "internal",
@@ -41,4 +41,14 @@ Quatro testes de API passaram, cobrindo acesso anônimo/professor/aluno, promoç
 
 docs:validate, code:inventory, code:check e knowledge:build passaram. docs:test teve 31 sucessos e duas falhas de criação de links simbólicos por EPERM no Windows. code:test teve 17 sucessos e três falhas: duas de links simbólicos e uma de proveniência Git. São limitações já observadas no ambiente, sem alteração dos extratores nesta tarefa.
 
-A listagem em memória usa somente campos administrativos e páginas de 25 itens. Não há edição ou redefinição pública de senha nessa tela. A habilitação do ID real e a redefinição solicitada ainda não foram executadas. A consulta a crons foi rejeitada pela revisão automática, e nenhum comando privado foi consultado. Foi solicitada autorização para tarefa temporária restrita às duas contas, sem consultar os crons existentes, e para publicar o pacote atual.
+A listagem em memória usa somente campos administrativos e páginas de 25 itens. Não há edição ou redefinição pública de senha nessa tela. A consulta inicial a crons foi rejeitada pela revisão automática, e nenhum comando privado existente foi consultado.
+
+## Publicação e operação autorizadas
+
+O responsável autorizou explicitamente publicar o pacote atual e executar uma tarefa temporária restrita à habilitação administrativa e à redefinição de senha de uma conta de aluno. Em 26/11/2026, no horário de Brasília, a revisão 03a21c1 foi publicada em https://tapago.coletivopindorama.com.br. O pacote inclui os ajustes anteriores de catálogo, pastas, presets, exercícios, login e administração.
+
+A rotina exclusiva de CLI confirmou os papéis das duas contas e a autorização profissional existente antes de escrever. Criou backup privado dos arquivos e da configuração, aplicou a migração aditiva de pastas, verificou os 55 arquivos por hash no servidor, manteve os demais valores privados e adicionou o ID administrativo. A redefinição afetou somente a conta de aluno solicitada e removeu uma sessão antiga. Nenhum e-mail real, senha, hash ou token integra este relatório ou os manifestos.
+
+A tarefa temporária concluiu com sucesso e sua exclusão foi aceita pela Hostinger. O arquivo de execução removeu a si mesmo; a listagem posterior da raiz confirmou sua ausência. Não foram consultadas as tarefas anteriores. O cache foi limpo. A conferência HTTP validou 34 arquivos públicos; 22 PNGs transformados pela CDN tiveram dimensões e todos os pixels comparados aos originais, incluindo a logo. Os outros 21 arquivos protegidos tiveram seus hashes conferidos pela rotina no servidor.
+
+O login do aluno com a nova senha passou em produção, assim como a consulta da sessão. A API administrativa retornou 403 para esse aluno. A sessão criada somente para o teste foi encerrada. A saúde da API respondeu 200 e status ok. O acesso administrativo foi habilitado na configuração privada e validado pela rotina; não foi utilizado o segredo de login do professor para testar sua sessão real. A entrega da nova credencial acontece somente ao responsável, fora dos arquivos versionados.
