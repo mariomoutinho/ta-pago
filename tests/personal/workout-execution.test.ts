@@ -4,6 +4,11 @@ import { remainingRest } from '../../shared/rest-timer';
 import type { Prescription } from '../../shared/workouts';
 const item = (sets: number[], rests: number[] = []) => ({ series: sets.map((sets, i) => ({ sets, repetitions: '10', restSeconds: rests[i] ?? 60 })) }) as Prescription;
 afterEach(() => vi.useRealTimers());
+it('descansa após a última série se ainda há outro exercício, respeitando o intervalo da linha final', () => {
+  expect(nextSet(item([2, 1], [30, 90]), [2, 0], true)).toMatchObject({ row: 1, next: [2, 1], restSeconds: 90 });
+  expect(nextSet(item([1], [0]), [0], true)?.restSeconds).toBe(0);
+  expect(nextSet(item([1], [90]), [0], false)?.restSeconds).toBe(0);
+});
 it.each([1, 3, 7, 12])('registra %i séries sem ultrapassar a prescrição e não descansa após a última', total => {
   const prescription = item([total]); let counts = [0];
   for (let i = 0; i < total; i++) { const step = nextSet(prescription, counts)!; counts = step.next; expect(step.restSeconds).toBe(i === total - 1 ? 0 : 60); }

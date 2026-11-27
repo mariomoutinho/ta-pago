@@ -50,7 +50,7 @@ export function useStudentProgress(workout: WorkoutData, student: { revision: nu
   }
   async function register(item: Prescription) {
     if (!rest.ready || rest.active() || lock.current || Date.now() - lastAction.current < 500) return;
-    const action = nextSet(item, counts(item)); if (!action) return;
+    const action = nextSet(item, counts(item), workout.exercises.some(other => other.id !== item.id && !finished(other))); if (!action) return;
     lastAction.current = Date.now(); rest.prepare();
     const result = await save(item, action.next);
     const startedAt = Date.now();
@@ -62,9 +62,15 @@ export function useStudentProgress(workout: WorkoutData, student: { revision: nu
   }
   const remaining = (item: Prescription) => prescribedSets(item).reduce((sum, n, i) => sum + n - (counts(item)[i] ?? 0), 0);
   const resting = (item: Prescription) => !!rest.timer && rest.timer.workoutId === workout.id && rest.timer.revision === student?.revision && rest.timer.itemId === item.id && rest.timer.version === get(item)?.version && rest.remaining > 0;
+  const restSource = workout.exercises.find(resting);
+  const nextExercise = restSource && finished(restSource)
+    ? [...workout.exercises.slice(workout.exercises.indexOf(restSource) + 1), ...workout.exercises.slice(0, workout.exercises.indexOf(restSource))].find(item => !finished(item))
+    : undefined;
   return { counts, busy, finished,
-    completion: student ? (item: Prescription) => <SetCounter name={item.exercise?.name ?? 'Exercício'} remaining={remaining(item) + (resting(item) ? 1 : 0)} disabled={busy || !student.editable || !rest.ready || rest.active()} register={() => void register(item)} /> : undefined,
-    inline: student ? (item: Prescription) => <>{resting(item) && rest.inline(item.id!)}</> : undefined,
+    completion: student ? (item: Prescription) => <SetCounter name={item.exercise?.name ?? 'Exercício'} remaining={remaining(item) + (resting(item) && !finished(item) ? 1 : 0)} disabled={busy || !student.editable || !rest.ready || rest.active()} register={() => void register(item)} /> : undefined,
+    inline: student ? (item: Prescription) => <>{nextExercise?.id === item.id && restSource
+      ? <View style={{ gap: 4 }}><Label size={12} muted>Descanso antes do próximo exercício</Label>{rest.inline(restSource.id!)}</View>
+      : resting(item) && !finished(item) && rest.inline(item.id!)}</> : undefined,
     undo: student ? (item: Prescription) => <Button label={`Desfazer última série de ${item.exercise?.name}`} disabled={busy || !student.editable || !counts(item).some(Boolean)} variant="secondary" onPress={() => void undo(item)}>Desfazer última série</Button> : undefined,
     notice: student && <View style={{ gap: 8 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Label size={12}>Progresso</Label><Label bold>{totals.percent}%</Label></View>

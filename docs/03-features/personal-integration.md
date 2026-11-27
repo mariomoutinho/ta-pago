@@ -4,7 +4,7 @@
   "title": "Módulo Personal integrado",
   "status": "proposed",
   "owner": "mariomoutinho",
-  "updated_at": "2026-11-26",
+  "updated_at": "2026-11-27",
   "language": "pt-BR",
   "tags": [
     "03-features"
@@ -92,7 +92,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.18.0",
+  "version": "4.18.1",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -264,7 +264,7 @@ A rota mantém seleção nos parâmetros rotina e treino, pelo contrato WorkoutR
 
 ## Execução por séries no Focus
 
-Observado no código local: a execução substitui o checkbox por SetCounter, um botão de 48 px com séries restantes. Cada toque confirma uma única série na API existente de progresso, com revisão da prescrição e versão de execução. O progresso geral considera séries, inclusive durante o descanso. O contador principal mantém o número anterior até o prazo terminar; a última série mostra check e vermelho imediatamente, sem novo descanso. A ação Desfazer última série fica nos detalhes e cancela o descanso correspondente após confirmação do servidor.
+Observado no código local: a execução substitui o checkbox por SetCounter, um botão de 48 px com séries restantes. Cada toque confirma uma única série na API existente de progresso, com revisão da prescrição e versão de execução. O progresso geral considera séries, inclusive durante o descanso. Entre séries, o contador principal mantém o número anterior até o prazo terminar. A última série do exercício mostra check e vermelho imediatamente; se houver outro exercício pendente, inicia o intervalo prescrito na linha concluída e mostra a contagem no próximo exercício, mantendo a primeira série bloqueada até o fim. A última série do treino inteiro não abre descanso extra. A ação Desfazer última série fica nos detalhes e cancela o descanso correspondente após confirmação do servidor.
 
 O descanso usa o intervalo de cada linha prescrita e timestamps absolutos. O painel fica dentro do exercício, com MM:SS e barra; ao terminar, recolhe os detalhes, libera o contador e anuncia a próxima série. O progresso diário continua no backend, separado da prescrição. Somente o prazo de descanso fica no armazenamento local, por conta: localStorage na web e SecureStore no Expo nativo. A recuperação verifica data em America/Sao_Paulo, revisão e versão. Um descanso ativo bloqueia novos registros, inclusive ao abrir outro treino na mesma sessão do aplicativo. Não há fila offline: falhas não avançam as séries e apresentam recuperação explícita.
 

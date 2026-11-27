@@ -104,7 +104,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "12.10.6",
+  "version": "12.10.7",
   "authority": "code",
   "audience": [
     "developer",
@@ -371,6 +371,8 @@ O formulário de prescrição segue o visual Studio: cabeçalho com ícone e ori
 Na página profissional de treinos do aluno, Todas as rotinas aparece junto de Perfil do aluno e Treinos quando uma rotina está selecionada. A ação remove a seleção da rotina e do treino na URL.
 
 ## Séries e descanso no cartão recolhido
+
+Ao finalizar um exercício na visão do aluno, o intervalo da última linha prescrita também é usado antes da primeira série do próximo exercício pendente. O exercício concluído mantém check e destaque; a contagem aparece no próximo cartão e bloqueia novos registros até terminar, inclusive após recarga. Intervalo zero ou ausente libera imediatamente; a conclusão do treino inteiro não acrescenta descanso. A correção da última série cancela seu intervalo.
 
 O comando de expandir/recolher usa o ícone ChevronDown do Lucide em uma superfície arredondada discreta, com rotação conforme o estado, destaque do tema ao abrir e contraste branco em exercícios concluídos. A área de toque mantém 44 px e os rótulos acessíveis de expandir/recolher.
 
