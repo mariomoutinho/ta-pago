@@ -10,6 +10,51 @@ import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
+test("Focus do aluno mostra calendário, temas, perfil e estados de carregamento", async ({page}) => {
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.clock.setFixedTime(new Date('2026-11-26T15:00:00Z'));
+  await page.addInitScript(()=>localStorage.setItem('tapago.theme','dark'));
+  const headers={'X-Requested-With':'TaPago'};
+  expect((await page.request.post(base+'/api/auth/register',{headers,data:{name:'Atleta Focus',email:'focus-browser@example.test',password:'senha-ficticia-12345',role:'student'}})).status()).toBe(201);
+  let fail=false;
+  await page.route('**/api/me/workout-calendar?*',route=>{
+    if(fail)return route.fulfill({status:503,json:{error:'Histórico indisponível'}});
+    const month=new URL(route.request().url()).searchParams.get('month');
+    const days=month==='2026-11'?[2,4,6,9,11,13,16,18,20,23,25].map(day=>({date:'2026-11-'+String(day).padStart(2,'0'),count:1})):[];
+    return route.fulfill({json:{month,days,total:days.length}});
+  });
+  await page.setViewportSize({width:390,height:896});await page.goto(base);
+  await expect(page.getByRole('heading',{name:'Olá, atleta!'})).toBeVisible();
+  await expect(page.getByTestId('student-month-total')).toHaveText('11');
+  await expect(page.getByLabel('26/11/2026, Hoje, Sem registro',{exact:true})).toBeVisible();
+  await expect(page.getByLabel('27/11/2026, Futuro',{exact:true})).toBeVisible();
+  await expect(page.getByRole('tab',{name:'Início',exact:true})).toHaveAttribute('aria-selected','true');
+  await page.screenshot({path:'data/student-focus-390.png'});
+  await page.getByRole('button',{name:'Próximo mês',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Dezembro 2026'})).toBeVisible();
+  await expect(page.getByTestId('student-month-total')).toHaveText('0');
+  await page.getByRole('button',{name:'Mês anterior',exact:true}).click();
+  await expect(page.getByTestId('student-month-total')).toHaveText('11');
+  await page.getByRole('button',{name:'Ativar tema claro',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Ativar tema escuro',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Notificações',exact:true})).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await page.screenshot({path:'data/student-focus-light-390.png',animations:'disabled'});
+  await page.getByRole('button',{name:'Notificações',exact:true}).click();
+  await expect(page.getByText('Nenhum treino publicado por enquanto.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Fechar',exact:true}).click();
+  await page.getByRole('link',{name:'Meus treinos',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Meus treinos',exact:true})).toBeVisible();
+  await page.getByRole('tab',{name:'Perfil',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Meu perfil',exact:true})).toBeVisible();
+  await expect(page.getByLabel('Código de convite',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Sair da conta',exact:true})).toBeVisible();
+  fail=true;await page.getByRole('tab',{name:'Início',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Tentar carregar histórico',exact:true})).toBeVisible();
+  fail=false;await page.getByRole('button',{name:'Tentar carregar histórico',exact:true}).click();
+  await expect(page.getByTestId('student-month-total').filter({visible:true})).toHaveText('11');
+  for(const width of [320,1280]){await page.setViewportSize({width,height:896});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+  expect(errors).toEqual([]);
+});
 test("administração lista perfis e restringe professores comuns", async ({page}) => {
   const headers={"X-Requested-With":"TaPago"};
   await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Admin Navegador",email:"admin-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
@@ -413,7 +458,8 @@ test("início do aluno conecta professor e mostra somente treinos liberados no c
     } })).status()).toBe(201);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(base);
-    await expect(page.getByRole("heading", { name: "Olá, Aluno" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Olá, atleta!" })).toBeVisible();
+    await page.getByRole("tab", { name: "Perfil", exact: true }).click();
     await page.getByLabel("Código de convite", { exact: true }).fill(invitation.code);
     await page.getByRole("button", { name: "Aceitar convite", exact: true }).click();
     await expect(page.getByText("Professor do Portal", { exact: true })).toBeVisible();
@@ -431,6 +477,7 @@ test("início do aluno conecta professor e mostra somente treinos liberados no c
     const published = await teacher.request.put(base + `/api/workout-plans/${draft.id}`, { headers, data: { ...draft, status: "ativo" } });
     expect(published.status()).toBe(200);
     await page.getByRole("button", { name: "Voltar ao meu início", exact: true }).click();
+    await page.getByRole("tab", { name: "Perfil", exact: true }).click();
     await expect(page.getByText(/Consulte as rotinas e as orientações/)).toBeVisible();
     await page.screenshot({ path: "test-results/student-home-mobile.png", fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -439,6 +486,7 @@ test("início do aluno conecta professor e mostra somente treinos liberados no c
     await expect(page.getByRole("button", { name: "Treino do portal", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "+ Adicionar treino", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: "Voltar ao meu início", exact: true }).click();
+    await page.getByRole("tab", { name: "Perfil", exact: true }).click();
     await page.getByRole("button", { name: "Abrir meu acompanhamento", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Aluno Portal", exact: true })).toBeVisible();
     await page.reload();

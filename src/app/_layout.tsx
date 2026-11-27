@@ -59,6 +59,7 @@ function Navigation() {
         <Stack.Protected guard={user?.role === "student"}>
           <Stack.Screen name="acompanhamento/[id]" />
           <Stack.Screen name="treinos" />
+          <Stack.Screen name="perfil" />
         </Stack.Protected>
         <Stack.Protected guard={user?.role === "personal" && !!user.isAdmin}>
           <Stack.Screen name="administracao" />

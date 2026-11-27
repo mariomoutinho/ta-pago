@@ -11,6 +11,11 @@
   ],
   "indexable": true,
   "sources": [
+    "src/components/student/home.tsx",
+    "src/components/student/layout.tsx",
+    "src/components/student/profile.tsx",
+    "src/constants/focus.ts",
+    "shared/student-calendar.ts",
     "server/admin.ts",
     "backend-php/src/Admin.php",
     "src/app/administracao.tsx",
@@ -71,7 +76,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.15.0",
+  "version": "4.16.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -222,3 +227,11 @@ Observado: /administracao lista professores e alunos, com busca por nome ou e-ma
 O administrador mantém o perfil personal e recebe uma capacidade adicional pelo ID em configuração privada: PERSONAL_ADMIN_IDS no Express ou authorizedAdminIds no PHP. O ID deve continuar autorizado também como professor. A opção Administração aparece somente para essa capacidade, com proteção de rota e da API GET /api/admin/profiles. Cadastro público e login não aceitam promoção administrativa pelo cliente. A remoção do ID na configuração revoga o acesso em requisições seguintes. Nenhum privilégio é concedido apenas pelo e-mail.
 
 A implementação não oferece edição de perfis nem exibição ou recuperação da senha original. Os backends filtram e paginam em memória a projeção mínima dos cadastros; consultas SQL paginadas serão necessárias se o volume tornar isso insuficiente. A configuração de contas reais e a publicação são operações separadas, não comprovadas pelos testes sintéticos.
+
+## Início do aluno no layout Focus
+
+Observado: a área do aluno tem cabeçalho com a logo local, identificação ALUNO, tema e acesso às publicações reais de planos. A navegação inferior oferece Início, Treinos e Perfil. O início apresenta Olá, atleta!, ação Meus treinos, calendário mensal, legenda e resumo do mês. Os convites, vínculos, acompanhamento, grupos e saída da conta ficam no Perfil, preservando os recursos anteriores.
+
+GET /api/me/workout-calendar?month=AAAA-MM existe no Express e no PHP. Exige aluno autenticado e agrega somente conclusões ligadas ao próprio accountId, por data completa dentro do mês. Retorna month, days com date/count e total. Não há limite de 30 registros por rotina nessa consulta, nem alteração do banco. O histórico continua incluindo planos arquivados e rotinas removidas logicamente. O resumo conta treinos, portanto dois treinos no mesmo dia somam dois no total e uma célula treinada.
+
+A data de hoje segue America/Sao_Paulo. A grade inicia no domingo, considera anos bissextos, permite navegar entre meses e diferencia conclusão, dia sem registro, futuro e hoje. Carregamento e falha não aparecem como zero; a consulta é renovada ao voltar para o início, descarta respostas anteriores e permite tentar novamente. O calendário é de leitura e não cria conclusões. O conteúdo fica limitado em largura em desktop e se adapta a 320 px; o tema claro é derivado dos tokens existentes. A referência visual foi a imagem do responsável, mediante autorização após o limite de consultas do Figma impedir o contexto detalhado.

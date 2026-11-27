@@ -1,83 +1,19 @@
-import { useState, useEffect, useRef, type ReactNode } from "react";
-import {
-  Pressable,
-  ScrollView,
-  View,
-  useWindowDimensions,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useRef, type ReactNode } from "react";
+import { ScrollView, View, useWindowDimensions } from "react-native";
 import { useTheme } from "@/hooks/use-theme";
-import { useThemePreference } from "@/hooks/theme-preference";
 import { useSession } from "@/features/personal/auth";
-import AppTabs from "@/components/app-tabs";
-import { Button, Label, Notice, s } from "./ui";
-import { message } from "@/features/personal/api";
-import { router } from "expo-router";
-import { Brand } from "./brand";
 import { ProfessionalLayout } from "../studio/professional-layout";
+import { StudentLayout } from "../student/layout";
 import { Studio } from "@/constants/studio";
 export { Brand } from "./brand";
 export function PersonalShell({ children }: { children: ReactNode }) {
+  const { user } = useSession();
   const t = useTheme();
-  const { scheme, toggleTheme } = useThemePreference();
-  const { user, logout } = useSession();
-  const [error, setError] = useState("");
-  const { width } = useWindowDimensions();
-  if (!user)
-    return (
-      <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>
-        {children}
-      </View>
-    );
+  if (!user) return <View style={{ flex: 1, backgroundColor: t.backgroundElement }}>{children}</View>;
   if (user.role === "personal") return <ProfessionalLayout>{children}</ProfessionalLayout>;
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: t.backgroundElement }}>
-      <View
-        style={[
-          styles.header,
-          { backgroundColor: t.background, borderColor: t.border },
-        ]}
-      >
-        <View style={[styles.headerInner, { gap: width < 700 ? 10 : 24 }]}>
-          <View style={[s.row, width < 700 ? { width: "100%", justifyContent: "space-between" } : { flexShrink: 1 }]}>
-            <Pressable accessibilityRole="link" accessibilityLabel="Ir para o início" onPress={() => router.push("/")} style={{ flexShrink: 1 }}>
-              <Brand compact={width < 700} />
-            </Pressable>
-          </View>
-          {width >= 900 && <AppTabs />}
-          <View style={[s.row, { marginLeft: "auto" }]}>
-            <View style={width < 700 ? { display: "none" } : undefined}>
-              <Label size={12} bold>
-                {user.name}
-              </Label>
-              <Label size={10} muted>
-                Conta do aluno
-              </Label>
-            </View>
-            <Button variant="secondary" label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>
-              {scheme === "dark" ? "☀" : "☾"}
-            </Button>
-            <Button
-              variant="secondary"
-              onPress={async () => {
-                try {
-                  await logout();
-                } catch (e) {
-                  setError(message(e));
-                }
-              }}
-            >
-              Sair
-            </Button>
-          </View>
-        </View>
-      </View>
-      <Notice error>{error}</Notice>
-      <View style={{ flex: 1 }}>{children}</View>
-    </SafeAreaView>
-  );
+  return <StudentLayout>{children}</StudentLayout>;
 }
+
 export function Page({
   children,
   resetKey,
@@ -112,16 +48,3 @@ export function Page({
     </ScrollView>
   );
 }
-const styles = StyleSheet.create({
-  header: { borderBottomWidth: 1 },
-  headerInner: {
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    maxWidth: 1320,
-    width: "100%",
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-});

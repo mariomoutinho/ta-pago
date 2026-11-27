@@ -3,6 +3,15 @@ declare(strict_types=1);
 namespace TaPago;
 
 trait Workouts {
+    private function studentCalendar(): array {
+        ensure(($this->user['role']??'')==='student','Acesso do aluno',403);
+        $month=$_GET['month']??null;
+        ensure(is_string($month)&&preg_match('/^[1-9]\d{3}-(0[1-9]|1[0-2])$/D',$month)===1,'Mês inválido');
+        $start=$month.'-01';$end=(new \DateTimeImmutable($start,new \DateTimeZone('UTC')))->format('Y-m-t');
+        $rows=$this->db->query('SELECT c.completedOn,COUNT(*) AS total FROM WorkoutCompletion c JOIN Workout w ON w.id=c.workoutId JOIN WorkoutPlan p ON p.id=w.planId JOIN Student s ON s.id=p.studentId WHERE s.accountId=? AND c.completedOn>=? AND c.completedOn<=? GROUP BY c.completedOn ORDER BY c.completedOn',[$this->user['id'],$start,$end])->fetchAll(\PDO::FETCH_ASSOC);
+        $days=array_map(fn($row)=>['date'=>$row['completedOn'],'count'=>(int)$row['total']],$rows);
+        return ['month'=>$month,'days'=>$days,'total'=>array_sum(array_column($days,'count'))];
+    }
     private function workoutFolders(string $method,?string $id,array $body): mixed {
         $existing=$id?$this->own('WorkoutFolder',$id):null;
         if($method==='GET'&&!$id)return $this->db->rows('WorkoutFolder','ownerId=?',[$this->user['id']],'name ASC');

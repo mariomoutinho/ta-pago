@@ -13,6 +13,7 @@ import { HttpError } from "./evaluations";
 import { exerciseSchema, exerciseFavoriteSchema, planSchema, workoutFeedbackSchema, prescriptionPresetSchema } from "../shared/workouts";
 import { brazilToday } from "../shared/notifications";
 import exerciseCatalog from "../shared/exercise-catalog.json";
+import { calendarMonthSchema, monthRange } from "../shared/student-calendar";
 
 export const planInclude = {
   workouts: {
@@ -31,6 +32,13 @@ export const planInclude = {
 };
 export function workoutRoutes(db: Db, notify?: (owner:string)=>Promise<unknown>) {
   const router = Router();
+  router.get('/me/workout-calendar', async (req,res) => {
+    if(res.locals.user.role!=='student')throw new HttpError(403,'Acesso do aluno');
+    const month=calendarMonthSchema.parse(req.query.month),range=monthRange(month);
+    const records=await db.workoutCompletion.groupBy({by:['completedOn'],where:{completedOn:{gte:range.start,lte:range.end},workout:{plan:{student:{accountId:res.locals.user.id}}}},_count:{id:true},orderBy:{completedOn:'asc'}});
+    const days=records.map(record=>({date:record.completedOn,count:record._count.id}));
+    res.json({month,days,total:days.reduce((sum,day)=>sum+day.count,0)});
+  });
   const loadPrescription = (item: { series: unknown; load: number | null }) => createHash('sha256').update(JSON.stringify([item.series,item.load])).digest('hex');
   const progressPrescription=(item:{series:unknown;sets:number|null;exerciseId:string})=>createHash('sha256').update(JSON.stringify([item.series,item.sets,item.exerciseId])).digest('hex');
   router.put('/me/workout-exercises/:id/progress',async(req,res)=>{

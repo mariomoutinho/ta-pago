@@ -51,6 +51,7 @@ final class App {
             $this->pupil(); return array_map(function($s) { return array_merge(array_intersect_key($s,array_flip(['id','name','mainGoal','linkStatus','startDate'])),['personal'=>$this->teacher($s['personalId'])]); },$this->db->rows('Student','accountId=?',[$this->user['id']]));
         }
         if ($path==='/me/workout-plans' && $method==='GET') return $this->myPlans();
+        if ($path==='/me/workout-calendar' && $method==='GET') return $this->studentCalendar();
         if (preg_match('~^/me/workout-exercises/([^/]+)/progress$~D',$path,$m) && $method==='PUT') return $this->studentProgress($m[1],$body);
         if (str_starts_with($path,'/fitness-groups')) return $this->groupRoute($method,$path,$body);
         if (preg_match('~^/me/workout-exercises/([^/]+)/loads$~D',$path,$m) && $method==='PUT') return $this->studentLoads($m[1],$body);

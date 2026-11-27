@@ -31,6 +31,27 @@ const planData = {
   endsAt: "2026-11-01",
   workouts: [],
 };
+it("calendário do aluno agrega o mês completo e isola contas", async () => {
+  const account=await db.user.findUniqueOrThrow({where:{email:'ws@example.com'}});
+  const owner=await db.user.findUniqueOrThrow({where:{email:'wp@example.com'}});
+  const target=await db.student.create({data:{personalId:owner.id,accountId:account.id,name:'Calendário teste',mainGoal:'',startDate:'2026-12-01'}});
+  const createPlan=(id:string)=>db.workoutPlan.create({data:{studentId:id,title:'Histórico',objective:'',difficulty:'Iniciante',startsAt:'2026-12-01',status:'arquivado',publishedAt:new Date(),workouts:{create:[{name:'Rotina A',orderIndex:0},{name:'Rotina B',orderIndex:1}]}},include:{workouts:true}});
+  const own=await createPlan(target.id),foreign=await createPlan(foreignStudentId);
+  for(let day=1;day<=31;day++)await db.workoutCompletion.create({data:{workoutId:own.workouts[0].id,completedOn:'2026-12-'+String(day).padStart(2,'0')}});
+  await db.workoutCompletion.create({data:{workoutId:own.workouts[1].id,completedOn:'2026-12-01'}});
+  await db.workoutCompletion.create({data:{workoutId:foreign.workouts[0].id,completedOn:'2026-12-01'}});
+  await db.workoutCompletion.create({data:{workoutId:own.workouts[0].id,completedOn:'2027-01-01'}});
+  const result=await student.get('/api/me/workout-calendar?month=2026-12');
+  expect(result.status).toBe(200);expect(result.body.total).toBe(32);expect(result.body.days).toHaveLength(31);
+  expect(result.body.days[0]).toEqual({date:'2026-12-01',count:2});
+  expect((await stranger.get('/api/me/workout-calendar?month=2026-12')).body.total).toBe(0);
+  expect((await personal.get('/api/me/workout-calendar?month=2026-12')).status).toBe(403);
+  expect((await request(app).get('/api/me/workout-calendar?month=2026-12')).status).toBe(401);
+  expect((await student.get('/api/me/workout-calendar?month=2026-13')).status).toBe(400);
+  expect((await student.get('/api/me/workout-calendar')).status).toBe(400);
+  await db.workoutPlan.deleteMany({where:{id:{in:[own.id,foreign.id]}}});
+  await db.student.delete({where:{id:target.id}});
+});
 beforeAll(async () => {
   writeFileSync(path.join(folder, "test.db"), "");
   execFileSync(
