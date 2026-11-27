@@ -12,7 +12,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "authority": "code",
   "audience": ["developer", "ai_agent", "reviewer"],
   "sensitivity": "internal",
@@ -74,3 +74,9 @@ personal:build e typecheck passaram. docs:validate aprovou 58 documentos, e code
 ## Limites e entrega
 
 Não houve teste físico de Android/iOS ou nova integração com MySQL de produção: banco e backends não foram alterados. O endpoint existente e seus controles continuam os mesmos. A prévia local usa somente o banco de demonstração já existente. Não foram utilizados dados ou credenciais de produção. O trabalho permanece nesta branch local, sem push ou deploy.
+
+## Versionamento e verificação da prévia
+
+O commit 0eed46a contém a implementação, os testes, a documentação e os manifestos determinísticos, na branch feat/student-workouts-list. Este complemento registra a entrega após o commit funcional, sem incluir os arquivos preexistentes de Gradle ou documentos pessoais.
+
+A prévia em http://127.0.0.1:3003/treinos foi conferida contra o bundle gerado. O login da conta sintética local respondeu 200, e GET /api/me/workout-plans retornou as prescrições autorizadas do banco de demonstração com status 200. A sessão criada somente para essa verificação foi encerrada. As capturas de aceitação usam o banco temporário dos testes e ficam disponíveis nos caminhos registrados acima. Não houve push, merge na main ou deploy; a CI remota não foi executada para esta branch local.
