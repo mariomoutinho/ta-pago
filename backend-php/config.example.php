@@ -13,4 +13,5 @@ return [
     'retentionDays' => 90,
     'registrationEnabled' => true,
     'authorizedPersonalIds' => [], // IDs existentes autorizados pelo responsável; vazio bloqueia todo personal.
+    'authorizedAdminIds' => [], // Subconjunto dos professores autorizados com acesso à administração.
 ];

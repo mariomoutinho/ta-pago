@@ -33,6 +33,7 @@ import { notificationRoutes, dispatchPush } from "./push";
 import {androidNotificationRoutes,dispatchAndroidPush} from './android-push';
 import {passwordHasMinimum,PASSWORD_MINIMUM_MESSAGE} from '../shared/password';
 import { studentAccessRoutes } from "./student-access";
+import { adminRoutes } from "./admin";
 
 type Identity = { id: string; name: string; email: string; role: string };
 const identity = (res: express.Response) => res.locals.user as Identity;
@@ -47,7 +48,8 @@ const studentInclude = {
   },
   history: { orderBy: { createdAt: "desc" as const } },
 };
-export function createApp(db: Db, options: { authorizedPersonalIds?: readonly string[] } = {}) {
+export function createApp(db: Db, options: { authorizedPersonalIds?: readonly string[]; authorizedAdminIds?: readonly string[] } = {}) {
+  const authorizedAdminIds = options.authorizedAdminIds ?? (process.env.PERSONAL_ADMIN_IDS ?? "").split(",").map(id => id.trim()).filter(Boolean);
   const authorizedPersonalIds = options.authorizedPersonalIds ??
     (process.env.PERSONAL_AUTHORIZED_IDS ?? "").split(",").map((id) => id.trim()).filter(Boolean);
   const authorizedAccount = (user: Identity) =>
@@ -133,6 +135,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
     name: u.name,
     email: u.email,
     role: u.role,
+    isAdmin: u.role === "personal" && authorizedAdminIds.includes(u.id),
   });
   const tokenFrom = (req: express.Request) =>
     req.get("Authorization")?.replace(/^Bearer /, "") ??
@@ -218,6 +221,7 @@ export function createApp(db: Db, options: { authorizedPersonalIds?: readonly st
   app.use("/api/enrollment", privateEnrollmentRoutes(db));
   app.use("/api/notifications", notificationRoutes(db));
   app.use('/api/notifications/android',androidNotificationRoutes());
+  app.use("/api/admin", adminRoutes(db, authorizedAdminIds));
   app.use("/api", exerciseMediaRoutes(db));
   app.use("/api", workoutRoutes(db,notify));
   app.use('/api',groupRoutes(db));

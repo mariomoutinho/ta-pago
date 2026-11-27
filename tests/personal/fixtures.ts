@@ -5,9 +5,12 @@ import { hashPassword } from "../../server/security";
 
 // Contas sintéticas são provisionadas no banco de teste; nunca pelo cadastro público.
 const authorizedPersonalIds: string[] = [];
+const authorizedAdminIds: string[] = [];
 export function createTestApp(db: Db) {
-  return createApp(db, { authorizedPersonalIds });
+  return createApp(db, { authorizedPersonalIds, authorizedAdminIds });
 }
+export function authorizeFixtureAdmin(id: string) { authorizedAdminIds.push(id); }
+export function revokeFixtureAdmin(id: string) { const index = authorizedAdminIds.indexOf(id); if (index >= 0) authorizedAdminIds.splice(index, 1); }
 type Account = { name: string; email: string; password: string };
 export async function authorizeFixturePersonal(db: Db, id: string) {
   await db.user.update({ where: { id }, data: { role: "personal" } });

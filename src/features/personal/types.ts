@@ -63,6 +63,7 @@ export type Student = z.infer<typeof studentSchema> & {
   history: { id: string; action: string; createdAt: string; detail: unknown }[];
 };
 export type User = {
+  isAdmin?: boolean;
   id: string;
   name: string;
   email: string;

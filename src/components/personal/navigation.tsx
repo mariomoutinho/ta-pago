@@ -9,6 +9,7 @@ export default function PersonalNavigation() {
   const items =
     user?.role === "personal"
       ? [
+          ...(user.isAdmin ? [["/administracao", "Administração"]] : []),
           ["/", "Início"],
           ["/alunos", "Alunos"],
           ["/programas", "Programas"],

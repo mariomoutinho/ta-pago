@@ -6,6 +6,7 @@ require_once __DIR__.'/src/AndroidPush.php';
 require_once __DIR__.'/src/News.php';
 require_once __DIR__.'/src/Media.php';
 require_once __DIR__.'/src/Auth.php';
+require_once __DIR__.'/src/Admin.php';
 require_once __DIR__.'/src/Students.php';
 require_once __DIR__.'/src/Evaluations.php';
 require_once __DIR__.'/src/Workouts.php';

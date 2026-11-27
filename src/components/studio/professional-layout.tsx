@@ -9,6 +9,7 @@ import CalendarDays from "lucide-react-native/icons/calendar-days";
 import Dumbbell from "lucide-react-native/icons/dumbbell";
 import Library from "lucide-react-native/icons/library";
 import SlidersHorizontal from "lucide-react-native/icons/sliders-horizontal";
+import ShieldCheck from "lucide-react-native/icons/shield-check";
 import ClipboardList from "lucide-react-native/icons/clipboard-list";
 import Trophy from "lucide-react-native/icons/trophy";
 import LogOut from "lucide-react-native/icons/log-out";
@@ -30,7 +31,8 @@ import { EnrollmentNotifications } from "../personal/enrollment-notifications";
 import { IconButton, studioWebProps } from "./controls";
 import { StudioIcon } from "./icons";
 
-const routes: { href: string; label: string; icon: LucideIcon }[] = [
+const routes: { href: string; label: string; icon: LucideIcon; admin?: boolean }[] = [
+  { href: "/administracao", label: "Administração", icon: ShieldCheck, admin: true },
   { href: "/", label: "Início", icon: House }, { href: "/alunos", label: "Alunos", icon: Users },
   { href: "/programas", label: "Programas", icon: CalendarDays }, { href: "/exercicios", label: "Exercícios", icon: Dumbbell },
   { href: "/treinos-preparados", label: "Catálogo de treinos", icon: Library }, { href: "/modelos", label: "Avaliações", icon: ClipboardList },
@@ -66,7 +68,7 @@ function Sidebar({ collapsed, drawer, close, toggle, logout, pending }: { collap
     </View>
     <ScrollView style={{ flex: 1, overflow: "visible" }} contentContainerStyle={{ paddingTop: 18, gap: 8 }} showsVerticalScrollIndicator={false}>
       {!collapsed && <View style={{ paddingHorizontal: 12, marginBottom: 8 }}><Text style={{ fontFamily: Fonts.sans, color: t.subtle, fontSize: 10, fontWeight: "600", letterSpacing: 1.4 }}>ÁREA PROFISSIONAL</Text></View>}
-      {routes.map(item => <SidebarItem key={item.href} item={item} collapsed={collapsed} active={isActive(path, item.href)} navigate={() => { router.push(item.href as Href); close(); }} />)}
+      {routes.filter(item => !item.admin || user?.isAdmin).map(item => <SidebarItem key={item.href} item={item} collapsed={collapsed} active={isActive(path, item.href)} navigate={() => { router.push(item.href as Href); close(); }} />)}
     </ScrollView>
     <View style={{ borderTopWidth: 1, borderColor: t.border, paddingTop: 20, paddingHorizontal: collapsed ? 4 : 12, gap: 14 }}>
       {!collapsed && <View style={{ gap: 6 }}><Text style={{ fontFamily: Fonts.sans, color: t.subtle, fontSize: 9, fontWeight: "600", letterSpacing: 1 }}>CONTA PROFISSIONAL</Text><Text numberOfLines={2} style={{ color: t.text, fontFamily: Fonts.sans, fontSize: 14, fontWeight: "600" }}>{user?.name}</Text></View>}
@@ -102,7 +104,7 @@ function StudioFrame({ children }: { children: ReactNode }) {
             {mobile ? <View style={{ flex: 1 }}><Text numberOfLines={1} style={{ fontFamily: Fonts.sans, fontSize: 13, fontWeight: "600", color: t.text }}>{current}</Text></View> : <View accessibilityLabel={`Área profissional / ${current}`} style={{ flexDirection: "row", alignItems: "center", gap: 8 }}><Label size={12} muted>Área profissional</Label><ChevronRight size={13} color={t.subtle} /><Label size={12} muted>{current}</Label></View>}
           </View>
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-            {!mobile && <View style={{ marginRight: 10, maxWidth: 200 }}><Text numberOfLines={1} style={{ fontFamily: Fonts.sans, color: t.text, fontSize: 12, fontWeight: "600" }}>{user?.name}</Text><Label size={10} muted>Personal</Label></View>}
+            {!mobile && <View style={{ marginRight: 10, maxWidth: 200 }}><Text numberOfLines={1} style={{ fontFamily: Fonts.sans, color: t.text, fontSize: 12, fontWeight: "600" }}>{user?.name}</Text><Label size={10} muted>{user?.isAdmin ? "Administrador" : "Personal"}</Label></View>}
             <IconButton label={scheme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"} onPress={toggleTheme}>{scheme === "dark" ? <StudioIcon name="sun" /> : <Moon size={20} color={t.textSecondary} strokeWidth={Studio.strokeWidth} />}</IconButton>
             <EnrollmentNotifications key={user?.id} studio />
           </View>

@@ -25,6 +25,9 @@ trait Auth {
     private function authorizedAccount(array $user): bool {
         return $user['role']!=='personal' || in_array($user['id'],$this->config['authorizedPersonalIds']??[],true);
     }
+    private function adminUser(array $user): array {
+        return [...array_intersect_key($user,array_flip(['id','name','email','role'])),'isAdmin'=>$user['role']==='personal'&&in_array($user['id'],$this->config['authorizedAdminIds']??[],true)];
+    }
     private function rate(string $bucket, int $limit = 20): void {
         // Não confiar em X-Forwarded-For enviado pelo cliente.
         $key=hash('sha256',$bucket.'|'.($_SERVER['REMOTE_ADDR']??'cli'));
@@ -43,7 +46,7 @@ trait Auth {
         if (!$session) return null;
         $this->sessionId=$session['id'];
         $u=$this->db->one('User','id=?',[$session['userId']]);
-        return $u && $this->authorizedAccount($u) ? array_intersect_key($u,array_flip(['id','name','email','role'])) : null;
+        return $u && $this->authorizedAccount($u) ? $this->adminUser($u) : null;
     }
     private function cookie(string $token, int $expires): void {
         setcookie('tapago_session_php',$token,['expires'=>$expires,'path'=>($this->config['basePath']?:'').'/',
@@ -73,7 +76,7 @@ trait Auth {
         $this->db->query('DELETE FROM Session WHERE expiresAt<?',[now()]);
         $this->db->create('Session',['id'=>hash('sha256',$token),'userId'=>$user['id'],'expiresAt'=>at(time()+43200)]);
         $this->cookie($token,time()+43200);
-        $out=['user'=>array_intersect_key($user,array_flip(['id','name','email','role']))];
+        $out=['user'=>$this->adminUser($user)];
         if (($_SERVER['HTTP_X_CLIENT_PLATFORM']??'')==='native') $out['token']=$token;
         return $out;
     }

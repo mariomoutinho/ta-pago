@@ -5,11 +5,26 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import type { Server } from "node:http";
 import { createDb } from "../../../server/db";
-import { createTestApp as createApp, provisionBrowserPersonal } from "../fixtures";
+import { createTestApp as createApp, provisionBrowserPersonal, authorizeFixtureAdmin } from "../fixtures";
 import { seed } from "../../../server/seed";
 const folder = mkdtempSync(path.join(tmpdir(), "tapago-browser-")),
   url = `file:${folder}/test.db`;
 const db = createDb(url);
+test("administração lista perfis e restringe professores comuns", async ({page}) => {
+  const headers={"X-Requested-With":"TaPago"};
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Admin Navegador",email:"admin-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
+  const account=await db.user.findUniqueOrThrow({where:{email:"admin-browser@example.test"}});
+  authorizeFixtureAdmin(account.id);
+  await page.goto(base+"/administracao");
+  await expect(page.getByRole('heading',{name:'Administração',exact:true})).toBeVisible();
+  await page.getByRole('textbox',{name:'Buscar nome ou e-mail'}).fill('admin-browser@example.test');
+  await expect(page.getByText('Admin Navegador',{exact:true}).last()).toBeVisible();
+  await expect(page.getByText('Conta com login',{exact:true})).toBeVisible();
+  await provisionBrowserPersonal(db,page.request,base,{headers,data:{name:"Professor Sem Admin",email:"ordinary-browser@example.test",role:"personal",password:"senha-ficticia-12345"}});
+  await page.goto(base+"/administracao");
+  await expect(page.getByRole('heading',{name:'Administração',exact:true})).toHaveCount(0);
+  expect((await page.request.get(base+'/api/admin/profiles')).status()).toBe(403);
+});
 process.env.PERSONAL_MEDIA_DIRECTORY = path.join(folder, "media");
 process.env.PERSONAL_PUSH_DIRECTORY = path.join(folder, "push");
 let server: Server;

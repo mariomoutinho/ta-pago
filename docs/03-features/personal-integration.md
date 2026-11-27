@@ -11,6 +11,11 @@
   ],
   "indexable": true,
   "sources": [
+    "server/admin.ts",
+    "backend-php/src/Admin.php",
+    "src/app/administracao.tsx",
+    "shared/admin.ts",
+    "tests/personal/admin.test.ts",
     "src/components/personal/password-field.tsx",
     "src/components/personal/login-form.web.tsx",
     "src/features/personal/remembered-login.ts",
@@ -66,7 +71,7 @@
   "repository": "mariomoutinho/ta-pago",
   "branch": "main",
   "commit_sha": "aaa87fefa966c6c358fc82d3fe3deb418203baeb",
-  "version": "4.14.0",
+  "version": "4.15.0",
   "authority": "proposal",
   "audience": [
     "developer",
@@ -208,3 +213,12 @@ Na web, o aplicativo grava somente e-mails em localStorage e solicita o salvamen
 No aplicativo nativo, a lista e as credenciais optadas são armazenadas com expo-secure-store, usando proteção vinculada ao dispositivo para a senha. Excluir uma entrada ou exceder cinco contas remove sua credencial nativa correspondente. Falhas de armazenamento não invalidam um login que a API já aprovou. Não houve alteração da expiração de sessões, dos cookies ou das permissões de professor/aluno.
 
 PasswordField reutiliza Field e os ícones Lucide com as cores do tema. O botão de olho fica dentro do campo, à direita, com alvo de toque de 44 px, rótulo Mostrar/Ocultar e estado acessível. A senha começa oculta, o valor é preservado ao alternar e o controle também aparece no cadastro de conta e na ativação de aluno.
+
+
+## Consulta administrativa de perfis
+
+Observado: /administracao lista professores e alunos, com busca por nome ou e-mail, filtro por perfil e páginas de 25 registros. Contas de aluno vinculadas não são duplicadas como fichas; fichas sem conta aparecem como Cadastro sem login, com os professores responsáveis. A consulta retorna somente identificadores, nome, e-mail, perfil, disponibilidade de login e vínculo de professor. Não retorna senhas, hashes ou informações de saúde.
+
+O administrador mantém o perfil personal e recebe uma capacidade adicional pelo ID em configuração privada: PERSONAL_ADMIN_IDS no Express ou authorizedAdminIds no PHP. O ID deve continuar autorizado também como professor. A opção Administração aparece somente para essa capacidade, com proteção de rota e da API GET /api/admin/profiles. Cadastro público e login não aceitam promoção administrativa pelo cliente. A remoção do ID na configuração revoga o acesso em requisições seguintes. Nenhum privilégio é concedido apenas pelo e-mail.
+
+A implementação não oferece edição de perfis nem exibição ou recuperação da senha original. Os backends filtram e paginam em memória a projeção mínima dos cadastros; consultas SQL paginadas serão necessárias se o volume tornar isso insuficiente. A configuração de contas reais e a publicação são operações separadas, não comprovadas pelos testes sintéticos.

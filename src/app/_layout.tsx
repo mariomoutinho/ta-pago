@@ -60,6 +60,9 @@ function Navigation() {
           <Stack.Screen name="acompanhamento/[id]" />
           <Stack.Screen name="treinos" />
         </Stack.Protected>
+        <Stack.Protected guard={user?.role === "personal" && !!user.isAdmin}>
+          <Stack.Screen name="administracao" />
+        </Stack.Protected>
         <Stack.Screen name="cadastro/[token]" />
         <Stack.Screen name="ativar" />
         <Stack.Screen name="notificacao" />

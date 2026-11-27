@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace TaPago;
 
 final class App {
-    use Auth, Students, Evaluations, Workouts, Enrollment, Media, Groups;
+    use Auth, Students, Evaluations, Workouts, Enrollment, Media, Groups, Admin;
     public int $status=200;
     public ?array $user=null;
     public array $deferredNotifications=[];
@@ -42,6 +42,7 @@ final class App {
         if (preg_match('~^/public/enrollment/([^/]+)$~D',$path,$m)) return $this->publicEnrollment($method,$m[1],$body);
         if (preg_match('~^/public/student-access/([^/]+)$~D',$path,$m)) return $this->studentAccess($method,$m[1],$body);
         ensure($this->user!==null,'Entre na sua conta para continuar',401);
+        if($method==='GET'&&$path==='/admin/profiles')return $this->adminProfiles();
         if ($path==='/exercise-videos' && $method==='PUT') return $this->uploadVideo();
         if (preg_match('~^/exercise-videos/([a-f0-9]{64})/([a-f0-9]{32})\.mp4$~D',$path,$m) && in_array($method,['GET','HEAD'],true)) return $this->video($m[1],$m[2]);
         if ($path==='/auth/logout' && $method==='POST') { $this->db->delete('Session',$this->sessionId); $this->cookie('',time()-3600); return ['ok'=>true]; }
